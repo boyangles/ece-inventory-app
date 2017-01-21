@@ -4,6 +4,7 @@ class User < ApplicationRecord
   validates :username, presence: true, length: { maximum: 50 },
                        uniqueness: { case_sensitive: false }
   validates :privilege, presence: true
+  validates :password, presence: true, length: { minimum: 6 }
 
   #Adds functionality to save a securely hashed password_digest attribute to the database
   #Adds a pair of virtual attributes (password and password_confirmation), including presence validations upon object creation and a validation requiring that they match.
