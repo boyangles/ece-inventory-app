@@ -70,6 +70,6 @@ class UsersController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
       # Rails 4+ requires you to whitelist attributes in the controller.
-      params.fetch(:user, {}).permit(:username, :privilege, :password)
+      params.fetch(:user, {})
     end
 end

@@ -6,7 +6,7 @@ class UserTest < ActiveSupport::TestCase
   # end
   
   def setup
-    @user = User.new(username: "Austin", privilege: "regular", password: "SamplePass", password_confirmation: "SamplePass")
+    @user = User.new(username: "Austin", privilege: "regular", email: "sample@sample.com", password: "SamplePass", password_confirmation: "SamplePass")
   end
 
   test "should be valid" do
@@ -25,7 +25,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "username should be unique" do
     duplicate_user = @user.dup
-    #Testing ofr case insensitivity
+    #Testing for case insensitivity
     duplicate_user.username = @user.username.upcase
     @user.save
     assert_not duplicate_user.valid?
@@ -38,6 +38,40 @@ class UserTest < ActiveSupport::TestCase
     assert_equal mixed_case_username.downcase, @user.reload.username
   end
 
+  test "email should be present" do
+    @user.email = ""
+    assert_not @user.valid?
+  end
+
+  test "email should not be too long" do
+    @user.email = "te" * 244 + "@sample.com"
+    assert_not @user.valid?
+  end
+
+  test "email validation accepts valid addresses" do
+    valid_addresses = %w[user@example.com USER@foo.COM A_US-ER@sample.email.org abc.123@foo.cn austin+andrew@baby.cn]
+    valid_addresses.each do |valid_address|
+      @user.email = valid_address
+      assert @user.valid?, "#{valid_address.inspect} should have been validated"
+    end
+  end
+
+  test "email validation rejects invalid emails" do
+    invalid_addresses = %w[user@example,com user_at_foo.org user.name@example. foo@bar_baz.com foo@bar+baz.com]
+    invalid_addresses.each do |invalid_address|
+      @user.email = invalid_address
+      assert_not @user.valid?, "#{invalid_address.inspect} should have been invalidated"
+    end
+  end
+
+  test "email should be unique" do
+    duplicate_user = @user.dup
+    #Testing ofr case insensitivity
+    duplicate_user.email = @user.email.upcase
+    @user.save
+    assert_not duplicate_user.valid?
+  end
+  
   test "password should be present and non blank" do
     @user.password = @user.password_confirmation = " " * 10
     assert_not @user.valid?
