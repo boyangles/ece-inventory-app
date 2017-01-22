@@ -12,6 +12,11 @@
   <% end %>
 
   <p>
+    <b>Item Requested</b>
+    <%= @item.unique_name %>
+  </p>
+
+  <p>
     <%= f.label :quantity %><br>
     <%= f.number_field :quantity %>
 
@@ -26,6 +31,8 @@
     <%= f.label :reason %><br>
     <%= f.text_area :reason %>
   </p>
+
+  <%= f.hidden_field :item_id, :value => @item.id %>
 
   <div class="actions">
     <%= f.submit %>

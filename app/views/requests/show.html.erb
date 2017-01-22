@@ -12,7 +12,8 @@
 
 <p>
   <strong>Item:</strong>
-  <%= @request.item %>
+  <% @item = Item.find(@request.item_id) %>
+  <%= @item.unique_name %>
 </p>
 
 <p>

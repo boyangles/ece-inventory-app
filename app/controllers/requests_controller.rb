@@ -16,10 +16,11 @@ class RequestsController < ApplicationController
   def new
     @request = Request.new
     
-    if !params[:quantity].blank?
-      @request[:quantity] = params[:quantity]
+    if !params[:item_id].blank?
+      @request[:item_id] = params[:item_id]
+      @item = Item.find(@request.item_id)
     end
-
+    
   end
 
   # GET /requests/1/edit
@@ -34,9 +35,7 @@ class RequestsController < ApplicationController
 
     # Set default values for requests:
     @request.user = @user.username
-    # @request.req_id #add this back?i deleted everything tho :(
     @request.datetime = Time.now
-    # @request.item = 
     @request.status = "outstanding"
     # @request.request_type = ??? what is this?
 
@@ -84,6 +83,6 @@ class RequestsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def request_params
-      params.fetch(:request, {}).permit(:datetime, :user, :item, :quantity, :reason, :status, :request_type, :instances)
+      params.fetch(:request, {}).permit(:datetime, :user, :item_id, :quantity, :reason, :status, :request_type, :instances)
     end
 end
