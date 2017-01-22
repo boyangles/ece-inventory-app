@@ -1,0 +1,32 @@
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>EceInventoryApp</title>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>
+||||||| merged common ancestors
+=======
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ToyApp</title>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>
+>>>>>>> 2b5a44b3ae1871ece42051fe74a61f050f019cdb
