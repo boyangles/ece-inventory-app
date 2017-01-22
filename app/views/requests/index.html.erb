@@ -1,0 +1,49 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Requests</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Request ID</th>
+      <th>Date Time</th>
+      <th>User</th>
+      <th>Item</th>
+      <th>Quantity</th>
+      <th>Reason</th>
+      <th>Status</th>
+      <th>Request Type</th>
+      <th>Instances</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @requests.each do |request| %>
+
+      <tr>
+        <th><%= request.req_id %></th>
+        <th><%= request.datetime %></th>
+        <th><%= request.user %></th>
+        <th><%= request.item %></th>
+        <th><%= request.quantity %></th>
+        <th><%= request.reason %></th>
+        <th><%= request.status %></th>
+        <th><%= request.request_type %></th>
+        <th>
+          <%=
+            request.instances ?  
+              request.instances["instancearray"] :
+              JSON['[ ]']
+          %>
+        </th>
+        <td><%= link_to 'Show', request %></td>
+        <td><%= link_to 'Edit', edit_request_path(request) %></td>
+        <td><%= link_to 'Destroy', request, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Request', new_request_path %>
