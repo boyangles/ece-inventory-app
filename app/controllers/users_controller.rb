@@ -10,6 +10,7 @@ class UsersController < ApplicationController
   # GET /users/1
   # GET /users/1.json
   def show
+    @user = User.find(params[:id])
   end
 
   # GET /users/new
@@ -26,14 +27,11 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
 
-    respond_to do |format|
-      if @user.save
-        format.html { redirect_to @user, notice: 'User was successfully created.' }
-        format.json { render :show, status: :created, location: @user }
-      else
-        format.html { render :new }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
+    if @user.save
+      flash[:success] = "Welcome to the ECE Inventory family!"
+      redirect_to @user
+    else
+      render 'new'
     end
   end
 
@@ -70,6 +68,6 @@ class UsersController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
       # Rails 4+ requires you to whitelist attributes in the controller.
-      params.fetch(:user, {})
+      params.fetch(:user, {}).permit(:username, :email, :privilege, :password, :password_confirmation)
     end
 end
