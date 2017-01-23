@@ -1,9 +1,6 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
   
   def setup
     @user = User.new(username: "Austin", privilege: "admin", email: "sample@cs.duke.edu",
@@ -99,9 +96,44 @@ class UserTest < ActiveSupport::TestCase
       assert @user.valid?
     end
 
-    status_list = %w[approvead approve good wait waited notapproved lol lmao]
+    status_list = %w[appRaRove good wait waited notapproved lol lmao]
     status_list.each do |s|
       @user.status = s
+      assert_not @user.valid?
+    end
+  end
+
+  test "status is downcased on save" do
+    status_list = %w[APPROVED WAITING]
+    status_list.each do |s|
+      @user.status = s
+      @user.save
+      assert_equal @user.status, s
+      @user.reload.status
+      assert_not_equal @user.status, s
+    end
+  end
+
+  test "privilege is downcased on save" do
+    priv_list = %w[ADMIN TA STUDENT]
+    priv_list.each do |s|
+      @user.privilege = s
+      @user.save
+      assert_equal @user.privilege, s
+      @user.reload.privilege
+      assert_not_equal @user.privilege, s
+    end
+  end
+
+  test "user privilege must be student, ta, or admin" do
+    priv_list = %w[admin ta student STUDENT TA AdmiN]
+    priv_list.each do |s|
+      @user.privilege = s
+      assert @user.valid?
+    end
+    priv_list = %w[ADMINIStraotr teacherAssistant students aefa notadmin sortofadmin]
+    priv_list.each do |s|
+      @user.privilege = s
       assert_not @user.valid?
     end
   end
