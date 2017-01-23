@@ -1,5 +1,11 @@
 class User < ApplicationRecord
 
+  before_validation {
+    self.username = username.downcase
+    self.email = email.downcase
+    self.privilege = privilege.downcase
+    self.status = status.downcase
+  }
 
   before_save { 
     self.username = username.downcase 
