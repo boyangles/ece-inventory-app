@@ -126,7 +126,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "user privilege must be student, ta, or admin" do
-    priv_list = %w[admin ta student STUDENT TA AdmiN]
+    priv_list = %w[admin ta student]
     priv_list.each do |s|
       @user.privilege = s
       assert @user.valid?
