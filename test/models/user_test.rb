@@ -6,7 +6,8 @@ class UserTest < ActiveSupport::TestCase
   # end
   
   def setup
-    @user = User.new(username: "Austin", privilege: "admin", email: "sample@cs.duke.edu", password: "SamplePass", password_confirmation: "SamplePass")
+    @user = User.new(username: "Austin", privilege: "admin", email: "sample@cs.duke.edu",
+                     password: "SamplePass", password_confirmation: "SamplePass", status: "approved")
   end
 
   test "should be valid" do
@@ -89,5 +90,19 @@ class UserTest < ActiveSupport::TestCase
   test "password should have a minimum length of 6" do
     @user.password = @user.password_confirmation = "q" * 5
     assert_not @user.valid?
+  end
+
+  test "status must be either approved or waiting" do
+    status_list = %w[approved waiting]
+    status_list.each do |s|
+      @user.status = s
+      assert @user.valid?
+    end
+
+    status_list = %w[approvead approve good wait waited notapproved lol lmao]
+    status_list.each do |s|
+      @user.status = s
+      assert_not @user.valid?
+    end
   end
 end

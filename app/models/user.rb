@@ -16,6 +16,10 @@ class User < ApplicationRecord
   validates :privilege, presence: true
   validates :password, presence: true, length: { minimum: 6 }
 
+  validates :status, presence: true
+  validates_inclusion_of :status, :in => %w[approved waiting], :message => "Status must either be approved or waiting"
+
+
   # some useful validation types we might use later on
   #validates_exclusion_of :username, :in => %w[bruh]
   #validates_format_of :privilege, :with => /\A(admin)\Z/
