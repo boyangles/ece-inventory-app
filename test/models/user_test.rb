@@ -109,8 +109,6 @@ class UserTest < ActiveSupport::TestCase
       @user.status = s
       @user.save
       assert_equal @user.status, s.downcase
-      @user.reload.status
-      assert_not_equal @user.status, s
     end
   end
 
@@ -120,8 +118,6 @@ class UserTest < ActiveSupport::TestCase
       @user.privilege = s
       @user.save
       assert_equal @user.privilege, s.downcase
-      @user.reload.privilege
-      assert_not_equal @user.privilege, s
     end
   end
 

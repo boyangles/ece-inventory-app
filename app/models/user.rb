@@ -7,13 +7,6 @@ class User < ApplicationRecord
     self.status = status.downcase
   }
 
-  before_save { 
-    self.username = username.downcase 
-    self.email = email.downcase
-    self.privilege = privilege.downcase
-    self.status = status.downcase
-  }
-
   # Modified to only allow duke emails
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-\.]*duke\.edu\z/i
 
