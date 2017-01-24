@@ -6,7 +6,8 @@ class UserTest < ActiveSupport::TestCase
   # end
   
   def setup
-    @user = User.new(username: "Austin", privilege: "regular", email: "sample@sample.com", password: "SamplePass", password_confirmation: "SamplePass")
+    @user = User.new(username: "Austin", privilege: "admin", email: "sample@cs.duke.edu",
+                     password: "SamplePass", password_confirmation: "SamplePass", status: "approved")
   end
 
   test "should be valid" do
@@ -48,12 +49,21 @@ class UserTest < ActiveSupport::TestCase
     assert_not @user.valid?
   end
 
-  test "email validation accepts valid addresses" do
+  test "email validation rejects valid addresses that are not duke emails" do
     valid_addresses = %w[user@example.com USER@foo.COM A_US-ER@sample.email.org abc.123@foo.cn austin+andrew@baby.cn]
+    valid_addresses.each do |valid_address|
+      @user.email = valid_address
+      assert_not @user.valid?, "#{valid_address.inspect} should have been validated"
+    end
+  end
+
+  test "email validation accepts duke addresses" do
+    valid_addresses = %w[user@cs.duke.edu USER@duke.edu A_US-ER@sample.duke.edu abc.123@ece.cs.duke.edu austin+andrew@edu.duke.edu]
     valid_addresses.each do |valid_address|
       @user.email = valid_address
       assert @user.valid?, "#{valid_address.inspect} should have been validated"
     end
+
   end
 
   test "email validation rejects invalid emails" do
@@ -80,5 +90,19 @@ class UserTest < ActiveSupport::TestCase
   test "password should have a minimum length of 6" do
     @user.password = @user.password_confirmation = "q" * 5
     assert_not @user.valid?
+  end
+
+  test "status must be either approved or waiting" do
+    status_list = %w[approved waiting]
+    status_list.each do |s|
+      @user.status = s
+      assert @user.valid?
+    end
+
+    status_list = %w[approvead approve good wait waited notapproved lol lmao]
+    status_list.each do |s|
+      @user.status = s
+      assert_not @user.valid?
+    end
   end
 end
