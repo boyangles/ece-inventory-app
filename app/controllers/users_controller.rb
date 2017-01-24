@@ -1,10 +1,15 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
+  # Editing/updating a user credential only can be done when logged in
+  before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
+  before_action :correct_user, only: [:edit, :update]
+  # Security issue: only admin users can delete users
+  before_action :admin_user, only: :destroy 
 
   # GET /users
   # GET /users.json
   def index
-    @users = User.all
+    @users = User.paginate(page: params[:page], per_page: 10)
   end
 
   # GET /users/1
@@ -20,6 +25,7 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
+    @user = User.find(params[:id])
   end
 
   # POST /users
@@ -34,6 +40,8 @@ class UsersController < ApplicationController
       if @user.save
         # Tell the UserMailer to send a welcome email after save
         UserMailer.welcome_email(@user).deliver
+      # Toggle to log the user in upon sign up
+      log_in @user
 
         format.html { redirect_to(root_path) }
         #format.json { render json: @user, status: :created, location: @user }
@@ -54,25 +62,21 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
-    respond_to do |format|
-      if @user.update(user_params)
-        format.html { redirect_to @user, notice: 'User was successfully updated.' }
-        format.json { render :show, status: :ok, location: @user }
-      else
-        format.html { render :edit }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
+    @user = User.find(params[:id])
+    if @user.update_attributes(user_params)
+      flash[:success] = "Credentials updated successfully"
+      redirect_to @user
+    else
+      render 'edit'
     end
   end
 
   # DELETE /users/1
   # DELETE /users/1.json
   def destroy
-    @user.destroy
-    respond_to do |format|
-      format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    User.find(params[:id]).destroy
+    flash[:success] = "User account deleted!"
+    redirect_to users_url
   end
 
   private
@@ -81,10 +85,30 @@ class UsersController < ApplicationController
       @user = User.find(params[:id])
     end
 
+    # Confirms logged-in user
+    def logged_in_user
+      unless logged_in?
+        store_location
+        flash[:danger] = "Login is required to access page."
+        redirect_to login_url
+      end
+    end
+
+    # Confirms correct user, otherwise redirect to homepage
+    def correct_user
+      @user = User.find(params[:id])
+      redirect_to(root_url) unless current_user?(@user)
+    end
+
+    # Confirms administrator
+    def admin_user
+      redirect_to(root_url) unless current_user.privilege == "admin"
+    end
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
       # Rails 4+ requires you to whitelist attributes in the controller.
-      params.fetch(:user, {}).permit(:username, :email, :privilege, :password, :password_confirmation, :status)
+      params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :status)
     end
 
   def confirm_email
