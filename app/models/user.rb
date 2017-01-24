@@ -16,6 +16,7 @@ class User < ApplicationRecord
                        format: { with: VALID_EMAIL_REGEX },
                        uniqueness: { case_sensitive: false }
   validates :privilege, presence: true
+  # Allowing for nil is okay because has_secure_password has another nil validation
   validates :password, presence: true, length: { minimum: 6 }
   validates :status, presence: true
 
@@ -27,6 +28,13 @@ class User < ApplicationRecord
   # some useful validation types we might use later on
   #validates_exclusion_of :username, :in => %w[bruh]
   #validates_format_of :privilege, :with => /\A(admin)\Z/
+
+  # Returns the hash digest for a given string, used in fixtures for testing
+  def User.digest(string)
+    cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
+                                                  BCrypt::Engine.cost
+    BCrypt::Password.create(string, cost: cost)
+  end
 
 
   #Adds functionality to save a securely hashed password_digest attribute to the database

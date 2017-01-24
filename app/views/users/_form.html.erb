@@ -1,32 +1,21 @@
-<%= form_for(user) do |f| %>
-  <% if user.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
+<%= form_for(@user, url: url) do |f| %>
+  <%= render 'shared/error_messages', object: @user %>
+      
+  <!-- Username -->
+  <%= f.label :username %>
+  <%= f.text_field :username, class: 'form-control' %>
+      
+  <!-- Email -->
+  <%= f.label :email %>
+  <%= f.email_field :email, class: 'form-control' %>
 
-      <ul>
-      <% user.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <!-- Password -->
+  <%= f.label :password %>
+  <%= f.password_field :password, class: 'form-control' %>
 
-  <p>
-    <%= f.label :username %><br>
-    <%= f.text_field :username %>
-  </p>
+  <!-- Password Confirm -->
+  <%= f.label :password_confirmation, "Confirm Password" %>
+  <%= f.password_field :password_confirmation, class: 'form-control' %>
 
-  <p>
-    <%= f.label :privilege %><br>
-    <%= f.text_field :privilege %>
-  </p>
-
-  <p>
-    <%= f.label :password %><br>
-    <%= f.text_field :password %>
-  </p>
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+  <%= f.submit yield(:button_text), class: "btn btn-primary" %>
 <% end %>

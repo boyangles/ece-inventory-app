@@ -12,6 +12,11 @@ gem 'rails-controller-testing'
 gem 'rails', '~> 5.0.1'
 # Add bcrypt for password hashing
 gem 'bcrypt', '3.1.11'
+#Faker gem for dummy data TODO: ONLY use for dev environment
+gem 'faker', '1.6.6'
+#Paginations:
+gem 'will_paginate', '3.1.0'
+gem 'bootstrap-will_paginate', '0.0.10'
 # Bootstrap sass gem
 gem 'bootstrap-sass', '3.3.6'
 # Use postgresql as the database for Active Record
