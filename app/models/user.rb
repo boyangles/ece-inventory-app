@@ -28,6 +28,13 @@ class User < ApplicationRecord
   #validates_exclusion_of :username, :in => %w[bruh]
   #validates_format_of :privilege, :with => /\A(admin)\Z/
 
+  # Returns the hash digest for a given string, used in fixtures for testing
+  def User.digest(string)
+    cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
+                                                  BCrypt::Engine.cost
+    BCrypt::Password.create(string, cost: cost)
+  end
+
 
   #Adds functionality to save a securely hashed password_digest attribute to the database
   #Adds a pair of virtual attributes (password and password_confirmation), including presence validations upon object creation and a validation requiring that they match.

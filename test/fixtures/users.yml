@@ -4,10 +4,12 @@
 # model remove the '{}' from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {}
 
-# column: value
-#
-two: {}
+# Convention: ALL PASSWORDS will be 'password'
 
-# column: value
+bernard:
+  username: bernieboy
+  email: ba34@duke.edu
+  privilege: admin
+  status: approved
+  password_digest: <%= User.digest('password') %>

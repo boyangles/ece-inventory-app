@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  get 'sessions/new'
-
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get 'welcome/index'
 
@@ -9,6 +7,11 @@ Rails.application.routes.draw do
     post '/signup', to: 'users#create'
   
   resources :requests
+
+  #Login and Sessions routes
+  get   '/login',   to: 'sessions#new'      #Describes the login screen
+  post  '/login',   to: 'sessions#create'   #Handles actually logging in
+  delete '/logout', to: 'sessions#destroy'  #Handles logging out
 
   root 'welcome#index'
   
