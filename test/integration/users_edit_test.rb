@@ -6,6 +6,9 @@ class UsersEditTest < ActionDispatch::IntegrationTest
   end
 
   test "handling unsucessful edits" do
+    # Required because authorization clause in before_action for UserController
+    log_in_as(@user)
+
     get edit_user_path(@user)
     assert_template 'users/edit'
     patch user_path(@user), params: {
@@ -21,6 +24,9 @@ class UsersEditTest < ActionDispatch::IntegrationTest
   end
 
   test "handling successful edits" do
+    # Required because authorization clause in before_action for UserController
+    log_in_as(@user)
+
     get edit_user_path(@user)
     assert_template 'users/edit'
     username = "Bonkers Amaldoss"
