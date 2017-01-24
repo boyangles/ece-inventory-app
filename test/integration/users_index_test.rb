@@ -26,12 +26,10 @@ class UsersIndexTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "viewing index as a non-admin" do
+  test "viewing index as a non-admin redirects to root path" do
     log_in_as(@non_admin)
     get users_path
     
-    assert_template 'users/index'
-    assert_select 'div.pagination'
-    assert_select 'a', text: 'delete', count: 0
+    assert_redirected_to root_path
   end
 end
