@@ -26,17 +26,29 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     @user = User.new(user_params)
-
     # Set default status and privilege
     @user.status = "waiting"
     @user.privilege = "student"
 
-    if @user.save
-      flash[:success] = "Welcome to the ECE Inventory family!"
-      redirect_to @user
-    else
-      render 'new'
+    respond_to do |format|
+      if @user.save
+        # Tell the UserMailer to send a welcome email after save
+        UserMailer.welcome_email(@user).deliver_later
+
+        format.html { redirect_to(@user, notice: 'Welcome to the ECE Inventory family! Click on the email link to confirm your account') }
+        format.json { render json: @user, status: :created, location: @user }
+      else
+        format.html { render action: 'new' }
+        format.json { render json: @user.errors, status: :unprocessable_entity }
+      end
     end
+
+    # if @user.save
+    #   flash[:success] = "Welcome to the ECE Inventory family!"
+    #   redirect_to @user
+    # else
+    #   render 'new'
+    # end
   end
 
   # PATCH/PUT /users/1
