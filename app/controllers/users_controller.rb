@@ -32,6 +32,9 @@ class UsersController < ApplicationController
     @user.privilege = "student"
 
     if @user.save
+      # Toggle to log the user in upon sign up
+      log_in @user
+
       flash[:success] = "Welcome to the ECE Inventory family!"
       redirect_to @user
     else
