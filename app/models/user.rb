@@ -16,7 +16,8 @@ class User < ApplicationRecord
                        format: { with: VALID_EMAIL_REGEX },
                        uniqueness: { case_sensitive: false }
   validates :privilege, presence: true
-  validates :password, presence: true, length: { minimum: 6 }
+  # Allowing for nil is okay because has_secure_password has another nil validation
+  validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
   validates :status, presence: true
 
   # Validation checks for checkboxes that will be created to only allow certain input
