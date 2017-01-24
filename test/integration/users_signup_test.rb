@@ -1,15 +1,17 @@
 require 'test_helper'
 
 class UsersSignupTest < ActionDispatch::IntegrationTest
-  test "invalid signup" do
+  test "invalid signup parameters" do
     get signup_path
     assert_no_difference 'User.count' do
       post users_path, params: {
                                  user: {
-                                         name: "",
+                                         username: "a",
                                          email: "user@invalid",
                                          password: "foo",
-                                         password_confirmation: "bar"
+                                         password_confirmation: "bar",
+                                         status: "me",
+                                         privilege: "meh"
                                        }
                                }
     end

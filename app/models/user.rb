@@ -1,12 +1,21 @@
 class User < ApplicationRecord
+
+  before_validation {
+    self.username = username.downcase
+    self.email = email.downcase
+    self.privilege = privilege.downcase
+    self.status = status.downcase
+  }
+
   before_save { 
     self.username = username.downcase 
     self.email = email.downcase
+    self.privilege = privilege.downcase
+    self.status = status.downcase
   }
 
   # Modified to only allow duke emails
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-\.]*duke\.edu\z/i
-
 
   validates :username, presence: true, length: { maximum: 50 },
                        uniqueness: { case_sensitive: false }
@@ -15,9 +24,11 @@ class User < ApplicationRecord
                        uniqueness: { case_sensitive: false }
   validates :privilege, presence: true
   validates :password, presence: true, length: { minimum: 6 }
-
   validates :status, presence: true
+
+  # Validation checks for checkboxes that will be created to only allow certain input
   validates_inclusion_of :status, :in => %w[approved waiting], :message => "Status must either be approved or waiting"
+  validates_inclusion_of :privilege, :in => %w[admin student ta], :message => "Privilege must be admin, ta, or student"
 
 
   # some useful validation types we might use later on
