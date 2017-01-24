@@ -13,3 +13,10 @@ bernard:
   privilege: admin
   status: approved
   password_digest: <%= User.digest('password') %>
+
+alex:
+  username: alexkelly
+  email: ak47@duke.edu
+  privilege: student
+  status: approved
+  password_digest: <%= User.digest('password') %>

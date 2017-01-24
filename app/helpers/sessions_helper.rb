@@ -11,6 +11,11 @@ module SessionsHelper
     @current_user = nil
   end
 
+  # Returns true if given user is current user
+  def current_user?(user)
+    user == current_user
+  end
+
   # Returns the current logged-in user, and nil if no logged-in user
   def current_user
     # find_by only executes when current user hasn't been assigned yet
