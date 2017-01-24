@@ -33,7 +33,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user.save
         # Tell the UserMailer to send a welcome email after save
-        UserMailer.welcome_email(@user).deliver_later
+        UserMailer.welcome_email(@user).deliver
 
         format.html { redirect_to(@user, notice: 'Welcome to the ECE Inventory family! Click on the email link to confirm your account') }
         format.json { render json: @user, status: :created, location: @user }
