@@ -19,9 +19,14 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     assert_select 'form[action="/signup"]'
   end
 
+  # Need to test logging in with confirmed credentials
+  test "valid signup and log in after email confirmed" do
+
+  end
+
   #not sure this is a great test now
   test "valid signup and redirection" do
-    get login_path
+    get signup_path
     post users_path, params: {
         user: {
             username: "username",
