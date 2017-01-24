@@ -35,11 +35,11 @@ class UsersController < ApplicationController
         # Tell the UserMailer to send a welcome email after save
         UserMailer.welcome_email(@user).deliver
 
-        format.html { redirect_to(@user, notice: 'Welcome to the ECE Inventory family! Click on the email link to confirm your account') }
-        format.json { render json: @user, status: :created, location: @user }
+        format.html { redirect_to(root_path) }
+        #format.json { render json: @user, status: :created, location: @user }
       else
         format.html { render action: 'new' }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
+        #format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
 
@@ -86,4 +86,19 @@ class UsersController < ApplicationController
       # Rails 4+ requires you to whitelist attributes in the controller.
       params.fetch(:user, {}).permit(:username, :email, :privilege, :password, :password_confirmation, :status)
     end
+
+  def confirm_email
+    @user = User.find_by_confirm_token(params[:id])
+    if @user
+      @user.email_activate
+      flash[:success] = "Welcome to the ECE Inventory System Your email has been confirmed.
+      Please sign in to continue."
+      redirect_to signup_url
+    else
+      flash[:error] = "Sorry. User does not exist"
+      redirect_to root_url
+    end
+  end
+
+
 end
