@@ -17,7 +17,7 @@ class User < ApplicationRecord
                        uniqueness: { case_sensitive: false }
   validates :privilege, presence: true
   # Allowing for nil is okay because has_secure_password has another nil validation
-  validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
+  validates :password, presence: true, length: { minimum: 6 }
   validates :status, presence: true
 
   # Validation checks for checkboxes that will be created to only allow certain input
