@@ -40,8 +40,10 @@ class UsersController < ApplicationController
       if @user.save
         # Tell the UserMailer to send a welcome email after save
         UserMailer.welcome_email(@user).deliver
-      # Toggle to log the user in upon sign up
-      log_in @user
+
+        # Toggle to log the user in upon sign up
+        # log_in @user
+        flash[:success] = "Please confirm email"
 
         format.html { redirect_to(root_path) }
         #format.json { render json: @user, status: :created, location: @user }
@@ -79,6 +81,20 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
 
+  def confirm_email
+    @user = User.find_by_confirm_token(params[:id])
+    if @user
+      @user.email_activate
+      flash[:success] = "Welcome to the ECE Inventory System Your email has been confirmed.
+      Please sign in to continue."
+      redirect_to signup_url
+    else
+      flash[:error] = "Sorry. User does not exist"
+      redirect_to root_url
+    end
+  end
+
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
@@ -111,18 +127,6 @@ class UsersController < ApplicationController
       params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :status)
     end
 
-  def confirm_email
-    @user = User.find_by_confirm_token(params[:id])
-    if @user
-      @user.email_activate
-      flash[:success] = "Welcome to the ECE Inventory System Your email has been confirmed.
-      Please sign in to continue."
-      redirect_to signup_url
-    else
-      flash[:error] = "Sorry. User does not exist"
-      redirect_to root_url
-    end
-  end
 
 
 end

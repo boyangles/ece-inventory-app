@@ -4,7 +4,7 @@ class UserMailer < ApplicationMailer
 
   def welcome_email(user)
     @user = user
-    @url  = 'https://spicysoftwareinventory.herokuapp.com/signup'
+    @url  = 'https://spicysoftwareinventory.herokuapp.com/login'
     mail(to: "#{user.username} <#{user.email}>", subject: 'Confirm Registration: ECE Inventory')
   end
 

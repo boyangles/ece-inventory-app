@@ -49,7 +49,6 @@ class User < ApplicationRecord
 
   # This method confirms a user has confirmed their email. Generates a random string to assign to the token, which identifies
   # which user to confirm
-  private
   def confirmation_token
     if self.confirm_token.blank?
       self.confirm_token = SecureRandom.urlsafe_base64.to_s
@@ -59,6 +58,6 @@ class User < ApplicationRecord
   def email_activate
     self.email_confirmed = true
     self.confirm_token = nil
-    save!# might need this to bypass password validations?(:validate => false)
+    save!(:validate => false)
   end
 end
