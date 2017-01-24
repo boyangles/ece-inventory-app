@@ -27,6 +27,10 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
 
+    # Set default status and privilege
+    @user.status = "waiting"
+    @user.privilege = "student"
+
     if @user.save
       flash[:success] = "Welcome to the ECE Inventory family!"
       redirect_to @user
