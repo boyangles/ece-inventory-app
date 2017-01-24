@@ -38,8 +38,8 @@ class UsersEditTest < ActionDispatch::IntegrationTest
       user: {
         username: username,
         email: email,
-        password: "",
-        password_confirmation: ""
+        password: "password",
+        password_confirmation: "password"
       }
     }
 
