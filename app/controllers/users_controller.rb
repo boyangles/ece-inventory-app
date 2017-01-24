@@ -1,8 +1,10 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
   # Editing/updating a user credential only can be done when logged in
-  before_action :logged_in_user, only: [:index, :edit, :update]
+  before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
   before_action :correct_user, only: [:edit, :update]
+  # Security issue: only admin users can delete users
+  before_action :admin_user, only: :destroy 
 
   # GET /users
   # GET /users.json
@@ -61,11 +63,9 @@ class UsersController < ApplicationController
   # DELETE /users/1
   # DELETE /users/1.json
   def destroy
-    @user.destroy
-    respond_to do |format|
-      format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    User.find(params[:id]).destroy
+    flash[:success] = "User account deleted!"
+    redirect_to users_url
   end
 
   private
@@ -89,9 +89,14 @@ class UsersController < ApplicationController
       redirect_to(root_url) unless current_user?(@user)
     end
 
+    # Confirms administrator
+    def admin_user
+      redirect_to(root_url) unless current_user.privilege == "admin"
+    end
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
       # Rails 4+ requires you to whitelist attributes in the controller.
-      params.fetch(:user, {}).permit(:username, :email, :privilege, :password, :password_confirmation, :status)
+      params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :status)
     end
 end

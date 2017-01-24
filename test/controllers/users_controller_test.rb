@@ -52,4 +52,34 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert flash.empty?
     assert_redirected_to root_url
   end
+
+  # Security Test:
+  test "privilege attribute should not be editable via web" do
+    log_in_as(@user2)
+    assert_not @user2.privilege == "admin"
+    patch user_path(@user2), params: {
+      user: {
+        password: "password",
+        password_confirmation: "password",
+        privilege: "admin"
+      }
+    }
+
+    assert_not @user2.privilege == "admin"
+  end
+
+  test "redirect to login screen when destroying and not logged in" do
+    assert_no_difference 'User.count' do
+      delete user_path(@user)
+    end
+    assert_redirected_to login_url
+  end
+
+  test "should redirect to root url when destroying and non-admin" do
+    log_in_as(@user2)
+    assert_no_difference 'User.count' do
+      delete user_path(@user)
+    end
+    assert_redirected_to root_url
+  end
 end
