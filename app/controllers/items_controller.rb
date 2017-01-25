@@ -1,10 +1,5 @@
 class ItemsController < ApplicationController
   # before_action :set_user, only: [:show, :edit, :update, :destroy]
-  # # Editing/updating a user credential only can be done when logged in
-  # before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
-  # before_action :correct_user, only: [:edit, :update]
-  # # Security issue: only admin users can delete users
-  # before_action :admin_user, only: :destroy
 
   # GET /items
   # GET /items.json
@@ -33,6 +28,29 @@ class ItemsController < ApplicationController
   # POST /items.json
   def create
     @item = Item.new(item_params)
+
+      if @item.save
+          redirect_to item_url(@item)
+      else
+
+      end
+
+    # if @user.save
+    #   flash[:success] = "Welcome to the ECE Inventory family!"
+    #   redirect_to @user
+    # else
+    #   render 'new'
+    # end
+  end
+
+  # Item.create([{ unique_name: 'f flesh', quantity: 10, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
+
+  private
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def item_params
+    # Rails 4+ requires you to whitelist attributes in the controller.
+    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description)
   end
 
 end
