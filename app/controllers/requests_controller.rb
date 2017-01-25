@@ -25,6 +25,16 @@ class RequestsController < ApplicationController
   # POST /requests.json
   def create
     @request = Request.new(request_params)
+    @user = User.find(current_user.id)
+
+    # Set default values for requests:
+    @request.user = @user.username
+    # @request.req_id #add this back?i deleted everything tho :(
+    @request.datetime = Time.now
+    # @request.item = 
+    @request.status = "outstanding"
+    # @request.request_type = ??? what is this?
+
 
     respond_to do |format|
       if @request.save
@@ -69,6 +79,6 @@ class RequestsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def request_params
-      params.fetch(:request, {}).permit(:req_id, :datetime, :user, :item, :quantity, :reason, :status, :request_type, :instances)
+      params.fetch(:request, {}).permit(:datetime, :user, :item, :quantity, :reason, :status, :request_type, :instances)
     end
 end
