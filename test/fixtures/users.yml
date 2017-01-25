@@ -12,6 +12,7 @@ bernard:
   email: ba34@duke.edu
   privilege: admin
   status: approved
+  email_confirmed: true
   password_digest: <%= User.digest('password') %>
 
 alex:
@@ -19,6 +20,7 @@ alex:
   email: ak47@duke.edu
   privilege: student
   status: approved
+  email_confirmed: true
   password_digest: <%= User.digest('password') %>
 
 <% 62.times do |n| %>
@@ -27,5 +29,6 @@ user_<%= n %>:
   email: <%= "user#{n}@duke.edu" %>
   privilege: admin
   status: approved
+  email_confirmed: true
   password_digest: <%= User.digest('password') %>
 <% end %>

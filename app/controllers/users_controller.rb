@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
   before_action :correct_user, only: [:edit, :update]
   # Security issue: only admin users can delete users
-  before_action :admin_user, only: :destroy 
+  before_action :admin_user, only: [:destroy , :index]
 
   # GET /users
   # GET /users.json
@@ -32,20 +32,33 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     @user = User.new(user_params)
-
     # Set default status and privilege
     @user.status = "waiting"
     @user.privilege = "student"
 
-    if @user.save
-      # Toggle to log the user in upon sign up
-      log_in @user
+    respond_to do |format|
+      if @user.save
+        # Tell the UserMailer to send a welcome email after save
+        UserMailer.welcome_email(@user).deliver
 
-      flash[:success] = "Welcome to the ECE Inventory family!"
-      redirect_to @user
-    else
-      render 'new'
+        # Toggle to log the user in upon sign up
+        # log_in @user
+        flash[:success] = "Please confirm email"
+
+        format.html { redirect_to(root_path) }
+        #format.json { render json: @user, status: :created, location: @user }
+      else
+        format.html { render action: 'new' }
+        #format.json { render json: @user.errors, status: :unprocessable_entity }
+      end
     end
+
+    # if @user.save
+    #   flash[:success] = "Welcome to the ECE Inventory family!"
+    #   redirect_to @user
+    # else
+    #   render 'new'
+    # end
   end
 
   # PATCH/PUT /users/1
@@ -67,6 +80,20 @@ class UsersController < ApplicationController
     flash[:success] = "User account deleted!"
     redirect_to users_url
   end
+
+  def confirm_email
+    @user = User.find_by_confirm_token(params[:id])
+    if @user
+      @user.email_activate
+      flash[:success] = "Welcome to the ECE Inventory System Your email has been confirmed.
+      Please sign in to continue."
+      redirect_to login_url
+    else
+      flash[:error] = "Sorry. User does not exist"
+      redirect_to root_url
+    end
+  end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -99,4 +126,7 @@ class UsersController < ApplicationController
       # Rails 4+ requires you to whitelist attributes in the controller.
       params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :status)
     end
+
+
+
 end

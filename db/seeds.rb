@@ -46,3 +46,6 @@ Tag.create([{ name: 'expensive'}, { name: 'rich'}, { name: 'broke'}, { name: '1'
                
                
 end
+
+User.create!(username: "admin1", email: "example@duke.edu", status: "approved",
+             privilege: "admin", password: "password", password_confirmation: "password", email_confirmed: true)

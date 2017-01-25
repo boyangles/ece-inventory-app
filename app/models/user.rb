@@ -7,6 +7,11 @@ class User < ApplicationRecord
     self.status = status.downcase
   }
 
+  # Creates the confirmation token before a user is created
+  before_create {
+    confirmation_token
+  }
+
   # Modified to only allow duke emails
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-\.]*duke\.edu\z/i
 
@@ -41,4 +46,18 @@ class User < ApplicationRecord
   #Adds a pair of virtual attributes (password and password_confirmation), including presence validations upon object creation and a validation requiring that they match.
   #Adds an authenticate method that returns the user when the password is correct and false otherwise
   has_secure_password
+
+  # This method confirms a user has confirmed their email. Generates a random string to assign to the token, which identifies
+  # which user to confirm
+  def confirmation_token
+    if self.confirm_token.blank?
+      self.confirm_token = SecureRandom.urlsafe_base64.to_s
+    end
+  end
+
+  def email_activate
+    self.email_confirmed = true
+    self.confirm_token = nil
+    save!(:validate => false)
+  end
 end
