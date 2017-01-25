@@ -1,0 +1,13 @@
+<% provide(:title, 'Users Awaiting Approval') %>
+
+<div class="center jumbotron">
+  <h1>Unapproved Users</h1>
+</div>
+
+<%= will_paginate %>
+
+<ul class = "user_request_page">
+  <%= render @user_request_page %>
+</ul>
+
+<%= will_paginate %>

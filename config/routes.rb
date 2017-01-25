@@ -22,6 +22,10 @@ Rails.application.routes.draw do
   post  '/login',   to: 'sessions#create'   #Handles actually logging in
   delete '/logout', to: 'sessions#destroy'  #Handles logging out
 
+
+  # User request page for admin
+  get '/userrequests', to: 'user_request_page#index'
+
   root 'welcome#index'
-  
+
 end
