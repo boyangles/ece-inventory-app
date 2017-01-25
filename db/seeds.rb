@@ -6,7 +6,7 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-Request.create([{ datetime: Time.new(2017) , user: 'austin', item: 'transistor' , quantity: 5, reason: 'got bored', status: 'outstanding', request_type: 'damaged', instances: {instancearray: ["0x35b2", "0x44a5", "0xa241"]}}])
+Request.create([{ datetime: Time.new(2017) , user: 'austin', item_id: 1 , quantity: 5, reason: 'got bored', status: 'outstanding', request_type: 'damaged', instances: {instancearray: ["0x35b2", "0x44a5", "0xa241"]}}])
 
 Item.create([{ unique_name: 'oscilloscope', quantity: 8, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
 
@@ -41,7 +41,8 @@ Tag.create([{ name: 'expensive'}, { name: 'rich'}, { name: 'broke'}, { name: '1'
                status: "approved",
                privilege: "admin",
                password: password,
-               password_confirmation: password)
+               password_confirmation: password,
+               email_confirmed: true)
                
                
                
