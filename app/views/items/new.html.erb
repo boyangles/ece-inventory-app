@@ -1,10 +1,5 @@
-<% provide(:title, 'Create new item') %>
-<% provide(:button_text, 'Create item here') %>
+<h1>New Item</h1>
 
-<h1>Sign up</h1>
+<%= render 'form', item: @item %>
 
-<div class="row">
-  <div class="col-md-6 col-md-offset-3">
-
-  </div>
-</div>
+<%= link_to 'Back', requests_path %>
