@@ -19,6 +19,12 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     assert_select 'form[action="/signup"]'
   end
 
+  # Need to test logging in with confirmed credentials
+  test "valid signup and log in after email confirmed" do
+
+  end
+
+  #not sure this is a great test now
   test "valid signup and redirection" do
     get signup_path
     post users_path, params: {
@@ -32,7 +38,6 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     assert_response :redirect
     follow_redirect!
     assert_response :success
-    assert_template 'users/show'
-    assert is_logged_in?
+    assert_template 'user_mailer/welcome_email'
   end
 end
