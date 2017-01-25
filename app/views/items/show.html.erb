@@ -1,0 +1,48 @@
+<p id="notice"><%= notice %></p>
+
+<% provide(:title, @item.unique_name) %>
+<div class="row">
+  <aside class="col-md-4">
+    <section class="item_info">
+      <h1>
+        <%= @item.unique_name %>
+      </h1>
+    </section>
+  </aside>
+</div>
+<p>
+  <strong>Unique_name:</strong>
+  <%= @item.unique_name %>
+</p>
+
+<p>
+  <strong>quantity:</strong>
+  <%= @item.quantity %>
+</p>
+
+<p>
+  <strong>model_number:</strong>
+  <%= @item.model_number %>
+</p>
+
+<p>
+  <strong>description:</strong>
+  <%= @item.description %>
+</p>
+
+<p>
+  <strong>tags:</strong>
+  <%= @item.tags %>
+</p>
+
+<p>
+  <strong>instances:</strong>
+  <%= @item.instances %>
+</p>
+
+
+<% provide(:title, @item.unique_name) %>
+<h1>
+  <%= @item.unique_name %>
+</h1>
+

@@ -14,6 +14,9 @@ Rails.application.routes.draw do
 
   resources :requests
 
+  resources :items
+
+
   #Login and Sessions routes
   get   '/login',   to: 'sessions#new'      #Describes the login screen
   post  '/login',   to: 'sessions#create'   #Handles actually logging in
