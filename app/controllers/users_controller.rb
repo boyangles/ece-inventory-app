@@ -9,11 +9,8 @@ class UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-    if admin_user
-      @users = User.paginate(page: params[:page], per_page: 10)
-    else
-      redirect_to root_path
-    end
+    admin_user
+    @users = User.paginate(page: params[:page], per_page: 10)
   end
 
   # GET /users/1
@@ -121,12 +118,12 @@ class UsersController < ApplicationController
 
     # Confirms administrator
     def admin_user
-      current_user.privilege == "admin"
+      redirect_to(root_url) unless current_user.privilege == 'admin'
     end
 
     # Confirms status is approved
     def user_approved
-      current_user.status == "approved"
+      redirect_to(root_url) unless current_user.status == 'approved'
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

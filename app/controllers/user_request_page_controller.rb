@@ -15,7 +15,7 @@ class UserRequestPageController < ApplicationController
   def approve_user(user)
     if admin_user
       UserMailer.confirm_user(user).deliver
-      user.user_activate
+      user.activate_user
       redirect_to userrequests_path
     else
       flash[:warning] = "You are not admin"
