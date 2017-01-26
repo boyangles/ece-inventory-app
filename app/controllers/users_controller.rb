@@ -4,12 +4,12 @@ class UsersController < ApplicationController
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
   before_action :correct_user, only: [:edit, :update]
   # Security issue: only admin users can delete users
-  before_action :admin_user, only: [:destroy , :index]
+  before_action :check_admin_user, only: [:destroy , :index]
 
   # GET /users
   # GET /users.json
   def index
-    admin_user
+    check_admin_user
     @users = User.paginate(page: params[:page], per_page: 10)
   end
 
@@ -117,7 +117,7 @@ class UsersController < ApplicationController
     end
 
     # Confirms administrator
-    def admin_user
+    def check_admin_user
       redirect_to(root_url) unless current_user.privilege == 'admin'
     end
 
