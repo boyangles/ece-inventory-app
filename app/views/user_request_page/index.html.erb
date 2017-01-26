@@ -7,6 +7,7 @@
 <%= will_paginate %>
 
 <ul class = "user_request_page">
+  <!-- I need this to have a button that will send the user next to it to the method in user_request_page_controller -->
   <%= render @user_request_page %> <%= link_to 'Approve User', userrequests_path, method: :post, params: {} %>
 
 </ul>

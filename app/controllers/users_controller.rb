@@ -16,6 +16,7 @@ class UsersController < ApplicationController
   # GET /users/1
   # GET /users/1.json
   def show
+    logged_in_user
     @user = User.find(params[:id])
   end
 
@@ -53,13 +54,6 @@ class UsersController < ApplicationController
         #format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
-
-    # if @user.save
-    #   flash[:success] = "Welcome to the ECE Inventory family!"
-    #   redirect_to @user
-    # else
-    #   render 'new'
-    # end
   end
 
   # PATCH/PUT /users/1
@@ -118,11 +112,13 @@ class UsersController < ApplicationController
 
     # Confirms administrator
     def check_admin_user
+      logged_in_user
       redirect_to(root_url) unless current_user.privilege == 'admin'
     end
 
     # Confirms status is approved
     def user_approved
+      logged_in_user
       redirect_to(root_url) unless current_user.status == 'approved'
     end
 
