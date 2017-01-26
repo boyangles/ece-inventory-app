@@ -25,6 +25,8 @@ class RequestsController < ApplicationController
 
   # GET /requests/1/edit
   def edit
+    @request = Request.find(params[:id])
+    @item = Item.find(@request.item_id)
   end
 
   # POST /requests
@@ -74,6 +76,8 @@ class RequestsController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+  
  
   private
     # Use callbacks to share common setup or constraints between actions.

@@ -29,7 +29,7 @@
 
   <p>
     <%= f.label :reason %><br>
-    <%= f.text_area :reason %>
+    <%= f.text_area :reason, :required => true %>
   </p>
 
   <%= f.hidden_field :item_id, :value => @item.id %>
