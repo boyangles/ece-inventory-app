@@ -12,7 +12,8 @@ class UserRequestPageController < ApplicationController
     check_admin_user
     UserMailer.confirm_user(user).deliver
     user.activate_user
-    redirect_to userrequests_path
+    flash.now[:info] = "#{user.username} approved"
+    render 'index'
   end
 
   # Confirms administrator

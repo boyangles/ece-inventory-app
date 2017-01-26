@@ -7,7 +7,7 @@
 <%= will_paginate %>
 
 <ul class = "user_request_page">
-  <%= render @user_request_page %> <%= link_to 'Approve User', userrequests_path, method: :approve_user %>
+  <%= render @user_request_page %> <%= link_to 'Approve User', userrequests_path, method: :post, params: {} %>
 
 </ul>
 
