@@ -9,7 +9,11 @@ class UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-    @users = User.paginate(page: params[:page], per_page: 10)
+    if admin_user
+      @users = User.paginate(page: params[:page], per_page: 10)
+    else
+      redirect_to root_path
+    end
   end
 
   # GET /users/1
@@ -85,9 +89,8 @@ class UsersController < ApplicationController
     @user = User.find_by_confirm_token(params[:id])
     if @user
       @user.email_activate
-      flash[:success] = "Welcome to the ECE Inventory System Your email has been confirmed.
-      Please sign in to continue."
-      redirect_to login_url
+      flash[:success] = "Welcome to the ECE Inventory System Your email has been confirmed. An Admin will verify your account shortly."
+      redirect_to root_url
     else
       flash[:error] = "Sorry. User does not exist"
       redirect_to root_url
@@ -118,7 +121,12 @@ class UsersController < ApplicationController
 
     # Confirms administrator
     def admin_user
-      redirect_to(root_url) unless current_user.privilege == "admin"
+      current_user.privilege == "admin"
+    end
+
+    # Confirms status is approved
+    def user_approved
+      current_user.status == "approved"
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

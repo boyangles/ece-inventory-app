@@ -8,5 +8,10 @@ class UserMailer < ApplicationMailer
     mail(to: "#{user.username} <#{user.email}>", subject: 'Confirm Registration: ECE Inventory')
   end
 
+  def confirm_user(user)
+    @user = user
+    @url  = 'https://spicysoftwareinventory.herokuapp.com/login'
+    mail(to: "#{user.username} <#{user.email}>", subject: 'Account Approved: ECE Inventory')
+  end
 
 end

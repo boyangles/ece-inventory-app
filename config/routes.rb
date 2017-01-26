@@ -25,6 +25,7 @@ Rails.application.routes.draw do
 
   # User request page for admin
   get '/userrequests', to: 'user_request_page#index'
+  get '/userrequests/approve', to: 'user_request_page#confirm_user'
 
   root 'welcome#index'
 
