@@ -40,6 +40,7 @@
   <%= @item.instances %>
 </p>
 
+<%= link_to "New Request", new_request_url(:item_id => @item.id), :class => "btn btn-primary" %>
 
 <% provide(:title, @item.unique_name) %>
 <h1>

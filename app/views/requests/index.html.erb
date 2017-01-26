@@ -5,7 +5,6 @@
 <table>
   <thead>
     <tr>
-      <th>Request ID</th>
       <th>Date Time</th>
       <th>User</th>
       <th>Item</th>
@@ -19,12 +18,11 @@
 
   <tbody>
     <% @requests.each do |request| %>
-
+      <% @item = Item.find(request.item_id) %>
       <tr>
-        <th><%= request.req_id %></th>
         <th><%= request.datetime %></th>
         <th><%= request.user %></th>
-        <th><%= request.item %></th>
+        <th><%= @item.unique_name %></th>
         <th><%= request.quantity %></th>
         <th><%= request.reason %></th>
         <th><%= request.status %></th>
@@ -46,4 +44,3 @@
 
 <br>
 
-<%= link_to 'New Request', new_request_path %>
