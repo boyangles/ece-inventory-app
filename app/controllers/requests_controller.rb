@@ -33,7 +33,7 @@ class RequestsController < ApplicationController
   # POST /requests.json
   def create
     @request = Request.new(request_params)
-    @user = User.find(current_user.id)
+    @user = current_user
 
     # Set default values for requests:
     @request.user = @user.username
