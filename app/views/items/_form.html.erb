@@ -34,7 +34,8 @@
     <!-- For adding tags to items -->
     <p> <strong>Tags</strong></p>
     <% if Tag.all.count > item.tags.all.count %>
-      <%= collection_select(:tag, :tag_id, Tag.left_outer_joins(:items).where( items: { id: nil } ), :id, :name, {prompt: true}, {:multiple=> true}) %>
+      <%= collection_select(:tag, :tag_id, Tag.all - item.tags.all, :id, :name, {:prompt => "-- select tags to add to item --"}, {:multiple=> true}) %>
+
     <% else %>
         <p>No more tags available</p>
     <% end %>
@@ -42,7 +43,7 @@
     <!-- For removing tags from items -->
     <p> <strong>Associated Tags</strong></p>
     <% if item.tags.count > 0 %>
-        <%= collection_select(:tag_to_remove, :tag_id_remove, item.tags.all, :id, :name, {prompt: true}, {:multiple=> true}) %>
+        <%= collection_select(:tag_to_remove, :tag_id_remove, item.tags.all, :id, :name, {:prompt => "-- select tags to remove from item --"}, {:multiple=> true}) %>
     <% else %>
         <p>No tags associated with <%= item.unique_name %></p>
     <% end %>
