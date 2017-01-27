@@ -7,7 +7,11 @@
 <%= will_paginate %>
 
 <ul class = "accountrequests">
-  <%= render @accountrequests %>
+  <% @accountrequests.each do |ar| %>
+    <li>
+      <%= render "accountrequest", :ar => ar %>
+    </li>
+  <% end %>
 </ul>
 
 <%= will_paginate %>
