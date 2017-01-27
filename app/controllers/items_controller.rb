@@ -63,10 +63,12 @@ class ItemsController < ApplicationController
   def update
     @item = Item.find(params[:id])
 
-    # Assigns a tag to a user
-    if !params[:tag][:tad_id]
-      @tags = Tag.find(params[:tag][:tag_id])
-      @item.tags << @tags
+    # adds tags based on what has been selected
+    params[:tag][:tag_id].each do |tag|
+      if tag.present?
+     	@tags = Tag.find(tag)
+      	@item.tags << @tags
+      end
     end
 
     if @item.update_attributes(item_params)

@@ -37,8 +37,8 @@
 
 <p>
   <strong>tags:</strong>
-  <%= @item.tags.each do |tag| %>
-    <%= tag.name %>
+  <% @item.tags.each do |tag| %>
+    <%= tag.name %>    
   <% end %>
 </p>
 
