@@ -13,7 +13,6 @@ Rails.application.routes.draw do
   end
 
   resources :requests
-
   resources :items
 
 
@@ -22,6 +21,17 @@ Rails.application.routes.draw do
   post  '/login',   to: 'sessions#create'   #Handles actually logging in
   delete '/logout', to: 'sessions#destroy'  #Handles logging out
 
+
+  # User request page for admin
+  resources :accountrequests
+  get '/accountrequests', to: 'accountrequests#index'
+
+  resources :accountrequests do
+    member do
+      get :approve_user
+    end
+  end
+
   root 'welcome#index'
-  
+
 end

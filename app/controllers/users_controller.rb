@@ -4,17 +4,19 @@ class UsersController < ApplicationController
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
   before_action :correct_user, only: [:edit, :update]
   # Security issue: only admin users can delete users
-  before_action :admin_user, only: [:destroy , :index]
+  before_action :check_admin_user, only: [:destroy , :index]
 
   # GET /users
   # GET /users.json
   def index
+    check_admin_user
     @users = User.paginate(page: params[:page], per_page: 10)
   end
 
   # GET /users/1
   # GET /users/1.json
   def show
+    logged_in_user
     @user = User.find(params[:id])
   end
 
@@ -52,13 +54,6 @@ class UsersController < ApplicationController
         #format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
-
-    # if @user.save
-    #   flash[:success] = "Welcome to the ECE Inventory family!"
-    #   redirect_to @user
-    # else
-    #   render 'new'
-    # end
   end
 
   # PATCH/PUT /users/1
@@ -85,9 +80,8 @@ class UsersController < ApplicationController
     @user = User.find_by_confirm_token(params[:id])
     if @user
       @user.email_activate
-      flash[:success] = "Welcome to the ECE Inventory System Your email has been confirmed.
-      Please sign in to continue."
-      redirect_to login_url
+      flash[:success] = "Welcome to the ECE Inventory System Your email has been confirmed. An Admin will verify your account shortly."
+      redirect_to root_url
     else
       flash[:error] = "Sorry. User does not exist"
       redirect_to root_url
@@ -117,8 +111,15 @@ class UsersController < ApplicationController
     end
 
     # Confirms administrator
-    def admin_user
-      redirect_to(root_url) unless current_user.privilege == "admin"
+    def check_admin_user
+      logged_in_user
+      redirect_to(root_url) unless current_user.privilege == 'admin'
+    end
+
+    # Confirms status is approved
+    def user_approved
+      logged_in_user
+      redirect_to(root_url) unless current_user.status == 'approved'
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

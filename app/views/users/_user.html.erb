@@ -3,6 +3,6 @@
   <%= link_to user.username, user %>
 
   <% if current_user.privilege == "admin" && !current_user?(user) %>
-    <%= link_to "delete", user, method: :delete, data: { confirm: "Are you sure you want to do this? This is not reversible." } %>
+      <%= link_to "delete", user, method: :delete, data: { confirm: "Are you sure you want to do this? This is not reversible." } %>
   <% end %>
 </li>

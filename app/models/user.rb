@@ -60,4 +60,9 @@ class User < ApplicationRecord
     self.confirm_token = nil
     save!(:validate => false)
   end
+
+  def activate_user
+    self.status = "approved"
+    save!(:validate => false)
+  end
 end
