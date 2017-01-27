@@ -13,7 +13,6 @@ Rails.application.routes.draw do
   end
 
   resources :requests
-
   resources :items
 
 
@@ -24,8 +23,14 @@ Rails.application.routes.draw do
 
 
   # User request page for admin
-  get '/userrequests', to: 'user_request_page#index'
-  post '/userrequests', to: 'user_request_page#approve_user'
+  resources :accountrequests
+  get '/accountrequests', to: 'accountrequests#index'
+
+  resources :accountrequests do
+    member do
+      get :approve_user
+    end
+  end
 
   root 'welcome#index'
 
