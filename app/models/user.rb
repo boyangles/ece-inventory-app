@@ -1,10 +1,18 @@
 class User < ApplicationRecord
+  enum privilege: {
+    student: 0,
+    ta: 1,
+    admin: 2
+  }, _prefix: :privilege
+
+  enum status: {
+    waiting: 0,
+    approved: 1
+  }, _prefix: :status
 
   before_validation {
     self.username = username.downcase
     self.email = email.downcase
-    self.privilege = privilege.downcase
-    self.status = status.downcase
   }
 
   # Creates the confirmation token before a user is created
@@ -20,19 +28,8 @@ class User < ApplicationRecord
   validates :email, presence: true, length: { maximum: 255 },
                        format: { with: VALID_EMAIL_REGEX },
                        uniqueness: { case_sensitive: false }
-  validates :privilege, presence: true
-  # Allowing for nil is okay because has_secure_password has another nil validation
   validates :password, presence: true, length: { minimum: 6 }
-  validates :status, presence: true
 
-  # Validation checks for checkboxes that will be created to only allow certain input
-  validates_inclusion_of :status, :in => %w[approved waiting], :message => "Status must either be approved or waiting"
-  validates_inclusion_of :privilege, :in => %w[admin student ta], :message => "Privilege must be admin, ta, or student"
-
-
-  # some useful validation types we might use later on
-  #validates_exclusion_of :username, :in => %w[bruh]
-  #validates_format_of :privilege, :with => /\A(admin)\Z/
 
   # Returns the hash digest for a given string, used in fixtures for testing
   def User.digest(string)
