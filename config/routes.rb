@@ -23,6 +23,7 @@ Rails.application.routes.draw do
 
   #Log Routes
   get   '/logs',    to: 'logs#index'        #Viewing all logs 
+  post  '/logs',    to: 'logs#create'       #Creating a log
 
   root 'welcome#index'
   

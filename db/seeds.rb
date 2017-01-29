@@ -8,45 +8,66 @@
 
 Request.create([{ datetime: Time.new(2017) , user: 'austin', item_id: 1 , quantity: 5, reason: 'got bored', status: 'outstanding', request_type: 'damaged', instances: {instancearray: ["0x35b2", "0x44a5", "0xa241"]}}])
 
-Item.create([{ unique_name: 'oscilloscope', quantity: 8, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
-
-Item.create([{ unique_name: 'resistor', quantity: 50, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
-
-Item.create([{ unique_name: 'transistor', quantity: 100, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
-
-Item.create([{ unique_name: 'broken arm', quantity: 30, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
-
-Item.create([{ unique_name: 'human flesh', quantity: 10, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
-
-Item.create([{ unique_name: 'a', quantity: 8, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
-
-Item.create([{ unique_name: 'b', quantity: 50, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
-
-Item.create([{ unique_name: 'c', quantity: 100, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
-
-Item.create([{ unique_name: 'd arm', quantity: 30, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
-
-Item.create([{ unique_name: 'e flesh', quantity: 10, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
-
-Item.create([{ unique_name: 'f flesh', quantity: 10, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
-
 Tag.create([{ name: 'expensive'}, { name: 'rich'}, { name: 'broke'}, { name: '1'}])
+
+
+
+#Creating Users:
+
+User.create!(
+  username: "admin1", 
+  email: "example@duke.edu", 
+  status: "approved",
+  privilege: "admin", 
+  password: "password", 
+  password_confirmation: "password", 
+  email_confirmed: true
+)
 
 100.times do |n|
   username = Faker::Name.name
   email = "example-#{n+1}@duke.edu"
   password = "password"
-  User.create!(username: username,
-               email: email,
-               status: "approved",
-               privilege: "admin",
-               password: password,
-               password_confirmation: password,
-               email_confirmed: true)
-               
-               
-               
+  User.create!(
+    username: username,
+    email: email,
+    status: "approved",
+    privilege: "admin",
+    password: password,
+    password_confirmation: password,
+    email_confirmed: true
+  )    
 end
 
-User.create!(username: "admin1", email: "example@duke.edu", status: "approved",
-             privilege: "admin", password: "password", password_confirmation: "password", email_confirmed: true)
+# Creating Items:
+
+15.times do |n|
+  unique_name = Faker::Book.title
+  quantity = Faker::Number.number(3)
+  model_number = Faker::Number.hexadecimal(6)
+  description = Faker::Lorem.paragraph(2, true, 1)
+  
+  Item.create!(
+    unique_name: unique_name,
+    quantity: quantity,
+    model_number: model_number,
+    description: description,
+    tags: {
+      tagarray: ["tag1", "tag2", "tag3"]
+    },
+    instances: {
+      instancearray: ["instance1", "instance2", "instance3"]
+    }
+  )
+end
+
+# Creating Requests:
+15.times do |n|
+  datetime = Faker::Time.between(5.days.ago, Time.now, :all)
+  # Obtain random user:
+  user = User.offset(rand(User.count)).first
+  # Obtain random item:
+  item = Item.offset(rand(Item.count)).first
+end
+  
+
