@@ -24,6 +24,13 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
   end
 
+  # DELETE /items/1
+  def destroy
+    Item.find(params[:id]).destroy
+    flash[:success] = "Item deleted!"
+    redirect_to users_url
+  end
+
   # POST /items
   # POST /items.json
   def create
