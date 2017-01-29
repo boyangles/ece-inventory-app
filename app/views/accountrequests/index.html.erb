@@ -9,7 +9,7 @@
 <ul class = "accountrequests">
   <% @accountrequests.each do |ar| %>
     <li>
-      <%= render "accountrequest", :ar => ar %>
+      <%= render partial: "accountrequest", locals: {:ar => ar}  %>
     </li>
   <% end %>
 </ul>

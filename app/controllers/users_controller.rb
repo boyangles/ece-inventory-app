@@ -88,6 +88,14 @@ class UsersController < ApplicationController
     end
   end
 
+  def approve_user
+    user = User.find(params[:id])
+    check_admin_user
+    UserMailer.confirm_user(user).deliver
+    user.activate_user
+    flash[:success] = "#{user.username} approved"
+    redirect_to accountrequests_path
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.

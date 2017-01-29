@@ -2,6 +2,6 @@
   <%= link_to ar.username, ar %>
 
   <% if current_user.privilege == "admin" && !current_user?(ar) %>
-      <%= link_to "Approve", ar, method: :post, data: { confirm: "Approve this user?"} %>
-      <%= link_to "Delete", ar, method: :delete, data: { confirm: "Are you sure you want to do this? This is not reversible." } %>
+      <%= link_to 'Approve', approve_user_user_path(ar), method: :post, data: { confirm: "Approve this user?"} %>
+      <%= link_to 'Delete', accountrequests_path(ar), method: :delete, data: { confirm: "Are you sure boi" } %>
   <% end %>

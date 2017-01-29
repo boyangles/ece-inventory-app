@@ -10,6 +10,9 @@ Rails.application.routes.draw do
     member do
       get :confirm_email
     end
+    member do
+      post :approve_user
+    end
   end
 
   resources :requests
@@ -24,13 +27,6 @@ Rails.application.routes.draw do
 
   # User request page for admin
   resources :accountrequests
-  get '/accountrequests', to: 'accountrequests#index'
-
-  resources :accountrequests do
-    member do
-      get :approve_user
-    end
-  end
 
   root 'welcome#index'
 

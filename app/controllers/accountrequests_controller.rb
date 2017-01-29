@@ -1,5 +1,14 @@
 class AccountrequestsController < ApplicationController
 
+  def show
+    # why is this being executed?
+    #User.find(params[:id]).destroy
+    #flash[:success] = "User request deleted"
+    #redirect_to accountrequests_path
+    flash[:success] = "what the fuck"
+    redirect_to users_path
+  end
+
   def index
     check_admin_user
     @accountrequests = User.where(:status => "waiting").paginate(page: params[:page], per_page: 10)
@@ -12,14 +21,6 @@ class AccountrequestsController < ApplicationController
     User.find(params[:id]).destroy
     flash[:success] = "User request deleted"
     redirect_to accountrequests_path
-  end
-
-  def approve_user(user)
-    check_admin_user
-    UserMailer.confirm_user(user).deliver
-    user.activate_user
-    flash[:success] = "#{user.username} approved"
-    render 'index'
   end
 
   private
