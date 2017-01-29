@@ -1,13 +1,39 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <strong>Request ID:</strong>
-  <%= @request.req_id %>
+  <strong>Request Time:</strong>
+  <%= @request.datetime %>
 </p>
 
 <p>
   <strong>User:</strong>
   <%= @request.user %>
+</p>
+
+<p>
+  <strong>Item:</strong>
+  <% @item = Item.find(@request.item_id) %>
+  <%= @item.unique_name %>
+</p>
+
+<p>
+  <strong>Request Type:</strong>
+  <%= @request.request_type %>
+</p>
+
+<p>
+  <strong>Quantity:</strong>
+  <%= @request.quantity %>
+</p>
+
+<p>
+  <strong>Reason:</strong>
+  <%= @request.reason %>
+</p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @request.status %>
 </p>
 
 <%= link_to 'Edit', edit_request_path(@request) %> |

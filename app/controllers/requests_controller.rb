@@ -15,16 +15,32 @@ class RequestsController < ApplicationController
   # GET /requests/new
   def new
     @request = Request.new
+    
+    if !params[:item_id].blank?
+      @request[:item_id] = params[:item_id]
+      @item = Item.find(@request.item_id)
+    end
+    
   end
 
   # GET /requests/1/edit
   def edit
+    @request = Request.find(params[:id])
+    @item = Item.find(@request.item_id)
   end
 
   # POST /requests
   # POST /requests.json
   def create
     @request = Request.new(request_params)
+    @user = current_user
+
+    # Set default values for requests:
+    @request.user = @user.username
+    @request.datetime = Time.now
+    @request.status = "outstanding"
+    # @request.request_type = ??? what is this?
+
 
     respond_to do |format|
       if @request.save
@@ -60,6 +76,8 @@ class RequestsController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+  
  
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -69,6 +87,6 @@ class RequestsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def request_params
-      params.fetch(:request, {}).permit(:req_id, :datetime, :user, :item, :quantity, :reason, :status, :request_type, :instances)
+      params.fetch(:request, {}).permit(:datetime, :user, :item_id, :quantity, :reason, :status, :request_type, :instances)
     end
 end
