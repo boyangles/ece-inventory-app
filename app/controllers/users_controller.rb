@@ -1,22 +1,20 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
   # Editing/updating a user credential only can be done when logged in
-  before_action :check_logged_in_user, only: [:index, :edit, :update, :destroy]
+  before_action :check_logged_in_user, only: [:show, :index, :edit, :update, :destroy]
   before_action :check_current_user, only: [:edit, :update]
   # Security issue: only admin users can delete users
-  before_action :check_admin_user, only: [:destroy , :index]
+  before_action :check_admin_user, only: [:destroy , :index, :approve_user]
 
   # GET /users
   # GET /users.json
   def index
-    check_admin_user
     @users = User.paginate(page: params[:page], per_page: 10)
   end
 
   # GET /users/1
   # GET /users/1.json
   def show
-    check_logged_in_user
     @user = User.find(params[:id])
   end
 
@@ -90,9 +88,8 @@ class UsersController < ApplicationController
 
   def approve_user
     user = User.find(params[:id])
-    check_admin_user
     UserMailer.confirm_user(user).deliver
-    user.activate_user
+    activate_user(user)
     flash[:success] = "#{user.username} approved"
     redirect_to accountrequests_path
   end

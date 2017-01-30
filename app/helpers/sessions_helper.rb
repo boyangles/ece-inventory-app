@@ -70,4 +70,9 @@ module SessionsHelper
   def check_approved_user
     redirect_to(root_url) unless current_user && current_user.status == 'approved'
   end
+
+  def activate_user(user)
+    user.status = "approved"
+    user.save!(:validate => false)
+  end
 end
