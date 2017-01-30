@@ -24,8 +24,7 @@ Rails.application.routes.draw do
   delete '/logout', to: 'sessions#destroy'  #Handles logging out
 
   #Log Routes
-  get   '/logs',    to: 'logs#index'        #Viewing all logs 
-  post  '/logs',    to: 'logs#create'       #Creating a log
+  resources :logs
 
   # User request page for admin
   resources :accountrequests
