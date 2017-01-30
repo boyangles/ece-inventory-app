@@ -94,7 +94,7 @@ class UsersController < ApplicationController
     UserMailer.confirm_user(user).deliver
     user.activate_user
     flash[:success] = "#{user.username} approved"
-    redirect_to account
+    redirect_to accountrequests_path
   end
 
   private

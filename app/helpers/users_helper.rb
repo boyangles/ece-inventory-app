@@ -9,7 +9,6 @@ module UsersHelper
 
   # Checks that the current user is an administrator
   def check_admin_user
-    check_logged_in_user
     redirect_to(root_url) unless current_user && current_user.privilege == 'admin'
   end
 
@@ -30,7 +29,6 @@ module UsersHelper
 
   # Confirms status is approved
   def check_approved_user
-    check_logged_in_user
     redirect_to(root_url) unless current_user && current_user.status == 'approved'
   end
 end
