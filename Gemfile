@@ -8,6 +8,13 @@ end
 #Integration testing gem
 gem 'rails-controller-testing'
 
+# Capybara RSpec Selenium Testing
+gem 'capybara'
+# gem 'rspec-rails'
+%w[rspec-core rspec-expectations rspec-mocks rspec-rails rspec-support].each do |lib|
+  gem lib, :git => "https://github.com/rspec/#{lib}.git", :branch => 'master'
+end
+
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.0.1'
 # Add bcrypt for password hashing
