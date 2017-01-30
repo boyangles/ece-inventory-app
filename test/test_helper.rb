@@ -7,7 +7,7 @@ class ActiveSupport::TestCase
   fixtures :all
 
   # Make the Capybara DSL available in all integration tests
-  include Capybara::DSL
+ # include Capybara::DSL
   require 'capybara/rails'
 
   # Reset sessions and driver between tests
