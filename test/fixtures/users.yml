@@ -7,6 +7,8 @@
 
 # Convention: ALL PASSWORDS will be 'password'
 
+# NOTE: Be sure not to modify these users unless for good reason, some tests depend on characteristics of users.
+
 bernard:
   username: bernieboy
   email: ba34@duke.edu
@@ -23,12 +25,38 @@ alex:
   email_confirmed: true
   password_digest: <%= User.digest('password') %>
 
+joeUnapproved:
+  username: joeUn
+  email: jo2un@duke.edu
+  privilege: student
+  status: waiting
+  email_confirmed: true
+  password_digest: <%= User.digest('password') %>
+
+adamUnapproved:
+  username: adamun2
+  email: adam1un@duke.edu
+  privilege: student
+  status: waiting
+  email_confirmed: true
+  password_digest: <%= User.digest('password') %>
+
 <% 62.times do |n| %>
 user_<%= n %>:
   username: <%= "username#{n}" %>
   email: <%= "user#{n}@duke.edu" %>
   privilege: admin
   status: approved
+  email_confirmed: true
+  password_digest: <%= User.digest('password') %>
+<% end %>
+
+<% 62.times do |n| %>
+user_<%= n %>:
+  username: <%= "username#{n}" %>
+  email: <%= "user#{n}@duke.edu" %>
+  privilege: admin
+  status: waiting
   email_confirmed: true
   password_digest: <%= User.digest('password') %>
 <% end %>

@@ -1,10 +1,10 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
   # Editing/updating a user credential only can be done when logged in
-  before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
-  before_action :correct_user, only: [:edit, :update]
+  before_action :check_logged_in_user, only: [:show, :index, :edit, :update, :destroy]
+  before_action :check_current_user, only: [:edit, :update]
   # Security issue: only admin users can delete users
-  before_action :admin_user, only: [:destroy , :index]
+  before_action :check_admin_user, only: [:destroy , :index, :approve_user]
 
   # GET /users
   # GET /users.json
@@ -20,6 +20,9 @@ class UsersController < ApplicationController
 
   # GET /users/new
   def new
+    if logged_in?
+      redirect_to root_path
+    end
     @user = User.new
   end
 
@@ -52,13 +55,6 @@ class UsersController < ApplicationController
         #format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
-
-    # if @user.save
-    #   flash[:success] = "Welcome to the ECE Inventory family!"
-    #   redirect_to @user
-    # else
-    #   render 'new'
-    # end
   end
 
   # PATCH/PUT /users/1
@@ -85,40 +81,26 @@ class UsersController < ApplicationController
     @user = User.find_by_confirm_token(params[:id])
     if @user
       @user.email_activate
-      flash[:success] = "Welcome to the ECE Inventory System Your email has been confirmed.
-      Please sign in to continue."
-      redirect_to login_url
+      flash[:success] = "Welcome to the ECE Inventory System Your email has been confirmed. An Admin will verify your account shortly."
+      redirect_to root_url
     else
       flash[:error] = "Sorry. User does not exist"
       redirect_to root_url
     end
   end
 
+  def approve_user
+    user = User.find(params[:id])
+    UserMailer.confirm_user(user).deliver
+    activate_user(user)
+    flash[:success] = "#{user.username} approved"
+    redirect_to accountrequests_path
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
       @user = User.find(params[:id])
-    end
-
-    # Confirms logged-in user
-    def logged_in_user
-      unless logged_in?
-        store_location
-        flash[:danger] = "Login is required to access page."
-        redirect_to login_url
-      end
-    end
-
-    # Confirms correct user, otherwise redirect to homepage
-    def correct_user
-      @user = User.find(params[:id])
-      redirect_to(root_url) unless current_user?(@user)
-    end
-
-    # Confirms administrator
-    def admin_user
-      redirect_to(root_url) unless current_user.privilege == "admin"
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
