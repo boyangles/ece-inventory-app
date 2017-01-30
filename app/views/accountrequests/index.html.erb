@@ -1,0 +1,17 @@
+<% provide(:title, 'Users Awaiting Approval') %>
+
+<div class="center jumbotron">
+  <h1>Unapproved Users</h1>
+</div>
+
+<%= will_paginate %>
+
+<ul class = "accountrequests">
+  <% @accountrequests.each do |ar| %>
+    <li>
+      <%= render partial: "accountrequest", locals: {:ar => ar}  %>
+    </li>
+  <% end %>
+</ul>
+
+<%= will_paginate %>

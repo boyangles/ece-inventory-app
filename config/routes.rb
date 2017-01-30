@@ -10,10 +10,12 @@ Rails.application.routes.draw do
     member do
       get :confirm_email
     end
+    member do
+      post :approve_user
+    end
   end
 
   resources :requests
-
   resources :items
 
 
@@ -22,6 +24,10 @@ Rails.application.routes.draw do
   post  '/login',   to: 'sessions#create'   #Handles actually logging in
   delete '/logout', to: 'sessions#destroy'  #Handles logging out
 
+
+  # User request page for admin
+  resources :accountrequests
+
   root 'welcome#index'
-  
+
 end

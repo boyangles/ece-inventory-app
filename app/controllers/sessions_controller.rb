@@ -8,8 +8,13 @@ class SessionsController < ApplicationController
     if user && user.authenticate(params[:session][:password])
       # Log in and redirect to the user profile page
       if user.email_confirmed
+        if user_approved(user)
           log_in user
           redirect_back_or user
+        else
+          flash[:error] = 'Your account has not been approved by an administrator'
+          render 'new'
+        end
       else
         flash.now[:error] = 'Please activate your account by following the
         instructions in the account confirmation email you received to proceed'
@@ -25,5 +30,9 @@ class SessionsController < ApplicationController
   def destroy
     log_out
     redirect_to root_url
+  end
+
+  def user_approved(user)
+    user.status == 'approved'
   end
 end
