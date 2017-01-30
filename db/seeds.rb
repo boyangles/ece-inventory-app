@@ -42,13 +42,12 @@ end
 # Creating Items:
 
 15.times do |n|
-  unique_name = Faker::Book.title
   quantity = Faker::Number.number(3)
   model_number = Faker::Number.hexadecimal(6)
   description = Faker::Lorem.paragraph(2, true, 1)
   
   Item.create!(
-    unique_name: unique_name,
+    unique_name: "item-#{n+1}",
     quantity: quantity,
     model_number: model_number,
     description: description,
@@ -68,6 +67,41 @@ end
   user = User.offset(rand(User.count)).first
   # Obtain random item:
   item = Item.offset(rand(Item.count)).first
+  # Random reason:
+  reason = Faker::Lorem.paragraph(2, true, 3)
+
+  Request.create!(
+    datetime: datetime,
+    user: user.username,
+    quantity: item.quantity,
+    reason: reason,
+    status: "outstanding",
+    request_type: "disbursement",
+    instances: {
+      instancearray: ["instance1", "instance2", "instance3"]
+    },
+    item_id: item.id
+  )
 end
   
+# Creating Logs:
+  # Disbursements:
+15.times do |n|
+  datetime = Faker::Time.between(30.days.ago, Time.now, :all)
+  item = Item.offset(rand(Item.count)).first
+  quantity = Faker::Number.number(3)
+  user = User.offset(rand(User.count)).first
+  request_type = rand(0...3)
 
+  Log.create!(
+    datetime: datetime,
+    item_id: item.id,
+    quantity: quantity,
+    user_id: user.id,
+    request_type: request_type
+  )
+end
+
+  # Acquisitions:
+
+  # Destructions:
