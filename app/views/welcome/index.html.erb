@@ -3,4 +3,6 @@
   The time is now: <%= Time.now %>
 </p>
 
-<%= link_to "Sign up now!", signup_path, class: "btn btn-lg btn-primary" %>
+<% if !logged_in? %>
+    <%= link_to "Sign up now!", signup_path, class: "btn btn-lg btn-primary" %>
+<% end %>

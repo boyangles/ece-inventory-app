@@ -9,10 +9,12 @@ Rails.application.routes.draw do
     member do
       get :confirm_email
     end
+    member do
+      post :approve_user
+    end
   end
 
   resources :requests
-
   resources :items
 
 
@@ -25,6 +27,9 @@ Rails.application.routes.draw do
   get   '/logs',    to: 'logs#index'        #Viewing all logs 
   post  '/logs',    to: 'logs#create'       #Creating a log
 
+  # User request page for admin
+  resources :accountrequests
+
   root 'welcome#index'
-  
+
 end

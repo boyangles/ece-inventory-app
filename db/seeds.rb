@@ -14,30 +14,34 @@ Tag.create([{ name: 'expensive'}, { name: 'rich'}, { name: 'broke'}, { name: '1'
 
 #Creating Users:
 
-User.create!(
-  username: "admin1", 
-  email: "example@duke.edu", 
-  status: 1,
-  privilege: 2, 
-  password: "password", 
-  password_confirmation: "password", 
-  email_confirmed: true
-)
-
-100.times do |n|
+12.times do |n|
   username = Faker::Name.name
   email = "example-#{n+1}@duke.edu"
   password = "password"
-  User.create!(
-    username: username,
-    email: email,
-    status: 1,
-    privilege: 2,
-    password: password,
-    password_confirmation: password,
-    email_confirmed: true
-  )    
+  User.create!(username: username,
+               email: email,
+               status: "waiting",
+               privilege: "admin",
+               password: password,
+               password_confirmation: password)
 end
+
+
+12.times do |n|
+  username = Faker::Name.name
+  email = "exampleApproved-#{n+1}@duke.edu"
+  password = "password"
+  User.create!(username: username,
+               email: email,
+               status: "approved",
+               privilege: "admin",
+               password: password,
+               password_confirmation: password,
+               email_confirmed: true)
+end
+
+User.create!(username: "admin", email: "adminusername@duke.edu", status: "approved",
+              privilege: "admin", password: "password", password_confirmation: "password", email_confirmed: "true")
 
 # Creating Items:
 

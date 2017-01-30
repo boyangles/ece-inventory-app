@@ -57,4 +57,5 @@ class User < ApplicationRecord
     self.confirm_token = nil
     save!(:validate => false)
   end
+
 end
