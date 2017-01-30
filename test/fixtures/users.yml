@@ -7,6 +7,8 @@
 
 # Convention: ALL PASSWORDS will be 'password'
 
+# NOTE: Be sure not to modify these users unless for good reason, some tests depend on characteristics of users.
+
 bernard:
   username: bernieboy
   email: ba34@duke.edu

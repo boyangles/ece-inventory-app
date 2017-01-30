@@ -3,4 +3,6 @@ class ApplicationController < ActionController::Base
   
   #Makes the sessions helper available in all our controllers
   include SessionsHelper
+  include UsersHelper
+
 end

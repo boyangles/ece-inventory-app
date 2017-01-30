@@ -4,9 +4,8 @@ class AccountrequestsControllerTest < ActionDispatch::IntegrationTest
 
   def setup
     @admin = users(:bernard)
-    @user2 = users(:alex)
-    @nonadmin = users(:adamUnapproved)
-    @user4 = users(:joeUnapproved)
+    @student = users(:alex)
+    @notApprovedUser = users(:adamUnapproved)
   end
 
   test "get account requests page as admin" do
@@ -16,8 +15,15 @@ class AccountrequestsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "get account requests page fails when not admin" do
-    log_in_as(@nonadmin)
+    log_in_as(@student)
     get accountrequests_path
+    assert_response :redirect
+    assert_redirected_to root_path
+  end
+
+  test "cannot log in with email confirmed but account not verified by admin" do
+    log_in_as(@notApprovedUser)
+    get items_path
     assert_response :redirect
     assert_redirected_to root_path
   end

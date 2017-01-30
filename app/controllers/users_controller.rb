@@ -1,8 +1,8 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
   # Editing/updating a user credential only can be done when logged in
-  before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
-  before_action :correct_user, only: [:edit, :update]
+  before_action :check_logged_in_user, only: [:index, :edit, :update, :destroy]
+  before_action :check_current_user, only: [:edit, :update]
   # Security issue: only admin users can delete users
   before_action :check_admin_user, only: [:destroy , :index]
 
@@ -16,7 +16,7 @@ class UsersController < ApplicationController
   # GET /users/1
   # GET /users/1.json
   def show
-    logged_in_user
+    check_logged_in_user
     @user = User.find(params[:id])
   end
 
@@ -94,40 +94,13 @@ class UsersController < ApplicationController
     UserMailer.confirm_user(user).deliver
     user.activate_user
     flash[:success] = "#{user.username} approved"
-    redirect_to accountrequests_path
+    redirect_to account
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
       @user = User.find(params[:id])
-    end
-
-    # Confirms logged-in user
-    def logged_in_user
-      unless logged_in?
-        store_location
-        flash[:danger] = "Login is required to access page."
-        redirect_to login_url
-      end
-    end
-
-    # Confirms correct user, otherwise redirect to homepage
-    def correct_user
-      @user = User.find(params[:id])
-      redirect_to(root_url) unless current_user?(@user)
-    end
-
-    # Confirms administrator
-    def check_admin_user
-      logged_in_user
-      redirect_to(root_url) unless current_user.privilege == 'admin'
-    end
-
-    # Confirms status is approved
-    def user_approved
-      logged_in_user
-      redirect_to(root_url) unless current_user.status == 'approved'
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

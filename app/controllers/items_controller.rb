@@ -1,5 +1,5 @@
 class ItemsController < ApplicationController
-  # before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :check_approved_user
 
   # GET /items
   # GET /items.json

@@ -12,7 +12,7 @@ class SessionsController < ApplicationController
           log_in user
           redirect_back_or user
         else
-          flash.now[:error] = 'Your account has not been approved by an administrator'
+          flash[:error] = 'Your account has not been approved by an administrator'
           render 'new'
         end
       else
