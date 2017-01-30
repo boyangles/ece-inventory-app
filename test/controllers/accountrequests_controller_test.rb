@@ -23,9 +23,7 @@ class AccountrequestsControllerTest < ActionDispatch::IntegrationTest
 
   test "cannot log in with email confirmed but account not verified by admin" do
     log_in_as(@notApprovedUser)
-    get items_path
-    assert_response :redirect
-    assert_redirected_to root_path
+    assert_template 'new'
   end
 
 
