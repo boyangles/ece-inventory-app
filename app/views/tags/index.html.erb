@@ -1,0 +1,16 @@
+<% provide(:title, 'All Tags') %>
+
+<div class="center jumbotron">
+  <h1>Tags</h1>
+</div>
+
+
+<%= will_paginate %>
+
+<ul class="tags">
+  <%= render @tags %>
+</ul>
+
+<%= will_paginate %>
+
+<%= link_to "View All", tags_path, class: "btn btn-lg btn-primary" %>

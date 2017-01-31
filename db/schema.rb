@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170131060907) do
+ActiveRecord::Schema.define(version: 20170131205512) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,20 @@ ActiveRecord::Schema.define(version: 20170131060907) do
     t.string  "description"
     t.json    "tags"
     t.json    "instances"
+  end
+
+  create_table "items_and_tags", id: false, force: :cascade do |t|
+    t.integer "item_id"
+    t.integer "tag_id"
+    t.index ["item_id"], name: "index_items_and_tags_on_item_id", using: :btree
+    t.index ["tag_id"], name: "index_items_and_tags_on_tag_id", using: :btree
+  end
+
+  create_table "items_tags", force: :cascade do |t|
+    t.integer "items_id"
+    t.integer "tags_id"
+    t.index ["items_id"], name: "index_items_tags_on_items_id", using: :btree
+    t.index ["tags_id"], name: "index_items_tags_on_tags_id", using: :btree
   end
 
   create_table "logs", force: :cascade do |t|
@@ -67,4 +81,8 @@ ActiveRecord::Schema.define(version: 20170131060907) do
     t.index ["username"], name: "index_users_on_username", unique: true, using: :btree
   end
 
+  add_foreign_key "items_and_tags", "items"
+  add_foreign_key "items_and_tags", "tags"
+  add_foreign_key "items_tags", "items", column: "items_id"
+  add_foreign_key "items_tags", "tags", column: "tags_id"
 end

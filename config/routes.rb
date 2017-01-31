@@ -16,6 +16,7 @@ Rails.application.routes.draw do
 
   resources :requests
   resources :items
+  resources :tags
 
 
   #Login and Sessions routes
