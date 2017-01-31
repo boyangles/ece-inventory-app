@@ -255,8 +255,8 @@ DEPENDENCIES
   puma (~> 3.0)
   rails (~> 5.0.1)
   rails-controller-testing
-  rspec-core!
   react-rails
+  rspec-core!
   rspec-expectations!
   rspec-mocks!
   rspec-rails!
