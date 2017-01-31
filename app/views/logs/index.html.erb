@@ -1,4 +1,30 @@
 <%# app/views/logs/index.html.erb %>
 <% provide(:title, 'Logs') %>
 
-<%= react_component 'Logs', {data: @logs } %>
+<h1>Logs</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Date Time</th>
+      <th>Username</th>
+      <th>Item Name</th>
+      <th>Quantity</th>
+      <th>Request Type</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @detailed_logs.each do |log| %>
+      <tr>
+        <th><%= log[:datetime] %></th>
+        <th><%= log[:user][:username] %></th>
+        <th><%= log[:item][:unique_name] %></th>
+        <th><%= log[:quantity] %></th>
+        <th><%= log[:request_type] %></th>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
