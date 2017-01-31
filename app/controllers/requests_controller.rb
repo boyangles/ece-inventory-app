@@ -11,11 +11,13 @@ class RequestsController < ApplicationController
   # GET /requests
   # GET /requests.json
   def index
-    @requests = Request.filter({:user => current_user.username})
-    # @requests = findRequestbyUser(@user)
-    if current_user.privilege_admin?
-      @requests = Request.all
+    filter_params = params.slice(:status)
+
+    if !current_user.privilege_admin?
+      filter_params[:user] = current_user.username
     end
+
+    @requests = Request.filter(filter_params)
   end
 
   # GET /requests/1
