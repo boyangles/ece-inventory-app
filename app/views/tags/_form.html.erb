@@ -1,16 +1,15 @@
-<%= form_for(tag) do |f| %>
-    <% if tag.errors.any? %>
+<%= form_for :tag do |f| %>
+    <% if @tag && @tag.errors.any? %>
         <div id="error_explanation">
-          <h2><%= pluralize(tag.errors.count, "error") %> prohibited this item from being saved:</h2>
+          <h2><%= pluralize(@tag.errors.count, "error") %> prohibited this request from being saved:</h2>
 
           <ul>
-            <% tag.errors.full_messages.each do |message| %>
+            <% @tag.errors.full_messages.each do |message| %>
                 <li><%= message %></li>
             <% end %>
           </ul>
         </div>
     <% end %>
-
     <p>
       <%= f.label :name %><br>
       <%= f.text_field :name %>

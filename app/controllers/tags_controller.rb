@@ -30,7 +30,9 @@ class TagsController < ApplicationController
       flash[:success] = "Tag saved"
       redirect_to tags_path
     else
-      flash[:error] = "Tag not saved"
+      @tags = Tag.paginate(page: params[:page], per_page: 10)
+      flash[:danger] = "Tag not saved"
+      render :index
     end
   end
 
