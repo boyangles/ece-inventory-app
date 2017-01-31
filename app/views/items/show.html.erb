@@ -31,14 +31,17 @@
 </p>
 
 <p>
-  <strong>tags:</strong>
-  <%= @item.tags %>
-</p>
-
-<p>
   <strong>instances:</strong>
   <%= @item.instances %>
 </p>
+
+<p>
+  <strong>tags:</strong>
+  <%= @item.tags.each do |tag| %>
+    <%= tag.name %>
+  <% end %>
+</p>
+
 
 <%= link_to "New Request", new_request_url(:item_id => @item.id), :class => "btn btn-primary" %>
 

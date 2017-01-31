@@ -14,6 +14,10 @@ class ItemsController < ApplicationController
   # GET /items/1.json
   def show
     @item = Item.find(params[:id])
+    # @tag = Tag.new(name: "fuasdfck")
+    # @fasdf = Tag.new(name: "seconfuck")
+    # @item.tags << @tag
+    # @item.tags << @fasdf
 
     outstanding_filter_params = { 
       :item_id => @item.id, 
@@ -54,20 +58,23 @@ class ItemsController < ApplicationController
       else
 
       end
-
-    # if @user.save
-    #   flash[:success] = "Welcome to the ECE Inventory family!"
-    #   redirect_to @user
-    # else
-    #   render 'new'
-    # end
   end
 
   def update
+    testvar = tag_params
+
     @item = Item.find(params[:id])
+    # @item.tags << @tags
+
+    #@tags = Tag.find_by_name(params[:assign][:tag])
+
+    #@tags = params[:assign][:tag]
+
+
     if @item.update_attributes(item_params)
-      flash[:success] = "Item updated successfully"
+      # flash[:success] = "Item updated successfully"
       redirect_to @item
+      flash[:success] = testvar
     else
       render 'edit'
     end
@@ -77,11 +84,15 @@ class ItemsController < ApplicationController
   # Item.create([{ unique_name: 'f flesh', quantity: 10, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
 
   private
-
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
     params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description)
+  end
+
+  def tag_params
+    # params.require(:assign).permit(:tag)
+    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :tag_id, :tags, :tag, :assign, :select, :option)
   end
 
 end

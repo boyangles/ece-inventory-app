@@ -31,6 +31,9 @@
       <%= f.text_field :model_number %>
     </p>
 
+    <p> <strong> Tags </strong></p>
+    <%= collection_select(:item_tags, :tag_id, Tag.all, :id, :name, {prompt: "Please select Tags to assign"}, {:multiple=> true}) %>
+
     <div class="actions">
       <%= f.submit %>
     </div>
