@@ -28,3 +28,8 @@
 </table>
 
 <br>
+
+<%= link_to "View Disbursements", logs_path(:request_type => "disbursement"), class: "btn btn-lg btn-primary" %>
+<%= link_to "View Acquisitions", logs_path(:request_type => "acquisition"), class: "btn btn-lg btn-primary" %>
+<%= link_to "View Destructions", logs_path(:request_type => "destruction"), class: "btn btn-lg btn-primary" %>
+<%= link_to "View All", logs_path, class: "btn btn-lg btn-primary" %>

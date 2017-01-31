@@ -1,8 +1,14 @@
 class LogsController < ApplicationController
   #TODO Add before_action (i.e. only admins can access logs)
-  
+  before_action :check_logged_in_user, only: [:index]
+  before_action :check_admin_user, only: [:index]
+
   def index
-    @logs = Log.filter(params.slice(:quantity))
+    @logs = Log.filter(params.slice(:datetime, 
+                                    :item_id, 
+                                    :quantity, 
+                                    :user_id, 
+                                    :request_type))
     
     @detailed_logs = []
     
