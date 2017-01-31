@@ -70,6 +70,27 @@ class RequestsController < ApplicationController
   # PATCH/PUT /requests/1
   # PATCH/PUT /requests/1.json
   def update
+    # TODO: Delete this sudo-code
+    # checkIfAdminRequestStatusUpdate(@request, updated_params)
+    # checkIfItemExists(@request)
+    # checkIfItemQuantityWillBeNegative(@request, corresponding item)
+    # If request is approved, create a log automatically... if not, then don't create one
+    # Decrease item quantity by request quantity
+    # Display error on the show page if request fails
+
+    
+
+    item_id = @request.item_id
+    if !itemExists?(item_id)
+      flash[:error] = "Item does not exist anymore."
+      redirect_to request_path(@request)
+    elsif !itemQuantitySufficient?(@request, item_id)
+      flash[:error] = "Item quantity not sufficient to fulfill request."
+      redirect_to request_path(@request)
+    else
+      flash[:success] = "Request approved"
+    end
+
     respond_to do |format|
       if @request.update(request_params)
         format.html { redirect_to @request, notice: 'Request was successfully updated.' }
