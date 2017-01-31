@@ -56,16 +56,16 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   # Security Test:
   test "privilege attribute should not be editable via web" do
     log_in_as(@user2)
-    assert_not @user2.privilege == "admin"
+    assert_not @user2.privilege_admin?
     patch user_path(@user2), params: {
       user: {
         password: "password",
         password_confirmation: "password",
-        privilege: "admin"
+        privilege: 2
       }
     }
 
-    assert_not @user2.privilege == "admin"
+    assert_not @user2.privilege_admin?
   end
 
   test "redirect to login screen when destroying and not logged in" do

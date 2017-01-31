@@ -1,7 +1,7 @@
   <%= gravatar_for ar, size: 50 %>
   <%= link_to ar.username, ar %>
 
-  <% if current_user.privilege == "admin" && !current_user?(ar) %>
+  <% if current_user.privilege_admin? && !current_user?(ar) %>
       <%= link_to 'Approve', approve_user_user_path(ar), method: :post, data: { confirm: "Approve this user?"} %>
       <%= link_to 'Delete', accountrequest_path(ar), action: :destroy, method: :delete, data: { confirm: "Are you sure you want to delete this request?" } %>
   <% end %>

@@ -49,10 +49,8 @@ class UsersController < ApplicationController
         flash[:success] = "Please confirm email"
 
         format.html { redirect_to(root_path) }
-        #format.json { render json: @user, status: :created, location: @user }
       else
         format.html { render action: 'new' }
-        #format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -106,7 +104,7 @@ class UsersController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
       # Rails 4+ requires you to whitelist attributes in the controller.
-      params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :status)
+      params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation)
     end
 
 

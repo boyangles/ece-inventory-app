@@ -88,49 +88,4 @@ class UserTest < ActiveSupport::TestCase
     @user.password = @user.password_confirmation = "q" * 5
     assert_not @user.valid?
   end
-
-  test "status must be either approved or waiting" do
-    status_list = %w[approved waiting]
-    status_list.each do |s|
-      @user.status = s
-      assert @user.valid?
-    end
-
-    status_list = %w[appRaRove good wait waited notapproved lol lmao]
-    status_list.each do |s|
-      @user.status = s
-      assert_not @user.valid?
-    end
-  end
-
-  test "status is downcased on save" do
-    status_list = %w[APPROVED WAITING]
-    status_list.each do |s|
-      @user.status = s
-      @user.save
-      assert_equal @user.status, s.downcase
-    end
-  end
-
-  test "privilege is downcased on save" do
-    priv_list = %w[ADMIN TA STUDENT]
-    priv_list.each do |s|
-      @user.privilege = s
-      @user.save
-      assert_equal @user.privilege, s.downcase
-    end
-  end
-
-  test "user privilege must be student, ta, or admin" do
-    priv_list = %w[admin ta student]
-    priv_list.each do |s|
-      @user.privilege = s
-      assert @user.valid?
-    end
-    priv_list = %w[ADMINIStraotr teacherAssistant students aefa notadmin sortofadmin]
-    priv_list.each do |s|
-      @user.privilege = s
-      assert_not @user.valid?
-    end
-  end
 end

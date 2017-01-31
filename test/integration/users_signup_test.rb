@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class UsersSignupTest < ActionDispatch::IntegrationTest
+
   test "invalid signup parameters" do
     get signup_path
     assert_no_difference 'User.count' do
@@ -9,12 +10,11 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
               username: "a",
               email: "user@invalid",
               password: "foo",
-              password_confirmation: "bar",
-              status: "me",
-              privilege: "meh"
+              password_confirmation: "bar"
           }
       }
     end
+    
     assert_template 'users/new'
     assert_select 'form[action="/signup"]'
   end
