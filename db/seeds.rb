@@ -43,6 +43,9 @@ end
 User.create!(username: "admin", email: "adminusername@duke.edu", status: "approved",
               privilege: "admin", password: "password", password_confirmation: "password", email_confirmed: "true")
 
+
+User.create(username:"abcd", email: "f@duke.edu" , status: "approved", privilege: "student", password: "yoyoyo", password_confirmation: "yoyoyo", email_confirmed: true)
+
 # Creating Items:
 
 15.times do |n|

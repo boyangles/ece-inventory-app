@@ -6,7 +6,17 @@ class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
 
-  # Add more helper methods to be used by all tests here...
+  # Make the Capybara DSL available in all integration tests
+ # include Capybara::DSL
+  require 'capybara/rails'
+
+  # Reset sessions and driver between tests
+  # Use super wherever this method is redefined in your individual test classes
+  def teardown
+    Capybara.reset_sessions!
+    Capybara.use_default_driver
+  end
+
   
   # Returns true if a user is logged in
   # Analog to method in development code => app/helpers/session_helper

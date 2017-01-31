@@ -24,6 +24,13 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
   end
 
+  # DELETE /items/1
+  def destroy
+    Item.find(params[:id]).destroy
+    flash[:success] = "Item deleted!"
+    redirect_to items_url
+  end
+
   # POST /items
   # POST /items.json
   def create
@@ -42,6 +49,17 @@ class ItemsController < ApplicationController
     #   render 'new'
     # end
   end
+
+  def update
+    @item = Item.find(params[:id])
+    if @item.update_attributes(item_params)
+      flash[:success] = "Item updated successfully"
+      redirect_to @item
+    else
+      render 'edit'
+    end
+  end
+
 
   # Item.create([{ unique_name: 'f flesh', quantity: 10, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
 
