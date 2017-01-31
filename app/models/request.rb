@@ -15,5 +15,5 @@ class Request < ApplicationRecord
 
   scope :user, -> (username) { where user: username }
   scope :status, -> (status) { where status: status }
-  scope :item_id, -> (item_id) { where item_id: item_id }
+  scope :item_name, -> (item_name) { where item_name: item_name }
 end
