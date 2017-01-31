@@ -36,5 +36,17 @@
   <%= @request.status %>
 </p>
 
+<% if @request.outstanding? && current_user.privilege_admin? %>
+  <%= link_to "Approve", 
+    request_path(@request, request: { :status => "approved" }), 
+    method: :put, 
+    class: "btn btn-lg btn-primary" %>
+
+  <%= link_to "Deny", 
+    request_path(@request, request: { :status => "denied" }), 
+    method: :put, 
+    class: "btn btn-lg btn-primary" %>
+<% end %>
+
 <%= link_to 'Edit', edit_request_path(@request) %> |
 <%= link_to 'Back', requests_path %>
