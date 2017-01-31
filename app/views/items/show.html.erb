@@ -47,3 +47,7 @@
   <%= @item.unique_name %>
 </h1>
 
+<td><%= link_to 'Remove item', @item, method: :delete, data: { confirm: 'Are you sure?' }, :class => "btn btn-primary" %></td>
+
+<!--<td><%= link_to 'Edit item', @item, method: :edit_item, data: { confirm: 'Are you sure?' }, :class => "btn btn-primary" %></td>-->
+<td><%= link_to 'Edit item', edit_item_path(@item),:class => "btn btn-primary" %></td>
