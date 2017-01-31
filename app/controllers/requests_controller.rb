@@ -1,15 +1,27 @@
 class RequestsController < ApplicationController
   before_action :set_request, only: [:show, :edit, :update, :destroy]
 
+
+
+  before_action :check_logged_in_user, only:[:index]
+
+  # before_action :request_index_by_admin, only: [ :index ]          #maybe
+  # Security issue: only admin users can delete users        #maybe
+
   # GET /requests
   # GET /requests.json
   def index
-    @requests = Request.all
+    @requests = Request.filter({:user => current_user.username})
+    # @requests = findRequestbyUser(@user)
+    if current_user.privilege_admin?
+      @requests = Request.all
+    end
   end
 
   # GET /requests/1
   # GET /requests/1.json
   def show
+
   end
 
   # GET /requests/new
@@ -85,6 +97,18 @@ class RequestsController < ApplicationController
       @request = Request.find(params[:id])
     end
 
+    def findRequestbyUser(user)
+       Request.find_by_user(user.username)
+    end
+
+    def request_index_by_admin
+      if !current_user
+        redirect_to root_url
+      # elsif !current_user.privilege_admin?
+      #   username = current_user.username
+      #   redirect_to requests_path, user: username
+      end
+    end
     # Never trust parameters from the scary internet, only allow the white list through.
     def request_params
       params.fetch(:request, {}).permit(:datetime, :user, :item_id, :quantity, :reason, :status, :request_type, :instances)
