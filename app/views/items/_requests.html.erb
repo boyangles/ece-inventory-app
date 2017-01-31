@@ -1,0 +1,29 @@
+<h1><%= (current_user.privilege_admin?) ? "Outstanding Requests" : "My Pending Requests" %></h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Date Time</th>
+      <% if current_user.privilege_admin? %>
+        <th>User</th>
+      <% end %>
+      <th>Quantity Requested</th>
+      <th>Request Type</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @outstanding_item_requests.each do |request| %>
+      <tr>
+        <th><%= request.datetime %></th>
+        <% if current_user.privilege_admin? %>
+          <th><%= request.user %></th>
+        <% end %>
+        <th><%= request.quantity %></th>
+        <th><%= request.request_type %></th>
+        
+        <td><%= link_to 'Show Details', request%></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -1,6 +1,8 @@
 class ItemsController < ApplicationController
   before_action :check_approved_user
 
+  before_action :check_logged_in_user, only: [:show]
+
   # GET /items
   # GET /items.json
   def index
@@ -12,6 +14,17 @@ class ItemsController < ApplicationController
   # GET /items/1.json
   def show
     @item = Item.find(params[:id])
+
+    outstanding_filter_params = { 
+      :item_id => @item.id, 
+      :status => "outstanding"
+    }
+
+    if !current_user.privilege_admin?
+      outstanding_filter_params[:user] = current_user.username
+    end
+
+    @outstanding_item_requests = Request.filter(outstanding_filter_params)
   end
 
   # GET /items/new
