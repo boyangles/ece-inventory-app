@@ -16,7 +16,7 @@ class UsersIndexTest < ActionDispatch::IntegrationTest
     
     first_page.each do |user|
       assert_select 'a[href=?]', user_path(user), text: user.username
-      unless user.privilege == "admin"
+      unless user.privilege_admin?
         assert_select 'a[href=?]', user_path(user), text: 'delete'
       end
     end

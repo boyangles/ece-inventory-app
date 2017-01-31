@@ -48,7 +48,7 @@ module SessionsHelper
   
   # Checks that the current user is an administrator
   def check_admin_user
-    redirect_to(root_url) unless current_user && current_user.privilege == 'admin'
+    redirect_to(root_url) unless current_user && current_user.privilege_admin?
   end
 
   # Confirms logged-in user
@@ -68,7 +68,7 @@ module SessionsHelper
 
   # Confirms status is approved
   def check_approved_user
-    redirect_to(root_url) unless current_user && current_user.status == 'approved'
+    redirect_to(root_url) unless current_user && current_user.status_approved?
   end
 
   def activate_user(user)
