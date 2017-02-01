@@ -19,9 +19,9 @@ class ItemsController < ApplicationController
     # @item.tags << @tag
     # @item.tags << @fasdf
 
-    outstanding_filter_params = { 
-      :item_id => @item.id, 
-      :status => "outstanding"
+    outstanding_filter_params = {
+        :item_id => @item.id,
+        :status => "outstanding"
     }
 
     if !current_user.privilege_admin?
@@ -53,28 +53,25 @@ class ItemsController < ApplicationController
   def create
     @item = Item.new(item_params)
 
-      if @item.save
-          redirect_to item_url(@item)
-      else
+    if @item.save
+      redirect_to item_url(@item)
+    else
 
-      end
+    end
   end
 
   def update
-    testvar = tag_params
-
     @item = Item.find(params[:id])
-    # @item.tags << @tags
 
-    #@tags = Tag.find_by_name(params[:assign][:tag])
-
-    #@tags = params[:assign][:tag]
-
+    # Assigns a tag to a user
+    if !params[:tag][:tad_id]
+      @tags = Tag.find(params[:tag][:tag_id])
+      @item.tags << @tags
+    end
 
     if @item.update_attributes(item_params)
-      # flash[:success] = "Item updated successfully"
+      flash[:success] = "Item updated successfully"
       redirect_to @item
-      flash[:success] = testvar
     else
       render 'edit'
     end
@@ -90,9 +87,9 @@ class ItemsController < ApplicationController
     params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description)
   end
 
-  def tag_params
-    # params.require(:assign).permit(:tag)
-    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :tag_id, :tags, :tag, :assign, :select, :option)
-  end
+  # def tag_params
+  #   # params.require(:assign).permit(:tag)
+  #   params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :tag_id, :tag, :tags, :name)
+  # end
 
 end

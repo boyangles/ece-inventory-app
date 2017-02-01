@@ -32,7 +32,7 @@
     </p>
 
     <p> <strong> Tags </strong></p>
-    <%= collection_select(:item_tags, :tag_id, Tag.all, :id, :name, {prompt: "Please select Tags to assign"}, {:multiple=> true}) %>
+    <%= collection_select(:tag, :tag_id, Tag.all, :id, :name, {prompt: true}, {:multiple=> false}) %>
 
     <div class="actions">
       <%= f.submit %>
