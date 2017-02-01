@@ -1,10 +1,10 @@
 module ItemsHelper
-  def itemExists?(item_id)
-    Item.find_by(:id => item_id)
+  def item_exists?(item_name)
+    Item.find_by(:unique_name => item_name)
   end
 
-  def itemQuantitySufficient?(@request, item_id)
-    item = Item.find_by(:id => item_id)
-    item.quantity - @request.quantity >= 0
+  def item_quantity_sufficient?(request, item_name)
+    item = Item.find_by(:unique_name => item_name)
+    item.quantity - request.quantity >= 0
   end
 end

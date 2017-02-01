@@ -30,9 +30,8 @@ class RequestsController < ApplicationController
   def new
     @request = Request.new
     
-    if !params[:item_id].blank?
-      @request[:item_id] = params[:item_id]
-      @item = Item.find(@request.item_id)
+    if !params[:item_name].blank?
+      @request[:item_name] = params[:item_name]
     end
     
   end
@@ -40,7 +39,6 @@ class RequestsController < ApplicationController
   # GET /requests/1/edit
   def edit
     @request = Request.find(params[:id])
-    @item = Item.find(@request.item_id)
   end
 
   # POST /requests
@@ -78,28 +76,30 @@ class RequestsController < ApplicationController
     # Decrease item quantity by request quantity
     # Display error on the show page if request fails
 
-    
+    # editRequest(@request)
 
-    item_id = @request.item_id
-    if !itemExists?(item_id)
-      flash[:error] = "Item does not exist anymore."
-      redirect_to request_path(@request)
-    elsif !itemQuantitySufficient?(@request, item_id)
-      flash[:error] = "Item quantity not sufficient to fulfill request."
-      redirect_to request_path(@request)
-    else
-      flash[:success] = "Request approved"
-    end
-
-    respond_to do |format|
-      if @request.update(request_params)
-        format.html { redirect_to @request, notice: 'Request was successfully updated.' }
-        format.json { render :show, status: :ok, location: @request }
+    if request_is_admin_status_update?(@request, request_params)
+      item_name = @request.item_name
+      if !item_exists?(item_name)
+        flash[:error] = "Item does not exist anymore."
+        redirect_to request_path(@request)
+      elsif !item_quantity_sufficient?(@request, item_name)
+        flash[:error] = "Item quantity not sufficient to fulfill request."
+        redirect_to request_path(@request)
       else
-        format.html { render :edit }
-        format.json { render json: @request.errors, status: :unprocessable_entity }
+        flash[:success] = "Request approved"
+        edit_request(@request)
+
+        item = Item.find_by(:unique_name => item_name) # should be unique
+        item.quantity = item.quantity - @request.quantity
+        item.save!
       end
+
+    else
+      # redirect_to root_url
+      edit_request(@request)
     end
+
   end
 
   # DELETE /requests/1
@@ -134,6 +134,6 @@ class RequestsController < ApplicationController
     end
     # Never trust parameters from the scary internet, only allow the white list through.
     def request_params
-      params.fetch(:request, {}).permit(:datetime, :user, :item_id, :quantity, :reason, :status, :request_type, :instances)
+      params.fetch(:request, {}).permit(:datetime, :user, :item_name, :quantity, :reason, :status, :request_type, :instances)
     end
 end

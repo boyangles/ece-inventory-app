@@ -16,7 +16,7 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
 
     outstanding_filter_params = { 
-      :item_id => @item.id, 
+      :item_name => @item.unique_name,
       :status => "outstanding"
     }
 
