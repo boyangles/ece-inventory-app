@@ -4,14 +4,22 @@
   <h1>Unapproved Users</h1>
 </div>
 
+
+
+
 <%= will_paginate %>
+
 
 <ul class = "accountrequests">
   <% @accountrequests.each do |ar| %>
+      <br>
     <li>
       <%= render partial: "accountrequest", locals: {:ar => ar}  %>
     </li>
+      <br>
   <% end %>
 </ul>
 
 <%= will_paginate %>
+
+

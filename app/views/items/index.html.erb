@@ -1,8 +1,11 @@
 <% provide(:title, 'All Items') %>
 
+<%= link_to "New Item", new_item_url, :class => "btn btn-primary" %>
+
 <div class="center jumbotron">
   <h1>Items</h1>
 </div>
+
 
 <%= will_paginate %>
 
@@ -11,3 +14,4 @@
 </ul>
 
 <%= will_paginate %>
+
