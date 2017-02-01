@@ -1,8 +1,5 @@
 class AccountrequestsController < ApplicationController
 
-
-
-
   def index
     check_admin_user
     @accountrequests = User.where(:status => "waiting").paginate(page: params[:page], per_page: 10)
