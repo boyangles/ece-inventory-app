@@ -2,6 +2,9 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
   # Editing/updating a user credential only can be done when logged in
   before_action :check_logged_in_user, only: [:show, :index, :edit, :update, :destroy]
+
+  # Check_current_user allows users to edit/update currently. Be aware that any method added to check_current_user will be
+  # bypassed by admin privileges
   before_action :check_current_user, only: [:edit, :update]
   # Security issue: only admin users can delete users
   before_action :check_admin_user, only: [:destroy , :index, :approve_user]

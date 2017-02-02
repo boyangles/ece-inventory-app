@@ -63,7 +63,7 @@ module SessionsHelper
   # Confirms correct user, otherwise redirect to homepage
   def check_current_user
     @user = User.find(params[:id])
-    redirect_to(root_url) unless current_user?(@user)
+    redirect_to(root_url) unless current_user?(@user) || current_user.privilege_admin?
   end
 
   # Confirms status is approved
