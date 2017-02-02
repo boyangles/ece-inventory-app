@@ -49,21 +49,21 @@ class ItemsController < ApplicationController
   def create
     @item = Item.new(item_params)
 
-    add_tags_to_item
-    remove_tags_from_item
+    add_tags_to_item(@item, params[:tag][:tag_id]) if params[:tag]
+    remove_tags_from_item(@item, params[:tag_to_remove][:tag_id_remove]) if params[:tag_to_remove]
 
     if @item.save
       redirect_to item_url(@item)
     else
-
+      render 'new'
     end
   end
 
   def update
     @item = Item.find(params[:id])
 
-    add_tags_to_item
-    remove_tags_from_item
+    add_tags_to_item(@item, params[:tag][:tag_id]) if params[:tag]
+    remove_tags_from_item(@item, params[:tag_to_remove][:tag_id_remove]) if params[:tag_to_remove]
 
     if @item.update_attributes(item_params)
       flash[:success] = "Item updated successfully"
@@ -75,29 +75,29 @@ class ItemsController < ApplicationController
 
   private
 
-  # adds tags based on what has been selected in update item
-  def add_tags_to_item
-    if params[:tag]
-      params[:tag][:tag_id].each do |tag|
-        if tag.present?
-          @tag = Tag.find(tag)
-          @item.tags << @tag
-        end
-      end
-    end
-  end
+  # # adds tags based on what has been selected in update item
+  # def add_tags_to_item
+  #   if params[:tag]
+  #     params[:tag][:tag_id].each do |tag_id|
+  #       if tag_id.present?
+  #         tag = Tag.find(tag_id)
+  #         @item.tags << tag
+  #       end
+  #     end
+  #   end
+  # end
 
-  # removes tags from item based on selection
-  def remove_tags_from_item
-    if params[:tag_to_remove]
-      params[:tag_to_remove][:tag_id_remove].each do |tag|
-        if tag.present?
-          @tag = Tag.find(tag)
-          @item.tags.delete(@tag)
-        end
-      end
-    end
-  end
+  # # removes tags from item based on selection
+  # def remove_tags_from_item
+  #   if params[:tag_to_remove]
+  #     params[:tag_to_remove][:tag_id_remove].each do |tag_id|
+  #       if tag_id.present?
+  #         tag = Tag.find(tag_id)
+  #         @item.tags.delete(tag)
+  #       end
+  #     end
+  #   end
+  # end
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params

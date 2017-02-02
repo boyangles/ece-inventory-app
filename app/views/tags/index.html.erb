@@ -4,8 +4,10 @@
   <h1>Tags</h1>
 </div>
 
-<%= render 'form', tag: @tag %>
-
+<% @tag = Tag.new %>
+<% if @tag %>
+	<%= render 'form', { url: nil } %>
+<% end %>
 
 <%= will_paginate %>
 
