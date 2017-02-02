@@ -31,12 +31,22 @@
       <%= f.text_field :model_number %>
     </p>
 
+    <!-- For adding tags to items -->
     <p> <strong>Tags</strong></p>
-    <% if Tag.left_outer_joins(:items).where(items: { id: nil} ).count > 0 %>
+    <% if Tag.all.count > item.tags.all.count %>
       <%= collection_select(:tag, :tag_id, Tag.left_outer_joins(:items).where( items: { id: nil } ), :id, :name, {prompt: true}, {:multiple=> true}) %>
     <% else %>
         <p>No more tags available</p>
     <% end %>
+
+    <!-- For removing tags from items -->
+    <p> <strong>Associated Tags</strong></p>
+    <% if item.tags.count > 0 %>
+        <%= collection_select(:tag_to_remove, :tag_id_remove, item.tags.all, :id, :name, {prompt: true}, {:multiple=> true}) %>
+    <% else %>
+        <p>No tags associated with <%= item.unique_name %></p>
+    <% end %>
+
     <div class="actions">
       <%= f.submit %>
     </div>

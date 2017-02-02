@@ -63,13 +63,26 @@ class ItemsController < ApplicationController
   def update
     @item = Item.find(params[:id])
 
-    # adds tags based on what has been selected
-    params[:tag][:tag_id].each do |tag|
-      if tag.present?
-     	@tags = Tag.find(tag)
-      	@item.tags << @tags
-      end
-    end
+    add_tags_to_item
+    remove_tags_from_item
+    # if params[:tag]
+    #   params[:tag][:tag_id].each do |tag|
+    #     if tag.present?
+    #       @tag = Tag.find(tag)
+    #       @item.tags << @tag
+    #     end
+    #   end
+    # end
+    # #add_tags_to_item
+    # #remove_tags_from_item
+    # if params[:tag_to_remove]
+    #   params[:tag_to_remove][:tag_id_remove].each do |tag|
+    #     if tag.present?
+    #       @tag = Tag.find(tag)
+    #       @item.tags.delete(@tag)
+    #     end
+    #   end
+    # end
 
     if @item.update_attributes(item_params)
       flash[:success] = "Item updated successfully"
@@ -80,9 +93,36 @@ class ItemsController < ApplicationController
   end
 
 
+
+
   # Item.create([{ unique_name: 'f flesh', quantity: 10, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
 
   private
+
+  # adds tags based on what has been selected in update item
+  def add_tags_to_item
+    if params[:tag]
+      params[:tag][:tag_id].each do |tag|
+        if tag.present?
+          @tag = Tag.find(tag)
+          @item.tags << @tag
+        end
+      end
+    end
+  end
+
+  # removes tags from item based on selection
+  def remove_tags_from_item
+    if params[:tag_to_remove]
+      params[:tag_to_remove][:tag_id_remove].each do |tag|
+        if tag.present?
+          @tag = Tag.find(tag)
+          @item.tags.delete(@tag)
+        end
+      end
+    end
+  end
+
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
