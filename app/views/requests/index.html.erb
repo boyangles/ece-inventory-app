@@ -18,11 +18,10 @@
 
   <tbody>
     <% @requests.each do |request| %>
-      <% @item = Item.find(request.item_id) %>
       <tr>
         <th><%= request.datetime %></th>
         <th><%= request.user %></th>
-        <th><%= @item.unique_name %></th>
+        <th><%= request.item_name %></th>
         <th><%= request.quantity %></th>
         <th><%= request.reason %></th>
         <th><%= request.status %></th>

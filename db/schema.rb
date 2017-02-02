@@ -51,9 +51,9 @@ ActiveRecord::Schema.define(version: 20170131212239) do
     t.json     "instances"
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
-    t.integer  "item_id"
     t.integer  "status",       default: 0
     t.integer  "request_type", default: 0
+    t.string   "item_name"
   end
 
   create_table "tags", force: :cascade do |t|

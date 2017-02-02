@@ -6,7 +6,7 @@ class ItemsController < ApplicationController
   # GET /items
   # GET /items.json
   def index
-    @items = Item.paginate(page: params[:page], per_page: 10)
+    @items = Item.order('unique_name ASC').paginate(page: params[:page], per_page: 10)
   end
 
 
@@ -16,7 +16,7 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
 
     outstanding_filter_params = {
-        :item_id => @item.id,
+      :item_name => @item.unique_name,
         :status => "outstanding"
     }
 
