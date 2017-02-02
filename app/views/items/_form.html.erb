@@ -32,9 +32,11 @@
     </p>
 
     <p> <strong>Tags</strong></p>
-    #Tag.find(:all, :conditions => ['id NOT IN (?)', item.tags])
-    <%= collection_select(:tag, :tag_id, Tag.left_outer_joins(:items).where( items: { id: nil } ), :id, :name, {prompt: true}, {:multiple=> true}) %>
-
+    <% if Tag.left_outer_joins(:items).where(items: { id: nil} ).count > 0 %>
+      <%= collection_select(:tag, :tag_id, Tag.left_outer_joins(:items).where( items: { id: nil } ), :id, :name, {prompt: true}, {:multiple=> true}) %>
+    <% else %>
+        <p>No more tags available</p>
+    <% end %>
     <div class="actions">
       <%= f.submit %>
     </div>
