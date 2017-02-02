@@ -11,34 +11,34 @@
   </aside>
 </div>
 <p>
-  <strong>Unique_name:</strong>
+  <strong>Unique Name:</strong>
   <%= @item.unique_name %>
 </p>
 
 <p>
-  <strong>quantity:</strong>
+  <strong>Quantity:</strong>
   <%= @item.quantity %>
 </p>
 
 <p>
-  <strong>model_number:</strong>
+  <strong>Model Number:</strong>
   <%= @item.model_number %>
 </p>
 
 <p>
-  <strong>description:</strong>
+  <strong>Description:</strong>
   <%= @item.description %>
 </p>
 
 <p>
-  <strong>instances:</strong>
+  <strong>Instances:</strong>
   <%= @item.instances %>
 </p>
 
 <p>
-  <strong>tags:</strong>
+  <strong>Tags:</strong>
   <% @item.tags.each do |tag| %>
-    <%= tag.name %>    
+    <%= tag.name + ', ' %>
   <% end %>
 </p>
 
