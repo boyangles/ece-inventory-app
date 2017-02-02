@@ -32,7 +32,8 @@
     </p>
 
     <p> <strong>Tags</strong></p>
-    <%= collection_select(:tag, :tag_id, Tag.all, :id, :name, {prompt: true}, {:multiple=> true}) %>
+    #Tag.find(:all, :conditions => ['id NOT IN (?)', item.tags])
+    <%= collection_select(:tag, :tag_id, Tag.left_outer_joins(:items).where( items: { id: nil } ), :id, :name, {prompt: true}, {:multiple=> true}) %>
 
     <div class="actions">
       <%= f.submit %>
