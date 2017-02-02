@@ -9,5 +9,11 @@
   <%= f.radio_button :status, 'denied' %>
   <%= label :status_denied, 'Deny'%>
 
+  <%= f.hidden_field :item_id, :value => request.item_id %>
+  <%= f.hidden_field :user_id, :value => (request.user_id) ? request.user_id : current_user.user_id %>
+  <%= f.hidden_field :reason, :value => request.reason %>
+  <%= f.hidden_field :request_type, :value => request.request_type %>
+  <%= f.hidden_field :quantity, :value => request.quantity %>
+
   <%= f.submit %>
 <% end %>

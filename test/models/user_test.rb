@@ -3,8 +3,8 @@ require 'test_helper'
 class UserTest < ActiveSupport::TestCase
   
   def setup
-    @user = User.new(username: "Austin", privilege: "admin", email: "sample@cs.duke.edu",
-                     password: "SamplePass", password_confirmation: "SamplePass", status: "approved")
+    @user = User.new(username: "Austin", privilege: "admin", email: "sample@duke.edu", password: "SamplePass", password_confirmation: "SamplePass", status: "approved", email_confirmed: true)
+    @item = items(:item1)
   end
 
   test "should be valid" do
@@ -87,5 +87,28 @@ class UserTest < ActiveSupport::TestCase
   test "password should have a minimum length of 6" do
     @user.password = @user.password_confirmation = "q" * 5
     assert_not @user.valid?
+  end
+
+  test "associated request should be destroyed when user deleted" do
+    @user.save 
+    @item.save 
+
+    Request.create!(
+      quantity: 5,
+      reason: 'For test',
+      status: 'outstanding',
+      request_type: 'disbursement',
+      user_id: @user.id,
+      item_id: @item.id)
+    
+    Log.create!(
+      quantity: 5,
+      request_type: 'disbursement',
+      user_id: @user.id,
+      item_id: @item.id)
+
+    assert_difference ['Request.count', 'Log.count'], -1 do
+      @user.destroy
+    end
   end
 end

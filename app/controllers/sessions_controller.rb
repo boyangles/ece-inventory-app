@@ -1,4 +1,6 @@
 class SessionsController < ApplicationController
+  before_action :check_logged_out_user, only: [:new, :create]
+ 
   def new
   end
 
@@ -12,11 +14,11 @@ class SessionsController < ApplicationController
           log_in user
           redirect_back_or user
         else
-          flash[:error] = 'Your account has not been approved by an administrator'
+          flash.now[:danger] = 'Your account has not been approved by an administrator'
           render 'new'
         end
       else
-        flash.now[:error] = 'Please activate your account by following the
+        flash.now[:danger] = 'Please activate your account by following the
         instructions in the account confirmation email you received to proceed'
         render 'new'
       end

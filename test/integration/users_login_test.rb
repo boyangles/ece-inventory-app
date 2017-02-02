@@ -7,6 +7,9 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
 
   def setup
     @user = users(:bernard)
+    
+    @admin = users(:bernard)
+    @non_admin = users(:alex)
   end
   
   # Catches the bug where the flash persists for more than a single page
@@ -62,5 +65,23 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", login_path
     assert_select "a[href=?]", logout_path, count: 0
     assert_select "a[href=?]", user_path(@user), count: 0
+  end
+  
+  # Logged in users should never be able to see the login page
+  test "viewing login page as an admin redirects to root path" do
+    log_in_as(@admin)
+    assert is_logged_in?
+
+    get login_path
+    
+    assert_redirected_to root_path
+  end
+  test "viewing login page as an non-admin redirects to root path" do
+    log_in_as(@non_admin)
+    assert is_logged_in?
+
+    get login_path
+    
+    assert_redirected_to root_path
   end
 end

@@ -3,6 +3,12 @@ class User < ApplicationRecord
   PRIVILEGE_OPTIONS = %w(student ta admin)
   STATUS_OPTIONS = %w(waiting approved)
 
+  # Relation with Requests
+  has_many :requests, dependent: :destroy
+
+  # Relation with Logs
+  has_many :logs, dependent: :destroy
+
   enum privilege: {
     student: 0,
     ta: 1,

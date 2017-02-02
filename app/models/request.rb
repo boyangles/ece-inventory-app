@@ -1,8 +1,13 @@
 class Request < ApplicationRecord
-  include Filterable
+  include Filterable, Subscribable
+
+  belongs_to :item
+  belongs_to :user
+
+  # Default scopes
+  default_scope -> { order(created_at: :desc) }
 
   # Data Options:
-  REQUEST_TYPE_OPTIONS = %w(disbursement acquisition destruction)
   STATUS_OPTIONS = %w(outstanding approved denied)
 
   enum request_type: {
@@ -17,11 +22,22 @@ class Request < ApplicationRecord
     denied: 2
   }
 
-  scope :user, -> (username) { where user: username }
+  scope :user_id, -> (user_id) { where user_id: user_id }
   scope :status, -> (status) { where status: status }
-  scope :item_name, -> (item_name) { where item_name: item_name }
+  scope :item_id, -> (item_id) { where item_id: item_id }
 
   # Validations
   validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
   validates :status, :inclusion => { :in => STATUS_OPTIONS }
+  validates :user_id, presence: true
+  validates :item_id, presence: true
+
+  # Methods:
+  def item_relevant?(item_id)
+    Item.exists?(:id => item_id)
+  end
+
+  def has_status_change_to_approved?(request_params)
+    self.outstanding? && request_params[:status] == 'approved'
+  end
 end

@@ -1,14 +1,19 @@
 class Item < ApplicationRecord
-
   validates :unique_name, presence: true, length: { maximum: 50 },
             uniqueness: { case_sensitive: false }
   validates :quantity, presence: true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   validates :model_number, presence: true
   validates :description, length: { maximum: 255 }
 
-
+  # Relation with Tags
   has_many :tags, -> { uniq },  :through => :item_tags
   has_many :item_tags
+
+  # Relation with Requests
+  has_many :requests, dependent: :destroy
+
+  # Relation with Logs
+  has_many :logs, dependent: :destroy
 
   def self.tagged_with_all(tag_filters)
     if(tag_filters.length == 0)
@@ -28,5 +33,18 @@ class Item < ApplicationRecord
 
   def self.filter_by_search(search_input)
     where("unique_name ILIKE ?", "%#{search_input}%") 
+  end
+
+  def update_by_request(request) 
+    case request.request_type.to_sym
+    when :disbursement
+      self[:quantity] = self[:quantity] - request[:quantity]
+    when :acquisition
+      self[:quantity] = self[:quantity] + request[:quantity]
+    when :destruction
+      self[:quantity] = self[:quantity] - request[:quantity]
+    else
+      self[:quantity]
+    end
   end
 end

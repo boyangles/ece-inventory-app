@@ -1,7 +1,10 @@
 class Log < ApplicationRecord
-  include Filterable
+  include Filterable, Subscribable
 
-  REQUEST_TYPE_OPTIONS = %w(disbursement acquisition destruction)
+  belongs_to :item
+  belongs_to :user
+
+  default_scope -> { order(created_at: :desc) }
 
   enum request_type: {
     disbursement: 0,
@@ -9,11 +12,12 @@ class Log < ApplicationRecord
     destruction: 2
   }
   
-  scope :datetime,      -> (datetime)     { where datetime: datetime }
   scope :item_id,       -> (item_id)      { where item_id: item_id }
   scope :quantity,      -> (quantity)     { where quantity: quantity }
   scope :user_id,       -> (user_id)      { where user_id: user_id }
   scope :request_type,  -> (request_type) { where request_type: request_type }
 
   validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
+
+  # Methods:
 end

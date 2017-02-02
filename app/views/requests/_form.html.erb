@@ -6,7 +6,7 @@
 
   <p>
     <b>Item Requested</b>
-    <%= request.item_name %>
+    <%= @item.unique_name %>
   </p>
 
   <p>
@@ -24,9 +24,8 @@
     <%= f.text_area :reason, :required => true %>
   </p>
 
-  <%= f.hidden_field :item_name, :value => request.item_name %>
-  <%= f.hidden_field :user, :value => current_user.username %>
-  <%= f.hidden_field :datetime, :value => Time.now %>
+  <%= f.hidden_field :item_id, :value => request.item_id %>
+  <%= f.hidden_field :user_id, :value => (request.user_id) ? request.user_id : current_user.id %>
   <%= f.hidden_field :status, :value => "outstanding" %>
 
 

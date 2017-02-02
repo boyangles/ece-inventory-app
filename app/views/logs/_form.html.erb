@@ -1,0 +1,25 @@
+<%= form_for(@log) do |f| %>
+  <% @form_obj = @log %>
+  <% if @form_obj %>
+    <% render 'shared/error_messages', object: @form_obj %>
+  <% end %>
+
+  <p>
+    <%= f.label :request_type %><br>
+    <%= f.select :request_type, Log.request_types.keys.to_a %>
+  </p>
+
+  <p>
+    <%= f.label "Item Name" %>
+    <%= collection_select(:item, :id, Item.all, :id, :unique_name, {:prompt => true}, {:required => true}) %>
+  </p>
+
+  <p>
+    <%= f.label :quantity %><br>
+    <%= f.number_field :quantity, :required => true %>
+  </p>
+
+  <%= f.hidden_field :user_id, :value => current_user.id %>
+
+  <%= f.submit class: "btn btn-primary" %>
+<% end %>

@@ -6,8 +6,6 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-Request.create([{ datetime: Time.new(2017) , user: 'austin', item_name: 1 , quantity: 5, reason: 'got bored', status: 'outstanding', request_type: 'acquisition'}])
-
 Tag.create([{ name: 'expensive'}, { name: 'rich'}, { name: 'broke'}, { name: '1'}])
 
 
@@ -54,18 +52,19 @@ User.create(username:"abcd", email: "f@duke.edu" , status: "approved", privilege
   quantity = Faker::Number.number(3)
   model_number = Faker::Number.hexadecimal(6)
   description = Faker::Lorem.paragraph(2, true, 1)
+  location = Faker::Address.city
 
   Item.create!(
     unique_name: "item-#{n+1}",
     quantity: quantity,
     model_number: model_number,
     description: description,
+    location: location
   )
 end
 
 # Creating Requests:
 15.times do |n|
-  datetime = Faker::Time.between(5.days.ago, Time.now, :all)
   # Obtain random user:
   user = User.offset(rand(User.count)).first
   # Obtain random item:
@@ -74,34 +73,27 @@ end
   reason = Faker::Lorem.paragraph(2, true, 3)
 
   Request.create!(
-    datetime: datetime,
-    user: user.username,
+    user_id: user.id,
     quantity: item.quantity,
     reason: reason,
     status: "outstanding",
     request_type: "disbursement",
-    item_name: "item-#{n+1}"
+    item_id: item.id
   )
 end
   
 # Creating Logs:
   # Disbursements:
 15.times do |n|
-  datetime = Faker::Time.between(30.days.ago, Time.now, :all)
   item = Item.offset(rand(Item.count)).first
   quantity = Faker::Number.number(3)
   user = User.offset(rand(User.count)).first
   request_type = rand(0...3)
 
   Log.create!(
-    datetime: datetime,
     item_id: item.id,
     quantity: quantity,
     user_id: user.id,
     request_type: request_type
   )
 end
-
-  # Acquisitions:
-
-  # Destructions:
