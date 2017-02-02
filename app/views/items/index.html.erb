@@ -8,10 +8,16 @@
 </div>
 
 <div class="search">
-	<%= form_for items_path, :method => 'get' do %>
+	<%= form_for items_path, :method => 'get' do |f| %>
   	<p class="submit_bar">
+			<%= f.label "Search by Item Name" %><br>
     	<%= text_field_tag :search, params[:search] %>
 	 	</p>
+
+		<p>
+			<%= f.label "Search by Model Number" %>
+			<%= text_field_tag :model_search, params[:model_search] %>
+		</p>
 
   	<h3>Required Tags</h3>
   	<div class="tags">
@@ -33,7 +39,7 @@
   	<% end %>
 		</div>
 
-		<%= submit_tag "Search" %>
+		<%= submit_tag "Search", class: "btn btn-primary" %>
 	<% end %>
 </div>
 
