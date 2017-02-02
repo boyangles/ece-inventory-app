@@ -15,13 +15,22 @@ ActiveRecord::Schema.define(version: 20170131223225) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "item_tags", force: :cascade do |t|
+    t.integer  "tag_id"
+    t.integer  "item_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_item_tags_on_item_id", using: :btree
+    t.index ["tag_id"], name: "index_item_tags_on_tag_id", using: :btree
+  end
+
   create_table "items", force: :cascade do |t|
     t.string  "unique_name"
     t.integer "quantity"
     t.integer "model_number"
     t.string  "description"
-    t.json    "tags"
     t.json    "instances"
+    t.json    "available_tags"
   end
 
   create_table "logs", force: :cascade do |t|

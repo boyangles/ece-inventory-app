@@ -15,9 +15,9 @@ class ItemsController < ApplicationController
   def show
     @item = Item.find(params[:id])
 
-    outstanding_filter_params = { 
+    outstanding_filter_params = {
       :item_name => @item.unique_name,
-      :status => "outstanding"
+        :status => "outstanding"
     }
 
     if !current_user.privilege_admin?
@@ -49,22 +49,22 @@ class ItemsController < ApplicationController
   def create
     @item = Item.new(item_params)
 
-      if @item.save
-          redirect_to item_url(@item)
-      else
+    add_tags_to_item(@item, params[:tag][:tag_id]) if params[:tag]
+    remove_tags_from_item(@item, params[:tag_to_remove][:tag_id_remove]) if params[:tag_to_remove]
 
-      end
-
-    # if @user.save
-    #   flash[:success] = "Welcome to the ECE Inventory family!"
-    #   redirect_to @user
-    # else
-    #   render 'new'
-    # end
+    if @item.save
+      redirect_to item_url(@item)
+    else
+      render 'new'
+    end
   end
 
   def update
     @item = Item.find(params[:id])
+
+    add_tags_to_item(@item, params[:tag][:tag_id]) if params[:tag]
+    remove_tags_from_item(@item, params[:tag_to_remove][:tag_id_remove]) if params[:tag_to_remove]
+
     if @item.update_attributes(item_params)
       flash[:success] = "Item updated successfully"
       redirect_to @item
@@ -73,10 +73,31 @@ class ItemsController < ApplicationController
     end
   end
 
-
-  # Item.create([{ unique_name: 'f flesh', quantity: 10, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
-
   private
+
+  # # adds tags based on what has been selected in update item
+  # def add_tags_to_item
+  #   if params[:tag]
+  #     params[:tag][:tag_id].each do |tag_id|
+  #       if tag_id.present?
+  #         tag = Tag.find(tag_id)
+  #         @item.tags << tag
+  #       end
+  #     end
+  #   end
+  # end
+
+  # # removes tags from item based on selection
+  # def remove_tags_from_item
+  #   if params[:tag_to_remove]
+  #     params[:tag_to_remove][:tag_id_remove].each do |tag_id|
+  #       if tag_id.present?
+  #         tag = Tag.find(tag_id)
+  #         @item.tags.delete(tag)
+  #       end
+  #     end
+  #   end
+  # end
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params

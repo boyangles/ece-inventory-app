@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+
   enum privilege: {
     student: 0,
     ta: 1,

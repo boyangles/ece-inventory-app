@@ -5,4 +5,11 @@ class Item < ApplicationRecord
   validates :quantity, presence: true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   validates :model_number, presence: true
   validates :description, length: { maximum: 255 }
+
+
+  has_many :tags, -> { uniq },  :through => :item_tags
+  has_many :item_tags
+  #has_and_belongs_to_many :tags
+  # accepts_nested_attributes_for :tags
+
 end

@@ -1,0 +1,15 @@
+<%= form_for(@tag, url: url) do |f| %>
+		<% @form_obj = @tag %>
+		<% if @form_obj %>
+  		<%= render 'shared/error_messages', object: @form_obj %>
+		<% end %>    
+
+    <p>
+      <%= f.label :name %><br>
+      <%= f.text_field :name %>
+    </p>
+
+    <div class="actions">
+      <%= f.submit %>
+    </div>
+<% end %>

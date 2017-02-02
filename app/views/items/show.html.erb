@@ -11,34 +11,37 @@
   </aside>
 </div>
 <p>
-  <strong>Unique_name:</strong>
+  <strong>Unique Name:</strong>
   <%= @item.unique_name %>
 </p>
 
 <p>
-  <strong>quantity:</strong>
+  <strong>Quantity:</strong>
   <%= @item.quantity %>
 </p>
 
 <p>
-  <strong>model_number:</strong>
+  <strong>Model Number:</strong>
   <%= @item.model_number %>
 </p>
 
 <p>
-  <strong>description:</strong>
+  <strong>Description:</strong>
   <%= @item.description %>
 </p>
 
 <p>
-  <strong>tags:</strong>
-  <%= @item.tags %>
+  <strong>Instances:</strong>
+  <%= @item.instances %>
 </p>
 
 <p>
-  <strong>instances:</strong>
-  <%= @item.instances %>
+  <strong>Tags:</strong>
+  <% @item.tags.each do |tag| %>
+    <%= tag.name + ', ' %>
+  <% end %>
 </p>
+
 
 <%= link_to "New Request", new_request_url(:item_name => @item.unique_name), :class => "btn btn-primary" %>
 

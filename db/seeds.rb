@@ -52,14 +52,14 @@ User.create(username:"abcd", email: "f@duke.edu" , status: "approved", privilege
   quantity = Faker::Number.number(3)
   model_number = Faker::Number.hexadecimal(6)
   description = Faker::Lorem.paragraph(2, true, 1)
-  
+
   Item.create!(
     unique_name: "item-#{n+1}",
     quantity: quantity,
     model_number: model_number,
     description: description,
-    tags: {
-      tagarray: ["tag1", "tag2", "tag3"]
+    available_tags: {
+      tagarray: ["tag1", "tag2", "3"]
     },
     instances: {
       instancearray: ["instance1", "instance2", "instance3"]

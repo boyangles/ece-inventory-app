@@ -1,5 +1,6 @@
 <%= form_for(@user, url: url) do |f| %>
-  <%= render 'shared/error_messages', object: @user %>
+	<% @form_obj = @user %>
+  <%= render 'shared/error_messages', object: @form_obj %>
       
   <!-- Username -->
   <%= f.label :username %>
