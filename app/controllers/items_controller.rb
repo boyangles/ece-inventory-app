@@ -65,24 +65,6 @@ class ItemsController < ApplicationController
 
     add_tags_to_item
     remove_tags_from_item
-    # if params[:tag]
-    #   params[:tag][:tag_id].each do |tag|
-    #     if tag.present?
-    #       @tag = Tag.find(tag)
-    #       @item.tags << @tag
-    #     end
-    #   end
-    # end
-    # #add_tags_to_item
-    # #remove_tags_from_item
-    # if params[:tag_to_remove]
-    #   params[:tag_to_remove][:tag_id_remove].each do |tag|
-    #     if tag.present?
-    #       @tag = Tag.find(tag)
-    #       @item.tags.delete(@tag)
-    #     end
-    #   end
-    # end
 
     if @item.update_attributes(item_params)
       flash[:success] = "Item updated successfully"
