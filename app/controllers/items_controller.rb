@@ -6,7 +6,7 @@ class ItemsController < ApplicationController
   # GET /items
   # GET /items.json
   def index
-    @items = Item.paginate(page: params[:page], per_page: 10)
+    @items = Item.order('unique_name ASC').paginate(page: params[:page], per_page: 10)
   end
 
 
@@ -14,13 +14,9 @@ class ItemsController < ApplicationController
   # GET /items/1.json
   def show
     @item = Item.find(params[:id])
-    # @tag = Tag.new(name: "fuasdfck")
-    # @fasdf = Tag.new(name: "seconfuck")
-    # @item.tags << @tag
-    # @item.tags << @fasdf
 
     outstanding_filter_params = {
-        :item_id => @item.id,
+      :item_name => @item.unique_name,
         :status => "outstanding"
     }
 
@@ -77,9 +73,6 @@ class ItemsController < ApplicationController
     end
   end
 
-
-  # Item.create([{ unique_name: 'f flesh', quantity: 10, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
-
   private
 
   # adds tags based on what has been selected in update item
@@ -111,10 +104,5 @@ class ItemsController < ApplicationController
     # Rails 4+ requires you to whitelist attributes in the controller.
     params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description)
   end
-
-  # def tag_params
-  #   # params.require(:assign).permit(:tag)
-  #   params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :tag_id, :tag, :tags, :name)
-  # end
 
 end

@@ -11,43 +11,49 @@
   </aside>
 </div>
 <p>
-  <strong>Unique_name:</strong>
+  <strong>Unique Name:</strong>
   <%= @item.unique_name %>
 </p>
 
 <p>
-  <strong>quantity:</strong>
+  <strong>Quantity:</strong>
   <%= @item.quantity %>
 </p>
 
 <p>
-  <strong>model_number:</strong>
+  <strong>Model Number:</strong>
   <%= @item.model_number %>
 </p>
 
 <p>
-  <strong>description:</strong>
+  <strong>Description:</strong>
   <%= @item.description %>
 </p>
 
 <p>
-  <strong>instances:</strong>
+  <strong>Instances:</strong>
   <%= @item.instances %>
 </p>
 
 <p>
-  <strong>tags:</strong>
+  <strong>Tags:</strong>
   <% @item.tags.each do |tag| %>
-    <%= tag.name %>    
+    <%= tag.name + ', ' %>
   <% end %>
 </p>
 
 
-<%= link_to "New Request", new_request_url(:item_id => @item.id), :class => "btn btn-primary" %>
+<%= link_to "New Request", new_request_url(:item_name => @item.unique_name), :class => "btn btn-primary" %>
 
-<%= link_to 'Remove item', @item, method: :delete, data: { confirm: 'Are you sure?' }, :class => "btn btn-primary" %>
+
+<% if current_user.privilege_admin? %>
+    <%= link_to 'Remove item', @item, method: :delete, data: { confirm: 'Are you sure?' }, :class => "btn btn-primary" %>
+    <%= link_to 'Edit item', edit_item_path(@item),:class => "btn btn-primary" %>
+<% end %>
 
 <!--<td><%= link_to 'Edit item', @item, method: :edit_item, data: { confirm: 'Are you sure?' }, :class => "btn btn-primary" %></td>-->
-<%= link_to 'Edit item', edit_item_path(@item),:class => "btn btn-primary" %>
+<!--<%= link_to 'Edit item', edit_item_path(@item),:class => "btn btn-primary" %>-->
 
 <%= render 'requests' %>
+
+<%= link_to 'Back', items_path %>

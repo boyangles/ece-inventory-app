@@ -6,7 +6,7 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-Request.create([{ datetime: Time.new(2017) , user: 'austin', item_id: 1 , quantity: 5, reason: 'got bored', status: 'outstanding', request_type: 'acquisition', instances: {instancearray: ["0x35b2", "0x44a5", "0xa241"]}}])
+Request.create([{ datetime: Time.new(2017) , user: 'austin', item_name: 1 , quantity: 5, reason: 'got bored', status: 'outstanding', request_type: 'acquisition', instances: {instancearray: ["0x35b2", "0x44a5", "0xa241"]}}])
 
 Tag.create([{ name: 'expensive'}, { name: 'rich'}, { name: 'broke'}, { name: '1'}])
 
@@ -87,7 +87,7 @@ end
     instances: {
       instancearray: ["instance1", "instance2", "instance3"]
     },
-    item_id: item.id
+    item_name: "item-#{n+1}"
   )
 end
   
