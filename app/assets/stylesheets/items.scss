@@ -9,6 +9,71 @@ $gray-medium-light: #eaeaea;
   li {
     overflow: auto;
     padding: 10px 0;
-    border-bottom: 1px solid $gray-medium-light;
+    border-bottom: 1px dashed $gray-medium-light;
   }
+}
+
+.search {
+  	margin: 20px 100px;
+  	position: relative;
+
+  .label {
+  	cursor: pointer;
+  	position: absolute;
+  	width: 25px;
+  	height: 25px;
+  	top: 0;
+  	left: 0;
+  	background: #eee;
+  	border: 1px solid #ddd;
+  }
+
+  .label:after {
+  	opacity: 0.2;
+  	content: '';
+  	position: absolute;
+  	width: 9px;
+  	height: 5px;
+  	background: transparent;
+  	top: 6px;
+  	left: 7px;
+  	border: 3px solid #333;
+  	border-top: none;
+  	border-right: none;
+
+  	transform: rotate(-45deg);
+  }
+
+  .label:hover::after {
+  	opacity: 0.5;
+  }
+
+  .input[type=checkbox] {
+  	vertical-align: top;
+  	width: 15px;
+  }
+
+  .input[type=checkbox]:checked + label:after {
+  	opacity: 1;
+  }
+
+}
+
+#required_tag_names_ {
+	width: 0;
+	word-break: break-all;	
+}
+
+#excluded_tag_names_ {
+	width: 0;
+	word-break: break-all;
+}
+
+.tags {
+	padding: 0;
+	margin-left: 0;
+	vertical-align: bottom;
+	position: relative;
+	top: -1px;
+	*overflow: hidden;
 }
