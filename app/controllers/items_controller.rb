@@ -53,6 +53,9 @@ class ItemsController < ApplicationController
   def create
     @item = Item.new(item_params)
 
+    add_tags_to_item
+    remove_tags_from_item
+
     if @item.save
       redirect_to item_url(@item)
     else
@@ -73,8 +76,6 @@ class ItemsController < ApplicationController
       render 'edit'
     end
   end
-
-
 
 
   # Item.create([{ unique_name: 'f flesh', quantity: 10, model_number: '???', description: 'measure stuff' , tags: {tagarray: ["0x35b2", "0x44a5", "0xa241"]}, instances: {instancearray: ["0x000", "0x001", "0xf163"]}}])
