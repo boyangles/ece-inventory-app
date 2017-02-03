@@ -45,15 +45,6 @@ class RequestsController < ApplicationController
   # POST /requests.json
   def create
     @request = Request.new(request_params)
-    @user = current_user
-
-    # Set default values for requests:
-    @request.user = @user.username
-    @request.datetime = Time.now
-    @request.status = "outstanding"
-    # @request.request_type = ??? what is this?
-
-
     respond_to do |format|
       if @request.save
         format.html { redirect_to @request, notice: 'Request was successfully created.' }
