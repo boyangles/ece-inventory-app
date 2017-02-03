@@ -1,5 +1,7 @@
-require 'rails_helper'
-require 'capybara/rails'
+# require 'rails_helper'
+# require 'capybara/rails'
+
+# FactoryGirl.find_definitions
 
 RSpec.describe "home page", :type => :feature do
   it "displays the user's username after successful login" do
