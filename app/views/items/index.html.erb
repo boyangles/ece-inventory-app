@@ -1,6 +1,8 @@
 <% provide(:title, 'All Items') %>
+<% if current_user.privilege_admin? %>
+  <%= link_to "New Item", new_item_url, :class => "btn btn-primary" %>
+<% end %>
 
-<%= link_to "New Item", new_item_url, :class => "btn btn-primary" %>
 
 <div class="center jumbotron">
   <h1>Items</h1>

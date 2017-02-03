@@ -45,15 +45,6 @@ class RequestsController < ApplicationController
   # POST /requests.json
   def create
     @request = Request.new(request_params)
-    @user = current_user
-
-    # Set default values for requests:
-    @request.user = @user.username
-    @request.datetime = Time.now
-    @request.status = "outstanding"
-    # @request.request_type = ??? what is this?
-
-
     respond_to do |format|
       if @request.save
         format.html { redirect_to @request, notice: 'Request was successfully created.' }
@@ -68,17 +59,7 @@ class RequestsController < ApplicationController
   # PATCH/PUT /requests/1
   # PATCH/PUT /requests/1.json
   def update
-    # TODO: Delete this sudo-code
-    # checkIfAdminRequestStatusUpdate(@request, updated_params)
-    # checkIfItemExists(@request)
-    # checkIfItemQuantityWillBeNegative(@request, corresponding item)
-    # If request is approved, create a log automatically... if not, then don't create one
-    # Decrease item quantity by request quantity
-    # Display error on the show page if request fails
-
-    # editRequest(@request)
-
-    if request_is_admin_status_update?(@request, request_params)
+   if request_is_admin_status_update?(@request, request_params)
       item_name = @request.item_name
       if !item_exists?(item_name)
         flash[:error] = "Item does not exist anymore."
@@ -134,6 +115,6 @@ class RequestsController < ApplicationController
     end
     # Never trust parameters from the scary internet, only allow the white list through.
     def request_params
-      params.fetch(:request, {}).permit(:datetime, :user, :item_name, :quantity, :reason, :status, :request_type, :instances)
+      params.fetch(:request, {}).permit(:datetime, :user, :item_name, :quantity, :reason, :status, :request_type, :instances, :response)
     end
 end

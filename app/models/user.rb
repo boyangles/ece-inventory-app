@@ -1,5 +1,8 @@
 class User < ApplicationRecord
 
+  PRIVILEGE_OPTIONS = %w(student ta admin)
+  STATUS_OPTIONS = %w(waiting approved)
+
   enum privilege: {
     student: 0,
     ta: 1,
@@ -30,6 +33,8 @@ class User < ApplicationRecord
                        format: { with: VALID_EMAIL_REGEX },
                        uniqueness: { case_sensitive: false }
   validates :password, presence: true, length: { minimum: 6 }
+  validates :privilege, :inclusion => { :in => PRIVILEGE_OPTIONS }
+  validates :status, :inclusion => { :in => STATUS_OPTIONS }
 
 
   # Returns the hash digest for a given string, used in fixtures for testing
