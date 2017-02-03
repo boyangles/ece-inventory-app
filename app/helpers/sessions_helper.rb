@@ -68,7 +68,11 @@ module SessionsHelper
 
   # Confirms status is approved
   def check_approved_user
-    redirect_to(root_url) unless current_user && current_user.status_approved?
+    unless logged_in?
+      store_location
+      flash[:danger] = "Your account has not been approved."
+      redirect_to login_url and return
+    end
   end
 
   def activate_user(user)
