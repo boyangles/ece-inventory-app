@@ -11,7 +11,7 @@
 
   <p>
     <%= f.label :quantity %><br>
-    <%= f.select :quantity, ((0..Item.where(["unique_name = ?", request.item_name]).first.quantity).map {|i| [i,i] } << ["No limit",nil]) %>
+    <%= f.select :quantity, ((0..Item.where(["unique_name = ?", request.item_name]).first.quantity).map {|i| [i,i] }) %>
   </p>
   
   <p>
