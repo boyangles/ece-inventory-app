@@ -6,7 +6,7 @@ class ItemsController < ApplicationController
   # GET /items
   # GET /items.json
   def index
-    @items = Item.order('unique_name ASC').paginate(page: params[:page], per_page: 10)
+    @items = Item.where("unique_name ILIKE ?", "%#{params[:search]}%").order('unique_name ASC').paginate(page: params[:page], per_page: 10)
   end
 
 
@@ -75,34 +75,10 @@ class ItemsController < ApplicationController
 
   private
 
-  # # adds tags based on what has been selected in update item
-  # def add_tags_to_item
-  #   if params[:tag]
-  #     params[:tag][:tag_id].each do |tag_id|
-  #       if tag_id.present?
-  #         tag = Tag.find(tag_id)
-  #         @item.tags << tag
-  #       end
-  #     end
-  #   end
-  # end
-
-  # # removes tags from item based on selection
-  # def remove_tags_from_item
-  #   if params[:tag_to_remove]
-  #     params[:tag_to_remove][:tag_id_remove].each do |tag_id|
-  #       if tag_id.present?
-  #         tag = Tag.find(tag_id)
-  #         @item.tags.delete(tag)
-  #       end
-  #     end
-  #   end
-  # end
-
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
-    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description)
+    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :search)
   end
 
 end

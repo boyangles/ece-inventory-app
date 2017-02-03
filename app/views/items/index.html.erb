@@ -8,6 +8,12 @@
   <h1>Items</h1>
 </div>
 
+<%= form_for items_path, :method => 'get' do %>
+  <p>
+    <%= text_field_tag :search, params[:search] %>
+    <%= submit_tag "Search" %>
+  </p>
+<% end %>
 
 <%= will_paginate %>
 
