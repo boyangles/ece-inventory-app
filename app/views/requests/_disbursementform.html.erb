@@ -17,7 +17,7 @@
   
   <p>
     <%= f.label 'User to distribute to' %><br>
-    <%= f.text_field :user, :required => true %>
+    <%= collection_select(:user, :user_id, User.all, :id, :email, {:prompt => true}, {:required => true}) %>
   </p>
 
   <p>

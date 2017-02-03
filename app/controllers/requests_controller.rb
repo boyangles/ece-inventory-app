@@ -1,8 +1,5 @@
 class RequestsController < ApplicationController
   before_action :set_request, only: [:show, :edit, :update, :destroy]
-
-
-
   before_action :check_logged_in_user, only:[:index]
 
   # before_action :request_index_by_admin, only: [ :index ]          #maybe
@@ -45,6 +42,8 @@ class RequestsController < ApplicationController
   # POST /requests.json
   def create
     @request = Request.new(request_params)
+    @request.user = User.find(params[:user][:user_id]).username
+
     respond_to do |format|
       if @request.save
         format.html { redirect_to @request, notice: 'Request was successfully created.' }
