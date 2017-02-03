@@ -42,7 +42,10 @@ class RequestsController < ApplicationController
   # POST /requests.json
   def create
     @request = Request.new(request_params)
-    @request.user = User.find(params[:user][:user_id]).username
+
+    if params[:user]
+      @request.user = User.find(params[:user][:user_id]).username
+    end
 
     respond_to do |format|
       if @request.save

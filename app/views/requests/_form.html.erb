@@ -11,12 +11,12 @@
 
   <p>
     <%= f.label :quantity %><br>
-    <%= f.number_field :quantity, :required => true %>
+    <%= f.select :quantity, ((0..Item.where(["unique_name = ?", request.item_name]).first.quantity).map {|i| [i,i] }) %>
   </p>
   
   <p>
     <%= f.label :request_type %><br>
-    <%= f.text_field :request_type, :required => true %>
+    <%= f.select :request_type, [['Disbursement','disbursement'],['Acquisition','acquisition'],['Destruction','destruction']] %>
   </p>
 
   <p>
