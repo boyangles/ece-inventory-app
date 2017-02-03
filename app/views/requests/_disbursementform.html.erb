@@ -16,20 +16,19 @@
   </p>
   
   <p>
-    <%= f.label :request_type %><br>
-    <%= f.text_field :request_type, :required => true %>
+    <%= f.label 'User to distribute to' %><br>
+    <%= f.text_field :user, :required => true %>
   </p>
 
   <p>
-    <%= f.label :reason %><br>
-    <%= f.text_area :reason, :required => true %>
+    <%= f.label 'Administrator Comment' %><br>
+    <%= f.text_area :response %>
   </p>
 
   <%= f.hidden_field :item_name, :value => request.item_name %>
-  <%= f.hidden_field :user, :value => current_user.username %>
   <%= f.hidden_field :datetime, :value => Time.now %>
-  <%= f.hidden_field :status, :value => "outstanding" %>
-
+  <%= f.hidden_field :status, :value => "approved" %>
+  <%= f.hidden_field :request_type, :value => "disbursement" %>
 
   <div class="actions">
     <%= f.submit %>

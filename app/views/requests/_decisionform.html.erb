@@ -1,0 +1,13 @@
+<%= form_for(request) do |f| %>
+  <p>
+    <%= f.label :response %><br>
+    <%= f.text_area :response %> 
+  </p>
+
+  <%= f.radio_button :status, 'approved', :checked => true %>
+  <%= label :status_approved, 'Approve' %>
+  <%= f.radio_button :status, 'denied' %>
+  <%= label :status_denied, 'Deny'%>
+
+  <%= f.submit %>
+<% end %>
