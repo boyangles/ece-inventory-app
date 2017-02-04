@@ -9,7 +9,24 @@ class Item < ApplicationRecord
 
   has_many :tags, -> { distinct },  :through => :item_tags
   has_many :item_tags
-  #has_and_belongs_to_many :tags
-  # accepts_nested_attributes_for :tags
 
+  def self.tagged_with_all(tag_filters)
+    if(tag_filters.length == 0)
+      all
+    else
+      joins(:tags).where('tags.name IN (?)', tag_filters).group('items.id').having('count(*)=?', tag_filters.count)
+    end
+  end
+
+  def self.tagged_with_none(tag_filters)
+    if(tag_filters.length == 0)
+      all
+    else
+      where("items.id IN (?)", select('items.id') - joins(:tags).where('tags.name IN (?)', tag_filters).distinct.select('items.id'))
+    end
+  end
+
+  def self.filter_by_search(search_input)
+    where("unique_name ILIKE ?", "%#{search_input}%") 
+  end
 end

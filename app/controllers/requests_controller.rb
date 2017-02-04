@@ -1,9 +1,9 @@
 class RequestsController < ApplicationController
   before_action :set_request, only: [:show, :edit, :update, :destroy]
-  before_action :check_logged_in_user, only:[:index]
+  before_action :check_logged_in_user, :check_approved_user
+
 
   # before_action :request_index_by_admin, only: [ :index ]          #maybe
-  # Security issue: only admin users can delete users        #maybe
 
   # GET /requests
   # GET /requests.json
