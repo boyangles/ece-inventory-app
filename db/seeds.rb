@@ -6,7 +6,7 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-Request.create([{ datetime: Time.new(2017) , user: 'austin', item_name: 1 , quantity: 5, reason: 'got bored', status: 'outstanding', request_type: 'acquisition', instances: {instancearray: ["0x35b2", "0x44a5", "0xa241"]}}])
+Request.create([{ datetime: Time.new(2017) , user: 'austin', item_name: 1 , quantity: 5, reason: 'got bored', status: 'outstanding', request_type: 'acquisition'}])
 
 Tag.create([{ name: 'expensive'}, { name: 'rich'}, { name: 'broke'}, { name: '1'}])
 
@@ -60,12 +60,6 @@ User.create(username:"abcd", email: "f@duke.edu" , status: "approved", privilege
     quantity: quantity,
     model_number: model_number,
     description: description,
-    available_tags: {
-      tagarray: ["tag1", "tag2", "3"]
-    },
-    instances: {
-      instancearray: ["instance1", "instance2", "instance3"]
-    }
   )
 end
 
@@ -86,9 +80,6 @@ end
     reason: reason,
     status: "outstanding",
     request_type: "disbursement",
-    instances: {
-      instancearray: ["instance1", "instance2", "instance3"]
-    },
     item_name: "item-#{n+1}"
   )
 end

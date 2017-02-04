@@ -4,7 +4,18 @@ class ItemsController < ApplicationController
   # GET /items
   # GET /items.json
   def index
-    @items = Item.order('unique_name ASC').paginate(page: params[:page], per_page: 10)
+    @tags = Tag.all
+    
+    @required_tag_filters = (params[:required_tag_names]) ? 
+      params[:required_tag_names] : []
+    @excluded_tag_filters = (params[:excluded_tag_names]) ?
+      params[:excluded_tag_names] : []
+
+    items_req = Item.tagged_with_all(@required_tag_filters).select("id")
+    items_exc = Item.tagged_with_none(@excluded_tag_filters).select("id")
+    items_req_and_exc = Item.where(:id => items_req & items_exc)
+
+    @items = items_req_and_exc.filter_by_search(params[:search]).order('unique_name ASC').paginate(page: params[:page], per_page: 10)
   end
 
 
@@ -76,7 +87,7 @@ class ItemsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
-    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description)
+    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :search)
   end
 
 end

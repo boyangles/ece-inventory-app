@@ -8,6 +8,28 @@
   <h1>Items</h1>
 </div>
 
+<%= form_for items_path, :method => 'get' do %>
+  <p>
+    <%= text_field_tag :search, params[:search] %>
+    <%= submit_tag "Search" %>
+  </p>
+
+  <h3>Required Tags</h3>
+  <% @tags.each do |tag| %>
+    <%= check_box_tag 'required_tag_names[]', 
+      tag.name, 
+      (@required_tag_filters.include? tag.name) %>
+    <%= tag.name %>
+  <% end %>
+
+  <h3>Excluded Tags</h3>
+  <% @tags.each do |tag| %>
+    <%= check_box_tag 'excluded_tag_names[]', 
+      tag.name, 
+      (@excluded_tag_filters.include? tag.name) %>
+    <%= tag.name %>
+  <% end %>
+<% end %>
 
 <%= will_paginate %>
 
