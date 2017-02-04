@@ -11,13 +11,11 @@
 
   <p>
     <%= f.label :quantity %><br>
-    <%= f.number_field :quantity, :required => true %>
-
-  </p>
+    <%= f.number_field :quantity, :required => true %>  </p>
   
   <p>
     <%= f.label 'User to distribute to' %><br>
-    <%= f.text_field :user, :required => true %>
+    <%= collection_select(:user, :user_id, User.where(:status => 1), :id, :email, {:prompt => true}, {:required => true}) %>
   </p>
 
   <p>

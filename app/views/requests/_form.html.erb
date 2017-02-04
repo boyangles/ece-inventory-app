@@ -12,12 +12,11 @@
   <p>
     <%= f.label :quantity %><br>
     <%= f.number_field :quantity, :required => true %>
-
   </p>
   
   <p>
     <%= f.label :request_type %><br>
-    <%= f.text_field :request_type, :required => true %>
+    <%= f.select :request_type, Request.request_types.keys.to_a %>
   </p>
 
   <p>
