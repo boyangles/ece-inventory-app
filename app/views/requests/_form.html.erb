@@ -16,7 +16,7 @@
   
   <p>
     <%= f.label :request_type %><br>
-    <%= f.select :request_type, [['Disbursement','disbursement'],['Acquisition','acquisition'],['Destruction','destruction']] %>
+    <%= f.select :request_type, Request.request_types.keys.to_a %>
   </p>
 
   <p>
