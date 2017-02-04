@@ -6,7 +6,18 @@ class ItemsController < ApplicationController
   # GET /items
   # GET /items.json
   def index
-    @items = Item.where("unique_name ILIKE ?", "%#{params[:search]}%").order('unique_name ASC').paginate(page: params[:page], per_page: 10)
+    @tags = Tag.all
+    
+    @required_tag_filters = (params[:required_tag_names]) ? 
+      params[:required_tag_names] : []
+    @excluded_tag_filters = (params[:excluded_tag_names]) ?
+      params[:excluded_tag_names] : []
+
+    items_req = Item.tagged_with_all(@required_tag_filters).select("id")
+    items_exc = Item.tagged_with_none(@excluded_tag_filters).select("id")
+    items_req_and_exc = Item.where(:id => items_req & items_exc)
+
+    @items = items_req_and_exc.filter_by_search(params[:search]).order('unique_name ASC').paginate(page: params[:page], per_page: 10)
   end
 
 
