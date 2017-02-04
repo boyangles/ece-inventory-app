@@ -11,8 +11,7 @@
 
   <p>
     <%= f.label :quantity %><br>
-    <%= f.select :quantity, ((0..Item.where(["unique_name = ?", request.item_name]).first.quantity).map {|i| [i,i] }) %>
-  </p>
+    <%= f.number_field :quantity, :required => true %>  </p>
   
   <p>
     <%= f.label 'User to distribute to' %><br>
