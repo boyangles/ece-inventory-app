@@ -32,6 +32,7 @@ FactoryGirl.define do
     password "password"
     email "example@duke.edu"
     status 0
+    privilege 0
     email_confirmed false
   end
 end
