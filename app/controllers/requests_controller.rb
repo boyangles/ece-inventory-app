@@ -64,10 +64,10 @@ class RequestsController < ApplicationController
    if request_is_admin_status_update?(@request, request_params)
       item_name = @request.item_name
       if !item_exists?(item_name)
-        flash[:error] = "Item does not exist anymore."
+        flash[:danger] = "Item does not exist anymore."
         redirect_to request_path(@request)
       elsif !item_quantity_sufficient?(@request, item_name)
-        flash[:error] = "Item quantity not sufficient to fulfill request."
+        flash[:danger] = "Item quantity not sufficient to fulfill request."
         redirect_to request_path(@request)
       else
         flash[:success] = "Request approved"
