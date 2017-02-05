@@ -24,4 +24,24 @@ class Request < ApplicationRecord
   # Validations
   validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
   validates :status, :inclusion => { :in => STATUS_OPTIONS }
+
+  # Methods:
+  def item_relevant?(item_name)
+    Item.exists?(:unique_name => item_name)
+  end
+
+  def oversubscribed?(item)
+    quantity_diff = item[:quantity] - self[:quantity]
+    
+    case self.request_type.to_sym
+    when :disbursement
+      return quantity_diff < 0
+    when :acquisition
+      return false
+    when :destruction
+      return quantity_diff < 0
+    else
+      return false
+    end
+  end
 end

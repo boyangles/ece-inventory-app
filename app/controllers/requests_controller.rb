@@ -42,53 +42,27 @@ class RequestsController < ApplicationController
   # POST /requests.json
   def create
     @request = Request.new(request_params)
-    @request.user = (params[:user]) ? params[:user][:username] : nil
-    item_name = @request.item_name
+    @request.user = (params[:user]) ? params[:user][:username] : current_user.username
 
-    if !item_exists?(item_name)
-      flash[:danger] = "Item does not currently exist"
-      render 'new' and return
+    @item = Item.find_by(:unique_name => @request.item_name)
+
+    # Create a denied request or an outstanding request
+    if !@request.approved?
+      save_form(@request) and return
     end
 
-    if @request.approved?
-      if @request.disbursement? && 
-              !item_quantity_sufficient?(@request, item_name)
-        flash[:danger] = "Cannot disburse when overdrafting item"
-        render 'new' and return
-      elsif @request.destruction? &&
-              !item_quantity_sufficient?(@request, item_name)
-        flash[:danger] = "Cannot destroy more items than in inventory"
-        render 'new' and return
-      end
-      
-      if @request.save
-        flash[:success] = "Request completed"
-        redirect_to(requests_path)
-
-
-        item = Item.find_by(:unique_name => item_name) # should be unique
-        item.quantity = (@request.acquisition?) ? 
-          item.quantity + @request.quantity : item.quantity - @request.quantity
-        item.save!
-
-        new_log_params = log_params
-        new_log_params[:user] = params[:user] ? params[:user][:username] : @request.user
-
-        new_log = Log.new(new_log_params)
-        new_log.save!
-      else
-        render 'new'
-      end
-    else
-      if @request.save
-        flash[:success] = "Request created"
-        redirect_to(requests_path)
-      else
-        render 'new'
-      end
+    if !@item
+      reject_to_new("Item does not currently exist") and return
+    elsif @request.oversubscribed?(@item)
+      reject_to_new("Oversubscribed!") and return
     end
 
-    
+    save_form(@request)
+    @item.update_by_request(@request)
+    @item.save!
+
+    @log = new_log_by_params_hash(@request, log_params)
+    @log.save!
   end
 
   # PATCH/PUT /requests/1
@@ -147,6 +121,31 @@ class RequestsController < ApplicationController
 
     def findRequestbyUser(user)
        Request.find_by_user(user.username)
+    end
+
+    def save_form(req)
+      if req.save
+        flash[:success] = "Request created"
+        redirect_to(requests_path)
+      else
+        render 'new'
+      end
+    end
+
+    def reject_to_new(msg)
+      flash[:danger] = msg
+      render 'new'
+    end
+
+    def new_log_by_params_hash(request, log_params)
+      new_log_params = log_params
+      new_log_params[:datetime] = log_params[:datetime] ? log_params[:datetime] : request.datetime
+      new_log_params[:item_name] = log_params[:item_name] ? log_params[:item_name] : request.item_name
+      new_log_params[:quantity] = log_params[:quantity] ? log_params[:quantity] : request.quantity
+      new_log_params[:request_type] = log_params[:request_type] ? log_params[:request_type] : request.request_type
+      new_log_params[:user] = params[:user] ? params[:user][:username] : request.user
+
+      return Log.new(new_log_params)
     end
 
     def request_index_by_admin
