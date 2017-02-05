@@ -10,10 +10,13 @@ class Log < ApplicationRecord
   }
   
   scope :datetime,      -> (datetime)     { where datetime: datetime }
-  scope :item_id,       -> (item_id)      { where item_id: item_id }
+  scope :item_name,     -> (item_name)    { where item_name: item_name }
   scope :quantity,      -> (quantity)     { where quantity: quantity }
-  scope :user_id,       -> (user_id)      { where user_id: user_id }
+  scope :user,          -> (user)         { where user: user }
   scope :request_type,  -> (request_type) { where request_type: request_type }
 
   validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
+
+  # Methods:
+
 end

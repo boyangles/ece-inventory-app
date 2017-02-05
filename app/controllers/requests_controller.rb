@@ -46,22 +46,45 @@ class RequestsController < ApplicationController
     if params[:user]
       @request.user = User.find(params[:user][:user_id]).username
     end
+    
+    item_name = @request.item_name
 
-    respond_to do |format|
-      if @request.save
-        format.html { redirect_to @request, notice: 'Request was successfully created.' }
-        format.json { render :show, status: :created, location: @request }
-      else
-        format.html { render :new }
-        format.json { render json: @request.errors, status: :unprocessable_entity }
+    if !item_exists?(item_name)
+      flash[:danger] = "Item does not currently exist"
+      render 'new' and return
+    end
+
+    if @request.approved?
+      if @request.disbursement? && 
+              !item_quantity_sufficient?(@request, item_name)
+        flash[:danger] = "Cannot disburse when overdrafting item"
+        render 'new' and return
+      elsif @request.destruction? &&
+              !item_quantity_sufficient?(@request, item_name)
+        flash[:danger] = "Cannot destroy more items than in inventory"
+        render 'new' and return
       end
     end
+
+    if @request.save
+      flash[:success] = "Request created"
+      redirect_to(requests_path)
+
+
+      item = Item.find_by(:unique_name => item_name) # should be unique
+      item.quantity = (@request.acquisition?) ? 
+        item.quantity + @request.quantity : item.quantity - @request.quantity
+      item.save!
+    else
+      render 'new'
+    end
+    
   end
 
   # PATCH/PUT /requests/1
   # PATCH/PUT /requests/1.json
   def update
-   if request_is_admin_status_update?(@request, request_params)
+    if request_is_admin_status_update?(@request, request_params)
       item_name = @request.item_name
       if !item_exists?(item_name)
         flash[:danger] = "Item does not exist anymore."

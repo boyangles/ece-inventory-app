@@ -97,9 +97,9 @@ end
 
   Log.create!(
     datetime: datetime,
-    item_id: item.id,
+    item_name: item.unique_name,
     quantity: quantity,
-    user_id: user.id,
+    user: user.username,
     request_type: request_type
   )
 end
