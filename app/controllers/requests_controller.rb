@@ -42,11 +42,10 @@ class RequestsController < ApplicationController
   # POST /requests.json
   def create
     @request = Request.new(request_params)
-    @request.user = (params[:user]) ? params[:user][:username] : current_user.username
+    @request.user = params[:user] ? params[:user][:username] : @request.user
 
     @item = Item.find_by(:unique_name => @request.item_name)
 
-    # Create a denied request or an outstanding request
     if !@request.approved?
       save_form(@request) and return
     end
@@ -55,50 +54,40 @@ class RequestsController < ApplicationController
       reject_to_new("Item does not currently exist") and return
     elsif @request.oversubscribed?(@item)
       reject_to_new("Oversubscribed!") and return
+    else
+      save_form(@request)
+      @item.update_by_request(@request)
+      @item.save!
+
+      @log = Log.new(log_params)
+      @log.user = @request.user
+      @log.save!
     end
-
-    save_form(@request)
-    @item.update_by_request(@request)
-    @item.save!
-
-    @log = new_log_by_params_hash(@request, log_params)
-    @log.save!
   end
 
   # PATCH/PUT /requests/1
   # PATCH/PUT /requests/1.json
   def update
-    if request_is_admin_status_update?(@request, request_params)
-      item_name = @request.item_name
-      if !item_exists?(item_name)
-        flash[:danger] = "Item does not exist anymore."
-        redirect_to request_path(@request)
-      elsif !item_quantity_sufficient?(@request, item_name)
-        flash[:danger] = "Item quantity not sufficient to fulfill request."
-        redirect_to request_path(@request)
-      else
-        flash[:success] = "Request approved"
-        edit_request(@request)
-
-        item = Item.find_by(:unique_name => item_name) # should be unique
-        item.quantity = item.quantity - @request.quantity
-        item.save!
-
-        new_log_params = log_params
-        new_log_params[:datetime] = log_params[:datetime] ? log_params[:datetime] : @request.datetime
-        new_log_params[:item_name] = log_params[:item_name] ? log_params[:item_name] : @request.item_name
-        new_log_params[:quantity] = log_params[:quantity] ? log_params[:quantity] : @request.quantity
-        new_log_params[:request_type] = log_params[:request_type] ? log_params[:request_type] : @request.request_type
-        new_log_params[:user] = params[:user] ? params[:user][:username] : @request.user
-
-        new_log = Log.new(new_log_params)
-        new_log.save!
-      end
-
-    else
-      edit_request(@request)
+    @request.user = params[:user] ? params[:user][:username] : @request.user
+    @item = Item.find_by(:unique_name => @request.item_name)
+    
+    if !@request.has_status_change_to_approved?(request_params)
+      update_form(@request, request_params) and return
     end
+    
+    if !@item
+      reject_to_edit(@request, "Item does not currently exist") and return
+    elsif @request.oversubscribed?(@item)
+      reject_to_edit(@request, "Oversubscribed!") and return
+    else
+      update_form(@request, request_params)
+      @item.update_by_request(@request)
+      @item.save!
 
+      @log = Log.new(log_params)
+      @log.user = @request.user
+      @log.save!
+    end
   end
 
   # DELETE /requests/1
@@ -132,20 +121,24 @@ class RequestsController < ApplicationController
       end
     end
 
+    def update_form(req, params)
+      if req.update(params)
+        flash[:success] = "Operation successful!"
+        redirect_to requests_path
+      else
+        flash[:danger] = "Operation failed"
+        redirect_to request_path(req)
+      end
+    end
+
     def reject_to_new(msg)
-      flash[:danger] = msg
+      flash.now[:danger] = msg
       render 'new'
     end
 
-    def new_log_by_params_hash(request, log_params)
-      new_log_params = log_params
-      new_log_params[:datetime] = log_params[:datetime] ? log_params[:datetime] : request.datetime
-      new_log_params[:item_name] = log_params[:item_name] ? log_params[:item_name] : request.item_name
-      new_log_params[:quantity] = log_params[:quantity] ? log_params[:quantity] : request.quantity
-      new_log_params[:request_type] = log_params[:request_type] ? log_params[:request_type] : request.request_type
-      new_log_params[:user] = params[:user] ? params[:user][:username] : request.user
-
-      return Log.new(new_log_params)
+    def reject_to_edit(request, msg)
+      flash[:danger] = msg
+      redirect_to request_path(request)
     end
 
     def request_index_by_admin

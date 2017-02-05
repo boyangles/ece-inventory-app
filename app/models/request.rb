@@ -44,4 +44,8 @@ class Request < ApplicationRecord
       return false
     end
   end
+
+  def has_status_change_to_approved?(request_params)
+    self.outstanding? && request_params[:status] == 'approved'
+  end
 end

@@ -18,5 +18,4 @@ class Log < ApplicationRecord
   validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
 
   # Methods:
-
 end
