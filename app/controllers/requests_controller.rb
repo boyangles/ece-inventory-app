@@ -42,11 +42,7 @@ class RequestsController < ApplicationController
   # POST /requests.json
   def create
     @request = Request.new(request_params)
-
-    if params[:user]
-      @request.user = User.find(params[:user][:user_id]).username
-    end
-    
+    @request.user = (params[:user]) ? params[:user][:username] : nil
     item_name = @request.item_name
 
     if !item_exists?(item_name)
@@ -64,20 +60,34 @@ class RequestsController < ApplicationController
         flash[:danger] = "Cannot destroy more items than in inventory"
         render 'new' and return
       end
-    end
+      
+      if @request.save
+        flash[:success] = "Request completed"
+        redirect_to(requests_path)
 
-    if @request.save
-      flash[:success] = "Request created"
-      redirect_to(requests_path)
 
+        item = Item.find_by(:unique_name => item_name) # should be unique
+        item.quantity = (@request.acquisition?) ? 
+          item.quantity + @request.quantity : item.quantity - @request.quantity
+        item.save!
 
-      item = Item.find_by(:unique_name => item_name) # should be unique
-      item.quantity = (@request.acquisition?) ? 
-        item.quantity + @request.quantity : item.quantity - @request.quantity
-      item.save!
+        new_log_params = log_params
+        new_log_params[:user] = params[:user] ? params[:user][:username] : @request.user
+
+        new_log = Log.new(new_log_params)
+        new_log.save!
+      else
+        render 'new'
+      end
     else
-      render 'new'
+      if @request.save
+        flash[:success] = "Request created"
+        redirect_to(requests_path)
+      else
+        render 'new'
+      end
     end
+
     
   end
 
@@ -99,10 +109,19 @@ class RequestsController < ApplicationController
         item = Item.find_by(:unique_name => item_name) # should be unique
         item.quantity = item.quantity - @request.quantity
         item.save!
+
+        new_log_params = log_params
+        new_log_params[:datetime] = log_params[:datetime] ? log_params[:datetime] : @request.datetime
+        new_log_params[:item_name] = log_params[:item_name] ? log_params[:item_name] : @request.item_name
+        new_log_params[:quantity] = log_params[:quantity] ? log_params[:quantity] : @request.quantity
+        new_log_params[:request_type] = log_params[:request_type] ? log_params[:request_type] : @request.request_type
+        new_log_params[:user] = params[:user] ? params[:user][:username] : @request.user
+
+        new_log = Log.new(new_log_params)
+        new_log.save!
       end
 
     else
-      # redirect_to root_url
       edit_request(@request)
     end
 
@@ -133,13 +152,14 @@ class RequestsController < ApplicationController
     def request_index_by_admin
       if !current_user
         redirect_to root_url
-      # elsif !current_user.privilege_admin?
-      #   username = current_user.username
-      #   redirect_to requests_path, user: username
       end
     end
     # Never trust parameters from the scary internet, only allow the white list through.
     def request_params
-      params.fetch(:request, {}).permit(:datetime, :user, :item_name, :quantity, :reason, :status, :request_type, :instances, :response)
+      params.fetch(:request, {}).permit(:datetime, :user, :item_name, :quantity, :reason, :status, :request_type, :response)
+    end
+
+    def log_params
+      params.fetch(:request, {}).permit(:datetime, :item_name, :quantity, :user, :request_type)
     end
 end

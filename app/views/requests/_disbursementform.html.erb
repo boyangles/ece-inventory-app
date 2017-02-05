@@ -15,7 +15,7 @@
   
   <p>
     <%= f.label 'User to distribute to' %><br>
-    <%= collection_select(:user, :user_id, User.where(:status => 1), :id, :email, {:prompt => true}, {:required => true}) %>
+    <%= collection_select(:user, :username, User.where(:status => 1), :username, :username, {:prompt => true}, {:required => true}) %>
   </p>
 
   <p>

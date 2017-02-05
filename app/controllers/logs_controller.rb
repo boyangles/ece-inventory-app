@@ -20,14 +20,55 @@ class LogsController < ApplicationController
     new_log_params[:item_name] = params[:item][:unique_name]
     @log = Log.new(new_log_params)
 
-    # TODO: Make disbursement/acquisition/destruction decrement actual item quantities
+    @item = Item.find_by(:unique_name => @log.item_name)
 
-    if @log.save
-      flash[:success] = "Log succesfully saved!"
-      redirect_to logs_path
-    else
-      render 'new'
+    # TODO: Make disbursement/acquisition/destruction decrement actual item quantities
+    if @log.disbursement?
+      if @item.quantity >= @log.quantity
+        if @log.save
+          flash[:success] = "Log succesfully saved!"
+          redirect_to logs_path
+
+          @item.quantity = @item.quantity - @log.quantity
+          @item.save!
+        else
+          flash[:danger] = "Unable to save!"
+          render 'new' and return
+        end
+      else
+          flash[:danger] = "Not enough item quantity"
+          render 'new' and return
+      end
+    elsif @log.destruction?
+      if @item.quantity >= @log.quantity
+        if @log.save
+          flash[:success] = "Log succesfully saved!"
+          redirect_to logs_path
+  
+          @item.quantity = @item.quantity - @log.quantity
+          @item.save!
+        else
+          flash[:danger] = "Unable to save!"
+          render 'new' and return
+        end
+      else
+          flash[:danger] = "Not enough item quantity"
+          render 'new' and return
+      end
+    else # @log.acquisition?
+      if @log.save
+        flash[:success] = "Log succesfully saved!"
+        redirect_to logs_path
+
+
+        @item.quantity = @item.quantity + @log.quantity
+        @item.save!
+      else
+        flash[:danger] = "Unable to save!"
+        render 'new' and return
+      end
     end
+
   end
 
   private
