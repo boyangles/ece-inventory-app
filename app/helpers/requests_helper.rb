@@ -1,8 +1,4 @@
 module RequestsHelper
-  def request_is_admin_status_update?(old_request, update_params)
-      old_request.outstanding? && update_params[:status] == 'approved'
-  end
-
   def edit_request(request)
     respond_to do |format|
       if request.update(request_params)

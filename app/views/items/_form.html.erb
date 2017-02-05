@@ -31,6 +31,11 @@
       <%= f.text_field :model_number %>
     </p>
 
+    <p>
+      <%= f.label :location %><br>
+      <%= f.text_field :location %>
+    </p>
+
     <!-- For adding tags to items -->
     <p> <strong>Tags</strong></p>
     <% if Tag.all.count > item.tags.all.count %>
