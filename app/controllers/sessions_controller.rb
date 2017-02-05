@@ -1,4 +1,6 @@
 class SessionsController < ApplicationController
+  before_action :check_logged_out_user, only: [:new, :create]
+ 
   def new
   end
 
