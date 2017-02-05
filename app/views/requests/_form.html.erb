@@ -25,7 +25,7 @@
   </p>
 
   <%= f.hidden_field :item_name, :value => request.item_name %>
-  <%= f.hidden_field :user, :value => current_user.username %>
+  <%= f.hidden_field :user, :value => (request.user) ? request.user : current_user.username %>
   <%= f.hidden_field :datetime, :value => Time.now %>
   <%= f.hidden_field :status, :value => "outstanding" %>
 

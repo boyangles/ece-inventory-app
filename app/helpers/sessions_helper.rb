@@ -60,6 +60,13 @@ module SessionsHelper
     end
   end
 
+  def check_logged_out_user
+    unless !logged_in?
+      flash[:danger] = "You are already logged in!"
+      redirect_to root_url and return
+    end
+  end
+
   # Confirms correct user, otherwise redirect to homepage
   def check_current_user
     @user = User.find(params[:id])

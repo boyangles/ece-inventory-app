@@ -3,6 +3,8 @@
 
 <h1>Logs</h1>
 
+<%= link_to "Report Acquisition and Damages", new_log_path, class: "btn btn-lg btn-primary" %>
+
 <table>
   <thead>
     <tr>
@@ -15,11 +17,11 @@
   </thead>
 
   <tbody>
-    <% @detailed_logs.each do |log| %>
+    <% @logs.each do |log| %>
       <tr>
         <th><%= log[:datetime] %></th>
-        <th><%= log[:user][:username] %></th>
-        <th><%= log[:item][:unique_name] %></th>
+        <th><%= log[:user] %></th>
+        <th><%= log[:item_name] %></th>
         <th><%= log[:quantity] %></th>
         <th><%= log[:request_type] %></th>
       </tr>

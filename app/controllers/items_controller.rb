@@ -87,7 +87,7 @@ class ItemsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
-    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :search)
+    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :search, :location)
   end
 
 end

@@ -1,8 +1,7 @@
 class Request < ApplicationRecord
-  include Filterable
+  include Filterable, Subscribable
 
   # Data Options:
-  REQUEST_TYPE_OPTIONS = %w(disbursement acquisition destruction)
   STATUS_OPTIONS = %w(outstanding approved denied)
 
   enum request_type: {
@@ -24,4 +23,13 @@ class Request < ApplicationRecord
   # Validations
   validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
   validates :status, :inclusion => { :in => STATUS_OPTIONS }
+
+  # Methods:
+  def item_relevant?(item_name)
+    Item.exists?(:unique_name => item_name)
+  end
+
+  def has_status_change_to_approved?(request_params)
+    self.outstanding? && request_params[:status] == 'approved'
+  end
 end
