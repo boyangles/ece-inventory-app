@@ -31,6 +31,11 @@
 </p>
 
 <p>
+  <strong>Location:</strong>
+  <%= @item.location %>
+</p>
+
+<p>
   <strong>Tags:</strong>
   <% @item.tags.each do |tag| %>
     <%= tag.name + ', ' %>

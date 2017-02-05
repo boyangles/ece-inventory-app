@@ -2,10 +2,7 @@ class AccountrequestsController < ApplicationController
 
   def index
     check_admin_user
-    @accountrequests = User.where(:status => "waiting").paginate(page: params[:page], per_page: 10)
-
-    #@user_request_page = User.paginate(page: params[:page], per_page: 10)
-    #@user_request_page = User.where(:status => "waiting").page(params[:page])
+    @accountrequests = User.where(status: 0, email_confirmed: true).paginate(page: params[:page], per_page: 10)
   end
 
   def destroy

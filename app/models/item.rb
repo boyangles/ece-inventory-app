@@ -29,4 +29,17 @@ class Item < ApplicationRecord
   def self.filter_by_search(search_input)
     where("unique_name ILIKE ?", "%#{search_input}%") 
   end
+
+  def update_by_request(request) 
+    case request.request_type.to_sym
+    when :disbursement
+      self[:quantity] = self[:quantity] - request[:quantity]
+    when :acquisition
+      self[:quantity] = self[:quantity] + request[:quantity]
+    when :destruction
+      self[:quantity] = self[:quantity] - request[:quantity]
+    else
+      self[:quantity]
+    end
+  end
 end
