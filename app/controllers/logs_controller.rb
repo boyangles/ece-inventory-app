@@ -16,63 +16,39 @@ class LogsController < ApplicationController
   end
 
   def create
-    new_log_params = log_params
-    new_log_params[:item_name] = params[:item][:unique_name]
-    @log = Log.new(new_log_params)
+    @log = Log.new(log_params)
+    @log.item_name = params[:item][:unique_name]
 
     @item = Item.find_by(:unique_name => @log.item_name)
-
-    # TODO: Make disbursement/acquisition/destruction decrement actual item quantities
-    if @log.disbursement?
-      if @item.quantity >= @log.quantity
-        if @log.save
-          flash[:success] = "Log succesfully saved!"
-          redirect_to logs_path
-
-          @item.quantity = @item.quantity - @log.quantity
-          @item.save!
-        else
-          flash[:danger] = "Unable to save!"
-          render 'new' and return
-        end
-      else
-          flash[:danger] = "Not enough item quantity"
-          render 'new' and return
-      end
-    elsif @log.destruction?
-      if @item.quantity >= @log.quantity
-        if @log.save
-          flash[:success] = "Log succesfully saved!"
-          redirect_to logs_path
-  
-          @item.quantity = @item.quantity - @log.quantity
-          @item.save!
-        else
-          flash[:danger] = "Unable to save!"
-          render 'new' and return
-        end
-      else
-          flash[:danger] = "Not enough item quantity"
-          render 'new' and return
-      end
-    else # @log.acquisition?
-      if @log.save
-        flash[:success] = "Log succesfully saved!"
-        redirect_to logs_path
-
-
-        @item.quantity = @item.quantity + @log.quantity
-        @item.save!
-      else
-        flash[:danger] = "Unable to save!"
-        render 'new' and return
-      end
+    
+    if !@item
+      reject_to_new("Item does not exist") and return
+    elsif Log.oversubscribed?(@item, @log)
+      reject_to_new("Oversubscribed!") and return
+    else
+      save_form(@log)
+      @item.update_by_request(@log)
+      @item.save!
     end
-
   end
 
   private
     def log_params
       params.fetch(:log, {}).permit(:datetime, :item_name, :quantity, :user, :request_type)
+    end
+
+    def save_form(log)
+      if log.save
+        flash[:success] = "Log succesfully saved!"
+        redirect_to(logs_path)
+      else
+        flash.now[:danger] = "Log could not be successfully saved"
+        render 'new'
+      end
+    end
+
+    def reject_to_new(msg)
+      flash.now[:danger] = msg
+      render 'new'
     end
 end

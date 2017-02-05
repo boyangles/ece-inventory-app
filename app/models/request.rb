@@ -1,8 +1,7 @@
 class Request < ApplicationRecord
-  include Filterable
+  include Filterable, Subscribable
 
   # Data Options:
-  REQUEST_TYPE_OPTIONS = %w(disbursement acquisition destruction)
   STATUS_OPTIONS = %w(outstanding approved denied)
 
   enum request_type: {
@@ -28,21 +27,6 @@ class Request < ApplicationRecord
   # Methods:
   def item_relevant?(item_name)
     Item.exists?(:unique_name => item_name)
-  end
-
-  def oversubscribed?(item)
-    quantity_diff = item[:quantity] - self[:quantity]
-    
-    case self.request_type.to_sym
-    when :disbursement
-      return quantity_diff < 0
-    when :acquisition
-      return false
-    when :destruction
-      return quantity_diff < 0
-    else
-      return false
-    end
   end
 
   def has_status_change_to_approved?(request_params)

@@ -1,7 +1,5 @@
 class Log < ApplicationRecord
-  include Filterable
-
-  REQUEST_TYPE_OPTIONS = %w(disbursement acquisition destruction)
+  include Filterable, Subscribable
 
   enum request_type: {
     disbursement: 0,

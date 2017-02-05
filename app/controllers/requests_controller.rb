@@ -52,7 +52,7 @@ class RequestsController < ApplicationController
 
     if !@item
       reject_to_new("Item does not currently exist") and return
-    elsif @request.oversubscribed?(@item)
+    elsif Request.oversubscribed?(@item, @request)
       reject_to_new("Oversubscribed!") and return
     else
       save_form(@request)
@@ -77,7 +77,7 @@ class RequestsController < ApplicationController
     
     if !@item
       reject_to_edit(@request, "Item does not currently exist") and return
-    elsif @request.oversubscribed?(@item)
+    elsif Request.oversubscribed?(@item, @request)
       reject_to_edit(@request, "Oversubscribed!") and return
     else
       update_form(@request, request_params)
@@ -117,6 +117,7 @@ class RequestsController < ApplicationController
         flash[:success] = "Request created"
         redirect_to(requests_path)
       else
+        flash.now[:danger] = "Request could not be successfully saved"
         render 'new'
       end
     end
