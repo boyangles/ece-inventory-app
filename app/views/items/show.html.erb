@@ -43,12 +43,12 @@
 </p>
 
 
-<%= link_to "New Request", new_request_url(:item_name => @item.unique_name), :class => "btn btn-primary" %>
+<%= link_to "New Request", new_request_url(:item_id => @item.id), :class => "btn btn-primary" %>
 
 
 <% if current_user.privilege_admin? %>
     <%= link_to 'Remove item', @item, method: :delete, data: { confirm: 'Are you sure?' }, :class => "btn btn-primary" %>
-    <%= link_to 'Edit item', edit_item_path(@item),:class => "btn btn-primary" %>
+    <%= link_to 'Edit item', edit_item_path(@item), :class => "btn btn-primary" %>
 <% end %>
 
 <%= render 'requests' %>

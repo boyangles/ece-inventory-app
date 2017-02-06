@@ -1,6 +1,9 @@
 class Request < ApplicationRecord
   include Filterable, Subscribable
 
+  belongs_to :item
+  belongs_to :user
+
   # Data Options:
   STATUS_OPTIONS = %w(outstanding approved denied)
 
@@ -16,17 +19,19 @@ class Request < ApplicationRecord
     denied: 2
   }
 
-  scope :user, -> (username) { where user: username }
+  scope :user_id, -> (user_id) { where user_id: user_id }
   scope :status, -> (status) { where status: status }
-  scope :item_name, -> (item_name) { where item_name: item_name }
+  scope :item_id, -> (item_id) { where item_id: item_id }
 
   # Validations
   validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
   validates :status, :inclusion => { :in => STATUS_OPTIONS }
+  validates :user_id, presence: true
+  validates :item_id, presence: true
 
   # Methods:
-  def item_relevant?(item_name)
-    Item.exists?(:unique_name => item_name)
+  def item_relevant?(item_id)
+    Item.exists?(:id => item_id)
   end
 
   def has_status_change_to_approved?(request_params)

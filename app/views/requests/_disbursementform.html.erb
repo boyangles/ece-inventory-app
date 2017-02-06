@@ -6,7 +6,10 @@
 
   <p>
     <b>Item Requested</b>
-    <%= request.item_name %>
+    <% item = Item.find(request.item_id) %>
+    <% if item %>
+      <%= item.unique_name %>
+    <% end %>
   </p>
 
   <p>
@@ -15,7 +18,7 @@
   
   <p>
     <%= f.label 'User to distribute to' %><br>
-    <%= collection_select(:user, :username, User.where(:status => 1), :username, :username, {:prompt => true}, {:required => true}) %>
+    <%= collection_select(:user, :id, User.where(:status => 1), :id, :username, {:prompt => true}, {:required => true}) %>
   </p>
 
   <p>
@@ -23,7 +26,7 @@
     <%= f.text_area :response %>
   </p>
 
-  <%= f.hidden_field :item_name, :value => request.item_name %>
+  <%= f.hidden_field :item_id, :value => request.item_id %>
   <%= f.hidden_field :reason, :value => request.reason %>
   <%= f.hidden_field :datetime, :value => Time.now %>
   <%= f.hidden_field :status, :value => "approved" %>

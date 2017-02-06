@@ -11,7 +11,7 @@ class RequestsController < ApplicationController
     filter_params = params.slice(:status)
 
     if !current_user.privilege_admin?
-      filter_params[:user] = current_user.username
+      filter_params[:user_id] = current_user.user_id
     end
 
     @requests = Request.filter(filter_params)
@@ -21,30 +21,33 @@ class RequestsController < ApplicationController
   # GET /requests/1.json
   def show
     @request = Request.find(params[:id])
+    @item = Item.find(@request.item_id)
+    @user = User.find(@request.user_id)
   end
 
   # GET /requests/new
   def new
     @request = Request.new
     
-    if !params[:item_name].blank?
-      @request[:item_name] = params[:item_name]
+    if !params[:item_id].blank?
+      @request[:item_id] = params[:item_id]
     end
-    
   end
 
   # GET /requests/1/edit
   def edit
     @request = Request.find(params[:id])
+    @item = Item.find(@request.item_id)
+    @user = User.find(@request.user_id)
   end
 
   # POST /requests
   # POST /requests.json
   def create
     @request = Request.new(request_params)
-    @request.user = params[:user] ? params[:user][:username] : @request.user
+    @request.user_id = params[:user] ? params[:user][:id] : @request.user_id
 
-    @item = Item.find_by(:unique_name => @request.item_name)
+    @item = Item.find(@request.item_id)
 
     if !@request.approved?
       save_form(@request) and return
@@ -60,7 +63,7 @@ class RequestsController < ApplicationController
       @item.save!
 
       @log = Log.new(log_params)
-      @log.user = @request.user
+      @log.user_id = @request.user_id
       @log.save!
     end
   end
@@ -68,8 +71,8 @@ class RequestsController < ApplicationController
   # PATCH/PUT /requests/1
   # PATCH/PUT /requests/1.json
   def update
-    @request.user = params[:user] ? params[:user][:username] : @request.user
-    @item = Item.find_by(:unique_name => @request.item_name)
+    @request.user_id = params[:user] ? params[:user][:id] : @request.user_id
+    @item = Item.find(@request.item_id)
     
     if !@request.has_status_change_to_approved?(request_params)
       update_form(@request, request_params) and return
@@ -85,7 +88,7 @@ class RequestsController < ApplicationController
       @item.save!
 
       @log = Log.new(log_params)
-      @log.user = @request.user
+      @log.user_id = @request.user_id
       @log.save!
     end
   end
@@ -106,10 +109,6 @@ class RequestsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_request
       @request = Request.find(params[:id])
-    end
-
-    def findRequestbyUser(user)
-       Request.find_by_user(user.username)
     end
 
     def save_form(req)
@@ -149,10 +148,10 @@ class RequestsController < ApplicationController
     end
     # Never trust parameters from the scary internet, only allow the white list through.
     def request_params
-      params.fetch(:request, {}).permit(:datetime, :user, :item_name, :quantity, :reason, :status, :request_type, :response)
+      params.fetch(:request, {}).permit(:datetime, :user_id, :item_id, :quantity, :reason, :status, :request_type, :response)
     end
 
     def log_params
-      params.fetch(:request, {}).permit(:datetime, :item_name, :quantity, :user, :request_type)
+      params.fetch(:request, {}).permit(:datetime, :item_id, :quantity, :user_id, :request_type)
     end
 end

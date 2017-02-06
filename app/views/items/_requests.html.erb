@@ -17,7 +17,8 @@
       <tr>
         <th><%= request.datetime %></th>
         <% if current_user.privilege_admin? %>
-          <th><%= request.user %></th>
+          <% user = User.find(request.user_id) %>
+          <th><%= user.username %></th>
         <% end %>
         <th><%= request.quantity %></th>
         <th><%= request.request_type %></th>

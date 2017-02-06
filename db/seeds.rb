@@ -6,8 +6,6 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-Request.create([{ datetime: Time.new(2017) , user: 'austin', item_name: 1 , quantity: 5, reason: 'got bored', status: 'outstanding', request_type: 'acquisition'}])
-
 Tag.create([{ name: 'expensive'}, { name: 'rich'}, { name: 'broke'}, { name: '1'}])
 
 
@@ -77,12 +75,12 @@ end
 
   Request.create!(
     datetime: datetime,
-    user: user.username,
+    user_id: user.id,
     quantity: item.quantity,
     reason: reason,
     status: "outstanding",
     request_type: "disbursement",
-    item_name: "item-#{n+1}"
+    item_id: item.id
   )
 end
   
@@ -97,13 +95,9 @@ end
 
   Log.create!(
     datetime: datetime,
-    item_name: item.unique_name,
+    item_id: item.id,
     quantity: quantity,
-    user: user.username,
+    user_id: user.id,
     request_type: request_type
   )
 end
-
-  # Acquisitions:
-
-  # Destructions:

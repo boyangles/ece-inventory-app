@@ -25,12 +25,12 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
 
     outstanding_filter_params = {
-      :item_name => @item.unique_name,
-        :status => "outstanding"
+      :item_id => @item.id,
+      :status => "outstanding"
     }
 
     if !current_user.privilege_admin?
-      outstanding_filter_params[:user] = current_user.username
+      outstanding_filter_params[:user_id] = current_user.id
     end
 
     @outstanding_item_requests = Request.filter(outstanding_filter_params)
@@ -64,6 +64,7 @@ class ItemsController < ApplicationController
     if @item.save
       redirect_to item_url(@item)
     else
+      flash.now[:danger] = "Unable to save!"
       render 'new'
     end
   end
@@ -78,6 +79,7 @@ class ItemsController < ApplicationController
       flash[:success] = "Item updated successfully"
       redirect_to @item
     else
+      flash.now[:danger] = "Unable to edit!"
       render 'edit'
     end
   end

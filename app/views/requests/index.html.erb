@@ -19,8 +19,8 @@
     <% @requests.each do |request| %>
       <tr>
         <th><%= request.datetime %></th>
-        <th><%= request.user %></th>
-        <th><%= request.item_name %></th>
+        <th><%= User.find(request.user_id).username %></th>
+        <th><%= Item.find(request.item_id).unique_name %></th>
         <th><%= request.quantity %></th>
         <th><%= request.reason %></th>
         <th><%= request.status %></th>

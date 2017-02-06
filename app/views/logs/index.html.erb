@@ -18,10 +18,12 @@
 
   <tbody>
     <% @logs.each do |log| %>
+      <% user = User.find(log.user_id) %>
+      <% item = Item.find(log.item_id) %>
       <tr>
         <th><%= log[:datetime] %></th>
-        <th><%= log[:user] %></th>
-        <th><%= log[:item_name] %></th>
+        <th><%= user.username %></th>
+        <th><%= item.unique_name %></th>
         <th><%= log[:quantity] %></th>
         <th><%= log[:request_type] %></th>
       </tr>
