@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(version: 20170206055931) do
     t.integer  "user_id"
     t.integer  "item_id"
     t.index ["item_id"], name: "index_logs_on_item_id", using: :btree
+    t.index ["user_id", "item_id", "created_at"], name: "index_logs_on_user_id_and_item_id_and_created_at", using: :btree
     t.index ["user_id"], name: "index_logs_on_user_id", using: :btree
   end
 
@@ -55,6 +56,7 @@ ActiveRecord::Schema.define(version: 20170206055931) do
     t.integer  "user_id"
     t.integer  "item_id"
     t.index ["item_id"], name: "index_requests_on_item_id", using: :btree
+    t.index ["user_id", "item_id", "created_at"], name: "index_requests_on_user_id_and_item_id_and_created_at", using: :btree
     t.index ["user_id"], name: "index_requests_on_user_id", using: :btree
   end
 

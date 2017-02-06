@@ -4,6 +4,9 @@ class Request < ApplicationRecord
   belongs_to :item
   belongs_to :user
 
+  # Default scopes
+  default_scope -> { order(created_at: :desc) }
+
   # Data Options:
   STATUS_OPTIONS = %w(outstanding approved denied)
 

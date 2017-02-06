@@ -25,4 +25,8 @@ class LogTest < ActiveSupport::TestCase
     @log.item_id = nil
     assert_not @log.valid?
   end
+
+  test "order should be most recent first" do
+    assert_equal logs(:most_recent), Log.first
+  end
 end

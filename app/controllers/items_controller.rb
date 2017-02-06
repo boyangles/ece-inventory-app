@@ -33,7 +33,7 @@ class ItemsController < ApplicationController
       outstanding_filter_params[:user_id] = current_user.id
     end
 
-    @outstanding_item_requests = Request.filter(outstanding_filter_params)
+    @requests = Request.filter(outstanding_filter_params).paginate(page: params[:page], per_page: 10)
   end
 
   # GET /items/new

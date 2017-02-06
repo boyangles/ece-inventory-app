@@ -4,6 +4,8 @@ class Log < ApplicationRecord
   belongs_to :item
   belongs_to :user
 
+  default_scope -> { order(created_at: :desc) }
+
   enum request_type: {
     disbursement: 0,
     acquisition: 1,
