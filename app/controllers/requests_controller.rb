@@ -6,7 +6,6 @@ class RequestsController < ApplicationController
   # before_action :request_index_by_admin, only: [ :index ]          #maybe
 
   # GET /requests
-  # GET /requests.json
   def index
     filter_params = params.slice(:status)
 
@@ -18,7 +17,6 @@ class RequestsController < ApplicationController
   end
 
   # GET /requests/1
-  # GET /requests/1.json
   def show
     @request = Request.find(params[:id])
     @item = Item.find(@request.item_id)
@@ -42,7 +40,6 @@ class RequestsController < ApplicationController
   end
 
   # POST /requests
-  # POST /requests.json
   def create
     @request = Request.new(request_params)
     @request.user_id = params[:user] ? params[:user][:id] : @request.user_id
@@ -69,7 +66,6 @@ class RequestsController < ApplicationController
   end
 
   # PATCH/PUT /requests/1
-  # PATCH/PUT /requests/1.json
   def update
     @request.user_id = params[:user] ? params[:user][:id] : @request.user_id
     @item = Item.find(@request.item_id)
@@ -94,13 +90,15 @@ class RequestsController < ApplicationController
   end
 
   # DELETE /requests/1
-  # DELETE /requests/1.json
   def destroy
-    @request.destroy
-    respond_to do |format|
-      format.html { redirect_to requests_url, notice: 'Request was successfully destroyed.' }
-      format.json { head :no_content }
+    
+    if (@request.destroy)
+      flash[:success] = "Request destroyed!"
+    else
+      flash[:danger] = "Unable to destroy request!"
     end
+
+    redirect_to requests_url
   end
 
   
