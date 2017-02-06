@@ -1,42 +1,25 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Requests</h1>
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+    <h1>Requests</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Date Requested</th>
-      <th>User</th>
-      <th>Item</th>
-      <th>Quantity</th>
-      <th>Reason</th>
-      <th>Status</th>
-      <th>Request Type</th>
-    </tr>
-  </thead>
+    <% if @requests.any? %>
+      <h3>No. Requests (<%= @requests.count %>)</h3>
+      <ol class="requests">
+        <%= render @requests %>
+      </ol>
 
-  <tbody>
-    <% @requests.each do |request| %>
-      <tr>
-        <th><%= request.created_at.to_date %></th>
-        <th><%= User.find(request.user_id).username %></th>
-        <th><%= Item.find(request.item_id).unique_name %></th>
-        <th><%= request.quantity %></th>
-        <th><%= request.reason %></th>
-        <th><%= request.status %></th>
-        <th><%= request.request_type %></th>
-        
-        <td><%= link_to 'Show', request %></td>
-        <td><%= link_to 'Edit', edit_request_path(request) %></td>
-        <td><%= link_to 'Destroy', request, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
+      <%= will_paginate @requests %>
     <% end %>
-  </tbody>
-</table>
+    
+    <br>
 
-<br>
+    <%= link_to "Outstanding Requests", requests_path(:status => "outstanding"), class: "btn btn-lg btn-primary" %>
+    <%= link_to "Approved Requests", requests_path(:status => "approved"), class: "btn btn-lg btn-primary" %>
+    <%= link_to "Denied Requests", requests_path(:status => "denied"), class: "btn btn-lg btn-primary" %>
+    <%= link_to "View All", requests_path, class: "btn btn-lg btn-primary" %>
+  </div>
+</div>
 
-<%= link_to "Outstanding Requests", requests_path(:status => "outstanding"), class: "btn btn-lg btn-primary" %>
-<%= link_to "Approved Requests", requests_path(:status => "approved"), class: "btn btn-lg btn-primary" %>
-<%= link_to "Denied Requests", requests_path(:status => "denied"), class: "btn btn-lg btn-primary" %>
-<%= link_to "View All", requests_path, class: "btn btn-lg btn-primary" %>
+

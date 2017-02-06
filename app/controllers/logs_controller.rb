@@ -6,7 +6,8 @@ class LogsController < ApplicationController
     @logs = Log.filter(params.slice(:item_id, 
                                     :quantity, 
                                     :user_id, 
-                                    :request_type))
+                                    :request_type)
+                      ).paginate(page: params[:page], per_page: 10)
     
   end
 
@@ -17,7 +18,7 @@ class LogsController < ApplicationController
   def create
     @log = Log.new(log_params)
     @log.item_id = params[:item][:id]
-    @item = Item.find(params[:item][:id])
+    @item = @log.item
 
     if !@item
       reject_to_new("Item does not exist") and return

@@ -10,17 +10,17 @@ class RequestsController < ApplicationController
     filter_params = params.slice(:status)
 
     if !current_user.privilege_admin?
-      filter_params[:user_id] = current_user.user_id
+      filter_params[:user_id] = current_user.id
     end
 
-    @requests = Request.filter(filter_params)
+    @requests = Request.filter(filter_params).paginate(page: params[:page], per_page: 10)
   end
 
   # GET /requests/1
   def show
     @request = Request.find(params[:id])
-    @item = Item.find(@request.item_id)
-    @user = User.find(@request.user_id)
+    @item = @request.item
+    @user = @request.user
   end
 
   # GET /requests/new
@@ -30,13 +30,15 @@ class RequestsController < ApplicationController
     if !params[:item_id].blank?
       @request[:item_id] = params[:item_id]
     end
+    @item = @request.item
+
   end
 
   # GET /requests/1/edit
   def edit
     @request = Request.find(params[:id])
-    @item = Item.find(@request.item_id)
-    @user = User.find(@request.user_id)
+    @item = @request.item
+    @user = @request.user
   end
 
   # POST /requests
@@ -44,7 +46,7 @@ class RequestsController < ApplicationController
     @request = Request.new(request_params)
     @request.user_id = params[:user] ? params[:user][:id] : @request.user_id
 
-    @item = Item.find(@request.item_id)
+    @item = @request.item
 
     if !@request.approved?
       save_form(@request) and return
@@ -68,7 +70,7 @@ class RequestsController < ApplicationController
   # PATCH/PUT /requests/1
   def update
     @request.user_id = params[:user] ? params[:user][:id] : @request.user_id
-    @item = Item.find(@request.item_id)
+    @item = @request.item
     
     if !@request.has_status_change_to_approved?(request_params)
       update_form(@request, request_params) and return

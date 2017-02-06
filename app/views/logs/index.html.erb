@@ -1,39 +1,27 @@
 <%# app/views/logs/index.html.erb %>
 <% provide(:title, 'Logs') %>
 
-<h1>Logs</h1>
 
-<%= link_to "Report Acquisition and Damages", new_log_path, class: "btn btn-lg btn-primary" %>
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+    <h1>Logs</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Date Logged</th>
-      <th>Username</th>
-      <th>Item Name</th>
-      <th>Quantity</th>
-      <th>Request Type</th>
-    </tr>
-  </thead>
+    <%= link_to "Report Acquisition and Damages", new_log_path, class: "btn btn-lg btn-primary" %>
+    
+    <% if @logs.any? %>
+      <h3>No. Logs (<%= @logs.count %>)</h3>
+      <ol class="logs">
+        <%= render @logs %>
+      </ol>
 
-  <tbody>
-    <% @logs.each do |log| %>
-      <% user = User.find(log.user_id) %>
-      <% item = Item.find(log.item_id) %>
-      <tr>
-        <th><%= log.created_at.to_date %></th>
-        <th><%= user.username %></th>
-        <th><%= item.unique_name %></th>
-        <th><%= log[:quantity] %></th>
-        <th><%= log[:request_type] %></th>
-      </tr>
+      <%= will_paginate @logs %>
     <% end %>
-  </tbody>
-</table>
 
-<br>
+    <br>
 
-<%= link_to "View Disbursements", logs_path(:request_type => "disbursement"), class: "btn btn-lg btn-primary" %>
-<%= link_to "View Acquisitions", logs_path(:request_type => "acquisition"), class: "btn btn-lg btn-primary" %>
-<%= link_to "View Destructions", logs_path(:request_type => "destruction"), class: "btn btn-lg btn-primary" %>
-<%= link_to "View All", logs_path, class: "btn btn-lg btn-primary" %>
+    <%= link_to "View Disbursements", logs_path(:request_type => "disbursement"), class: "btn btn-lg btn-primary" %>
+    <%= link_to "View Acquisitions", logs_path(:request_type => "acquisition"), class: "btn btn-lg btn-primary" %>
+    <%= link_to "View Destructions", logs_path(:request_type => "destruction"), class: "btn btn-lg btn-primary" %>
+    <%= link_to "View All", logs_path, class: "btn btn-lg btn-primary" %>
+  </div>
+</div>
