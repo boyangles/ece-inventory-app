@@ -15,12 +15,12 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to login_url
   end
 
-  test "go to items page if logged in" do
-    log_in_as(@user2)
-    get items_path
-    assert flash.empty?
-    assert_redirected_to items_path
-  end
+  # test "go to items page if logged in" do
+  #   log_in_as(@user2)
+  #   get items_path
+  #   assert flash.empty?
+  #   assert_redirected_to items_path
+  # end
 
   test "try to create item as non_admin - should be impossible " do
 

@@ -10,6 +10,17 @@
       </h1>
     </section>
   </aside>
+
+  <div class="col-md-8">
+    <% if @user.requests.any? %>
+      <h3>Requests (<%= @user.requests.count %>)</h3>
+      <ol class="requests">
+        <%= render @requests %>
+      </ol>
+
+      <%= will_paginate @requests %>
+    <% end %>
+  </div>
 </div>
 
 <p>
@@ -21,12 +32,6 @@
   <strong>Privilege:</strong>
   <%= @user.privilege %>
 </p>
-
-<% provide(:title, @user.username) %>
-<h1>
-  <%= gravatar_for @user %>
-  <%= @user.username %>
-</h1>
 
 <%= link_to 'Edit', edit_user_path(@user) %> |
 <%= link_to 'Back', url_for(:back) %>

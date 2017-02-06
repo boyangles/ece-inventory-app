@@ -6,45 +6,47 @@ class RequestsController < ApplicationController
   # before_action :request_index_by_admin, only: [ :index ]          #maybe
 
   # GET /requests
-  # GET /requests.json
   def index
     filter_params = params.slice(:status)
 
     if !current_user.privilege_admin?
-      filter_params[:user] = current_user.username
+      filter_params[:user_id] = current_user.id
     end
 
-    @requests = Request.filter(filter_params)
+    @requests = Request.filter(filter_params).paginate(page: params[:page], per_page: 10)
   end
 
   # GET /requests/1
-  # GET /requests/1.json
   def show
     @request = Request.find(params[:id])
+    @item = @request.item
+    @user = @request.user
   end
 
   # GET /requests/new
   def new
     @request = Request.new
     
-    if !params[:item_name].blank?
-      @request[:item_name] = params[:item_name]
+    if !params[:item_id].blank?
+      @request[:item_id] = params[:item_id]
     end
-    
+    @item = @request.item
+
   end
 
   # GET /requests/1/edit
   def edit
     @request = Request.find(params[:id])
+    @item = @request.item
+    @user = @request.user
   end
 
   # POST /requests
-  # POST /requests.json
   def create
     @request = Request.new(request_params)
-    @request.user = params[:user] ? params[:user][:username] : @request.user
+    @request.user_id = params[:user] ? params[:user][:id] : @request.user_id
 
-    @item = Item.find_by(:unique_name => @request.item_name)
+    @item = @request.item
 
     if !@request.approved?
       save_form(@request) and return
@@ -60,16 +62,15 @@ class RequestsController < ApplicationController
       @item.save!
 
       @log = Log.new(log_params)
-      @log.user = @request.user
+      @log.user_id = @request.user_id
       @log.save!
     end
   end
 
   # PATCH/PUT /requests/1
-  # PATCH/PUT /requests/1.json
   def update
-    @request.user = params[:user] ? params[:user][:username] : @request.user
-    @item = Item.find_by(:unique_name => @request.item_name)
+    @request.user_id = params[:user] ? params[:user][:id] : @request.user_id
+    @item = @request.item
     
     if !@request.has_status_change_to_approved?(request_params)
       update_form(@request, request_params) and return
@@ -85,19 +86,21 @@ class RequestsController < ApplicationController
       @item.save!
 
       @log = Log.new(log_params)
-      @log.user = @request.user
+      @log.user_id = @request.user_id
       @log.save!
     end
   end
 
   # DELETE /requests/1
-  # DELETE /requests/1.json
   def destroy
-    @request.destroy
-    respond_to do |format|
-      format.html { redirect_to requests_url, notice: 'Request was successfully destroyed.' }
-      format.json { head :no_content }
+    
+    if (@request.destroy)
+      flash[:success] = "Request destroyed!"
+    else
+      flash[:danger] = "Unable to destroy request!"
     end
+
+    redirect_to requests_url
   end
 
   
@@ -106,10 +109,6 @@ class RequestsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_request
       @request = Request.find(params[:id])
-    end
-
-    def findRequestbyUser(user)
-       Request.find_by_user(user.username)
     end
 
     def save_form(req)
@@ -149,10 +148,10 @@ class RequestsController < ApplicationController
     end
     # Never trust parameters from the scary internet, only allow the white list through.
     def request_params
-      params.fetch(:request, {}).permit(:datetime, :user, :item_name, :quantity, :reason, :status, :request_type, :response)
+      params.fetch(:request, {}).permit(:user_id, :item_id, :quantity, :reason, :status, :request_type, :response)
     end
 
     def log_params
-      params.fetch(:request, {}).permit(:datetime, :item_name, :quantity, :user, :request_type)
+      params.fetch(:request, {}).permit(:item_id, :quantity, :user_id, :request_type)
     end
 end

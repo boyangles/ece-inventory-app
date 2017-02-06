@@ -1,0 +1,17 @@
+<li id="request-<%= request.id %>">
+  <%= link_to gravatar_for(request.user, size:50), request.user %>
+  <span class="user"><%= link_to request.user.username, request.user %></span>
+  
+  <div class="content">
+    <b>Quantity: </b><%= request.quantity %>
+    <b>Type: </b><%= request.request_type %>
+    <b>Status: </b><%= request.status %>
+    <b>Item: </b><%= request.item.unique_name %>
+  </div>
+
+  <span><%= link_to 'Show Details', request%></span>
+  <br>
+  <span class="timestamp">
+    Posted <%= time_ago_in_words(request.created_at) %> ago.
+  </span>
+</li>
