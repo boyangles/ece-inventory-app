@@ -10,7 +10,6 @@ class Log < ApplicationRecord
     destruction: 2
   }
   
-  scope :datetime,      -> (datetime)     { where datetime: datetime }
   scope :item_id,       -> (item_id)      { where item_id: item_id }
   scope :quantity,      -> (quantity)     { where quantity: quantity }
   scope :user_id,       -> (user_id)      { where user_id: user_id }

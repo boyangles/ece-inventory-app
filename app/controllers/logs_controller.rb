@@ -3,8 +3,7 @@ class LogsController < ApplicationController
   before_action :check_logged_in_user, :check_admin_user
 
   def index
-    @logs = Log.filter(params.slice(:datetime, 
-                                    :item_id, 
+    @logs = Log.filter(params.slice(:item_id, 
                                     :quantity, 
                                     :user_id, 
                                     :request_type))
@@ -33,7 +32,7 @@ class LogsController < ApplicationController
 
   private
     def log_params
-      params.fetch(:log, {}).permit(:datetime, :item_id, :quantity, :user_id, :request_type)
+      params.fetch(:log, {}).permit(:item_id, :quantity, :user_id, :request_type)
     end
 
     def save_form(log)

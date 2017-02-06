@@ -1,8 +1,8 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <strong>Request Time:</strong>
-  <%= @request.datetime %>
+  <strong>Requested On:</strong>
+  <%= @request.created_at.to_date %>
 </p>
 
 <p>

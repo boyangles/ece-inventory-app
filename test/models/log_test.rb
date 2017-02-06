@@ -6,7 +6,6 @@ class LogTest < ActiveSupport::TestCase
     @item = items(:item1)
 
     @log = Log.new(
-      datetime: Time.now,
       quantity: 5,
       request_type: 'disbursement',
       user_id: @user.id,

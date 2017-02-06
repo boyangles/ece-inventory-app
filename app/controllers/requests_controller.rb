@@ -146,10 +146,10 @@ class RequestsController < ApplicationController
     end
     # Never trust parameters from the scary internet, only allow the white list through.
     def request_params
-      params.fetch(:request, {}).permit(:datetime, :user_id, :item_id, :quantity, :reason, :status, :request_type, :response)
+      params.fetch(:request, {}).permit(:user_id, :item_id, :quantity, :reason, :status, :request_type, :response)
     end
 
     def log_params
-      params.fetch(:request, {}).permit(:datetime, :item_id, :quantity, :user_id, :request_type)
+      params.fetch(:request, {}).permit(:item_id, :quantity, :user_id, :request_type)
     end
 end

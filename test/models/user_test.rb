@@ -94,7 +94,6 @@ class UserTest < ActiveSupport::TestCase
     @item.save 
 
     Request.create!(
-      datetime: Time.now,
       quantity: 5,
       reason: 'For test',
       status: 'outstanding',
@@ -103,7 +102,6 @@ class UserTest < ActiveSupport::TestCase
       item_id: @item.id)
     
     Log.create!(
-      datetime: Time.now,
       quantity: 5,
       request_type: 'disbursement',
       user_id: @user.id,

@@ -65,7 +65,6 @@ end
 
 # Creating Requests:
 15.times do |n|
-  datetime = Faker::Time.between(5.days.ago, Time.now, :all)
   # Obtain random user:
   user = User.offset(rand(User.count)).first
   # Obtain random item:
@@ -74,7 +73,6 @@ end
   reason = Faker::Lorem.paragraph(2, true, 3)
 
   Request.create!(
-    datetime: datetime,
     user_id: user.id,
     quantity: item.quantity,
     reason: reason,
@@ -87,14 +85,12 @@ end
 # Creating Logs:
   # Disbursements:
 15.times do |n|
-  datetime = Faker::Time.between(30.days.ago, Time.now, :all)
   item = Item.offset(rand(Item.count)).first
   quantity = Faker::Number.number(3)
   user = User.offset(rand(User.count)).first
   request_type = rand(0...3)
 
   Log.create!(
-    datetime: datetime,
     item_id: item.id,
     quantity: quantity,
     user_id: user.id,

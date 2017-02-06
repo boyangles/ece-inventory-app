@@ -3,7 +3,7 @@
 <table>
   <thead>
     <tr>
-      <th>Date Time</th>
+      <th>Creation Time</th>
       <% if current_user.privilege_admin? %>
         <th>User</th>
       <% end %>
@@ -15,7 +15,7 @@
   <tbody>
     <% @outstanding_item_requests.each do |request| %>
       <tr>
-        <th><%= request.datetime %></th>
+        <th><%= request.created_at.to_date %></th>
         <% if current_user.privilege_admin? %>
           <% user = User.find(request.user_id) %>
           <th><%= user.username %></th>

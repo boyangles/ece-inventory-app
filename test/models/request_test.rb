@@ -6,7 +6,6 @@ class RequestTest < ActiveSupport::TestCase
     @item = items(:item1)
 
     @request = Request.new(
-      datetime: Time.now,
       quantity: 5,
       reason: 'For test',
       status: 'outstanding',

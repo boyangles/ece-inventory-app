@@ -8,7 +8,7 @@
 <table>
   <thead>
     <tr>
-      <th>Date Time</th>
+      <th>Date Logged</th>
       <th>Username</th>
       <th>Item Name</th>
       <th>Quantity</th>
@@ -21,7 +21,7 @@
       <% user = User.find(log.user_id) %>
       <% item = Item.find(log.item_id) %>
       <tr>
-        <th><%= log[:datetime] %></th>
+        <th><%= log.created_at.to_date %></th>
         <th><%= user.username %></th>
         <th><%= item.unique_name %></th>
         <th><%= log[:quantity] %></th>

@@ -5,7 +5,7 @@
 <table>
   <thead>
     <tr>
-      <th>Date Time</th>
+      <th>Date Requested</th>
       <th>User</th>
       <th>Item</th>
       <th>Quantity</th>
@@ -18,7 +18,7 @@
   <tbody>
     <% @requests.each do |request| %>
       <tr>
-        <th><%= request.datetime %></th>
+        <th><%= request.created_at.to_date %></th>
         <th><%= User.find(request.user_id).username %></th>
         <th><%= Item.find(request.item_id).unique_name %></th>
         <th><%= request.quantity %></th>
