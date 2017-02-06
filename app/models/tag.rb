@@ -4,7 +4,4 @@ class Tag < ApplicationRecord
 
   has_many :items,  -> { distinct }, :through => :item_tags
   has_many :item_tags
-  #has_and_belongs_to_many :items
-  # accepts_nested_attributes_for :items
-
 end

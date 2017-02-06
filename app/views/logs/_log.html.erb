@@ -1,0 +1,16 @@
+<li id="log-<%= log.id %>">
+  <%= link_to gravatar_for(log.user, size: 50), log.user %>
+  <span class="user"><%= link_to log.user.username, log.user %></span>
+
+  <div class="content">
+    <b>Quantity: </b><%= log.quantity %>
+    <b>Type: </b><%= log.request_type %>
+    <b>Item: </b><%= log.item.unique_name %>
+  </div>
+
+  <br>
+  <span class="timestamp">
+    Logged <%= time_ago_in_words(log.created_at) %> ago.
+  </span>
+  
+</li>

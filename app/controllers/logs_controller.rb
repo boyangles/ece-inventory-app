@@ -3,11 +3,11 @@ class LogsController < ApplicationController
   before_action :check_logged_in_user, :check_admin_user
 
   def index
-    @logs = Log.filter(params.slice(:datetime, 
-                                    :item_name, 
+    @logs = Log.filter(params.slice(:item_id, 
                                     :quantity, 
-                                    :user, 
-                                    :request_type))
+                                    :user_id, 
+                                    :request_type)
+                      ).paginate(page: params[:page], per_page: 10)
     
   end
 
@@ -17,10 +17,9 @@ class LogsController < ApplicationController
 
   def create
     @log = Log.new(log_params)
-    @log.item_name = params[:item][:unique_name]
+    @log.item_id = params[:item][:id]
+    @item = @log.item
 
-    @item = Item.find_by(:unique_name => @log.item_name)
-    
     if !@item
       reject_to_new("Item does not exist") and return
     elsif Log.oversubscribed?(@item, @log)
@@ -34,7 +33,7 @@ class LogsController < ApplicationController
 
   private
     def log_params
-      params.fetch(:log, {}).permit(:datetime, :item_name, :quantity, :user, :request_type)
+      params.fetch(:log, {}).permit(:item_id, :quantity, :user_id, :request_type)
     end
 
     def save_form(log)
