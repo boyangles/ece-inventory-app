@@ -1,18 +1,18 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <strong>Request Time:</strong>
-  <%= @request.datetime %>
+  <strong>Requested On:</strong>
+  <%= @request.created_at.to_date %>
 </p>
 
 <p>
   <strong>User:</strong>
-  <%= @request.user %>
+  <%= @user.username %>
 </p>
 
 <p>
   <strong>Item:</strong>
-  <%= @request.item_name %>
+  <%= @item.unique_name %>
 </p>
 
 <p>
@@ -49,4 +49,5 @@
 
 
 <%= link_to 'Edit', edit_request_path(@request) %> |
+<%= link_to 'Destroy', @request, method: :delete, data: { confirm: 'Are you sure?' } %> |
 <%= link_to 'Back', requests_path %>

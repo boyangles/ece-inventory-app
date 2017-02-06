@@ -46,7 +46,7 @@ user_<%= n %>:
   username: <%= "username#{n}" %>
   email: <%= "user#{n}@duke.edu" %>
   privilege: 2
-  status: 0
+  status: 1
   email_confirmed: true
   password_digest: <%= User.digest('password') %>
 <% end %>

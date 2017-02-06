@@ -11,7 +11,7 @@
 
   <p>
     <%= f.label "Item Name" %>
-    <%= collection_select(:item, :unique_name, Item.all, :unique_name, :unique_name, {:prompt => true}, {:required => true}) %>
+    <%= collection_select(:item, :id, Item.all, :id, :unique_name, {:prompt => true}, {:required => true}) %>
   </p>
 
   <p>
@@ -19,8 +19,7 @@
     <%= f.number_field :quantity, :required => true %>
   </p>
 
-  <%= f.hidden_field :user, :value => current_user.username %>
-  <%= f.hidden_field :datetime, :value => Time.now %>
+  <%= f.hidden_field :user_id, :value => current_user.id %>
 
   <%= f.submit class: "btn btn-primary" %>
 <% end %>

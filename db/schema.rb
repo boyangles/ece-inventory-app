@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170205042339) do
+ActiveRecord::Schema.define(version: 20170206055931) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,24 +27,24 @@ ActiveRecord::Schema.define(version: 20170205042339) do
   create_table "items", force: :cascade do |t|
     t.string  "unique_name"
     t.integer "quantity"
-    t.integer "model_number"
     t.string  "description"
     t.string  "location"
+    t.string  "model_number"
   end
 
   create_table "logs", force: :cascade do |t|
-    t.time     "datetime"
     t.integer  "quantity"
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
     t.integer  "request_type", default: 0
-    t.string   "item_name"
-    t.string   "user"
+    t.integer  "user_id"
+    t.integer  "item_id"
+    t.index ["item_id"], name: "index_logs_on_item_id", using: :btree
+    t.index ["user_id", "item_id", "created_at"], name: "index_logs_on_user_id_and_item_id_and_created_at", using: :btree
+    t.index ["user_id"], name: "index_logs_on_user_id", using: :btree
   end
 
   create_table "requests", force: :cascade do |t|
-    t.time     "datetime"
-    t.string   "user"
     t.integer  "quantity"
     t.string   "reason"
     t.json     "instances"
@@ -52,8 +52,12 @@ ActiveRecord::Schema.define(version: 20170205042339) do
     t.datetime "updated_at",               null: false
     t.integer  "status",       default: 0
     t.integer  "request_type", default: 0
-    t.string   "item_name"
     t.string   "response"
+    t.integer  "user_id"
+    t.integer  "item_id"
+    t.index ["item_id"], name: "index_requests_on_item_id", using: :btree
+    t.index ["user_id", "item_id", "created_at"], name: "index_requests_on_user_id_and_item_id_and_created_at", using: :btree
+    t.index ["user_id"], name: "index_requests_on_user_id", using: :btree
   end
 
   create_table "tags", force: :cascade do |t|
@@ -76,4 +80,8 @@ ActiveRecord::Schema.define(version: 20170205042339) do
     t.index ["username"], name: "index_users_on_username", unique: true, using: :btree
   end
 
+  add_foreign_key "logs", "items"
+  add_foreign_key "logs", "users"
+  add_foreign_key "requests", "items"
+  add_foreign_key "requests", "users"
 end
