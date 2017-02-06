@@ -22,11 +22,37 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to items_path
   end
 
-  test "edit item" do
-    log_in_as(@user2)
-    get items_path
-    assert flash.empty?
-    assert_redirected_to items_path
+  test "try to create item as non_admin - should be impossible " do
+
   end
+
+  test "create item as admin" do
+
+  end
+
+  test "show item as non_admin - should be impossible" do
+
+  end
+
+  test "show item as admin  " do
+
+  end
+
+  test "edit item as non_admin - should be impossible" do
+
+  end
+
+  test "edit item as admin" do
+
+  end
+
+  test "delete item as non_admin - should be impossible " do
+
+  end
+
+  test "delete item as admin" do
+
+  end
+
 
 end
