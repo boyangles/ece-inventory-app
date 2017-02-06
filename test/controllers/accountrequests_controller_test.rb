@@ -27,6 +27,4 @@ class AccountrequestsControllerTest < ActionDispatch::IntegrationTest
   end
 
 
-
-
 end

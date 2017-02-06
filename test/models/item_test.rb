@@ -56,7 +56,7 @@ class ItemTest < ActiveSupport::TestCase
   end
 
   test "description should be possibly multiline" do
-    @item.description = "q" * 1523
+    @item.description = "q" * 230
     assert @item.valid?
   end
 
