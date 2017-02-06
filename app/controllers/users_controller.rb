@@ -10,13 +10,11 @@ class UsersController < ApplicationController
   before_action :check_admin_user, only: [:destroy , :index, :approve_user]
 
   # GET /users
-  # GET /users.json
   def index
     @users = User.paginate(page: params[:page], per_page: 10)
   end
 
   # GET /users/1
-  # GET /users/1.json
   def show
     @user = User.find(params[:id])
   end
@@ -35,31 +33,28 @@ class UsersController < ApplicationController
   end
 
   # POST /users
-  # POST /users.json
   def create
     @user = User.new(user_params)
     # Set default status and privilege
     @user.status = "waiting"
     @user.privilege = "student"
 
-    respond_to do |format|
-      if @user.save
-        # Tell the UserMailer to send a welcome email after save
-        UserMailer.welcome_email(@user).deliver
+    if @user.save
+      # Tell the UserMailer to send a welcome email after save
+      UserMailer.welcome_email(@user).deliver
 
-        # Toggle to log the user in upon sign up
-        # log_in @user
-        flash[:success] = "Please confirm email"
+      # Toggle to log the user in upon sign up
+      # log_in @user
+      flash[:success] = "Please confirm email"
 
-        format.html { redirect_to(root_path) }
-      else
-        format.html { render action: 'new' }
-      end
+      redirect_to(root_path)
+    else
+      flash.now[:danger] = "Unable to create user! Try again?"
+      render action: 'new'
     end
   end
 
   # PATCH/PUT /users/1
-  # PATCH/PUT /users/1.json
   def update
     @user = User.find(params[:id])
     if @user.update_attributes(user_params)
@@ -71,7 +66,6 @@ class UsersController < ApplicationController
   end
 
   # DELETE /users/1
-  # DELETE /users/1.json
   def destroy
     User.find(params[:id]).destroy
     flash[:success] = "User account deleted!"
