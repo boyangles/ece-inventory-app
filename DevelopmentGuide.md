@@ -38,7 +38,7 @@ Users has-many requests.
 ### Item
 An individual item instance includes many of the fields specified in our project assignment: a name, a quantity, a model, a description, and a location. An admin can edit these at any time, although the preferred method for updating method is through logging rather than direct editing. Item quantities are automatically updated when an approved request/log goes through. Below is a diagram showing how an item instance in our system. 
 
-![alt tag](ItemFlow.png)
+![Item Quantity Flow Chart](ItemFlow.PNG "Item Quantity Flow Chart")
 
 Items are linked to tags through a mutual has-many-through association, through the Item_Tag class, which allows many items to be linked to many tags and vice versa. In addition, items has-many requests and has-many logs.
 
@@ -53,7 +53,7 @@ Item_Tags exists to allow the mutual has-many-through association between Tag an
 ### Request
 Users can create requests, and specify the item requested, the quantity, and reason (required). The created_at and updated_at fields are automatically populated at the time. Requests are strictly for disbursements for student users, but can be used for acquisition and destruction as well for admin, although admins can also use logging for that purpose; these are the possible enums for the request_type field. The status field is also made up of enums; admin-created requests (can be for themselves or for other uses) are automatically "approved", whereas student-created requests are automatically "outstanding"; admin can then go in and "approve" or "deny" requests, and include a reply in the response field. Below is a dataflow that illustrates this process. 
 
-![alt tag](RequestFlow.png)
+![Request Status Flow Chart](RequestFlow.PNG  "Request Status Flow Chart")
 
 Requests are belong-to both items and users; in addition, they include the unique item_id and user_id fields in order for these associations to be easily searched. Finally, logs and requests creation and updating are automatically displayed to the admin in a log GUI. 
 
