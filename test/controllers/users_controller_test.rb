@@ -61,7 +61,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
       user: {
         password: "password",
         password_confirmation: "password",
-        privilege: 2
+        privilege: "admin"
       }
     }
 

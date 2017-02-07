@@ -34,6 +34,14 @@ class Item < ApplicationRecord
     where("unique_name ILIKE ?", "%#{search_input}%") 
   end
 
+  def self.filter_by_model_search(search_input)
+    if search_input.to_s.empty?
+      all
+    else
+      where(:model_number => search_input.strip)
+    end
+  end
+
   def update_by_request(request) 
     case request.request_type.to_sym
     when :disbursement

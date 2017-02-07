@@ -8,12 +8,20 @@
   <h1>Items</h1>
 </div>
 
-<%= form_for items_path, :method => 'get' do %>
+<%= form_for items_path, :method => 'get' do |f| %>
+  
   <p>
+    <%= f.label "Search by Item Name" %><br>
     <%= text_field_tag :search, params[:search] %>
-    <%= submit_tag "Search" %>
   </p>
 
+  <p>
+    <%= f.label "Search by Model" %><br>
+    <%= text_field_tag :model_search, params[:model_search] %>
+  </p>
+
+  <%= submit_tag "Search", class: "btn btn-primary" %>
+  
   <h3>Required Tags</h3>
   <% @tags.each do |tag| %>
     <%= check_box_tag 'required_tag_names[]', 
