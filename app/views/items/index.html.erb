@@ -21,21 +21,25 @@
 
   	<h3>Required Tags</h3>
   	<div class="tags">
-		<% @tags.each do |tag| %>
-    	<%= check_box_tag 'required_tag_names[]', 
-      	tag.name, 
-      	(@required_tag_filters.include? tag.name) %>
-    	<%= tag.name %>
-  	<% end %>
+      <% @tags.each do |tag| %>
+          <label class="checkbox-inline">
+    	      <%= check_box_tag 'required_tag_names[]', 
+      	      tag.name, 
+              (@required_tag_filters.include? tag.name) %><br>
+            <%= tag.name %>
+          </label>
+  	  <% end %>
 		</div>
 
   	<h3>Excluded Tags</h3>
 		<div class="tags">
-		<% @tags.each do |tag| %>
-    	<%= check_box_tag 'excluded_tag_names[]', 
-      	tag.name, 
-      	(@excluded_tag_filters.include? tag.name) %>
-    	<%= tag.name %>
+      <% @tags.each do |tag| %>
+        <label class="checkbox-inline">
+    	    <%= check_box_tag 'excluded_tag_names[]', 
+      	  tag.name, 
+          (@excluded_tag_filters.include? tag.name) %><br>
+    	  <%= tag.name %>
+        </label>
   	<% end %>
 		</div>
 
