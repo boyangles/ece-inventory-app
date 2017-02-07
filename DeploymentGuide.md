@@ -11,6 +11,7 @@ Our inventory system currently runs on Heroku, which is Cloud Platform As A Serv
  - PostgreSQL: version 9.6.1
  - Bundler version 1.13.7
  - Recommended browser is Chrome, version 55.0.2883.95+
+ - Ensure your wifi does not block the heroku domain with firewalls 
 
 #### Cloning the repository:
  - To begin, select Clone or Download on GitHub, then copy the URL to your terminal git the command: <git clone the_url>
