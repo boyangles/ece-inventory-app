@@ -74,8 +74,9 @@ class UsersController < ApplicationController
 
   # DELETE /users/1
   def destroy
-    User.find(params[:id]).destroy
-    flash[:success] = "User account deleted!"
+    user = User.find(params[:id])
+    user.update!(status: 0)
+    flash[:success] = "User account deactivated!"
     redirect_to users_url
   end
 
@@ -86,7 +87,7 @@ class UsersController < ApplicationController
       flash[:success] = "Welcome to the ECE Inventory System Your email has been confirmed. An Admin will verify your account shortly."
       redirect_to root_url
     else
-      flash[:error] = "Sorry. User does not exist"
+      flash[:danger] = "Sorry. User does not exist"
       redirect_to root_url
     end
   end

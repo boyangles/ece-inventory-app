@@ -45,7 +45,7 @@ module SessionsHelper
   def store_location
     session[:forwarding_url] = request.original_url if request.get?
   end
-  
+
   # Checks that the current user is an administrator
   def check_admin_user
     redirect_to(root_url) unless current_user && current_user.privilege_admin?
@@ -75,7 +75,7 @@ module SessionsHelper
 
   # Confirms status is approved
   def check_approved_user
-    unless logged_in?
+    unless current_user.status_approved?
       store_location
       flash[:danger] = "Your account has not been approved."
       redirect_to login_url and return
@@ -83,7 +83,7 @@ module SessionsHelper
   end
 
   def activate_user(user)
-    user.status = "approved"
+    user.status = 'approved'
     user.save!(:validate => false)
   end
 end
