@@ -26,3 +26,4 @@ Our inventory system currently runs on Heroku, which is Cloud Platform As A Serv
 #### Deploy over Heroku:
  - Create a free Heroku Account and set up a new app. 
  - I recommend consulting this Heroku tutorial to set up your first app - https://devcenter.heroku.com/articles/getting-started-with-rails5. Most sections are already taken care of. Being at "Deploy your application to Heroku" to see how to deploy on a remote server.
+
