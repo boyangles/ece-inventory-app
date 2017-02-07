@@ -58,6 +58,12 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   def update
     @user = User.find(params[:id])
+    
+    if (params[:password].blank? && !current_user?(@user))
+      params.delete(:password)
+      params.delete(:password_confirmation)
+    end
+
     if @user.update_attributes(user_params)
       flash[:success] = "Credentials updated successfully"
       redirect_to @user
@@ -102,7 +108,7 @@ class UsersController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
       # Rails 4+ requires you to whitelist attributes in the controller.
-      params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation)
+      params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :privilege)
     end
 
 
