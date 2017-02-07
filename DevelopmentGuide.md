@@ -19,7 +19,8 @@ The database consists of tables with the model classes as the primary (lookup) k
 
 | Model Class |                                                       Fields                                                       |
 |-------------|:------------------------------------------------------------------------------------------------------------------:|
-| User        | username, created_at, updated_at, password_digest, email, email_confirmed, confirm_token, status, privilege, email |
+| User        | username, created_at, updated_at, password_digest, email, email_confirmed, confirm_token, status, privilege
+|
 | Item        | unique_name, quantity, model_number, description, location                                                         |
 | Request     | datetime, user_id, quantity, reason, instances, created_at, updated_at, status, request_type, item_id, response     |
 | Tag         | name, created_at, updated_at                                                                                       |
