@@ -35,7 +35,7 @@ class Item < ApplicationRecord
   end
 
   def self.filter_by_model_search(search_input)
-    if search_input.to_s.empty?
+    if search_input.to_s.strip.empty?
       all
     else
       where(:model_number => search_input.strip)
