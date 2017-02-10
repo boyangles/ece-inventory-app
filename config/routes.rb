@@ -33,9 +33,9 @@ Rails.application.routes.draw do
   root 'welcome#index'
 
   ## Maps to app/controllers/api directory
-  namespace :api, :defaults: { format: :json },
-                               constraints: { subdomain: 'api' },
-                               path: '/' do
+  namespace :api, defaults: { format: :json },
+                              constraints: { subdomain: 'api' },
+                              path: '/' do
 
   end
 end
