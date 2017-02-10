@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170206055931) do
+ActiveRecord::Schema.define(version: 20170210185306) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,6 +42,15 @@ ActiveRecord::Schema.define(version: 20170206055931) do
     t.index ["item_id"], name: "index_logs_on_item_id", using: :btree
     t.index ["user_id", "item_id", "created_at"], name: "index_logs_on_user_id_and_item_id_and_created_at", using: :btree
     t.index ["user_id"], name: "index_logs_on_user_id", using: :btree
+  end
+
+  create_table "request_items", force: :cascade do |t|
+    t.integer  "request_id"
+    t.integer  "item_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_request_items_on_item_id", using: :btree
+    t.index ["request_id"], name: "index_request_items_on_request_id", using: :btree
   end
 
   create_table "requests", force: :cascade do |t|

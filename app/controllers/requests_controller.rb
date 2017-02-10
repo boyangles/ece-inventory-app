@@ -154,4 +154,9 @@ class RequestsController < ApplicationController
     def log_params
       params.fetch(:request, {}).permit(:item_id, :quantity, :user_id, :request_type)
     end
+
+    def find_cart
+      Request.find(:status == "cart")
+    end
+
 end

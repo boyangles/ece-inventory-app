@@ -1,7 +1,10 @@
 class Request < ApplicationRecord
   include Filterable, Subscribable
 
-  belongs_to :item
+  #relationship with items
+  has_many :items,  -> {uniq}, :through => :request_items
+  has_many :request_items
+
   belongs_to :user
 
   # Default scopes

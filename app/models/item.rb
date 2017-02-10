@@ -9,7 +9,13 @@ class Item < ApplicationRecord
   has_many :item_tags
 
   # Relation with Requests
-  has_many :requests, dependent: :destroy
+  has_many :requests, -> { uniq },  :through => :request_items
+  has_many :request_items
+
+
+  #OLD RELATIONSHIP WITH REQUESTS BELOW
+  # # Relation with Requests
+  # has_many :requests, dependent: :destroy
 
   # Relation with Logs
   has_many :logs, dependent: :destroy
