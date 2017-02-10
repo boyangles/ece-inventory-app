@@ -21,7 +21,7 @@ class User < ApplicationRecord
   }, _prefix: :status
 
   before_validation {
-    self.username = username.downcase
+    # self.username = username.downcase
     self.email = email.downcase
   }
 
