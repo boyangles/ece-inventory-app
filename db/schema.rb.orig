@@ -10,7 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170209194834) do
+<<<<<<< HEAD
+ActiveRecord::Schema.define(version: 20170131212239) do
+||||||| merged common ancestors
+ActiveRecord::Schema.define(version: 20170131060907) do
+=======
+ActiveRecord::Schema.define(version: 20170131223225) do
+>>>>>>> master
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,24 +33,25 @@ ActiveRecord::Schema.define(version: 20170209194834) do
   create_table "items", force: :cascade do |t|
     t.string  "unique_name"
     t.integer "quantity"
+    t.integer "model_number"
     t.string  "description"
-    t.string  "location"
-    t.string  "model_number"
+    t.json    "instances"
+    t.json    "available_tags"
   end
 
   create_table "logs", force: :cascade do |t|
+    t.time     "datetime"
+    t.integer  "item_id"
     t.integer  "quantity"
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
-    t.integer  "request_type", default: 0
     t.integer  "user_id"
-    t.integer  "item_id"
-    t.index ["item_id"], name: "index_logs_on_item_id", using: :btree
-    t.index ["user_id", "item_id", "created_at"], name: "index_logs_on_user_id_and_item_id_and_created_at", using: :btree
-    t.index ["user_id"], name: "index_logs_on_user_id", using: :btree
+    t.integer  "request_type", default: 0
   end
 
   create_table "requests", force: :cascade do |t|
+    t.time     "datetime"
+    t.string   "user"
     t.integer  "quantity"
     t.string   "reason"
     t.json     "instances"
@@ -52,12 +59,7 @@ ActiveRecord::Schema.define(version: 20170209194834) do
     t.datetime "updated_at",               null: false
     t.integer  "status",       default: 0
     t.integer  "request_type", default: 0
-    t.string   "response"
-    t.integer  "user_id"
-    t.integer  "item_id"
-    t.index ["item_id"], name: "index_requests_on_item_id", using: :btree
-    t.index ["user_id", "item_id", "created_at"], name: "index_requests_on_user_id_and_item_id_and_created_at", using: :btree
-    t.index ["user_id"], name: "index_requests_on_user_id", using: :btree
+    t.string   "item_name"
   end
 
   create_table "tags", force: :cascade do |t|
@@ -68,19 +70,16 @@ ActiveRecord::Schema.define(version: 20170209194834) do
 
   create_table "users", force: :cascade do |t|
     t.string   "username"
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
     t.string   "password_digest"
     t.string   "email"
+    t.boolean  "email_confirmed", default: false
+    t.string   "confirm_token"
     t.integer  "status",          default: 0
     t.integer  "privilege",       default: 0
-    t.string   "confirm_token"
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
     t.index ["username"], name: "index_users_on_username", unique: true, using: :btree
   end
 
-  add_foreign_key "logs", "items"
-  add_foreign_key "logs", "users"
-  add_foreign_key "requests", "items"
-  add_foreign_key "requests", "users"
 end
