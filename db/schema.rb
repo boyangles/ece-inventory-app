@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170209194834) do
+ActiveRecord::Schema.define(version: 20170210163204) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,6 +58,11 @@ ActiveRecord::Schema.define(version: 20170209194834) do
     t.index ["item_id"], name: "index_requests_on_item_id", using: :btree
     t.index ["user_id", "item_id", "created_at"], name: "index_requests_on_user_id_and_item_id_and_created_at", using: :btree
     t.index ["user_id"], name: "index_requests_on_user_id", using: :btree
+  end
+
+  create_table "stack_exchanges", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "tags", force: :cascade do |t|

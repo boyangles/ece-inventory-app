@@ -17,6 +17,7 @@ end
 
 # DUKE OAUTH GEM for net id verification
 gem "omniauth-duke-oauth2", :git => 'git@gitlab.oit.duke.edu:colab/omniauth-duke-oauth2.git', :ref => '5eaf6759'
+gem "httparty"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.0.1'
