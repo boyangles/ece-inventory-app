@@ -36,7 +36,6 @@ class User < ApplicationRecord
   validates :username, presence: true, length: { maximum: 50 },
                        uniqueness: { case_sensitive: false }
   validates :email, presence: true, length: { maximum: 255 },
-                       format: { with: VALID_EMAIL_REGEX },
                        uniqueness: { case_sensitive: false }
   validates :password, presence: true, length: { minimum: 6 }, :if => :password
   validates :privilege, :inclusion => { :in => PRIVILEGE_OPTIONS }

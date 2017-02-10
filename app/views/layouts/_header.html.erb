@@ -4,6 +4,7 @@
     <nav>
       <ul class="nav navbar-nav navbar-right">
         <li><%= link_to "Home", root_path %></li>
+        <li><%= link_to 'Duke Login', '/auth/duke_oauth2' %></li>
 
         <% if logged_in? %>
             <li><%= link_to "Items", items_path %></li>

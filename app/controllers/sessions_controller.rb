@@ -23,12 +23,4 @@ class SessionsController < ApplicationController
     redirect_to root_url
   end
 
-  def oauth
-    redirect_to sessions_oauth_path
-  end
-
-  def show
-    render 'oauth'
-  end
-
 end

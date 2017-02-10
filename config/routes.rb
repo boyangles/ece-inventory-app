@@ -17,12 +17,13 @@ Rails.application.routes.draw do
 
   #Login and Sessions routes
   get   '/login',   to: 'sessions#new'      #Describes the login screen
-  post  '/login',   to: 'sessions#create'   #Handles actually logging in
+  # post  '/login',   to: 'sessions#create'   #Handles actually logging in
   delete '/logout', to: 'sessions#destroy'  #Handles logging out
 
 
+  get '/auth/:provider/callback', to: 'welcome#index'
+
   resources :sessions
-  get '/sessions/oauth', to: 'session#oauth'
 
   #Log Routes
   resources :logs
