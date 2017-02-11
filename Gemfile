@@ -14,6 +14,8 @@ gem 'capybara'
 %w[rspec-core rspec-expectations rspec-mocks rspec-rails rspec-support].each do |lib|
   gem lib, :git => "https://github.com/rspec/#{lib}.git", :branch => 'master'
 end
+# Responds for respond_to
+gem 'responders'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.0.1'
@@ -67,6 +69,14 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+end
+
+group :test do
+  # Factory Girl Rails for testing suite for API
+  gem "factory_girl_rails"
+  # FFaker Gem for testing suite for API
+  gem "ffaker"
+  gem "shoulda-matchers"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
