@@ -40,6 +40,9 @@ RSpec.configure do |config|
   config.order = "random"
   
   config.expect_with(:rspec) { |c| c.syntax = [:should, :expect] }
+
+  # Including to test requests
+  config.include URLRequest::JsonHelpers, :type => :controller
 end
 
 Shoulda::Matchers.configure do |config|
