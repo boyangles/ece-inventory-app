@@ -43,6 +43,11 @@ RSpec.configure do |config|
 
   # Including to test requests
   config.include URLRequest::JsonHelpers, :type => :controller
+  config.include URLRequest::HeadersHelpers, :type => :controller
+
+  config.before(:each, type: :controller) do
+    include_default_accept_headers
+  end
 end
 
 Shoulda::Matchers.configure do |config|

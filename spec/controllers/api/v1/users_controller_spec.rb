@@ -1,12 +1,10 @@
 require 'rails_helper'
 
 describe Api::V1::UsersController do
-  before(:each) { request.headers['Accept'] = "application/vnd.spicysoftwareinventory.v1" }
-
   describe "GET #show" do
     before(:each) do
       @user = FactoryGirl.create :user
-      get :show, id: @user.id, format: :json
+      get :show, id: @user.id
     end
 
     it "returns info about a reporter on a hash" do
@@ -23,7 +21,7 @@ describe Api::V1::UsersController do
       before(:each) do
         @user_attributes = FactoryGirl.attributes_for :user
         @user_attributes[:email] = @user_attributes[:email].downcase
-        post :create, { user: @user_attributes }, format: :json
+        post :create, { user: @user_attributes }
       end
 
       it "renders the json representation for the user record just created" do
@@ -39,7 +37,7 @@ describe Api::V1::UsersController do
       before(:each) do
         @invalid_user_attributes = { password: "password",
                                      password_confirmation: "password" }
-        post :create, { user: @invalid_user_attributes }, format: :json
+        post :create, { user: @invalid_user_attributes }
       end
 
       it "renders JSON error" do
@@ -61,7 +59,7 @@ describe Api::V1::UsersController do
       before(:each) do
         @user = FactoryGirl.create :user
         patch :update, { id: @user.id,
-                         user: { email: "newmailexample@duke.edu" } }, format: :json
+                         user: { email: "newmailexample@duke.edu" } }
       end
 
       it "renders json representation for updated user" do
@@ -76,7 +74,7 @@ describe Api::V1::UsersController do
       before(:each) do
         @user = FactoryGirl.create :user
         patch :update, { id: @user.id,
-                         user: { email: "bademail.com" } }, format: :json
+                         user: { email: "bademail.com" } }
       end
 
       it "renders error from JSON" do
@@ -96,7 +94,7 @@ describe Api::V1::UsersController do
   describe "DELETE #destroy" do
     before(:each) do
       @user = FactoryGirl.create :user
-      delete :destroy, { id: @user.id }, format: :json
+      delete :destroy, { id: @user.id }
     end
 
     it { should respond_with 204 }
