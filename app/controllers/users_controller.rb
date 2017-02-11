@@ -36,7 +36,7 @@ class UsersController < ApplicationController
   # POST /users
   def create
     @user = User.new(user_params)
-    # Set default status and privilege
+    # TODO: May not be needed because of databse defaults
     @user.status = "waiting"
     @user.privilege = "student"
 

@@ -21,8 +21,9 @@ class User < ApplicationRecord
   }, _prefix: :status
 
   before_validation {
-    self.username = username.downcase
-    self.email = email.downcase
+    # Only downcase if the fields are there
+    self.username = (username.to_s == '') ? username : username.downcase
+    self.email = (email.to_s == '') ? email : email.downcase
   }
 
   # Creates the confirmation token before a user is created
