@@ -40,7 +40,7 @@ Rails.application.routes.draw do
           constraints: ApiConstraints.new(version: 1, default: true) do
       # List of resources
       resources :users, :only => [:index, :show, :create, :update, :destroy]
-      resource :requests, :only => [:destroy]
+      resources :requests, :only => [:index, :show, :create, :update, :destroy]
     end
   end
 end
