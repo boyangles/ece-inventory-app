@@ -1,16 +1,34 @@
 require 'rails_helper'
-require 'capybara/rails'
 
-RSpec.describe "home page", :type => :feature do
-  it "displays the user's username after successful login" do
-    #user = FactoryGirl.create(:user, :username => "jdoe", :password => "secret")
-    user = User.create!(username: "jdoe", email: "jaiefn@duke.edu", password: "password", privilege: "admin",
-                        status: "approved", email_confirmed: "true")
-    visit "/login"
-    fill_in "Username", :with => "jdoe"
-    fill_in "Password", :with => "password"
-    click_button "Log in"
+describe User do
+  before { @user = FactoryGirl.build(:user) }
 
-    page.all('a', :text => 'jdoe')
+  subject{ @user }
+
+  it { should respond_to(:email) }
+  it { should respond_to(:password) }
+  it { should respond_to(:password_confirmation) }
+  it { should respond_to(:auth_token) }
+
+  it { should validate_presence_of(:email) }
+  it { should validate_uniqueness_of(:email).case_insensitive }
+  it { should validate_confirmation_of(:password) }
+  it { should allow_value('example@duke.edu').for(:email) }
+  it { should validate_uniqueness_of(:auth_token) }
+
+  describe "#generate_authentication_token!" do
+    it "generates a unique token" do
+      Devise.stub(:friendly_token).and_return("auniquetoken123")
+      @user.generate_authentication_token!
+      expect(@user.auth_token).to eql "auniquetoken123"
+    end
+
+    it "generates another token when one has already been taken" do
+      existing_user = FactoryGirl.create(:user, auth_token: "auniquetoken123")
+      @user.generate_authentication_token!
+      expect(@user.auth_token).not_to eql existing_user.auth_token
+    end
   end
+
+  it { should be_valid }
 end

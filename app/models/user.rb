@@ -29,6 +29,7 @@ class User < ApplicationRecord
   # Creates the confirmation token before a user is created
   before_create {
     confirmation_token
+    generate_authentication_token!
   }
 
   # Modified to only allow duke emails
@@ -42,6 +43,7 @@ class User < ApplicationRecord
   validates :password, presence: true, length: { minimum: 6 }, :if => :password
   validates :privilege, :inclusion => { :in => PRIVILEGE_OPTIONS }
   validates :status, :inclusion => { :in => STATUS_OPTIONS }
+  validates :auth_token, uniqueness: true, allow_nil: true
 
 
   # Returns the hash digest for a given string, used in fixtures for testing
@@ -63,6 +65,12 @@ class User < ApplicationRecord
     if self.confirm_token.blank?
       self.confirm_token = SecureRandom.urlsafe_base64.to_s
     end
+  end
+
+  def generate_authentication_token!
+    begin
+      self.auth_token = Devise.friendly_token
+    end while self.class.exists?(auth_token: auth_token)
   end
 
   def email_activate

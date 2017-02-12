@@ -3,7 +3,14 @@ require 'test_helper'
 class UserTest < ActiveSupport::TestCase
   
   def setup
-    @user = User.new(username: "Austin", privilege: "admin", email: "sample@duke.edu", password: "SamplePass", password_confirmation: "SamplePass", status: "approved", email_confirmed: true)
+    @user = User.new(username: "Austin",
+                     privilege: "admin",
+                     email: "sample@duke.edu",
+                     password: "SamplePass",
+                     password_confirmation: "SamplePass",
+                     status: "approved",
+                     email_confirmed: true,
+                     auth_token: Devise.friendly_token)
     @item = items(:item1)
   end
 
@@ -110,5 +117,16 @@ class UserTest < ActiveSupport::TestCase
     assert_difference ['Request.count', 'Log.count'], -1 do
       @user.destroy
     end
+  end
+
+  test "verify before_create makes auth_token unique" do
+    duplicate_user = @user.dup
+    duplicate_user[:username] = 'AustinDup'
+    duplicate_user[:email] = 'sampledup@duke.edu'
+
+    duplicate_user[:auth_token] = @user[:auth_token]
+    @user.save
+
+    assert duplicate_user.valid?
   end
 end
