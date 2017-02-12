@@ -14,7 +14,6 @@ bernard:
   email: ba34@duke.edu
   privilege: 2
   status: 1
-  email_confirmed: true
   password_digest: <%= User.digest('password') %>
 
 alex:
@@ -22,7 +21,6 @@ alex:
   email: ak47@duke.edu
   privilege: 0
   status: 1
-  email_confirmed: true
   password_digest: <%= User.digest('password') %>
 
 joeUnapproved:
@@ -30,7 +28,6 @@ joeUnapproved:
   email: jo2un@duke.edu
   privilege: 0
   status: 0
-  email_confirmed: true
   password_digest: <%= User.digest('password') %>
 
 adamUnapproved:
@@ -38,7 +35,6 @@ adamUnapproved:
   email: adam1un@duke.edu
   privilege: 0
   status: 0
-  email_confirmed: true
   password_digest: <%= User.digest('password') %>
 
 <% 62.times do |n| %>
@@ -47,6 +43,5 @@ user_<%= n %>:
   email: <%= "user#{n}@duke.edu" %>
   privilege: 2
   status: 1
-  email_confirmed: true
   password_digest: <%= User.digest('password') %>
 <% end %>
