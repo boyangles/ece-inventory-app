@@ -4,11 +4,7 @@ Rails.application.routes.draw do
 
   post '/signup', to: 'users#create'
 
-  resources :users, except: :new do
-    member do
-      get :confirm_authentication
-    end
-  end
+  resources :users, except: :new
 
   resources :requests
   resources :items

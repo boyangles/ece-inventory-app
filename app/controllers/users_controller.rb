@@ -9,8 +9,12 @@ class UsersController < ApplicationController
   # Security issue: only admin users can delete users
   before_action :check_admin_user, only: [:destroy , :index, :approve_user]
 
+
   def new
-    user = User.new
+    if logged_in?
+      redirect_to root_path
+    end
+    @user = User.new
   end
 
   # GET /users
@@ -48,7 +52,7 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   def update
     @user = User.find(params[:id])
-    
+
     if (params[:password].blank? && !current_user?(@user))
       params.delete(:password)
       params.delete(:password_confirmation)
@@ -69,29 +73,17 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
 
-  def confirm_authentication
-    @user = User.find_by_confirm_token(params[:id])
-    if @user
-      log_in(@user)
-      flash[:success] = "Welcome to the ECE Inventory System"
-      redirect_to root_url
-    else
-      flash[:error] = "Sorry. User does not exist"
-      redirect_to login_path
-    end
+  private
+  # Use callbacks to share common setup or constraints between actions.
+  def set_user
+    @user = User.find(params[:id])
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_user
-      @user = User.find(params[:id])
-    end
-
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def user_params
-      # Rails 4+ requires you to whitelist attributes in the controller.
-      params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :privilege)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def user_params
+    # Rails 4+ requires you to whitelist attributes in the controller.
+    params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :privilege)
+  end
 
 
 
