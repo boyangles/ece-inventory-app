@@ -41,6 +41,7 @@ Rails.application.routes.draw do
       # List of resources
       resources :users, :only => [:index, :show, :create, :update, :destroy]
       resources :requests, :only => [:index, :show, :create, :update, :destroy]
+      resources :items, :only => [:index, :show, :create, :update, :destroy]
     end
   end
 end
