@@ -35,7 +35,7 @@ end
                status: "approved",
                privilege: "admin",
                password: password,
-               password_confirmation: passwordtrue)
+               password_confirmation: password)
 end
 
 User.create!(username: "admin", email: "adminusername@duke.edu", status: "approved",

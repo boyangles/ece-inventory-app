@@ -7,18 +7,7 @@ RSpec.describe "home page", :type => :feature do
     fill_in "Username", :with => "jdoe"
     fill_in "Password", :with => "password"
     click_button "Log in"
-
+    expect(page.current_path).to eq user_path(user)
     page.all('a', :text => 'jdoe')
-  end
-
-  it "logs in as admin from seeds.rb" do
-    user = User.find_by(username: "admin")
-    assert user
-    visit "/login"
-    fill_in "Username", :with => "admin"
-    fill_in "Password", :with => "password"
-    click_button "Log in"
-
-    page.all('a', :text => 'admin')
   end
 end

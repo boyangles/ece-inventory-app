@@ -9,6 +9,10 @@ class UsersController < ApplicationController
   # Security issue: only admin users can delete users
   before_action :check_admin_user, only: [:destroy , :index, :approve_user]
 
+  def new
+    user = User.new
+  end
+
   # GET /users
   def index
     @users = User.where(status: 1).paginate(page: params[:page], per_page: 10)
