@@ -44,6 +44,7 @@ Rails.application.routes.draw do
       resources :items, :only => [:index, :show, :create, :update, :destroy]
       resources :tags, :only => [:index, :show, :create, :update, :destroy]
       resources :logs, :only => [:index, :show, :create, :update, :destroy]
+      resources :sessions, :only => [:create, :destroy]
     end
   end
 end
