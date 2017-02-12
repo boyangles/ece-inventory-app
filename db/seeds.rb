@@ -83,20 +83,20 @@ items.each do |item|
   )
 end
 
-## Creating Requests:
-#50.times do |n|
-#  # Obtain random user:
-#  user = User.offset(rand(User.count)).first
-#  # Random reason:
-#  reason = Faker::Lorem.paragraph(2, true, 3)
-#
-#  Request.create!(
-#      user_id: user.id,
-#      reason: reason,
-#      status: "outstanding",
-#      request_type: "disbursement",
-#  )
-#end
+# Creating Requests:
+50.times do |n|
+ # Obtain random user:
+ user = User.offset(rand(User.count)).first
+ # Random reason:
+ reason = Faker::Lorem.paragraph(2, true, 3)
+
+ Request.create!(
+     user_id: user.id,
+     reason: reason,
+     status: "outstanding",
+     request_type: "disbursement",
+ )
+end
 
 # Creating Logs:
 # Disbursements:

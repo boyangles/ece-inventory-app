@@ -27,18 +27,18 @@ class Request < ApplicationRecord
 
   scope :user_id, -> (user_id) { where user_id: user_id }
   scope :status, -> (status) { where status: status }
-  scope :item_id, -> (item_id) { where item_id: item_id }
+  # scope :item_id, -> (item_id) { where item_id: item_id }
 
   # Validations
   validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
   validates :status, :inclusion => { :in => STATUS_OPTIONS }
   validates :user_id, presence: true
-  validates :item_id, presence: true
+  # validates :item_id, presence: true
 
   # Methods:
-  def item_relevant?(item_id)
-    Item.exists?(:id => item_id)
-  end
+  # def item_relevant?(item_id)
+  #   Item.exists?(:id => item_id)
+  # end
 
   def has_status_change_to_approved?(request_params)
     self.outstanding? && request_params[:status] == 'approved'

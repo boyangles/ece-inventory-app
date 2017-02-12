@@ -28,10 +28,10 @@ class RequestsController < ApplicationController
   def new
     @request = Request.new
     
-    if !params[:item_id].blank?
-      @request[:item_id] = params[:item_id]
-    end
-    @item = @request.item
+    # if !params[:item_id].blank?
+    #   @request[:item_id] = params[:item_id]
+    # end
+    # @item = @request.items
 
   end
 
@@ -144,7 +144,8 @@ class RequestsController < ApplicationController
     end
     # Never trust parameters from the scary internet, only allow the white list through.
     def request_params
-      params.fetch(:request, {}).permit(:user_id, :item_id, :reason, :status, :request_type, :response)
+      # params.fetch(:request, {}).permit(:user_id, :item_id, :reason, :status, :request_type, :response)
+      params.fetch(:request, {}).permit(:user_id, :reason, :status, :request_type, :response)
     end
 
     def log_params

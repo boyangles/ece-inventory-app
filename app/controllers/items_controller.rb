@@ -35,8 +35,7 @@ class ItemsController < ApplicationController
     if !current_user.privilege_admin?
       outstanding_filter_params[:user_id] = current_user.id
     end
-
-    @requests = Request.filter(outstanding_filter_params).paginate(page: params[:page], per_page: 10)
+    # @request = Request.filter(outstanding_filter_params).paginate(page: params[:page], per_page: 10)
   end
 
   # GET /items/new
