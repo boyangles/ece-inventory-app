@@ -28,7 +28,6 @@ austin:
   email: al12345@duke.edu
   privilege: 2
   status: 1
-  email_confirmed: true
   password_digest: <%= User.digest('password') %>
 
 joeUnapproved:
