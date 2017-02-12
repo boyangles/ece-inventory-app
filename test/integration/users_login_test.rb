@@ -7,7 +7,6 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
 
   def setup
     @user = users(:bernard)
-    
     @admin = users(:bernard)
     @non_admin = users(:alex)
   end
@@ -71,9 +70,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
   test "viewing login page as an admin redirects to root path" do
     log_in_as(@admin)
     assert is_logged_in?
-
     get login_path
-    
     assert_redirected_to root_path
   end
   test "viewing login page as an non-admin redirects to root path" do

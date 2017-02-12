@@ -20,14 +20,6 @@ class UsersController < ApplicationController
     @requests = @user.requests.paginate(page: params[:page], per_page: 10)
   end
 
-  # GET /users/new
-  def new
-    if logged_in?
-      redirect_to root_path
-    end
-    @user = User.new
-  end
-
   # GET /users/1/edit
   def edit
     @user = User.find(params[:id])
@@ -41,13 +33,7 @@ class UsersController < ApplicationController
     @user.privilege = "student"
 
     if @user.save
-      # Tell the UserMailer to send a welcome email after save
-      UserMailer.welcome_email(@user).deliver
-
       # Toggle to log the user in upon sign up
-      # log_in @user
-      flash[:success] = "Please confirm email"
-
       redirect_to(root_path)
     else
       flash.now[:danger] = "Unable to create user! Try again?"
@@ -79,24 +65,16 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
 
-  def confirm_email
+  def confirm_authentication
     @user = User.find_by_confirm_token(params[:id])
     if @user
-      @user.email_activate
-      flash[:success] = "Welcome to the ECE Inventory System Your email has been confirmed. An Admin will verify your account shortly."
+      log_in(@user)
+      flash[:success] = "Welcome to the ECE Inventory System"
       redirect_to root_url
     else
       flash[:error] = "Sorry. User does not exist"
-      redirect_to root_url
+      redirect_to login_path
     end
-  end
-
-  def approve_user
-    user = User.find(params[:id])
-    UserMailer.confirm_user(user).deliver
-    activate_user(user)
-    flash[:success] = "#{user.username} approved"
-    redirect_to accountrequests_path
   end
 
   private
