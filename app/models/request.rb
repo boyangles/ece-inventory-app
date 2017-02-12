@@ -22,7 +22,8 @@ class Request < ApplicationRecord
   enum status: {
     outstanding: 0,
     approved: 1,
-    denied: 2
+    denied: 2,
+    cart: 3
   }
 
   scope :user_id, -> (user_id) { where user_id: user_id }
