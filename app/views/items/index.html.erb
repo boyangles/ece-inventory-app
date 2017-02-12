@@ -3,33 +3,49 @@
   <%= link_to "New Item", new_item_url, :class => "btn btn-primary" %>
 <% end %>
 
-
-<div class="center jumbotron">
+<div class="center_jumbotron">
   <h1>Items</h1>
 </div>
 
-<%= form_for items_path, :method => 'get' do %>
-  <p>
-    <%= text_field_tag :search, params[:search] %>
-    <%= submit_tag "Search" %>
-  </p>
+<div class="search">
+	<%= form_for items_path, :method => 'get' do |f| %>
+  	<p class="submit_bar">
+			<%= f.label "Search by Item Name" %><br>
+    	<%= text_field_tag :search, params[:search] %>
+	 	</p>
 
-  <h3>Required Tags</h3>
-  <% @tags.each do |tag| %>
-    <%= check_box_tag 'required_tag_names[]', 
-      tag.name, 
-      (@required_tag_filters.include? tag.name) %>
-    <%= tag.name %>
-  <% end %>
+		<p>
+			<%= f.label "Search by Model Number" %>
+			<%= text_field_tag :model_search, params[:model_search] %>
+		</p>
 
-  <h3>Excluded Tags</h3>
-  <% @tags.each do |tag| %>
-    <%= check_box_tag 'excluded_tag_names[]', 
-      tag.name, 
-      (@excluded_tag_filters.include? tag.name) %>
-    <%= tag.name %>
-  <% end %>
-<% end %>
+  	<h3>Required Tags</h3>
+  	<div class="tags">
+      <% @tags.each do |tag| %>
+          <label class="checkbox-inline">
+    	      <%= check_box_tag 'required_tag_names[]', 
+      	      tag.name, 
+              (@required_tag_filters.include? tag.name) %><br>
+            <%= tag.name %>
+          </label>
+  	  <% end %>
+		</div>
+
+  	<h3>Excluded Tags</h3>
+		<div class="tags">
+      <% @tags.each do |tag| %>
+        <label class="checkbox-inline">
+    	    <%= check_box_tag 'excluded_tag_names[]', 
+      	  tag.name, 
+          (@excluded_tag_filters.include? tag.name) %><br>
+    	  <%= tag.name %>
+        </label>
+  	<% end %>
+		</div>
+
+		<%= submit_tag "Search", class: "btn btn-primary" %>
+	<% end %>
+</div>
 
 <%= will_paginate %>
 

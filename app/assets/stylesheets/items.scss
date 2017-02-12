@@ -9,6 +9,7 @@ $gray-medium-light: #eaeaea;
   li {
     overflow: auto;
     padding: 10px 0;
-    border-bottom: 1px solid $gray-medium-light;
+    border-bottom: 1px dashed $gray-medium-light;
   }
 }
+

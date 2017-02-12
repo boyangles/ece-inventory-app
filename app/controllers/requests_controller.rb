@@ -1,7 +1,7 @@
 class RequestsController < ApplicationController
   before_action :set_request, only: [:show, :edit, :update, :destroy]
   before_action :check_logged_in_user, :check_approved_user
-
+  before_action :check_requests_corresponds_to_current_user, only: [:edit, :update, :destroy, :show]
 
   # before_action :request_index_by_admin, only: [ :index ]          #maybe
 
