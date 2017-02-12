@@ -6,8 +6,9 @@ class SessionsController < ApplicationController
 
   def create
     if request.env['omniauth.auth']
-      user = User.find_or_create_by(email: request.env['omniauth.auth']['info']['email'])
-      # Hardcoded now to just approve all users through duke net ID.
+      user = User.find_or_create_by(username: request.env['omniauth.auth']['info']['netid'],
+                                    email: request.env['omniauth.auth']['info']['email'])
+      # TODO: Hardcoded now to just approve all users through duke net ID.
       user.status = "approved"
       user.save(:validate => false)
       log_in(user)
