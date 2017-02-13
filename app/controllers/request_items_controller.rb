@@ -2,6 +2,7 @@ class RequestItemsController < ApplicationController
   before_action :check_logged_in_user, :check_approved_user
 
   def index
+    @request_items = RequestItem.paginate(page: params[:page], per_page: 10)
   end
 
   # GET /requests/1
@@ -16,10 +17,9 @@ class RequestItemsController < ApplicationController
     end
 
     # look for cart
-    find_cart[:request_id]
-    @request_item[:request_id] = find_cart[:request_id]
-
-
+    # find_cart
+    find_cart_id
+    @request_item[:request_id] = @request.id
   end
 
   def create
@@ -40,13 +40,31 @@ class RequestItemsController < ApplicationController
     params.fetch(:request_item, {}).permit(:quantity, :item_id, :request_id)
   end
 
-  def find_cart
-    if Request.where(:user_id => current_user.id, :status => "cart").empty?
-      # create cart
-      Request.new(:status => "cart", :user_id => current_user, :reason => "TBD")
-    else
-      Request.where(:user_id => current_user.id, :status => "cart")
+
+  #:user_id => current_user.id,
+  def find_cart_id
+    # if Request.where( :status => "cart").none?
+    #   # create cart
+    #   return Request.new(:status => "cart", :user_id => current_user, :reason => "TBD").id
+    # else
+    #   return Request.where(:user_id => current_user.id, :status => "cart").id
+    # end
+
+    @request = Request.where(:status => "cart", :user_id => current_user.id).first
+    if @request.nil?
+      @request = Request.new(:status => "cart", :user_id => current_user.id, :reason => "TBD", :request_type => "disbursement")
     end
+
+    # if Request.where(:status => 3).empty?
+    #   @request = Request.new(:status => 3, :user_id => current_user.id, :reason => "TBD", :request_type => "disbursement")
+    # else
+    #   @request = Request.where(:status => 3)
+    # end
+
+    if !@request.save(:validate => false)
+      flash[:error] = "jaklsdfkljadslfjklasjdlfjklasjdflajlksdfjlkasjdfkljaskldf"
+    end
+
   end
 
 end

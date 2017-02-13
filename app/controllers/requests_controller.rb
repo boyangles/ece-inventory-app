@@ -25,15 +25,15 @@ class RequestsController < ApplicationController
 
   # GET /requests/new
   # Delete this?? soon-ish, plus edit routes.
-  def new
-    @request = Request.new
-    
-    # if !params[:item_id].blank?
-    #   @request[:item_id] = params[:item_id]
-    # end
-    # @item = @request.items
-
-  end
+  # def new
+  #   @request = Request.new
+  #
+  #   # if !params[:item_id].blank?
+  #   #   @request[:item_id] = params[:item_id]
+  #   # end
+  #   # @item = @request.items
+  #
+  # end
 
   # GET /requests/1/edit
   def edit
