@@ -9,6 +9,21 @@
 
 # NOTE: Be sure not to modify these users unless for good reason, some tests depend on characteristics of users.
 
+
+admin:
+  username: admin
+  email: adminz2@duke.edu
+  privilege: 2
+  status: 1
+  password_digest: <%= User.digest('password') %>
+
+student:
+  username: student
+  email: student@duke.edu
+  privilege: 0
+  status: 1
+  password_digest: <%= User.digest('password') %>
+
 bernard:
   username: bernieboy
   email: ba34@duke.edu

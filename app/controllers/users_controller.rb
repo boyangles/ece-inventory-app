@@ -7,7 +7,7 @@ class UsersController < ApplicationController
   # bypassed by admin privileges
   before_action :check_current_user, only: [:show, :edit, :update]
   # Security issue: only admin users can delete users
-  before_action :check_admin_user, only: [:destroy , :index, :approve_user]
+  before_action :check_admin_user, only: [:create, :destroy , :index, :approve_user]
 
 
   def new
@@ -38,8 +38,8 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      # Toggle to log the user in upon sign up
-      redirect_to(root_path)
+      flash.now[:success] = "#{@user.username} created"
+      redirect_to users_path
     else
       flash.now[:danger] = "Unable to create user! Try again?"
       render action: 'new'
