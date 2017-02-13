@@ -16,6 +16,7 @@ bernard:
   status: 1
   email_confirmed: true
   password_digest: <%= User.digest('password') %>
+  auth_token: <%= Devise.friendly_token %>
 
 alex:
   username: alexkelly
@@ -24,6 +25,7 @@ alex:
   status: 1
   email_confirmed: true
   password_digest: <%= User.digest('password') %>
+  auth_token: <%= Devise.friendly_token %>
 
 joeUnapproved:
   username: joeUn
@@ -32,6 +34,7 @@ joeUnapproved:
   status: 0
   email_confirmed: true
   password_digest: <%= User.digest('password') %>
+  auth_token: <%= Devise.friendly_token %>
 
 adamUnapproved:
   username: adamun2
@@ -40,6 +43,7 @@ adamUnapproved:
   status: 0
   email_confirmed: true
   password_digest: <%= User.digest('password') %>
+  auth_token: <%= Devise.friendly_token %>
 
 <% 62.times do |n| %>
 user_<%= n %>:
@@ -49,4 +53,5 @@ user_<%= n %>:
   status: 1
   email_confirmed: true
   password_digest: <%= User.digest('password') %>
+  auth_token: <%= Devise.friendly_token %>
 <% end %>

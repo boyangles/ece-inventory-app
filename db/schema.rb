@@ -76,7 +76,7 @@ ActiveRecord::Schema.define(version: 20170212184020) do
     t.string   "confirm_token"
     t.integer  "status",          default: 0
     t.integer  "privilege",       default: 0
-    t.string   "auth_token"
+    t.string   "auth_token",      default: ""
     t.index ["auth_token"], name: "index_users_on_auth_token", unique: true, using: :btree
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
     t.index ["username"], name: "index_users_on_username", unique: true, using: :btree

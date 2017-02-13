@@ -1,5 +1,9 @@
 class Api::V1::UsersController < ApplicationController
-  before_action :authenticate_with_token!, only: [:index]
+  # TODO: Include actions for #create
+  before_action :authenticate_with_token!, only: [:index, :show, :update, :destroy]
+  before_action :auth_by_admin_privilege!, only: [:index]
+  before_action -> { auth_by_same_user_or_admin!(params[:id]) }, only: [:show, :update, :destroy]
+
   respond_to :json
 
   def index

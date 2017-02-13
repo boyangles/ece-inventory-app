@@ -4,6 +4,7 @@ describe Api::V1::UsersController do
   describe "GET #show" do
     before(:each) do
       @user = FactoryGirl.create :user
+      api_authorization_header @user[:auth_token]
       get :show, id: @user.id
     end
 
@@ -21,6 +22,7 @@ describe Api::V1::UsersController do
       before(:each) do
         @user_attributes = FactoryGirl.attributes_for :user
         @user_attributes[:email] = @user_attributes[:email].downcase
+
         post :create, { user: @user_attributes }
       end
 
@@ -58,6 +60,7 @@ describe Api::V1::UsersController do
     context "when is successfully updated" do
       before(:each) do
         @user = FactoryGirl.create :user
+        api_authorization_header @user[:auth_token]
         patch :update, { id: @user.id,
                          user: { email: "newmailexample@duke.edu" } }
       end
@@ -73,6 +76,7 @@ describe Api::V1::UsersController do
     context "when is not created" do
       before(:each) do
         @user = FactoryGirl.create :user
+        api_authorization_header @user[:auth_token]
         patch :update, { id: @user.id,
                          user: { email: "bademail.com" } }
       end
@@ -94,6 +98,7 @@ describe Api::V1::UsersController do
   describe "DELETE #destroy" do
     before(:each) do
       @user = FactoryGirl.create :user
+      api_authorization_header @user[:auth_token]
       delete :destroy, { id: @user.id }
     end
 

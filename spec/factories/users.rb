@@ -5,5 +5,6 @@ FactoryGirl.define do
     password "password"
     password_confirmation "password"
     status "approved"
+    privilege "admin"
   end
 end
