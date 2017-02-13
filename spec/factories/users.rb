@@ -4,5 +4,6 @@ FactoryGirl.define do
     email "sample@duke.edu"
     password "password"
     password_confirmation "password"
+    status "approved"
   end
 end

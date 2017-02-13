@@ -9,9 +9,6 @@ describe Api::V1::SessionsController do
 
     context 'when credentials are correct' do
       before(:each) do
-        @user[:status] = 'approved'
-        @user.save
-
         post_credentials(@user[:email], 'password')
       end
 
@@ -25,9 +22,6 @@ describe Api::V1::SessionsController do
 
     context 'when password credentials are incorrect' do
       before(:each) do
-        @user[:status] = 'approved'
-        @user.save
-
         post_credentials(@user[:email], 'invalid_password')
       end
 
