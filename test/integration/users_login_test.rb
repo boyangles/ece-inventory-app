@@ -7,11 +7,10 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
 
   def setup
     @user = users(:bernard)
-    
     @admin = users(:bernard)
     @non_admin = users(:alex)
   end
-  
+
   # Catches the bug where the flash persists for more than a single page
   test "login with incorrect information" do
     get login_path # Visit the login path
@@ -35,10 +34,10 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
 
     # Step 2
     post login_path, params: {
-      session: {
-        username: @user.username,
-        password: 'password'
-      }
+        session: {
+            username: @user.username,
+            password: 'password'
+        }
     }
 
     assert is_logged_in?
@@ -50,7 +49,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
 
     # Step 3
     assert_select "a[href=?]", login_path, count: 0
-   
+
     # Step 4
     assert_select "a[href=?]", logout_path
 
@@ -66,14 +65,12 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", logout_path, count: 0
     assert_select "a[href=?]", user_path(@user), count: 0
   end
-  
+
   # Logged in users should never be able to see the login page
   test "viewing login page as an admin redirects to root path" do
     log_in_as(@admin)
     assert is_logged_in?
-
     get login_path
-    
     assert_redirected_to root_path
   end
   test "viewing login page as an non-admin redirects to root path" do
@@ -81,7 +78,24 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     assert is_logged_in?
 
     get login_path
-    
+
     assert_redirected_to root_path
+  end
+
+  test "Create local account as admin, log out, then log in with local" do
+    log_in_as(@admin)
+    get new_user_path
+    post users_path, params: {
+        user: {
+            username: "cotton eyed joe",
+            email: "cottonjoe@email.com",
+            password: "password",
+            password_confirmation: "password"
+        }
+    }
+    delete logout_path
+    assert_not is_logged_in?
+    log_in_as(@user)
+    assert_redirected_to user_path(@user)
   end
 end

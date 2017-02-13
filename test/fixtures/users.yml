@@ -9,12 +9,28 @@
 
 # NOTE: Be sure not to modify these users unless for good reason, some tests depend on characteristics of users.
 
+
+admin:
+  username: admin
+  email: adminz2@duke.edu
+  privilege: 2
+  status: 1
+  password_digest: <%= User.digest('password') %>
+  auth_token: <%= Devise.friendly_token %>
+
+student:
+  username: student
+  email: student@duke.edu
+  privilege: 0
+  status: 1
+  password_digest: <%= User.digest('password') %>
+  auth_token: <%= Devise.friendly_token %>
+
 bernard:
   username: bernieboy
   email: ba34@duke.edu
   privilege: 2
   status: 1
-  email_confirmed: true
   password_digest: <%= User.digest('password') %>
   auth_token: <%= Devise.friendly_token %>
 
@@ -23,7 +39,14 @@ alex:
   email: ak47@duke.edu
   privilege: 0
   status: 1
-  email_confirmed: true
+  password_digest: <%= User.digest('password') %>
+  auth_token: <%= Devise.friendly_token %>
+
+austin:
+  username: bojing
+  email: al12345@duke.edu
+  privilege: 2
+  status: 1
   password_digest: <%= User.digest('password') %>
   auth_token: <%= Devise.friendly_token %>
 
@@ -32,7 +55,6 @@ joeUnapproved:
   email: jo2un@duke.edu
   privilege: 0
   status: 0
-  email_confirmed: true
   password_digest: <%= User.digest('password') %>
   auth_token: <%= Devise.friendly_token %>
 
@@ -41,7 +63,6 @@ adamUnapproved:
   email: adam1un@duke.edu
   privilege: 0
   status: 0
-  email_confirmed: true
   password_digest: <%= User.digest('password') %>
   auth_token: <%= Devise.friendly_token %>
 
@@ -51,7 +72,6 @@ user_<%= n %>:
   email: <%= "user#{n}@duke.edu" %>
   privilege: 2
   status: 1
-  email_confirmed: true
   password_digest: <%= User.digest('password') %>
   auth_token: <%= Devise.friendly_token %>
 <% end %>

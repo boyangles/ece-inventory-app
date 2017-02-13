@@ -5,7 +5,7 @@ class Item < ApplicationRecord
   validates :description, length: { maximum: 255 }
 
   # Relation with Tags
-  has_many :tags, -> { uniq },  :through => :item_tags
+  has_many :tags, -> { distinct },  :through => :item_tags
   has_many :item_tags
 
   # Relation with Requests

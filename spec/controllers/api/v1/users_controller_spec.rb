@@ -78,7 +78,7 @@ describe Api::V1::UsersController do
         @user = FactoryGirl.create :user
         api_authorization_header @user[:auth_token]
         patch :update, { id: @user.id,
-                         user: { email: "bademail.com" } }
+                         user: { email: "" } }
       end
 
       it "renders error from JSON" do
@@ -88,7 +88,7 @@ describe Api::V1::UsersController do
 
       it "renders the json errors on why the user couldn't be created" do
         user_response = json_response
-        expect(user_response[:errors][:email]).to include "is invalid"
+        expect(user_response[:errors][:email]).to include "can't be blank"
       end
 
       it { should respond_with 422 }

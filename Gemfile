@@ -14,10 +14,15 @@ gem 'capybara'
 %w[rspec-core rspec-expectations rspec-mocks rspec-rails rspec-support].each do |lib|
   gem lib, :git => "https://github.com/rspec/#{lib}.git", :branch => 'master'
 end
+
 # Responds for respond_to
 gem 'responders'
 # Devise for authentication tokens
 gem 'devise'
+
+# DUKE OAUTH GEM for net id verification
+gem "omniauth-duke-oauth2", :git => 'git@gitlab.oit.duke.edu:colab/omniauth-duke-oauth2.git', :ref => '5eaf6759'
+gem "httparty"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.0.1'
