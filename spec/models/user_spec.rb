@@ -1,16 +1,41 @@
-require 'rails_helper'
-require 'capybara/rails'
+# require 'rails_helper'
+# require 'capybara/rails'
 
-RSpec.describe "home page", :type => :feature do
+# FactoryGirl.find_definitions
+
+RSpec.describe "sign in tests", :type => :feature do
   it "displays the user's username after successful login" do
-    #user = FactoryGirl.create(:user, :username => "jdoe", :password => "secret")
-    user = User.create!(username: "jdoe", email: "jaiefn@duke.edu", password: "password", privilege: "admin",
-                        status: "approved", email_confirmed: "true")
-    visit "/login"
-    fill_in "Username", :with => "jdoe"
-    fill_in "Password", :with => "password"
+    @user = FactoryGirl.create(:approved_user)
+    visit login_path
+    fill_in "Username", :with => @user.username
+    fill_in "Password", :with => @user.password
     click_button "Log in"
-
-    page.all('a', :text => 'jdoe')
+    page.all('a', :text => @user.username)
+    expect(page).to have_content @user.username
+    expect(page).to have_content @user.privilege
+    expect(page).to have_content "Items"
+    expect(page).to have_no_content "Users"
+    expect(page).to have_no_content "Tags"
   end
+
+  it "login with admin user" do
+    @user = FactoryGirl.create(:admin)
+    visit login_path
+    fill_in "Username", with: @user.username
+    fill_in "Password", with: @user.password
+    click_button "Log in"
+    expect(page).to have_content @user.username
+    expect(page).to have_content @user.privilege
+    expect(page).to have_content "Users"
+    expect(page).to have_content "Items"
+    expect(page).to have_content "Tags"
+    expect(page).to have_content "Home"
+    expect(page).to have_content "Account"
+
+  end
+
+  after :each do
+    User.delete(@user)
+  end
+
 end
