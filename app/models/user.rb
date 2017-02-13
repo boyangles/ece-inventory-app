@@ -21,8 +21,9 @@ class User < ApplicationRecord
   }, _prefix: :status
 
   before_validation {
-    self.username = username.downcase
-    self.email = email.downcase
+    # Only downcase if the fields are there
+    self.username = (username.to_s == '') ? username : username.downcase
+    self.email = (email.to_s == '') ? email : email.downcase
   }
 
   # Creates the confirmation token before a user is created
@@ -31,12 +32,11 @@ class User < ApplicationRecord
   }
 
   # Modified to only allow duke emails
-  VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-\.]*duke\.edu\z/i
+   # VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-\.]*duke\.edu\z/i
 
   validates :username, presence: true, length: { maximum: 50 },
                        uniqueness: { case_sensitive: false }
   validates :email, presence: true, length: { maximum: 255 },
-                       format: { with: VALID_EMAIL_REGEX },
                        uniqueness: { case_sensitive: false }
   validates :password, presence: true, length: { minimum: 6 }, :if => :password
   validates :privilege, :inclusion => { :in => PRIVILEGE_OPTIONS }
@@ -62,12 +62,6 @@ class User < ApplicationRecord
     if self.confirm_token.blank?
       self.confirm_token = SecureRandom.urlsafe_base64.to_s
     end
-  end
-
-  def email_activate
-    self.email_confirmed = true
-    self.confirm_token = nil
-    save!(:validate => false)
   end
 
 end

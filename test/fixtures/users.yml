@@ -9,12 +9,26 @@
 
 # NOTE: Be sure not to modify these users unless for good reason, some tests depend on characteristics of users.
 
+
+admin:
+  username: admin
+  email: adminz2@duke.edu
+  privilege: 2
+  status: 1
+  password_digest: <%= User.digest('password') %>
+
+student:
+  username: student
+  email: student@duke.edu
+  privilege: 0
+  status: 1
+  password_digest: <%= User.digest('password') %>
+
 bernard:
   username: bernieboy
   email: ba34@duke.edu
   privilege: 2
   status: 1
-  email_confirmed: true
   password_digest: <%= User.digest('password') %>
 
 alex:
@@ -22,7 +36,13 @@ alex:
   email: ak47@duke.edu
   privilege: 0
   status: 1
-  email_confirmed: true
+  password_digest: <%= User.digest('password') %>
+
+austin:
+  username: bojing
+  email: al12345@duke.edu
+  privilege: 2
+  status: 1
   password_digest: <%= User.digest('password') %>
 
 joeUnapproved:
@@ -30,7 +50,6 @@ joeUnapproved:
   email: jo2un@duke.edu
   privilege: 0
   status: 0
-  email_confirmed: true
   password_digest: <%= User.digest('password') %>
 
 adamUnapproved:
@@ -38,7 +57,6 @@ adamUnapproved:
   email: adam1un@duke.edu
   privilege: 0
   status: 0
-  email_confirmed: true
   password_digest: <%= User.digest('password') %>
 
 <% 62.times do |n| %>
@@ -47,6 +65,5 @@ user_<%= n %>:
   email: <%= "user#{n}@duke.edu" %>
   privilege: 2
   status: 1
-  email_confirmed: true
   password_digest: <%= User.digest('password') %>
 <% end %>
