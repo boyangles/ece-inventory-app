@@ -22,7 +22,7 @@ class User < ApplicationRecord
 
   before_validation {
     self.username = username.downcase
-    self.email = email ? email.downcase : "dummyemail@example.com"
+    self.email = email ? email.downcase : "#{username}@example.com"
   }
 
   # Creates the confirmation token before a user is created

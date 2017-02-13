@@ -36,6 +36,8 @@ class UsersController < ApplicationController
   # POST /users
   def create
     @user = User.new(user_params)
+    # TODO: Status is hardcoded for now until we decide what to do with it
+    @user.status = 1
 
     if @user.save
       flash.now[:success] = "#{@user.username} created"
