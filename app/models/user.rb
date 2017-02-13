@@ -22,8 +22,9 @@ class User < ApplicationRecord
 
   before_validation {
     # Only downcase if the fields are there
+    # TODO: Figure out what to do with emails for local accounts. can't have blank as two local accounts cannot be created then.
     self.username = (username.to_s == '') ? username : username.downcase
-    self.email = (email.to_s == '') ? email : email.downcase
+    self.email = (email.to_s == '') ? "#{username.to_s}@example.com" : email.downcase
   }
 
   # Creates the confirmation token before a user is created
