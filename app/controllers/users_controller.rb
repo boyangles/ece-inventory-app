@@ -37,10 +37,10 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     # TODO: Status is hardcoded for now until we decide what to do with it
-    @user.status = 1
+    @user.status = "approved"
 
     if @user.save
-      flash.now[:success] = "#{@user.username} created"
+      flash[:success] = "#{@user.username} created"
       redirect_to users_path
     else
       flash.now[:danger] = "Unable to create user! Try again?"

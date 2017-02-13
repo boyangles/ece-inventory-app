@@ -16,7 +16,6 @@ gem 'capybara'
 end
 # Factory Girl - Testing
 gem "factory_girl_rails"
-gem "factory_girl"
 
 # DUKE OAUTH GEM for net id verification
 gem "omniauth-duke-oauth2", :git => 'git@gitlab.oit.duke.edu:colab/omniauth-duke-oauth2.git', :ref => '5eaf6759'

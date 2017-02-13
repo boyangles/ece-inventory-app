@@ -281,7 +281,6 @@ DEPENDENCIES
   byebug
   capybara
   coffee-rails (~> 4.2)
-  factory_girl
   factory_girl_rails
   faker (= 1.6.6)
   httparty
