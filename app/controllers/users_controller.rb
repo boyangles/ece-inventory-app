@@ -11,9 +11,9 @@ class UsersController < ApplicationController
 
 
   def new
-    if logged_in?
-      redirect_to root_path
-    end
+    # if logged_in?
+    #   redirect_to root_path
+    # end
     @user = User.new
   end
 
@@ -36,9 +36,6 @@ class UsersController < ApplicationController
   # POST /users
   def create
     @user = User.new(user_params)
-    # Set default status and privilege
-    @user.status = "waiting"
-    @user.privilege = "student"
 
     if @user.save
       # Toggle to log the user in upon sign up

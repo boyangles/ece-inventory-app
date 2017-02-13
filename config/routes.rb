@@ -2,10 +2,9 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get 'welcome/index'
 
-  post '/signup', to: 'users#create'
+  #post '/signup', to: 'users#create'
 
-  resources :users, except: :new
-
+  resources :users
   resources :requests
   resources :items
   resources :tags
