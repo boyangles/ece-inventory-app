@@ -1,0 +1,1 @@
+json.array! @accountrequests, partial: 'accountrequests/accountrequest', as: :user

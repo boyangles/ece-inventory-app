@@ -7,15 +7,7 @@ class UsersController < ApplicationController
   # bypassed by admin privileges
   before_action :check_current_user, only: [:show, :edit, :update]
   # Security issue: only admin users can delete users
-  before_action :check_admin_user, only: [:create, :destroy , :index, :approve_user]
-
-
-  def new
-    # if logged_in?
-    #   redirect_to root_path
-    # end
-    @user = User.new
-  end
+  before_action :check_admin_user, only: [:destroy , :index, :approve_user]
 
   # GET /users
   def index
@@ -28,6 +20,14 @@ class UsersController < ApplicationController
     @requests = @user.requests.paginate(page: params[:page], per_page: 10)
   end
 
+  # GET /users/new
+  def new
+    if logged_in?
+      redirect_to root_path
+    end
+    @user = User.new
+  end
+
   # GET /users/1/edit
   def edit
     @user = User.find(params[:id])
@@ -36,13 +36,19 @@ class UsersController < ApplicationController
   # POST /users
   def create
     @user = User.new(user_params)
-
-    # TODO: Status is hardcoded for now until we decide what to do with it
-    @user.status = "approved"
+    # Set default status and privilege
+    @user.status = "waiting"
+    @user.privilege = "student"
 
     if @user.save
-      flash[:success] = "#{@user.username} created"
-      redirect_to users_path
+      # Tell the UserMailer to send a welcome email after save
+      UserMailer.welcome_email(@user).deliver
+
+      # Toggle to log the user in upon sign up
+      # log_in @user
+      flash[:success] = "Please confirm email"
+
+      redirect_to(root_path)
     else
       flash.now[:danger] = "Unable to create user! Try again?"
       render action: 'new'
@@ -52,7 +58,7 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   def update
     @user = User.find(params[:id])
-
+    
     if (params[:password].blank? && !current_user?(@user))
       params.delete(:password)
       params.delete(:password_confirmation)
@@ -73,17 +79,37 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
 
-  private
-  # Use callbacks to share common setup or constraints between actions.
-  def set_user
-    @user = User.find(params[:id])
+  def confirm_email
+    @user = User.find_by_confirm_token(params[:id])
+    if @user
+      @user.email_activate
+      flash[:success] = "Welcome to the ECE Inventory System Your email has been confirmed. An Admin will verify your account shortly."
+      redirect_to root_url
+    else
+      flash[:error] = "Sorry. User does not exist"
+      redirect_to root_url
+    end
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
-  def user_params
-    # Rails 4+ requires you to whitelist attributes in the controller.
-    params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :privilege)
+  def approve_user
+    user = User.find(params[:id])
+    UserMailer.confirm_user(user).deliver
+    activate_user(user)
+    flash[:success] = "#{user.username} approved"
+    redirect_to accountrequests_path
   end
+
+  private
+    # Use callbacks to share common setup or constraints between actions.
+    def set_user
+      @user = User.find(params[:id])
+    end
+
+    # Never trust parameters from the scary internet, only allow the white list through.
+    def user_params
+      # Rails 4+ requires you to whitelist attributes in the controller.
+      params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :privilege)
+    end
 
 
 

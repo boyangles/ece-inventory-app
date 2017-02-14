@@ -4,8 +4,11 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   def setup
     @user = users(:bernard)
     @user2 = users(:alex)
-    @admin = users(:admin)
-    @student = users(:student)
+  end
+  
+  test "should get new" do
+    get signup_url
+    assert_response :success
   end
 
   test "redirect to login page with index when not logged in" do
@@ -21,10 +24,10 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
   test "redirect to login page with update when not logged in" do
     patch user_path(@user), params: {
-        user: {
-            username: @user.username,
-            email: @user.email
-        }
+      user: {
+        username: @user.username,
+        email: @user.email
+      }
     }
     assert_not flash.empty?
     assert_redirected_to login_url
@@ -40,10 +43,10 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "redirect to homepage with update when logged in as different user" do
     log_in_as(@user2)
     patch user_path(@user), params: {
-        user: {
-            username: @user.username,
-            email: @user.email
-        }
+      user: {
+        username: @user.username,
+        email: @user.email
+      }
     }
 
     assert flash.empty?
@@ -55,11 +58,11 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     log_in_as(@user2)
     assert_not @user2.privilege_admin?
     patch user_path(@user2), params: {
-        user: {
-            password: "password",
-            password_confirmation: "password",
-            privilege: "admin"
-        }
+      user: {
+        password: "password",
+        password_confirmation: "password",
+        privilege: "admin"
+      }
     }
 
     assert_not @user2.privilege_admin?
@@ -78,37 +81,5 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
       delete user_path(@user)
     end
     assert_redirected_to root_url
-  end
-
-  test "create local account through admin user" do
-    log_in_as(@admin)
-    get new_user_path
-    assert_difference 'User.count' do
-      post users_path, params: {
-          user: {
-              username: "cotton eyed joe",
-              email: "cottonjoe@email.com",
-              password: "password",
-              password_confirmation: "password"
-          }
-      }
-    end
-    assert_redirected_to users_path
-  end
-
-  test "cannot create new user through non admin account" do
-    log_in_as(@student)
-    get new_user_path
-    assert_no_difference 'User.count' do
-      post users_path, params: {
-          user: {
-              username: "cotton eyed joe",
-              email: "cottonjoe@email.com",
-              password: "password",
-              password_confirmation: "password"
-          }
-      }
-    end
-    assert_redirected_to root_path
   end
 end

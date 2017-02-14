@@ -3,13 +3,7 @@ require 'test_helper'
 class UserTest < ActiveSupport::TestCase
   
   def setup
-    @user = User.new(username: "Austin",
-                     privilege: "admin",
-                     email: "sample@duke.edu",
-                     password: "SamplePass",
-                     password_confirmation: "SamplePass",
-                     status: "approved",
-                     auth_token: Devise.friendly_token)
+    @user = User.new(username: "Austin", privilege: "admin", email: "sample@duke.edu", password: "SamplePass", password_confirmation: "SamplePass", status: "approved", email_confirmed: true)
     @item = items(:item1)
   end
 
@@ -43,7 +37,6 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "email should be present" do
-    skip("Ignored until we figure out local account emails")
     @user.email = ""
     assert_not @user.valid?
   end
@@ -54,7 +47,6 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "email validation rejects valid addresses that are not duke emails" do
-    skip("we don't really have invalid email addresses anymore technically but leaving in case")
     valid_addresses = %w[user@example.com USER@foo.COM A_US-ER@sample.email.org abc.123@foo.cn austin+andrew@baby.cn]
     valid_addresses.each do |valid_address|
       @user.email = valid_address
@@ -71,9 +63,7 @@ class UserTest < ActiveSupport::TestCase
 
   end
 
-
   test "email validation rejects invalid emails" do
-    skip("Not sure what email addresses are invalid or not at this point? Depends on how we do local accounts")
     invalid_addresses = %w[user@example,com user_at_foo.org user.name@example. foo@bar_baz.com foo@bar+baz.com]
     invalid_addresses.each do |invalid_address|
       @user.email = invalid_address
@@ -120,16 +110,5 @@ class UserTest < ActiveSupport::TestCase
     assert_difference ['Request.count', 'Log.count'], -1 do
       @user.destroy
     end
-  end
-
-  test "verify before_create makes auth_token unique" do
-    duplicate_user = @user.dup
-    duplicate_user[:username] = 'AustinDup'
-    duplicate_user[:email] = 'sampledup@duke.edu'
-
-    duplicate_user[:auth_token] = @user[:auth_token]
-    @user.save
-
-    assert duplicate_user.valid?
   end
 end
