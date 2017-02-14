@@ -100,6 +100,18 @@ class RequestsController < ApplicationController
 
     redirect_to requests_url
   end  
+
+
+  def find_cart(usr)
+    @request = Request.where(:status => "cart", :user_id => usr.id).first
+    if @request.nil?
+      @request = Request.new(:status => "cart", :user_id => usr.id, :reason => "TBD", :request_type => "disbursement")
+    end
+
+    if !@request.save(:validate => false)
+      flash[:error] = "Cart was not found"
+    end
+  end
  
   private
     # Use callbacks to share common setup or constraints between actions.

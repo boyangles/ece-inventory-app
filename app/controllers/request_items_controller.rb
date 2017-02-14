@@ -16,9 +16,8 @@ class RequestItemsController < ApplicationController
       @request_item[:item_id] = params[:item_id]
     end
 
-    # look for cart
-    # find_cart
-    find_cart_id
+    # look for cart to link request to item
+    Request.find_cart
     @request_item[:request_id] = @request.id
   end
 
@@ -38,33 +37,6 @@ class RequestItemsController < ApplicationController
   def request_item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
     params.fetch(:request_item, {}).permit(:quantity, :item_id, :request_id)
-  end
-
-
-  #:user_id => current_user.id,
-  def find_cart_id
-    # if Request.where( :status => "cart").none?
-    #   # create cart
-    #   return Request.new(:status => "cart", :user_id => current_user, :reason => "TBD").id
-    # else
-    #   return Request.where(:user_id => current_user.id, :status => "cart").id
-    # end
-
-    @request = Request.where(:status => "cart", :user_id => current_user.id).first
-    if @request.nil?
-      @request = Request.new(:status => "cart", :user_id => current_user.id, :reason => "TBD", :request_type => "disbursement")
-    end
-
-    # if Request.where(:status => 3).empty?
-    #   @request = Request.new(:status => 3, :user_id => current_user.id, :reason => "TBD", :request_type => "disbursement")
-    # else
-    #   @request = Request.where(:status => 3)
-    # end
-
-    if !@request.save(:validate => false)
-      flash[:error] = "jaklsdfkljadslfjklasjdlfjklasjdflajlksdfjlkasjdfkljaskldf"
-    end
-
   end
 
 end

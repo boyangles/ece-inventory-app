@@ -62,7 +62,7 @@
 
 
 
-<%= link_to "New Request", new_request_item_url(:item_id => @item.id), :class => "btn btn-primary" %>
+<%= link_to "Add to Cart", new_request_item_url(:item_id => @item.id), :class => "btn btn-primary" %>
 <% if current_user.privilege_admin? %>
   <%= link_to 'Remove item', 
     @item, 
