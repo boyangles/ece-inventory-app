@@ -15,6 +15,15 @@ gem 'capybara'
   gem lib, :git => "https://github.com/rspec/#{lib}.git", :branch => 'master'
 end
 
+# Responds for respond_to
+gem 'responders'
+# Devise for authentication tokens
+gem 'devise'
+
+# DUKE OAUTH GEM for net id verification
+gem "omniauth-duke-oauth2", :git => 'git@gitlab.oit.duke.edu:colab/omniauth-duke-oauth2.git', :ref => '5eaf6759'
+gem "httparty"
+
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.0.1'
 # Add bcrypt for password hashing
@@ -67,6 +76,14 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+end
+
+group :test do
+  # Factory Girl Rails for testing suite for API
+  gem "factory_girl_rails"
+  # FFaker Gem for testing suite for API
+  gem "ffaker"
+  gem "shoulda-matchers"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
