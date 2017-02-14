@@ -3,23 +3,23 @@ require 'rails_helper'
 describe User do
   before { @user = FactoryGirl.build(:user) }
 
-  subject{ @user }
+  subject { @user }
 
-  it { should respond_to(:email) }
-  it { should respond_to(:password) }
-  it { should respond_to(:password_confirmation) }
-  it { should respond_to(:auth_token) }
+  it { expect(subject).to respond_to(:email) }
+  it { expect(subject).to respond_to(:password) }
+  it { expect(subject).to respond_to(:password_confirmation) }
+  it { expect(subject).to respond_to(:auth_token) }
 
   # TODO: Change when validation of email is finalized
-  xit { should validate_presence_of(:email) }
-  it { should validate_uniqueness_of(:email).case_insensitive }
-  it { should validate_confirmation_of(:password) }
-  it { should allow_value('example@duke.edu').for(:email) }
-  it { should validate_uniqueness_of(:auth_token) }
+  xit { expect(subject).to validate_presence_of(:email) }
+  it { expect(subject).to  validate_uniqueness_of(:email).case_insensitive }
+  it { expect(subject).to  validate_confirmation_of(:password) }
+  it { expect(subject).to  allow_value('example@duke.edu').for(:email) }
+  it { expect(subject).to  validate_uniqueness_of(:auth_token) }
 
   describe "#generate_authentication_token!" do
     it "generates a unique token" do
-      Devise.stub(:friendly_token).and_return("auniquetoken123")
+      allow(Devise).to receive(:friendly_token).and_return("auniquetoken123")
       @user.generate_authentication_token!
       expect(@user.auth_token).to eql "auniquetoken123"
     end
@@ -31,7 +31,7 @@ describe User do
     end
   end
 
-  it { should be_valid }
+  it { expect(subject).to be_valid }
 end
 
 RSpec.describe "sign in tests", :type => :feature do
