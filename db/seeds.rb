@@ -84,21 +84,17 @@ end
 
 # Creating Requests:
 50.times do |n|
-  # Obtain random user:
-  user = User.offset(rand(User.count)).first
-  # Obtain random item:
-  item = Item.offset(rand(Item.count)).first
-  # Random reason:
-  reason = Faker::Lorem.paragraph(2, true, 3)
+ # Obtain random user:
+ user = User.offset(rand(User.count)).first
+ # Random reason:
+ reason = Faker::Lorem.paragraph(2, true, 3)
 
-  Request.create!(
-      user_id: user.id,
-      quantity: item.quantity,
-      reason: reason,
-      status: "outstanding",
-      request_type: "disbursement",
-      item_id: item.id
-  )
+ Request.create!(
+     user_id: user.id,
+     reason: reason,
+     status: "outstanding",
+     request_type: "disbursement",
+ )
 end
 
 # Creating Logs:

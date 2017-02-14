@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   resources :requests
   resources :items
   resources :tags
-
+  resources :request_items
 
   #Login and Sessions routes
   get   '/login',   to: 'sessions#new'      #Describes the login screen
