@@ -44,8 +44,17 @@ ActiveRecord::Schema.define(version: 20170212184020) do
     t.index ["user_id"], name: "index_logs_on_user_id", using: :btree
   end
 
+  create_table "request_items", force: :cascade do |t|
+    t.integer  "request_id"
+    t.integer  "item_id"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+    t.integer  "quantity",   default: 0
+    t.index ["item_id"], name: "index_request_items_on_item_id", using: :btree
+    t.index ["request_id"], name: "index_request_items_on_request_id", using: :btree
+  end
+
   create_table "requests", force: :cascade do |t|
-    t.integer  "quantity"
     t.string   "reason"
     t.json     "instances"
     t.datetime "created_at",               null: false
@@ -54,9 +63,6 @@ ActiveRecord::Schema.define(version: 20170212184020) do
     t.integer  "request_type", default: 0
     t.string   "response"
     t.integer  "user_id"
-    t.integer  "item_id"
-    t.index ["item_id"], name: "index_requests_on_item_id", using: :btree
-    t.index ["user_id", "item_id", "created_at"], name: "index_requests_on_user_id_and_item_id_and_created_at", using: :btree
     t.index ["user_id"], name: "index_requests_on_user_id", using: :btree
   end
 
@@ -88,6 +94,5 @@ ActiveRecord::Schema.define(version: 20170212184020) do
 
   add_foreign_key "logs", "items"
   add_foreign_key "logs", "users"
-  add_foreign_key "requests", "items"
   add_foreign_key "requests", "users"
 end
