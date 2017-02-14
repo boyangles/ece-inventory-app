@@ -1,7 +1,14 @@
+require "application_responder"
+
 class ApplicationController < ActionController::Base
-  protect_from_forgery with: :exception
+  self.responder = ApplicationResponder
+  respond_to :html
+
+  protect_from_forgery with: :null_session
   
   #Makes the sessions helper available in all our controllers
+  include Authenticable
+
   include SessionsHelper
   include RequestsHelper
   include ItemsHelper
