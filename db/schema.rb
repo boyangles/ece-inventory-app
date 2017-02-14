@@ -47,20 +47,19 @@ ActiveRecord::Schema.define(version: 20170212184020) do
   create_table "request_items", force: :cascade do |t|
     t.integer  "request_id"
     t.integer  "item_id"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-    t.integer  "quantity",   default: 0
+    t.integer  "request_type", default: 0
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.integer  "quantity",     default: 0
     t.index ["item_id"], name: "index_request_items_on_item_id", using: :btree
     t.index ["request_id"], name: "index_request_items_on_request_id", using: :btree
   end
 
   create_table "requests", force: :cascade do |t|
     t.string   "reason"
-    t.json     "instances"
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.integer  "status",       default: 0
-    t.integer  "request_type", default: 0
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+    t.integer  "status",     default: 0
     t.string   "response"
     t.integer  "user_id"
     t.index ["user_id"], name: "index_requests_on_user_id", using: :btree

@@ -10,18 +10,13 @@ class Item < ApplicationRecord
 
   # Relation with Requests
   has_many :requests, -> { uniq },  :through => :request_items
-  has_many :request_items
-
-
-  #OLD RELATIONSHIP WITH REQUESTS BELOW
-  # # Relation with Requests
-  # has_many :requests, dependent: :destroy
+  has_many :request_items, dependent: :destroy
 
   # Relation with Logs
   has_many :logs, dependent: :destroy
 
   def self.tagged_with_all(tag_filters)
-    if(tag_filters.length == 0)
+    if tag_filters.length == 0
       all
     else
       joins(:tags).where('tags.name IN (?)', tag_filters).group('items.id').having('count(*)=?', tag_filters.count)
@@ -29,7 +24,7 @@ class Item < ApplicationRecord
   end
 
   def self.tagged_with_none(tag_filters)
-    if(tag_filters.length == 0)
+    if tag_filters.length == 0
       all
     else
       where("items.id IN (?)", select('items.id') - joins(:tags).where('tags.name IN (?)', tag_filters).distinct.select('items.id'))
@@ -48,14 +43,14 @@ class Item < ApplicationRecord
     end
   end
 
-  def update_by_request(request) 
-    case request.request_type.to_sym
+  def update_by_request(request_item)
+    case request_item.request_type.to_sym
     when :disbursement
-      self[:quantity] = self[:quantity] - request[:quantity]
+      self[:quantity] = self[:quantity] - request_item[:quantity]
     when :acquisition
-      self[:quantity] = self[:quantity] + request[:quantity]
+      self[:quantity] = self[:quantity] + request_item[:quantity]
     when :destruction
-      self[:quantity] = self[:quantity] - request[:quantity]
+      self[:quantity] = self[:quantity] - request_item[:quantity]
     else
       self[:quantity]
     end
