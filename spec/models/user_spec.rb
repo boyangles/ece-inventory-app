@@ -10,8 +10,7 @@ describe User do
   it { should respond_to(:password_confirmation) }
   it { should respond_to(:auth_token) }
 
-  # TODO: Change when validation of email is finalized
-  xit { should validate_presence_of(:email) }
+  it { should validate_presence_of(:email) }
   it { should validate_uniqueness_of(:email).case_insensitive }
   it { should validate_confirmation_of(:password) }
   it { should allow_value('example@duke.edu').for(:email) }
