@@ -24,16 +24,9 @@ class RequestsController < ApplicationController
   end
 
   # GET /requests/new
-  # Delete this?? soon-ish, plus edit routes.
-  # def new
-  #   @request = Request.new
-  #
-  #   # if !params[:item_id].blank?
-  #   #   @request[:item_id] = params[:item_id]
-  #   # end
-  #   # @item = @request.items
-  #
-  # end
+  def new
+    @request = Request.new
+  end
 
   # GET /requests/1/edit
   def edit
@@ -42,6 +35,7 @@ class RequestsController < ApplicationController
   end
 
   # POST /requests
+  ## TODO: Workflow -> Go through each subrequest
   def create
     @request = Request.new(request_params)
     @request.user_id = params[:user] ? params[:user][:id] : @request.user_id

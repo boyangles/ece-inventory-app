@@ -56,7 +56,6 @@ ActiveRecord::Schema.define(version: 20170210210619) do
 
   create_table "requests", force: :cascade do |t|
     t.string   "reason"
-    t.json     "instances"
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
     t.integer  "status",       default: 0

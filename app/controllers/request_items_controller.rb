@@ -1,5 +1,5 @@
 class RequestItemsController < ApplicationController
-  before_action :check_logged_in_user, :check_approved_user
+  before_action :check_logged_in_user
 
   def index
     @request_items = RequestItem.paginate(page: params[:page], per_page: 10)
