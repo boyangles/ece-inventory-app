@@ -1,5 +1,5 @@
 class Request < ApplicationRecord
-  include Filterable
+  include Filterable, Subscribable
 
   #relationship with items
   has_many :items,  -> {uniq}, :through => :request_items
@@ -13,6 +13,12 @@ class Request < ApplicationRecord
   # Data Options:
   STATUS_OPTIONS = %w(outstanding approved denied)
 
+  enum request_type: {
+      disbursement: 0,
+      acquisition: 1,
+      destruction: 2
+  }
+
   enum status: {
     outstanding: 0,
     approved: 1,
@@ -24,7 +30,7 @@ class Request < ApplicationRecord
   scope :status, -> (status) { where status: status }
 
   # Validations
-  ## TODO: Before save, make sure all the request_items are not oversubscribed
+  validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
   validates :status, :inclusion => { :in => STATUS_OPTIONS }
   validates :user_id, presence: true
 
