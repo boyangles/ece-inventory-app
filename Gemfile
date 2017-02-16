@@ -8,6 +8,10 @@ end
 #Integration testing gem
 gem 'rails-controller-testing'
 
+# API Testing Swagger
+gem 'swagger-docs'
+gem 'ruby-swagger'
+
 # Capybara RSpec Selenium Testing
 gem 'capybara'
 # gem 'rspec-rails'

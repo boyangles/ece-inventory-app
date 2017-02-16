@@ -1,6 +1,13 @@
 class Api::V1::ItemsController < ApplicationController
   respond_to :json
 
+  swagger_controller :items, 'Items'
+
+  swagger_api :index do
+    summary 'Returns all items'
+    notes 'These are some notes for everybody!'
+  end
+
   def index
     respond_with Item.all
   end
