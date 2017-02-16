@@ -42,6 +42,7 @@ class RequestsController < ApplicationController
   end
 
   # POST /requests
+	# OBSOLETE???
   def create
     @request = Request.new(request_params)
     @request.user_id = params[:user] ? params[:user][:id] : @request.user_id
@@ -68,26 +69,30 @@ class RequestsController < ApplicationController
   # PATCH/PUT /requests/1
   def update
     @request.user_id = params[:user] ? params[:user][:id] : @request.user_id
-    @item = @request.item
     
     if !@request.has_status_change_to_approved?(request_params)
-      update_form(@request, request_params) and return
+      # update_item_quantities(@request, request_params)
+			update_form(@request, request_params) and return
     end
     
-    if !@item
-      reject_to_edit(@request, "Item does not currently exist") and return
-    elsif Request.oversubscribed?(@item, @request)
-      reject_to_edit(@request, "Oversubscribed!") and return
-    else
-      update_form(@request, request_params)
-      @item.update_by_request(@request)
-      @item.save!
+    @request.request_items.each do |req_item| 
+    	@item = Item.find(req_item.item_id)
+			if !@item
+      	reject_to_edit(@request, "Item does not currently exist") and return
+    	elsif Request.oversubscribed?(@item, @request)
+      	reject_to_edit(@request, "Oversubscribed!") and return
+    	else
+      	update_form(@request, request_params)
 
-      @log = Log.new(log_params)
-      @log.user_id = @request.user_id
-      @log.save!
-    end
-  end
+				@item.update_by_request(@request)
+      	@item.save!
+
+      	@log = Log.new(log_params)
+      	@log.user_id = @request.user_id
+      	@log.save!
+    	end
+  	end
+	end
 
   # DELETE /requests/1
   def destroy
@@ -101,18 +106,6 @@ class RequestsController < ApplicationController
     redirect_to requests_url
   end  
 
-
-  def find_cart(usr)
-    @request = Request.where(:status => "cart", :user_id => usr.id).first
-    if @request.nil?
-      @request = Request.new(:status => "cart", :user_id => usr.id, :reason => "TBD", :request_type => "disbursement")
-    end
-
-    if !@request.save(:validate => false)
-      flash[:error] = "Cart was not found"
-    end
-  end
- 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_request
@@ -132,12 +125,19 @@ class RequestsController < ApplicationController
     def update_form(req, params)
       if req.update(params)
         flash[:success] = "Operation successful!"
-        redirect_to requests_path
       else
         flash[:danger] = "Operation failed"
-        redirect_to request_path(req)
       end
+		  redirect_to request_path(req)
     end
+
+		def update_item_quantities(req, params)
+			if req.update_attributes(params[:request_item])
+				flash[:success] = "Item quantities updated!"
+			else
+				flash[:danger] = "poop"
+			end
+		end
 
     def reject_to_new(msg)
       flash.now[:danger] = msg
@@ -157,7 +157,7 @@ class RequestsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def request_params
       # params.fetch(:request, {}).permit(:user_id, :item_id, :reason, :status, :request_type, :response)
-      params.fetch(:request, {}).permit(:user_id, :reason, :status, :request_type, :response)
+      params.fetch(:request, {}).permit(:user_id, :reason, :status, :request_type, :response, request_items_attributes: [:id, :quantity])
     end
 
     def log_params
