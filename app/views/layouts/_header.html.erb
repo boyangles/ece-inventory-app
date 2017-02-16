@@ -14,7 +14,7 @@
                 <li><%= link_to "Tags", tags_path %></li>
             <% end %>
             <li>
-              <% @request = Request.find_cart(current_user) %>
+							<% @request = grab_cart(current_user) %>
               <%= link_to "Cart", request_path(@request) %></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">

@@ -1,0 +1,2 @@
+class UserCart < ApplicationRecord
+end

@@ -4,17 +4,23 @@
     <%= render 'shared/error_messages', object: @form_obj %>
   <% end %>
 
+	<p>
+		<b>Items Requested</b>
 
-  <p>
-    <b>Item Requested</b>
-    <%= @item.unique_name %>
-  </p>
+		<% if request.request_items.empty? %>
+			<p> Your cart is empty! </p>
+		<% end %>
 
-  <p>
-    <%= f.label :quantity %><br>
-    <%= f.number_field :quantity, :required => true %>
-  </p>
+		<% for request.request_items.each do |req_item| %>
+			<% f.fields_for(req_item) do |ff| %>
+				<p>
+					<%= Item.find(req_item.item_id).unique_name %>
+					<%= ff.number_field :quantity, :required => true %>
+				</p>	
+			<% end %>
+		<% end %>
 
+	</p>
 
   <p>
     <%= f.label :reason %><br>
@@ -22,7 +28,7 @@
   </p>
 
   <%= f.hidden_field :user_id, :value => (request.user_id) ? request.user_id : current_user.id %>
-  <%= f.hidden_field :status, :value => "outstanding" %>
+  <%= f.hidden_field :status, :value => request.status %>
 
 
   <div class="actions">
