@@ -6,15 +6,16 @@ class Api::V1::UsersController < ApplicationController
 
   respond_to :json
 
-  #protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
+  protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
   #skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
-  #skip_before_action :verify_authenticity_token, if: :json_request?
+  skip_before_action :verify_authenticity_token
 
   swagger_controller :users, 'Users'
 
   swagger_api :index do
     summary 'Returns all Users'
     notes 'These are some notes for everybody!'
+    param :header, :auth_token, :string, :required, 'fuck'
     param :query, :page, :integer, :optional, "Page number"
     response :unauthorized
     response :not_acceptable, "The request you made is not acceptable"
@@ -35,7 +36,25 @@ class Api::V1::UsersController < ApplicationController
     param :form, :username, :string, :required, "Username"
     param :form, :email, :string, :required, "Email"
     param :form, :password, :string, :required, "Password"
-    param :form, :password_digest, :string, :required, "Password Confirmation"
+    param :form, :password_confirmation, :string, :required, "Password Confirmation"
+    response :unauthorized
+    response :not_acceptable
+  end
+
+  swagger_api :update do
+    summary "Updates an existing user"
+    param :path, :id, :integer, :required, "id"
+    param :form, :username, :string, "Username"
+    param :form, :email, :string, "Email"
+    param :form, :password, :string, "Password"
+    param :form, :password_confirmation, :string, "Password Confirmation"
+    response :unauthorized
+    response :not_acceptable
+  end
+
+  swagger_api :destroy do
+    summary "Deletes a user"
+    param :path, :id, :integer, :required, "id"
     response :unauthorized
     response :not_acceptable
   end
@@ -75,6 +94,6 @@ class Api::V1::UsersController < ApplicationController
 
   private
     def user_params
-      params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :privilege)
+      params.permit(:username, :email, :password, :password_confirmation, :privilege)
     end
 end

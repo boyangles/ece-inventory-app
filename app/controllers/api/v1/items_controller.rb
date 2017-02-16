@@ -29,7 +29,7 @@ class Api::V1::ItemsController < ApplicationController
   swagger_api :create do
     summary "Creates a new Item"
     param :form, :unique_name, :string, :required, "Unique Name"
-    param :form, :quantity, :long, :required, "Quantity"
+    param :form, :quantity, :number, :required, "Quantity"
     param :form, :description, :string, :required, "Description"
     param :form, :model_number, :string, :required, "Model Number"
     response :unauthorized
@@ -41,7 +41,7 @@ class Api::V1::ItemsController < ApplicationController
     notes 'Must have ID to update'
     param :path, :id, :integer, :required, "Item Id"
     param :form, :unique_name, :string, :required, "Unique Name"
-    param :form, :quantity, :long, :required, "Quantity"
+    param :form, :quantity, :number, :required, "Quantity"
     param :form, :description, :string, :required, "Description"
     param :form, :model_number, :string, :required, "Model Number"
     response :unauthorized
@@ -91,6 +91,6 @@ class Api::V1::ItemsController < ApplicationController
 
   private
   def item_params
-    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description)
+    params.permit(:unique_name, :quantity, :model_number, :description)
   end
 end
