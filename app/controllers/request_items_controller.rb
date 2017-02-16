@@ -17,15 +17,16 @@ class RequestItemsController < ApplicationController
     end
 
     # look for cart to link request to item
-    Request.find_cart
+    @request = grab_cart(current_user)
     @request_item[:request_id] = @request.id
   end
 
   def create
     @request_item = RequestItem.new(request_item_params) #make private def later
     if @request_item.save
-      redirect_to users_url   ## TODO: Redirect to cart page.
-    else
+			@request = grab_cart(current_user)
+    	redirect_to request_path(@request)
+		else
       flash.now[:danger] = "You may not add this to the cart!"
       render 'new'
     end
