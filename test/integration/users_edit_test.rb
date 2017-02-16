@@ -8,6 +8,7 @@ class UsersEditTest < ActionDispatch::IntegrationTest
         status: 'cart',
         request_type: 'disbursement',
         user_id: @user.id)
+    @request.save!
   end
 
   test "handling unsucessful edits" do

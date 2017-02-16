@@ -49,7 +49,6 @@ class UsersController < ApplicationController
   
 	@cart = Request.new(:status => "cart", :user_id => @user.id, :reason => "TBD")
 	@cart.save!
-	@user.cart_id = @cart.id
 
 	end
 
