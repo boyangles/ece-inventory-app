@@ -36,33 +36,17 @@ end
                privilege: "admin",
                password: password,
                password_confirmation: password,
-               email_confirmed: true)
+               auth_token: Devise.friendly_token)
 end
 
 User.create!(username: "admin", email: "adminusername@duke.edu", status: "approved",
-             privilege: "admin", password: "password", password_confirmation: "password", email_confirmed: "true")
+             privilege: "admin", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
 User.create!(username: "nonadmin", email: "nonadminusername@duke.edu", status: "approved",
-             privilege: "student", password: "password", password_confirmation: "password", email_confirmed: "true")
+             privilege: "student", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
 
 
-User.create(username:"abcd", email: "f@duke.edu" , status: "approved", privilege: "student", password: "yoyoyo", password_confirmation: "yoyoyo", email_confirmed: true)
-
-# Creating Items:
-
-# 15.times do |n|
-#   quantity = Faker::Number.number(3)
-#   model_number = Faker::Number.hexadecimal(6)
-#   description = Faker::Lorem.paragraph(2, true, 1)
-#   location = Faker::Address.city
-#
-#   Item.create!(
-#     unique_name: "item-#{n+1}",
-#     quantity: quantity,
-#     model_number: model_number,
-#     description: description,
-#     location: location
-#   )
-# end
+User.create(username:"abcd", email: "f@duke.edu" , status: "approved",
+            privilege: "student", password: "yoyoyo", password_confirmation: "yoyoyo", auth_token: Devise.friendly_token)
 
 
 items = %w[Resistor Transistor Oscilloscope RED_LED Green_LED Capacitor Screw Washer BOE-Bot Electrical_Tape Arduino_Kit
