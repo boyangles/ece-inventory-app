@@ -7,12 +7,7 @@ class UsersController < ApplicationController
   # bypassed by admin privileges
   before_action :check_current_user, only: [:show, :edit, :update]
   # Security issue: only admin users can delete users
-<<<<<<< HEAD
   before_action :check_admin_user, only: [:create, :destroy , :index]
-=======
-  before_action :check_admin_user, only: [:create, :destroy , :index, :approve_user]
->>>>>>> parent of 851365f... Revert "Merge branch 'master' into shopping_cart"
-
 
   def new
     # if logged_in?
