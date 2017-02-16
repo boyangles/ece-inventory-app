@@ -6,12 +6,10 @@ class RequestTest < ActiveSupport::TestCase
     @item = items(:item1)
 
     @request = Request.new(
-      quantity: 5,
       reason: 'For test',
       status: 'outstanding',
       request_type: 'disbursement',
-      user_id: @user.id,
-      item_id: @item.id)
+      user_id: @user.id)
   end
 
   test "should be valid" do
@@ -20,11 +18,6 @@ class RequestTest < ActiveSupport::TestCase
 
   test "user id should be present" do
     @request.user_id = nil
-    assert_not @request.valid?
-  end
-
-  test "item id should be present" do
-    @request.item_id = nil
     assert_not @request.valid?
   end
 

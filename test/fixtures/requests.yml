@@ -4,7 +4,6 @@
 # model remove the '{}' from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 request1:
-  quantity: 15
   reason: 'For jokes'
   status: 0
   request_type: 0
@@ -12,21 +11,18 @@ request1:
 
 
 request2:
-  quantity: 1222
   reason: 'For jokes'
   status: 1
   request_type: 0
   created_at: <%= 3.years.ago %>
 
 request3:
-  quantity: 35
   reason: 'For 3 jokes'
   status: 0
   request_type: 0
   created_at: <%= 2.hours.ago %>
 
 most_recent:
-  quantity: 255
   reason: 'For 4 jokes'
   status: 0
   request_type: 0

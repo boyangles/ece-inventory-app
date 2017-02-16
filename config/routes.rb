@@ -4,7 +4,9 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get 'welcome/index'
 
-  #post '/signup', to: 'users#create'
+  # TODO: Deprecated... All test associated with this are irrelevant
+  # get '/signup', to: 'users#new'
+  # post '/signup', to: 'users#create'
 
   resources :users
   resources :requests
