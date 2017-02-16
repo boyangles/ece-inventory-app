@@ -7,11 +7,13 @@ class Request < ApplicationRecord
 
   belongs_to :user
 
+  accepts_nested_attributes_for :request_items, allow_destroy: true
+
   # Default scopes
   default_scope -> { order(created_at: :desc) }
 
   # Data Options:
-  STATUS_OPTIONS = %w(outstanding approved denied)
+  STATUS_OPTIONS = %w(outstanding approved denied cart)
 
   enum request_type: {
       disbursement: 0,

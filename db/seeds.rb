@@ -30,22 +30,40 @@ end
   username = Faker::Name.name
   email = "exampleApproved-#{n+1}@duke.edu"
   password = "password"
-  User.create!(username: username,
+ 
+  usr = User.create!(username: username,
                email: email,
                status: "approved",
                privilege: "admin",
                password: password,
                password_confirmation: password,
                email_confirmed: true)
+
+  
+  req = Request.create!(status: "cart",
+		user_id: usr.id,
+		reason: "tbd",
+		request_type: "disbursement")
+
+  UserCart.create!(user_id: usr.id, 
+		  cart_id: req.id)  
+  		
 end
 
-User.create!(username: "admin", email: "adminusername@duke.edu", status: "approved",
-             privilege: "admin", password: "password", password_confirmation: "password", email_confirmed: "true")
-User.create!(username: "nonadmin", email: "nonadminusername@duke.edu", status: "approved",
-             privilege: "student", password: "password", password_confirmation: "password", email_confirmed: "true")
+admin = User.create!(username: "admin", email: "adminusername@duke.edu", status: "approved", privilege: "admin", password: "password", password_confirmation: "password", email_confirmed: "true")
+r = Request.create!(status: "cart", user_id: admin.id, reason: "tbd", request_type: "disbursement")
+UserCart.create!(user_id: admin.id, cart_id: r.id)
 
 
-User.create(username:"abcd", email: "f@duke.edu" , status: "approved", privilege: "student", password: "yoyoyo", password_confirmation: "yoyoyo", email_confirmed: true)
+nonadmin = User.create!(username: "nonadmin", email: "nonadminusername@duke.edu", status: "approved", privilege: "student", password: "password", password_confirmation: "password", email_confirmed: "true")
+re = Request.create!(status: "cart", user_id: nonadmin.id, reason: "tbd", request_type: "disbursement")
+UserCart.create!(user_id: nonadmin.id, cart_id: re.id)
+
+
+yo = User.create!(username:"abcd", email: "f@duke.edu" , status: "approved", privilege: "student", password: "yoyoyo", password_confirmation: "yoyoyo", email_confirmed: true)
+req = Request.create!(status: "cart", user_id: yo.id, reason: "tbd", request_type: "disbursement")
+UserCart.create!(user_id: yo.id, cart_id: req.id)
+
 
 # Creating Items:
 
