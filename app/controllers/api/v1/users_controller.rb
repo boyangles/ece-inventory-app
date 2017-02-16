@@ -6,6 +6,40 @@ class Api::V1::UsersController < ApplicationController
 
   respond_to :json
 
+  #protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
+  #skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
+  #skip_before_action :verify_authenticity_token, if: :json_request?
+
+  swagger_controller :users, 'Users'
+
+  swagger_api :index do
+    summary 'Returns all Users'
+    notes 'These are some notes for everybody!'
+    param :query, :page, :integer, :optional, "Page number"
+    response :unauthorized
+    response :not_acceptable, "The request you made is not acceptable"
+    response :requested_range_not_satisfiable
+  end
+
+  swagger_api :show do
+    summary "Fetches a single user"
+    param :path, :id, :integer, :required, "User Id"
+    response :ok, "Success", :user
+    response :unauthorized
+    response :not_acceptable
+    response :not_found
+  end
+
+  swagger_api :create do
+    summary "Creates a new User"
+    param :form, :username, :string, :required, "Username"
+    param :form, :email, :string, :required, "Email"
+    param :form, :password, :string, :required, "Password"
+    param :form, :password_digest, :string, :required, "Password Confirmation"
+    response :unauthorized
+    response :not_acceptable
+  end
+
   def index
     respond_with User.all
   end
@@ -36,7 +70,7 @@ class Api::V1::UsersController < ApplicationController
   def destroy
     user = User.find(params[:id])
     user.destroy
-    head 204
+    he  ad 204
   end
 
   private
