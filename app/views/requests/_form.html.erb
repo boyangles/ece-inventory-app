@@ -18,11 +18,11 @@
 					<%= ff.number_field :item_id %>
 					<%= ff.hidden_field :request_id, :value => (request.id) %>
 				<% else %>
-					<%= item = Item.find(ff.object.item_id).unique_name %>
+					<%= Item.find(ff.object.item_id).unique_name %>
 				<% end %>
 				<%= ff.number_field :quantity, :required => true %>
-				<%= ff.hidden_field :item_id, :value => (item.id) %>
 				<%= ff.hidden_field :request_id, :value => (request.id) %>
+				<%= ff.hidden_field :item_id, :value => (ff.object.item_id) %>
 			</p>
  		<% end %>
 

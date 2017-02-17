@@ -39,7 +39,7 @@ class RequestsController < ApplicationController
   def edit
     @request = Request.find(params[:id])
     @user = @request.user
-		3.times {@request.request_items.build }
+		# 3.times {@request.request_items.build }
   end
 
   # POST /requests
@@ -77,7 +77,7 @@ class RequestsController < ApplicationController
     end
     
     @request.request_items.each do |req_item| 
-    	@item = Item.find(req_item.item_id)
+	   	@item = Item.find(req_item.item_id)
 			if !@item
       	reject_to_edit(@request, "Item does not currently exist") and return
     	elsif Request.oversubscribed?(@item, @request)
@@ -92,10 +92,6 @@ class RequestsController < ApplicationController
       	@log.user_id = @request.user_id
       	@log.save!
 	
-				# create a new cart object and update user
-				# create_new_cart()
-				# @user_cart = UserCart.where(:user_id => current_user.id).take
-				# @user_cart.cart_id = @cart.id
     	end
   	end
 	end
