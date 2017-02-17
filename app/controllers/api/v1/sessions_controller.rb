@@ -17,7 +17,6 @@ class Api::V1::SessionsController < ApplicationController
 
   def create
     user = User.find_by(:username => params[:username])
-    puts user.username
     user.status = 'approved'
     if user && user.authenticate(params[:password])
       if user.status_approved?
