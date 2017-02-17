@@ -1,5 +1,5 @@
 class ItemsController < ApplicationController
-  before_action :check_logged_in_user, :check_approved_user
+  before_action :check_logged_in_user
 
   # GET /items
   # GET /items.json

@@ -65,6 +65,11 @@ ActiveRecord::Schema.define(version: 20170216021411) do
     t.index ["user_id"], name: "index_requests_on_user_id", using: :btree
   end
 
+  create_table "stack_exchanges", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "tags", force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at", null: false
@@ -80,14 +85,15 @@ ActiveRecord::Schema.define(version: 20170216021411) do
 
   create_table "users", force: :cascade do |t|
     t.string   "username"
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
     t.string   "password_digest"
     t.string   "email"
-    t.boolean  "email_confirmed", default: false
-    t.string   "confirm_token"
     t.integer  "status",          default: 0
     t.integer  "privilege",       default: 0
+    t.string   "confirm_token"
+    t.string   "auth_token",      default: ""
+    t.index ["auth_token"], name: "index_users_on_auth_token", unique: true, using: :btree
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
     t.index ["username"], name: "index_users_on_username", unique: true, using: :btree
   end

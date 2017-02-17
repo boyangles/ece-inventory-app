@@ -4,6 +4,10 @@
   <h1>Users</h1>
 </div>
 
+<% if current_user.privilege_admin? %>
+    <%= link_to "Create New Account", new_user_url, :class => "btn btn-primary" %>
+<% end %>
+
 <%= will_paginate %>
 
 <ul class="users">

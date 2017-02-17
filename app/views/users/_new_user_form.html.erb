@@ -1,0 +1,21 @@
+<%= form_for(@user) do |f| %>
+    <% @form_obj = @user %>
+    <%= render 'shared/error_messages', object: @form_obj %>
+
+    <!-- Username -->
+    <%= f.label :username %>
+    <%= f.text_field :username, class: 'form-control' %>
+
+    <!-- Password -->
+    <%= f.label :password %>
+    <%= f.password_field :password, class: 'form-control' %>
+
+    <!-- Password Confirm -->
+    <%= f.label :password_confirmation, "Confirm Password" %>
+    <%= f.password_field :password_confirmation, class: 'form-control' %>
+
+    <%= f.label :privilege, "Define Privilege" %>
+    <%= f.select :privilege, User.privileges.keys.to_a %>
+
+    <%= f.submit yield(:button_text), class: "btn btn-primary" %>
+<% end %>
