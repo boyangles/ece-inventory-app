@@ -1,6 +1,9 @@
 class Api::V1::UsersController < BaseController
   # TODO: Include actions for #create
-  before_action :authenticate_with_token!, only: [:index, :show, :update, :destroy]
+
+  # authentication_actions = [:index, :show, :update, :destroy]
+
+  before_action :authenticate_with_token!
   before_action :auth_by_admin_privilege!, only: [:index]
   before_action -> { auth_by_same_user_or_admin!(params[:id]) }, only: [:show, :update, :destroy]
 
@@ -11,6 +14,12 @@ class Api::V1::UsersController < BaseController
   #skip_before_action :verify_authenticity_token
 
   swagger_controller :users, 'Users'
+
+  # authentication_actions.each do |api_action|
+  #   swagger_api api_action do
+  #     param :header, :Authorization, :required, "Authorization Token"
+  #   end
+  # end
 
   swagger_api :index do
     summary 'Returns all Users'
@@ -36,6 +45,7 @@ class Api::V1::UsersController < BaseController
     param :form, :email, :string, :required, "Email"
     param :form, :password, :string, :required, "Password"
     param :form, :password_confirmation, :string, :required, "Password Confirmation"
+    param_list :form, :privilege, :string, :required, "Privilege", [ "admin", "ta", "student" ]
     response :unauthorized
     response :not_acceptable
   end
@@ -47,6 +57,7 @@ class Api::V1::UsersController < BaseController
     param :form, :email, :string, "Email"
     param :form, :password, :string, "Password"
     param :form, :password_confirmation, :string, "Password Confirmation"
+    param_list :form, :privilege, :string , "Privilege", [ "admin", "ta", "student" ]
     response :unauthorized
     response :not_acceptable
   end

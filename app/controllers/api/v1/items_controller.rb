@@ -1,11 +1,20 @@
 class Api::V1::ItemsController < BaseController
   respond_to :json
 
+#  authentication_actions = [:index, :show, :create, :update, :destroy]
+  before_action :authenticate_with_token!
+
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
   #skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
   #skip_before_action :verify_authenticity_token, if: :json_request?
 
   swagger_controller :items, 'Items'
+
+  # authentication_actions.each do |api_action|
+  #   swagger_api api_action do
+  #     param :header, :Authorization, :required, "Authorization Token"
+  #   end
+  # end
 
   swagger_api :index do
     summary 'Returns all items'
