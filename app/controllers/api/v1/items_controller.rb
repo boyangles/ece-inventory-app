@@ -1,4 +1,4 @@
-class Api::V1::ItemsController < ApplicationController
+class Api::V1::ItemsController < BaseController
   respond_to :json
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }

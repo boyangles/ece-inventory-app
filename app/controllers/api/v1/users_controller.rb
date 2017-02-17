@@ -1,4 +1,4 @@
-class Api::V1::UsersController < ApplicationController
+class Api::V1::UsersController < BaseController
   # TODO: Include actions for #create
   before_action :authenticate_with_token!, only: [:index, :show, :update, :destroy]
   before_action :auth_by_admin_privilege!, only: [:index]
@@ -8,14 +8,13 @@ class Api::V1::UsersController < ApplicationController
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
   #skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
-  skip_before_action :verify_authenticity_token
+  #skip_before_action :verify_authenticity_token
 
   swagger_controller :users, 'Users'
 
   swagger_api :index do
     summary 'Returns all Users'
     notes 'These are some notes for everybody!'
-    param :header, :auth_token, :string, :required, 'fuck'
     param :query, :page, :integer, :optional, "Page number"
     response :unauthorized
     response :not_acceptable, "The request you made is not acceptable"

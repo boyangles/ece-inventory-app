@@ -1,4 +1,4 @@
-class Api::V1::TagsController < ApplicationController
+class Api::V1::TagsController < BaseController
   respond_to :json
 
   def index
