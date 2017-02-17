@@ -7,7 +7,7 @@ class Request < ApplicationRecord
 
   belongs_to :user
 
-  accepts_nested_attributes_for :request_items, allow_destroy: true
+  accepts_nested_attributes_for :request_items, allow_destroy: true, :reject_if => lambda {|a| a[:item_id].blank?}
 
   # Default scopes
   default_scope -> { order(created_at: :desc) }

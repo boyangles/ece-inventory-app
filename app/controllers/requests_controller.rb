@@ -39,6 +39,7 @@ class RequestsController < ApplicationController
   def edit
     @request = Request.find(params[:id])
     @user = @request.user
+		3.times {@request.request_items.build }
   end
 
   # POST /requests
@@ -67,11 +68,11 @@ class RequestsController < ApplicationController
   end
 
   # PATCH/PUT /requests/1
+	# TODO: Can only update cart/outstanding - can't update approved/denied
   def update
     @request.user_id = params[:user] ? params[:user][:id] : @request.user_id
     
     if !@request.has_status_change_to_approved?(request_params)
-      # update_item_quantities(@request, request_params)
 			update_form(@request, request_params) and return
     end
     
@@ -90,6 +91,11 @@ class RequestsController < ApplicationController
       	@log = Log.new(log_params)
       	@log.user_id = @request.user_id
       	@log.save!
+	
+				# create a new cart object and update user
+				# create_new_cart()
+				# @user_cart = UserCart.where(:user_id => current_user.id).take
+				# @user_cart.cart_id = @cart.id
     	end
   	end
 	end
@@ -131,14 +137,6 @@ class RequestsController < ApplicationController
 		  redirect_to request_path(req)
     end
 
-		def update_item_quantities(req, params)
-			if req.update_attributes(params[:request_item])
-				flash[:success] = "Item quantities updated!"
-			else
-				flash[:danger] = "poop"
-			end
-		end
-
     def reject_to_new(msg)
       flash.now[:danger] = msg
       render 'new'
@@ -154,6 +152,12 @@ class RequestsController < ApplicationController
         redirect_to root_url
       end
     end
+
+		def create_new_cart
+			@cart = Request.new(:status => "cart", :user_id => current_user.id, :reason => "tbd")
+		end
+
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def request_params
       # params.fetch(:request, {}).permit(:user_id, :item_id, :reason, :status, :request_type, :response)

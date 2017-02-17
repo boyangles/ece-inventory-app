@@ -12,10 +12,16 @@
 		<% end %>
 
 		<%= f.fields_for :request_items do |ff| %>
-			<div class = "req_item">
-				<%= Item.find(ff.object.item_id).unique_name %>	
+			<p class = "req_item">		
+				<% if ff.object.item_id.nil? %>
+					<b>Item ID</b>
+					<%= ff.number_field :item_id %>
+					<%= ff.hidden_field :request_id, :value => (request.id) %>
+				<% else %>
+					<%= Item.find(ff.object.item_id).unique_name %>
+				<% end %>
 				<%= ff.number_field :quantity, :required => true %>
-			</div>
+			</p>
  		<% end %>
 
 	</p>
