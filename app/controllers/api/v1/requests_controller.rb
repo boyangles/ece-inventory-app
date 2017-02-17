@@ -47,7 +47,7 @@ class Api::V1::RequestsController < BaseController
   end
 
   swagger_api :update do
-    summary "Updates an existing tag"
+    summary "Updates an existing request"
     param :path, :id, :integer, :required, "id"
     param :form, :user_id, :number, "User ID"
     param :form, :item_id, :number, "Item ID"
@@ -61,7 +61,7 @@ class Api::V1::RequestsController < BaseController
   end
 
   swagger_api :destroy do
-    summary "Deletes a tag"
+    summary "Deletes a request"
     param :path, :id, :integer, :required, "id"
     response :unauthorized
     response :not_acceptable
