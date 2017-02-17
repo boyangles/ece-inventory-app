@@ -9,14 +9,14 @@ class Api::V1::SessionsController < ApplicationController
   swagger_api :create do
     summary 'Returns all items'
     notes 'These are some notes for everybody!'
-    param :form, :email, :string, :required, "Username"
+    param :form, :username, :string, :required, "Username"
     param :form, :password, :string, :required, "Password"
     response :unauthorized
     response :requested_range_not_satisfiable
   end
 
   def create
-    user = User.find_by(:email => params[:email])
+    user = User.find_by(:username => params[:username])
     puts user.username
     user.status = 'approved'
     if user && user.authenticate(params[:password])
@@ -28,7 +28,7 @@ class Api::V1::SessionsController < ApplicationController
         render json: { errors: 'Your account has not been approved by an administrator' }, status: 422
       end
     else
-      render json: { errors: 'Invalid email or password' }, status: 422
+      render json: { errors: 'Invalid username or password' }, status: 422
     end
   end
 

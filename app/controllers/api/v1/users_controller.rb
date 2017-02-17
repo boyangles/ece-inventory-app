@@ -6,12 +6,9 @@ class Api::V1::UsersController < BaseController
   before_action :authenticate_with_token!
   before_action :auth_by_admin_privilege!, only: [:index]
   before_action -> { auth_by_same_user_or_admin!(params[:id]) }, only: [:show, :update, :destroy]
+  protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
   respond_to :json
-
-  protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
-  #skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
-  #skip_before_action :verify_authenticity_token
 
   swagger_controller :users, 'Users'
 

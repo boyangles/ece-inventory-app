@@ -8,6 +8,9 @@ class Api::V1::ItemsController < BaseController
   #skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
   #skip_before_action :verify_authenticity_token, if: :json_request?
 
+  #TODO: Still needs admin checks on most of these too
+
+
   swagger_controller :items, 'Items'
 
   # authentication_actions.each do |api_action|
