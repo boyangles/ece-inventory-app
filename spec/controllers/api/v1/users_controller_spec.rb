@@ -23,7 +23,7 @@ describe Api::V1::UsersController do
         @user_attributes = FactoryGirl.attributes_for :user
         @user_attributes[:email] = @user_attributes[:email].downcase
 
-        post :create, { user: @user_attributes }
+        post :create, @user_attributes
       end
 
       it "renders the json representation for the user record just created" do
@@ -39,7 +39,7 @@ describe Api::V1::UsersController do
       before(:each) do
         @invalid_user_attributes = { password: "password",
                                      password_confirmation: "invalid_password" }
-        post :create, { user: @invalid_user_attributes }
+        post :create, @invalid_user_attributes
       end
 
       it "renders JSON error" do
@@ -62,7 +62,7 @@ describe Api::V1::UsersController do
         @user = FactoryGirl.create :user
         api_authorization_header @user[:auth_token]
         patch :update, { id: @user.id,
-                         user: { email: "newmailexample@duke.edu" } }
+                        email: "newmailexample@duke.edu" }
       end
 
       it "renders json representation for updated user" do
@@ -78,7 +78,7 @@ describe Api::V1::UsersController do
         @user = FactoryGirl.create :user
         api_authorization_header @user[:auth_token]
         patch :update, { id: @user.id,
-                         user: { email: "" } }
+                        email: "" }
       end
 
       # TODO: Change when validation of email is finalized
