@@ -17,8 +17,8 @@
   <% end %>
   <% @request.request_items.each do |req_item| %>
       <% item = Item.find(req_item.item_id) %>
-      <li><%= item.unique_name + ': '%>
-      <%= req_item.quantity %> </li>
+      <p><%= item.unique_name + ': '%>
+      <%= req_item.quantity %> </p>
   <% end %>
 </p>
 
@@ -32,12 +32,15 @@
   <%= @request.reason %>
 </p>
 
-<p>
-  <strong>Status:</strong>
-  <%= @request.status %>
-</p>
 
-<% if !@request.outstanding? %>
+<% if !@request.cart? %>
+	<p>
+  	<strong>Status:</strong>
+  	<%= @request.status %>
+	</p>
+<% end %>
+
+<% if !@request.outstanding? && !@request.cart? %>
   <p>
     <strong>Admin Response:</strong>
     <%= (@request.response) ? @request.response : "None given." %>
@@ -48,7 +51,6 @@
 <% if @request.outstanding? && current_user.privilege_admin? %>
   <%= render 'decisionform', request: @request %>
 <% end %>
-
 
 <%= link_to 'Edit', edit_request_path(@request) %> |
 <%= link_to 'Destroy', @request, method: :delete, data: { confirm: 'Are you sure?' } %> |
