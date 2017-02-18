@@ -8,7 +8,7 @@
 		<b>Items Requested</b>
 
 		<% if request.request_items.empty? %>
-			<p> Your cart is empty! </p>
+			<p> Your cart is empty! Add items in order to checkout. </p>
 		<% end %>
 
 		<%= f.fields_for :request_items do |ff| %>
@@ -38,7 +38,7 @@
 
 	<p>
 	<% if @request.cart? %>
-		<%= link_to "Place Order", requests_path(:status => "outstanding") %>
+		<%= link_to "Place Order", request_path(params[:id], :status => "outstanding") %>
 	<% end %>
 	</p>
 

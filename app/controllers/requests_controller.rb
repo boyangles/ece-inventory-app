@@ -106,7 +106,18 @@ class RequestsController < ApplicationController
     end
 
     redirect_to requests_url
-  end  
+  end
+
+	def create_new_cart
+		@request.update
+		@cart = Request.new(:status => "cart", :user_id => current_user.id, :reason => "Fill me in!")
+		@cart.save!
+		uc = UserCart.find_by(:user_id => current_user.id);
+		uc.cart_id = @cart.id
+		uc.save!
+		redirect_to users_url
+	end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -148,10 +159,6 @@ class RequestsController < ApplicationController
         redirect_to root_url
       end
     end
-
-		def create_new_cart
-			@cart = Request.new(:status => "cart", :user_id => current_user.id, :reason => "tbd")
-		end
 
 
     # Never trust parameters from the scary internet, only allow the white list through.

@@ -13,7 +13,7 @@
 <p>
   <strong>Items:</strong>
 	<% if @request.request_items.empty? %>
-		<p>Your cart is empty!</p>
+		<p>Your cart is empty! Add items in order to checkout. </p>
   <% end %>
   <% @request.request_items.each do |req_item| %>
       <% item = Item.find(req_item.item_id) %>
@@ -51,6 +51,11 @@
 <% if @request.outstanding? && current_user.privilege_admin? %>
   <%= render 'decisionform', request: @request %>
 <% end %>
+
+<% if !@request.request_items.empty? && @request.cart? %>
+	<%= render 'placeorderform', request: @request %>
+<% end %>
+
 
 <%= link_to 'Edit', edit_request_path(@request) %> |
 <%= link_to 'Destroy', @request, method: :delete, data: { confirm: 'Are you sure?' } %> |
