@@ -45,6 +45,7 @@ class RequestsController < ApplicationController
   # POST /requests
 	# OBSOLETE???
   def create
+
     @request = Request.new(request_params)
     @request.user_id = params[:user] ? params[:user][:id] : @request.user_id
 
@@ -58,13 +59,16 @@ class RequestsController < ApplicationController
       reject_to_new("Oversubscribed!") and return
     else
       save_form(@request)
-      @item.update_by_request(@request)
+      # TODO: Fix this
+      @item.update_by_subrequest(@request, @request.request_type)
       @item.save!
 
       @log = Log.new(log_params)
       @log.user_id = @request.user_id
       @log.save!
     end
+
+
   end
 
   # PATCH/PUT /requests/1
@@ -73,27 +77,42 @@ class RequestsController < ApplicationController
     @request.user_id = params[:user] ? params[:user][:id] : @request.user_id
     
     if !@request.has_status_change_to_approved?(request_params)
-			update_form(@request, request_params) and return
+			update_form(@request, request_params)
+      create_new_cart and return
     end
     
-    @request.request_items.each do |req_item| 
-	   	@item = Item.find(req_item.item_id)
-			if !@item
-      	reject_to_edit(@request, "Item does not currently exist") and return
-    	elsif Request.oversubscribed?(@item, @request)
-      	reject_to_edit(@request, "Oversubscribed!") and return
-    	else
-      	update_form(@request, request_params)
+    # @request.request_items.each do |req_item|
+	   # 	@item = Item.find(req_item.item_id)
+			# if !@item
+    #   	reject_to_edit(@request, "Item does not currently exist") and return
+    # 	elsif Request.oversubscribed?(@item, @request)
+    #   	reject_to_edit(@request, "Oversubscribed!") and return
+    #   else
+    #     # TODO: Want to check if all items are not oversubscribed beforehand... for loop before this for loop
+    #   	update_form(@request, request_params)
+			# 	@item.update_by_request(@request)
+    #   	@item.save!
+    #
+    #   	@log = Log.new(log_params)
+    #   	@log.user_id = @request.user_id
+    #   	@log.save!
+    #
+    # 	end
+    # end
 
-				@item.update_by_request(@request)
-      	@item.save!
+    request_valid, error_msg = @request.is_valid?
 
-      	@log = Log.new(log_params)
-      	@log.user_id = @request.user_id
-      	@log.save!
-	
-    	end
-  	end
+    if !request_valid
+      reject_to_edit(@request, error_msg) and return
+    end
+
+    @request.update(request_params)
+
+    @request.request_items.each do |sub_request|
+      @item = Item.find(sub_request.item_id)
+      @item.update_by_subrequest(sub_request, @request.request_type)
+      @item.save!
+    end
 	end
 
   # DELETE /requests/1
@@ -107,16 +126,6 @@ class RequestsController < ApplicationController
 
     redirect_to requests_url
   end
-
-	def create_new_cart
-		@request.update
-		@cart = Request.new(:status => "cart", :user_id => current_user.id, :reason => "Fill me in!")
-		@cart.save!
-		uc = UserCart.find_by(:user_id => current_user.id);
-		uc.cart_id = @cart.id
-		uc.save!
-		redirect_to users_url
-	end
 
 
   private
@@ -160,6 +169,11 @@ class RequestsController < ApplicationController
       end
     end
 
+
+    def create_new_cart
+      @new_cart = Request.new(:status => "cart", :user_id => current_user.id, :reason => "Fill me in!")
+      @new_cart.save
+    end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def request_params

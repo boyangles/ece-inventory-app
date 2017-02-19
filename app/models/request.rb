@@ -40,4 +40,17 @@ class Request < ApplicationRecord
     self.outstanding? && request_params[:status] == 'approved'
   end
 
+  def is_valid?
+    self.request_items.each do |sub_request|
+      @item = Item.find(sub_request.item_id)
+
+      if !@item
+        return false, "Item doesn't exist anymore!"
+      elsif Request.component_oversubscribed?(@item, self, sub_request)
+        return false, "Item named #{@item.unique_name} is oversubscribed. Requested #{sub_request.quantity}, but only has #{@item.quantity}."
+      end
+    end
+
+    return true, ""
+  end
 end
