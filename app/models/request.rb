@@ -55,17 +55,11 @@ class Request < ApplicationRecord
     return true, ""
   end
 
-  def cart_cannot_be_duplicated
-    if self.cart? && Request.exists?(:user_id => self.user_id)
-      errors.add(:user_id, 'There cannot be two cart requests for a single user')
-    end
-  end
+  private
 
-  class RequestValidator < ActiveModel::Validator
-    def validate(record)
-      if record.cart? && Request.exists?(record.user_id)
-        record.errors[:user_id] << 'There cannot be two cart requests for a single user'
-      end
+  def cart_cannot_be_duplicated
+    if self.cart? && Request.where(:user_id => self.user_id).where(:status => :cart).exists?
+      errors.add(:user_id, 'There cannot be two cart requests for a single user')
     end
   end
 end

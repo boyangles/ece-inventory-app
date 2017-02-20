@@ -17,8 +17,8 @@ class RequestsController < ApplicationController
   # GET /requests/1
   def show
     @request = Request.find(params[:id])
-   
-	  @user = @request.user
+
+    @user = @request.user
   end
 
   # GET /requests/1/edit
@@ -29,31 +29,33 @@ class RequestsController < ApplicationController
 
   # PATCH/PUT /requests/1
   def update
-    @request.user_id = params[:user] ? params[:user][:id] : @request.user_id
-    
-    if !@request.has_status_change_to_approved?(request_params)
-			update_and_redirect_to_index(@request, request_params)
-      create_new_cart and return
+    if params[:user]
+      @request.user_id = params[:user][:id]
     end
 
-    request_valid, error_msg = @request.are_request_details_valid?
+    if @request.has_status_change_to_approved?(request_params)
+      request_valid, error_msg = @request.are_request_details_valid?
 
-    if !request_valid
-      reject_to_edit(@request, error_msg) and return
+      if request_valid
+        update_to_index(@request, request_params)
+
+        @request.request_items.each do |sub_request|
+          @item = Item.find(sub_request.item_id)
+          @item.update_by_subrequest(sub_request, @request.request_type)
+          @item.save!
+        end
+      else
+        reject_to_edit(@request, error_msg)
+      end
+    else
+      update_to_index(@request, request_params)
+      create_new_cart
     end
-
-    update_and_redirect_to_index(@request, request_params)
-
-    @request.request_items.each do |sub_request|
-      @item = Item.find(sub_request.item_id)
-      @item.update_by_subrequest(sub_request, @request.request_type)
-      @item.save!
-    end
-	end
+  end
 
   # DELETE /requests/1
   def destroy
-    
+
     if (@request.destroy)
       flash[:success] = "Request destroyed!"
     else
@@ -65,46 +67,47 @@ class RequestsController < ApplicationController
 
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_request
-      @request = Request.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_request
+    @request = Request.find(params[:id])
+  end
 
-    def update_and_redirect_to_index(req, params)
-      if req.update(params)
-        flash[:success] = "Operation successful!"
-      else
-        flash[:danger] = "Operation failed"
-      end
-		  redirect_to request_path(req)
+  def update_to_index(req, params)
+    if req.update(params)
+      flash[:success] = "Operation successful!"
+      redirect_to request_path(req)
+    else
+      flash[:danger] = "Operation failed"
+      redirect_to request_path(req)
     end
+  end
 
-    def reject_to_edit(request, msg)
-      flash[:danger] = msg
-      redirect_to request_path(request)
-    end
+  def reject_to_edit(request, msg)
+    flash[:danger] = msg
+    redirect_to request_path(request)
+  end
 
-    def create_new_cart
-      @new_cart = Request.new(:status => "cart",
-                              :user_id => current_user.id,
-                              :reason => "Fill me in!")
-      @new_cart.save
-    end
+  def create_new_cart
+    @new_cart = Request.new(:status => "cart",
+                            :user_id => current_user.id,
+                            :reason => "Fill me in!")
+    @new_cart.save!
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def request_params
-      params.fetch(:request, {}).permit(:user_id,
-                                        :reason,
-                                        :status,
-                                        :request_type,
-                                        :response,
-                                        request_items_attributes: [:id, :quantity])
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def request_params
+    params.fetch(:request, {}).permit(:user_id,
+                                      :reason,
+                                      :status,
+                                      :request_type,
+                                      :response,
+                                      request_items_attributes: [:id, :quantity])
+  end
 
-    def log_params
-      params.fetch(:request, {}).permit(:item_id,
-                                        :user_id,
-                                        :request_type)
-    end
+  def log_params
+    params.fetch(:request, {}).permit(:item_id,
+                                      :user_id,
+                                      :request_type)
+  end
 
 end
