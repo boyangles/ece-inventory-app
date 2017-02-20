@@ -49,7 +49,6 @@ class RequestsController < ApplicationController
       end
     else
       update_to_index(@request, request_params)
-      create_new_cart
     end
   end
 
@@ -73,25 +72,22 @@ class RequestsController < ApplicationController
   end
 
   def update_to_index(req, params)
-    if req.update(params)
-      flash[:success] = "Operation successful!"
-      redirect_to request_path(req)
-    else
-      flash[:danger] = "Operation failed"
-      redirect_to request_path(req)
-    end
+    req.update_attributes!(params)
+
+    flash[:success] = "Operation successful!"
+    redirect_to request_path(req)
+    # if req.update(params)
+    #   flash[:success] = "Operation successful!"
+    #   redirect_to request_path(req)
+    # else
+    #   flash[:danger] = "Operation failed"
+    #   redirect_to request_path(req)
+    # end
   end
 
   def reject_to_edit(request, msg)
     flash[:danger] = msg
     redirect_to request_path(request)
-  end
-
-  def create_new_cart
-    @new_cart = Request.new(:status => "cart",
-                            :user_id => current_user.id,
-                            :reason => "Fill me in!")
-    @new_cart.save!
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.

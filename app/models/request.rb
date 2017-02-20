@@ -31,6 +31,10 @@ class Request < ApplicationRecord
   scope :user_id, -> (user_id) { where user_id: user_id }
   scope :status, -> (status) { where status: status }
 
+  after_update {
+    create_cart_on_status_change_from_cart(self.user_id)
+  }
+
   # Validations
   validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
   validates :status, :inclusion => { :in => STATUS_OPTIONS }
@@ -60,6 +64,16 @@ class Request < ApplicationRecord
   def cart_cannot_be_duplicated
     if self.cart? && Request.where(:user_id => self.user_id).where(:status => :cart).exists?
       errors.add(:user_id, 'There cannot be two cart requests for a single user')
+    end
+  end
+
+  def create_cart_on_status_change_from_cart(id)
+    old_status = self.status_was
+    new_status = self.status
+
+    if old_status == 'cart' && old_status != new_status
+      @cart = Request.new(:status => :cart, :user_id => id, :reason => 'TBD')
+      @cart.save!
     end
   end
 end

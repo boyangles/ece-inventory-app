@@ -5,6 +5,6 @@ module RequestsHelper
   end
 
   def grab_cart(usr)
-  	@request = Request.where(user_id: usr.id, status: "cart").take
+  	@request = Request.where(user_id: usr.id, status: :cart).take
   end
 end
