@@ -27,13 +27,20 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
   test "redirect to homepage when logged in as different user and not admin" do
     log_in_as(@user2)
 
-    @request_bernard = Request.find_by(:user_id => @user.id)
+    Request.create!(
+        reason: 'For test',
+        status: 'outstanding',
+        request_type: 'disbursement',
+        user_id: @user.id)
 
-    get edit_request_path(@request_bernard)
+    @req = Request.find_by(:user_id => @user.id)
+
+    get edit_request_path(@req)
     assert flash.empty?
     assert_redirected_to root_url
 
-    patch request_path(@request_bernard), params: {
+    patch request_path(@req), params: {
+        id: @req.id,
         request: {
             reason: 'For fun!',
             status: 'outstanding',
@@ -43,11 +50,11 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert flash.empty?
     assert_redirected_to root_url
 
-    delete request_path(@request_bernard)
+    delete request_path(@req)
     assert flash.empty?
     assert_redirected_to root_url
 
-    get request_path(@request_bernard)
+    get request_path(@req)
     assert_redirected_to root_url
   end
 end
