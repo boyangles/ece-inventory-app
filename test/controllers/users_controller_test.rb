@@ -93,7 +93,11 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
           }
       }
     end
+
     assert_redirected_to users_path
+
+    @new_user = User.find_by(:email => "cottonjoe@email.com")
+    assert Request.where(:user_id => @new_user.id).where(:status => :cart).exists?
   end
 
   test "cannot create new user through non admin account" do

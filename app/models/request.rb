@@ -35,12 +35,13 @@ class Request < ApplicationRecord
   validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
   validates :status, :inclusion => { :in => STATUS_OPTIONS }
   validates :user_id, presence: true
+  validate :cart_cannot_be_duplicated
 
   def has_status_change_to_approved?(request_params)
     self.outstanding? && request_params[:status] == 'approved'
   end
 
-  def is_valid?
+  def are_request_details_valid?
     self.request_items.each do |sub_request|
       @item = Item.find(sub_request.item_id)
 
@@ -52,5 +53,19 @@ class Request < ApplicationRecord
     end
 
     return true, ""
+  end
+
+  def cart_cannot_be_duplicated
+    if self.cart? && Request.exists?(:user_id => self.user_id)
+      errors.add(:user_id, 'There cannot be two cart requests for a single user')
+    end
+  end
+
+  class RequestValidator < ActiveModel::Validator
+    def validate(record)
+      if record.cart? && Request.exists?(record.user_id)
+        record.errors[:user_id] << 'There cannot be two cart requests for a single user'
+      end
+    end
   end
 end

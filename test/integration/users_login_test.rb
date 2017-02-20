@@ -96,12 +96,8 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     }
     @created_user = User.find_by(:username => "cotton eyed joe")
 
-    @cart = Request.new(
-      reason: 'For test',
-      status: 'cart',
-      request_type: 'disbursement',
-      user_id: @created_user.id)
-    @cart.save!
+    # Cart automatically created when user is created
+    assert Request.exists?(:user_id => @created_user.id)
 
     delete logout_path
     assert_not is_logged_in?

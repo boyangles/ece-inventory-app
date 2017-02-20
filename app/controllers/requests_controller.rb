@@ -36,7 +36,7 @@ class RequestsController < ApplicationController
       create_new_cart and return
     end
 
-    request_valid, error_msg = @request.is_valid?
+    request_valid, error_msg = @request.are_request_details_valid?
 
     if !request_valid
       reject_to_edit(@request, error_msg) and return
