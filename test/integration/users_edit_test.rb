@@ -3,12 +3,6 @@ require 'test_helper'
 class UsersEditTest < ActionDispatch::IntegrationTest
   def setup
     @user = users(:bernard)
-    @request = Request.new(
-        reason: 'For test',
-        status: 'cart',
-        request_type: 'disbursement',
-        user_id: @user.id)
-    @request.save!
   end
 
   test "handling unsucessful edits" do

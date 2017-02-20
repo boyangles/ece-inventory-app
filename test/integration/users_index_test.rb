@@ -4,20 +4,6 @@ class UsersIndexTest < ActionDispatch::IntegrationTest
   def setup
     @admin = users(:bernard)
     @non_admin = users(:alex)
-
-    @request_admin = Request.new(
-        reason: 'For test',
-        status: 'cart',
-        request_type: 'disbursement',
-        user_id: @admin.id)
-    @request_admin.save!
-
-    @request_nonadmin = Request.new(
-        reason: 'For test',
-        status: 'cart',
-        request_type: 'disbursement',
-        user_id: @non_admin.id)
-    @request_nonadmin.save!
   end
 
   test "index, pagination, and deletion as administrator" do

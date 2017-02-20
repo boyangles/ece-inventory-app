@@ -9,27 +9,6 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     @user = users(:bernard)
     @admin = users(:bernard)
     @non_admin = users(:alex)
-
-    @request_user = Request.new(
-        reason: 'For test',
-        status: 'cart',
-        request_type: 'disbursement',
-        user_id: @user.id)
-    @request_user.save!
-
-    @request_admin = Request.new(
-        reason: 'For test',
-        status: 'cart',
-        request_type: 'disbursement',
-        user_id: @admin.id)
-    @request_admin.save!
-
-    @request_nonadmin = Request.new(
-        reason: 'For test',
-        status: 'cart',
-        request_type: 'disbursement',
-        user_id: @non_admin.id)
-    @request_nonadmin.save!
   end
 
   # Catches the bug where the flash persists for more than a single page

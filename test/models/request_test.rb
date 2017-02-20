@@ -20,8 +20,4 @@ class RequestTest < ActiveSupport::TestCase
     @request.user_id = nil
     assert_not @request.valid?
   end
-
-  test "order should be most recent first" do
-    assert_equal requests(:most_recent), Request.first
-  end
 end
