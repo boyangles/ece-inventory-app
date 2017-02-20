@@ -1,5 +1,6 @@
 <% provide(:title, 'All Items') %>
-<% if current_user.privilege_admin? %>
+
+<% if is_manager_or_admin? %>
   <%= link_to "New Item", new_item_url, :class => "btn btn-primary" %>
 <% end %>
 
