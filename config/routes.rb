@@ -4,13 +4,17 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get 'welcome/index'
 
-  #post '/signup', to: 'users#create'
+  # TODO: Deprecated... All test associated with this are irrelevant
+  # get '/signup', to: 'users#new'
+  # post '/signup', to: 'users#create'
 
   resources :users
   resources :requests
+    put 'requests/:id/clear' => 'requests#clear', :as => 'clear_request'    # Clears items from requests
+    patch 'requests/:id/clear', to: 'requests#clear'
   resources :items
   resources :tags
-
+  resources :request_items, :except => [:index, :show]
 
   #Login and Sessions routes
   get   '/login',   to: 'sessions#new'      #Describes the login screen

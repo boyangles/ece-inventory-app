@@ -85,6 +85,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
   test "Create local account as admin, log out, then log in with local" do
     log_in_as(@admin)
     get new_user_path
+
     post users_path, params: {
         user: {
             username: "cotton eyed joe",
@@ -93,6 +94,11 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
             password_confirmation: "password"
         }
     }
+    @created_user = User.find_by(:username => "cotton eyed joe")
+
+    # Cart automatically created when user is created
+    assert Request.exists?(:user_id => @created_user.id)
+
     delete logout_path
     assert_not is_logged_in?
     log_in_as(@user)

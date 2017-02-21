@@ -4,32 +4,50 @@
     <%= render 'shared/error_messages', object: @form_obj %>
   <% end %>
 
-  <p>
-    <b>Item Requested</b>
-    <%= @item.unique_name %>
-  </p>
+	<p>
+		<b>Items Requested</b>
 
-  <p>
-    <%= f.label :quantity %><br>
-    <%= f.number_field :quantity, :required => true %>
-  </p>
+		<% if request.request_items.empty? %>
+			<p> Your cart is empty! Add items in order to checkout. </p>
+		<% end %>
 
-  <p>
-    <%= f.label :request_type %><br>
-    <%= f.select :request_type, Request.request_types.keys.to_a %>
-  </p>
+		<%= f.fields_for :request_items do |ff| %>
+			<p class = "req_item">		
+				<% if ff.object.item_id.nil? %>
+					<b>Item ID</b>
+					<%= ff.number_field :item_id %>
+					<%= ff.hidden_field :request_id, :value => (request.id) %>
+				<% else %>
+					<%= Item.find(ff.object.item_id).unique_name %>
+				<% end %>
+				<%= ff.number_field :quantity, :required => true %>
+				<%= ff.hidden_field :request_id, :value => (request.id) %>
+				<%= ff.hidden_field :item_id, :value => (ff.object.item_id) %>
+			</p>
+ 		<% end %>
+
+	</p>
 
   <p>
     <%= f.label :reason %><br>
     <%= f.text_area :reason, :required => true %>
   </p>
 
-  <%= f.hidden_field :item_id, :value => request.item_id %>
   <%= f.hidden_field :user_id, :value => (request.user_id) ? request.user_id : current_user.id %>
-  <%= f.hidden_field :status, :value => "outstanding" %>
+  <%= f.hidden_field :status, :value => request.status %>
 
+	<p>
+	<% if @request.cart? %>
+		<%= link_to "Place Order", request_path(params[:id], :status => "outstanding") %>
+	<% end %>
+	</p>
 
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+  <div>
+    <% if !@request.approved? && !@request.denied? %>
+			<%= f.submit %>
+		<% else %>
+			<p>An administrator has already responded to this request. Please create a new request for further needs ohohohoho </p>
+  	<% end %>
+	</div>
+
 <% end %>

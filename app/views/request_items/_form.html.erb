@@ -1,0 +1,23 @@
+<%= form_for(request_item) do |f| %>
+    <% @form_obj = request_item %>
+    <% if @form_obj %>
+        <%= render 'shared/error_messages', object: @form_obj %>
+    <% end %>
+
+    <p>
+      <b>Item Requested</b>
+      <%= Item.find(@request_item.item_id).unique_name %>
+    </p>
+
+    <p>
+      <%= f.label :quantity %><br>
+      <%= f.number_field :quantity, :required => true %>
+    </p>
+
+    <%= f.hidden_field :item_id, :value => request_item.item_id %>
+    <%= f.hidden_field :request_id, :value => request_item.request_id %>
+
+    <div class="actions">
+      <%= f.submit "Add to Cart" %>
+    </div>
+<% end %>

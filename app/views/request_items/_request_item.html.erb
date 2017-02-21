@@ -1,0 +1,15 @@
+<p id="notice"><%= notice %></p>
+
+<table>
+
+  <tbody>
+  <tr>
+    <th><%= request_item.request_id %></th>
+    <% item = Item.find(request_item.item_id) %>
+    <%= item.unique_name %>
+  </tr>
+  </tbody>
+</table>
+
+
+<br>
