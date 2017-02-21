@@ -12,6 +12,10 @@ class Item < ApplicationRecord
   has_many :requests, -> { uniq },  :through => :request_items
   has_many :request_items, dependent: :destroy
 
+  # Relationship with CustomField
+  has_many :custom_fields, -> { uniq }, :through => :item_custom_fields
+  has_many :item_custom_fields, dependent: destroy
+
   # Relation with Logs
   has_many :logs, dependent: :destroy
 
