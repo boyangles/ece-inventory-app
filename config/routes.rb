@@ -10,6 +10,8 @@ Rails.application.routes.draw do
 
   resources :users
   resources :requests
+    put 'requests/:id/clear' => 'requests#clear', :as => 'clear_request'    # Clears items from requests
+    patch 'requests/:id/clear', to: 'requests#clear'
   resources :items
   resources :tags
   resources :request_items

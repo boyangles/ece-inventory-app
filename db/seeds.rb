@@ -38,25 +38,17 @@ end
                password: password,
                password_confirmation: password,
                auth_token: Devise.friendly_token)
-
-  req = Request.create!(status: "cart",
-                        user_id: usr.id,
-                        reason: "tbd",
-                        request_type: "disbursement")
 end
 
 admin = User.create!(username: "admin", email: "adminusername@duke.edu", status: "approved",
              privilege: "admin", password: "password", password_confirmation: "password",
                      auth_token: Devise.friendly_token)
-r = Request.create!(status: "cart", user_id: admin.id, reason: "tbd", request_type: "disbursement")
 
 nonadmin = User.create!(username: "nonadmin", email: "nonadminusername@duke.edu", status: "approved",
              privilege: "student", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
-re = Request.create!(status: "cart", user_id: nonadmin.id, reason: "tbd", request_type: "disbursement")
 
 yo = User.create(username:"abcd", email: "f@duke.edu" , status: "approved",
                  privilege: "student", password: "yoyoyo", password_confirmation: "yoyoyo", auth_token: Devise.friendly_token)
-req = Request.create!(status: "cart", user_id: yo.id, reason: "tbd", request_type: "disbursement")
 
 items = %w[Resistor Transistor Oscilloscope RED_LED Green_LED Capacitor Screw Washer BOE-Bot Electrical_Tape Arduino_Kit
             QTI_Sensor Server_Motor Piezo_Speaker Seven_Segment_Display IC_Chip]

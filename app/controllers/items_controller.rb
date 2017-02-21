@@ -50,7 +50,7 @@ class ItemsController < ApplicationController
 
   # DELETE /items/1
   def destroy
-    Item.find(params[:id]).destroy
+    Item.find(params[:id]).destroy!
     flash[:success] = "Item deleted!"
     redirect_to items_url
   end

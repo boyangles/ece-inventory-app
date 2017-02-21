@@ -58,5 +58,9 @@
 
 
 <%= link_to 'Edit', edit_request_path(@request) %> |
-<%= link_to 'Destroy', @request, method: :delete, data: { confirm: 'Are you sure?' } %> |
+<% if @request.cart? %>
+    <%= link_to 'Clear', clear_request_path(@request), method: :put %>
+<% else %>
+    <%= link_to 'Destroy', @request, method: :delete, data: { confirm: 'Are you sure?' } %>
+<% end %> |
 <%= link_to 'Back', requests_path %>
