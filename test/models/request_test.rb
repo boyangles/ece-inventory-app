@@ -22,10 +22,10 @@ class RequestTest < ActiveSupport::TestCase
   end
 
   test "there cannot be two 'cart' request for a single user at any time" do
-    @prev_request = Request.where(:user_id => @user.id).where(:status => :cart)
+    @prev_request = Request.where(:user_id => @user.id).where(:status => :cart).first
     @request1 = Request.new(reason: 'test1', status: 'cart',
                             request_type: 'disbursement',
-                            user_id: @prev_request.user_id)
+                            user_id: @prev_request[:user_id])
     assert_not @request1.valid?
   end
 end

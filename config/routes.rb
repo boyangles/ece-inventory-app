@@ -14,9 +14,10 @@ Rails.application.routes.draw do
     patch 'requests/:id/clear', to: 'requests#clear'
   resources :items
   resources :tags
-  resources :request_items
+  
   resources :item_custom_fields, :only => [:index, :show, :create, :update, :destroy]
   resources :custom_fields, :only => [:create, :destroy]
+  resources :request_items, :except => [:index, :show]
 
   #Login and Sessions routes
   get   '/login',   to: 'sessions#new'      #Describes the login screen

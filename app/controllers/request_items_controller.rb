@@ -1,14 +1,6 @@
 class RequestItemsController < ApplicationController
   before_action :check_logged_in_user
 
-  def index
-    @request_items = RequestItem.paginate(page: params[:page], per_page: 10)
-  end
-
-  # GET /requests/1
-  def show
-  end
-
   def new
     @request_item = RequestItem.new
 
