@@ -62,7 +62,9 @@ class Request < ApplicationRecord
   private
 
   def cart_cannot_be_duplicated
-    if self.cart? && Request.where(:user_id => self.user_id).where(:status => :cart).exists?
+    if self.cart? &&
+        Request.where(:user_id => self.user_id).where(:status => :cart).exists? &&
+        self.status_was != self.status
       errors.add(:user_id, 'There cannot be two cart requests for a single user')
     end
   end

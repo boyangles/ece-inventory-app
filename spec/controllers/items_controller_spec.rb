@@ -14,7 +14,7 @@ RSpec.describe "Create Item Tests", :type => :feature do
   end
 
   after :each do
-    User.delete(@user)
+    User.destroy(@user)
   end
 
 end

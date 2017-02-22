@@ -12,7 +12,7 @@
 
 <p>
   <strong>Items:</strong>
-	<% if @request.request_items.empty? %>
+	<% if @request.request_items.empty? && @request.cart? %>
 		<p>Your cart is empty! Add items in order to checkout. </p>
   <% end %>
   <% @request.request_items.each do |req_item| %>
@@ -56,7 +56,11 @@
 	<%= render 'placeorderform', request: @request %>
 <% end %>
 
-
-<%= link_to 'Edit', edit_request_path(@request) %> |
-<%= link_to 'Destroy', @request, method: :delete, data: { confirm: 'Are you sure?' } %> |
+<% if @request.cart? %>
+		<%= link_to 'Edit', edit_request_path(@request) %> |
+    <%= link_to 'Clear', clear_request_path(@request), method: :put %>
+<% elsif @request.outstanding? %>
+ 		<%= link_to 'Edit', edit_request_path(@request) %> |
+   	<%= link_to 'Destroy', @request, method: :delete, data: { confirm: 'Are you sure?' } %>
+<% end %> |
 <%= link_to 'Back', requests_path %>

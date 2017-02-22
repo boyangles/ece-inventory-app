@@ -1,5 +1,5 @@
 class RequestsController < ApplicationController
-  before_action :set_request, only: [:show, :edit, :update, :destroy]
+  before_action :set_request, only: [:show, :edit, :update, :destroy, :clear]
   before_action :check_logged_in_user
   before_action :check_requests_corresponds_to_current_user, only: [:edit, :update, :destroy, :show]
 
@@ -52,9 +52,13 @@ class RequestsController < ApplicationController
     end
   end
 
+  def clear
+    @request.items.destroy_all
+    redirect_to request_path(@request)
+  end
+
   # DELETE /requests/1
   def destroy
-
     if (@request.destroy)
       flash[:success] = "Request destroyed!"
     else
@@ -76,13 +80,6 @@ class RequestsController < ApplicationController
 
     flash[:success] = "Operation successful!"
     redirect_to request_path(req)
-    # if req.update(params)
-    #   flash[:success] = "Operation successful!"
-    #   redirect_to request_path(req)
-    # else
-    #   flash[:danger] = "Operation failed"
-    #   redirect_to request_path(req)
-    # end
   end
 
   def reject_to_edit(request, msg)
