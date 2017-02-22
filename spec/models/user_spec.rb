@@ -59,13 +59,12 @@ RSpec.describe "sign in tests", :type => :feature do
     expect(page).to have_content @user.privilege
     expect(page).to have_content "Users"
     expect(page).to have_content "Items"
-    expect(page).to have_content "Tags"
     expect(page).to have_content "Home"
     expect(page).to have_content "Account"
 
   end
 
   after :each do
-    User.delete(@user)
+    User.destroy(@user)
   end
 end
