@@ -21,7 +21,7 @@
       <%= f.text_field :description %>
     </p>
 
-    <% if is_admin? %>
+    <% if !Item.exists?(item) || is_admin? %>
         <p>
           <%= f.label :quantity %><br>
           <%= f.text_field :quantity %>
@@ -55,6 +55,7 @@
         <p>No tags associated with <%= item.unique_name %></p>
     <% end %>
 
+    <!-- TODO: Make it so this asks confirmation dialog if the quantity is changed -->
     <div class="actions">
       <%= f.submit %>
     </div>

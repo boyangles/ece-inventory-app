@@ -46,7 +46,7 @@
   <div class="col-md-8">
     <% if @item.requests.any? %>
         <h3>
-          <%= (current_user.privilege_admin?) ?
+          <%= (is_manager_or_admin?) ?
                   "Outstanding Requests" :
                   "My Pending Requests" %>
         </h3>
@@ -64,7 +64,7 @@
 
 <%= link_to "New Request", new_request_url(:item_id => @item.id), :class => "btn btn-primary" %>
 
-<% if current_user.privilege_admin? %>
+<% if is_admin? %>
     <%= link_to 'Remove item',
                 @item,
                 method: :delete,

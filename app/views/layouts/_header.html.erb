@@ -26,7 +26,7 @@
                                            "My Requests" %>
                 <li><%= link_to request_label, requests_path %></li>
                 
-                <% if current_user.privilege_admin? %>
+                <% if is_admin? %>
                   <li><%= link_to "Logs", logs_path %></li>
                 <% end %>
 

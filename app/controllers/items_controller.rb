@@ -1,6 +1,6 @@
 class ItemsController < ApplicationController
   before_action :check_logged_in_user
-  before_action :check_manager_or_admin, only: [:create, :new, :edit, :update, :index]
+  before_action :check_manager_or_admin, only: [:create, :new, :edit, :update]
   before_action :check_admin_user, only: [:destroy]
 
   # GET /items
@@ -42,7 +42,7 @@ class ItemsController < ApplicationController
         :status => "outstanding"
     }
 
-    if !current_user.privilege_admin?
+    if !is_manager_or_admin?
       outstanding_filter_params[:user_id] = current_user.id
     end
 
