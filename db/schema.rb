@@ -47,7 +47,6 @@ ActiveRecord::Schema.define(version: 20170221074708) do
     t.string  "unique_name"
     t.integer "quantity"
     t.string  "description"
-    t.string  "location"
     t.string  "model_number"
   end
 
