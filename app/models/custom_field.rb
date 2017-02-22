@@ -42,6 +42,23 @@ class CustomField < ApplicationRecord
     end
   end
 
+  def self.pretty_field_type(input_custom_field_id)
+    selected_field_type = CustomField.find(input_custom_field_id).field_type
+
+    case selected_field_type
+      when 'short_text_type'
+        return "Short Text"
+      when 'long_text_type'
+        return "Long Text"
+      when 'integer_type'
+        return "Integer"
+      when 'float_type'
+        return "Decimal"
+      else
+        return nil
+    end
+  end
+
   ## Instance Methods:
 
   private

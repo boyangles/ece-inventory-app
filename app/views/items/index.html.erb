@@ -55,3 +55,44 @@
 
 <%= will_paginate %>
 
+<button data-toggle="collapse" data-target="#item_index_custom_field_list">
+  Custom Fields...
+</button>
+
+<div id="item_index_custom_field_list" class="collapse">
+  <table class="table table-hover">
+    <tbody>
+      <% CustomField.all.each do |cf| %>
+        <tr>
+          <td><b><%= cf.field_name %></b></td>
+          <td><%= cf.private_indicator ? 'private' : 'public' %></td>
+          <td><%= CustomField.pretty_field_type(cf.id) %></td>
+          <% if !current_user.privilege_student? %>
+            <td>
+              <%= link_to cf, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-default" do %>
+                  <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+              <% end %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+
+      <% if !current_user.privilege_student? %>
+        <%= form_for :custom_field, url: custom_fields_path, method: 'post' do |cff| %>
+            <td><%= cff.text_field :field_name, class: "form-control" %></td>
+            <td>Private? <%= cff.check_box :private_indicator, class: "form-control" %></td>
+            <td><%= cff.select :field_type, [['Short Text', 'short_text_type'],
+                                             ['Long Text', 'long_text_type'],
+                                             ['Integer', 'integer_type'],
+                                             ['Float', 'float_type']],
+                               {}, class: "form-control" %></td>
+            <td>
+              <%= button_tag(type: 'submit', class: "btn btn-primary") do %>
+                  <span class="glyphicon glyphicon-plus-sign"></span>
+              <% end %>
+            </td>
+        <% end %>
+    <% end %>
+    </tbody>
+  </table>
+</div>
