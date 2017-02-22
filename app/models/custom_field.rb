@@ -19,4 +19,40 @@ class CustomField < ApplicationRecord
             presence: true, uniqueness: true
   validates :private_indicator, :inclusion => { in: [ true, false ] }
   validates :field_type, :inclusion => { :in => FIELD_TYPE_OPTIONS }
+
+  after_create {
+    create_items_for_custom_fields(self.id)
+  }
+
+  ## Class Methods:
+  def self.find_icf_field_column(input_custom_field_id)
+    selected_field_type = CustomField.find(input_custom_field_id).field_type
+
+    case selected_field_type
+      when 'short_text_type'
+        return :short_text_content
+      when 'long_text_type'
+        return :long_text_content
+      when 'integer_type'
+        return :integer_content
+      when 'float_type'
+        return :float_content
+      else
+        return nil
+    end
+  end
+
+  ## Instance Methods:
+
+  private
+
+  def create_items_for_custom_fields(custom_field_id)
+    Item.all.each do |item|
+      ItemCustomField.create!(item_id: item.id, custom_field_id: custom_field_id,
+                              short_text_content: nil,
+                              long_text_content: nil,
+                              integer_content: nil,
+                              float_content: nil)
+    end
+  end
 end

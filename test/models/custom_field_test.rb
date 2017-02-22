@@ -53,14 +53,12 @@ class CustomFieldTest < ActiveSupport::TestCase
   end
 
   test "CF-7: Test removing fields via destroy" do
-    @cf_location = CustomField.new(field_name: 'location',
-                                   private_indicator: false,
-                                   field_type: 'short_text_type')
-    @cf_restock_info = CustomField.new(field_name: 'restock_info',
-                                       private_indicator: true,
-                                       field_type: 'long_text_type')
-    @cf_location.save!
-    @cf_restock_info.save!
+    @cf_location = CustomField.create!(field_name: 'location',
+                                       private_indicator: false,
+                                       field_type: 'short_text_type')
+    @cf_restock_info = CustomField.create!(field_name: 'restock_info',
+                                           private_indicator: true,
+                                           field_type: 'long_text_type')
 
     assert_difference ['CustomField.count'], -2 do
       @cf_location.destroy!
@@ -68,5 +66,23 @@ class CustomFieldTest < ActiveSupport::TestCase
     end
   end
 
+  test "CF-8: Test Finding appropriate column for ItemCustomField" do
+    @cf_short_text = CustomField.create!(field_name: 'short_text_field',
+                                         private_indicator: false,
+                                         field_type: 'short_text_type')
+    @cf_long_text = CustomField.create!(field_name: 'long_text_field',
+                                        private_indicator: false,
+                                        field_type: 'long_text_type')
+    @cf_integer = CustomField.create!(field_name: 'integer_field',
+                                      private_indicator: false,
+                                      field_type: 'integer_type')
+    @cf_float = CustomField.create!(field_name: 'float_field',
+                                    private_indicator: false,
+                                    field_type: 'float_type')
 
+    assert CustomField.find_icf_field_column(@cf_short_text.id) == :short_text_content
+    assert CustomField.find_icf_field_column(@cf_long_text.id) == :long_text_content
+    assert CustomField.find_icf_field_column(@cf_integer.id) == :integer_content
+    assert CustomField.find_icf_field_column(@cf_float.id) == :float_content
+  end
 end

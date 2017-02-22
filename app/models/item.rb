@@ -19,6 +19,10 @@ class Item < ApplicationRecord
   # Relation with Logs
   has_many :logs, dependent: :destroy
 
+  after_create {
+    create_custom_fields_for_items(self.id)
+  }
+
   def self.tagged_with_all(tag_filters)
     if tag_filters.length == 0
       all
@@ -57,6 +61,18 @@ class Item < ApplicationRecord
       self[:quantity] = self[:quantity] - subrequest[:quantity]
     else
       self[:quantity]
+    end
+  end
+
+  private
+
+  def create_custom_fields_for_items(item_id)
+    CustomField.all.each do |cf|
+      ItemCustomField.create!(item_id: item_id, custom_field_id: cf.id,
+                              short_text_content: nil,
+                              long_text_content: nil,
+                              integer_content: nil,
+                              float_content: nil)
     end
   end
 end
