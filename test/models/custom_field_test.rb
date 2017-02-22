@@ -44,4 +44,29 @@ class CustomFieldTest < ActiveSupport::TestCase
       assert_not @cf1.valid?
     end
   end
+
+  test "CF-6: Add CustomField with all the correct parameters succeeds" do
+    @cf_sample = CustomField.new(field_name: 'location',
+                                 private_indicator: false,
+                                 field_type: 'short_text_type')
+    assert @cf_sample.valid?
+  end
+
+  test "CF-7: Test removing fields via destroy" do
+    @cf_location = CustomField.new(field_name: 'location',
+                                   private_indicator: false,
+                                   field_type: 'short_text_type')
+    @cf_restock_info = CustomField.new(field_name: 'restock_info',
+                                       private_indicator: true,
+                                       field_type: 'long_text_type')
+    @cf_location.save!
+    @cf_restock_info.save!
+
+    assert_difference ['CustomField.count'], -2 do
+      @cf_location.destroy!
+      @cf_restock_info.destroy!
+    end
+  end
+
+
 end
