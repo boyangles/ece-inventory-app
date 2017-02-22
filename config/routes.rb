@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   resources :items
   resources :tags
   resources :request_items
+  resources :item_custom_fields, :only => [:index, :show, :create, :update, :destroy]
 
   #Login and Sessions routes
   get   '/login',   to: 'sessions#new'      #Describes the login screen

@@ -35,6 +35,7 @@ gem 'will_paginate', '3.1.0'
 gem 'bootstrap-will_paginate', '0.0.10'
 # Bootstrap sass gem
 gem 'bootstrap-sass', '3.3.6'
+gem 'bootstrap-x-editable-rails'
 # React-Rails
 gem 'react-rails'
 # Use postgresql as the database for Active Record
