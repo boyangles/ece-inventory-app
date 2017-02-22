@@ -55,14 +55,14 @@
                   <% if current_user.privilege_student? %>
                     <%= field_content %>
                   <% else %>
-                    <a href="#" data-xeditable="true"
-                       data-pk="<%= icf.id %>"
-                       data-model="item_custom_field"
-                       data-name="<%= CustomField.find_icf_field_column(icf.custom_field_id).to_s %>"
-                       data-url="<%= item_custom_field_url(icf) %>"
-                       data-title="Enter modification">
-                      <%= field_content %>
-                    </a>
+                      <a href="#" data-xeditable="true"
+                         data-pk="<%= icf.id %>"
+                         data-model="item_custom_field"
+                         data-name="<%= CustomField.find_icf_field_column(icf.custom_field_id).to_s %>"
+                         data-url="<%= item_custom_field_url(icf) %>"
+                         data-title="Enter modification">
+                        <%= field_content %>
+                      </a>
                   <% end %>
                 </td>
               </tr>
