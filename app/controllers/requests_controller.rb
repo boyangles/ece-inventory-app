@@ -9,7 +9,7 @@ class RequestsController < ApplicationController
   def index
     filter_params = params.slice(:status)
 
-    if !current_user.privilege_admin?
+    if !is_manager_or_admin?
       filter_params[:user_id] = current_user.id
     end
 
