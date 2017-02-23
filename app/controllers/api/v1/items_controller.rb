@@ -1,15 +1,11 @@
 class Api::V1::ItemsController < BaseController
   respond_to :json
 
-#  authentication_actions = [:index, :show, :create, :update, :destroy]
   before_action :authenticate_with_token!
+  before_action :auth_by_manager_privilege!, only: [:new, :create, :edit, :update]
+  before_action :auth_by_admin_privilege!, only: [:destroy]
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
-  #skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
-  #skip_before_action :verify_authenticity_token, if: :json_request?
-
-  #TODO: Still needs admin checks on most of these too
-
 
   swagger_controller :items, 'Items'
 
