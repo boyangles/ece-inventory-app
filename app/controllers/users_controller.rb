@@ -6,8 +6,9 @@ class UsersController < ApplicationController
   # Check_current_user allows users to edit/update currently. Be aware that any method added to check_current_user will be
   # bypassed by admin privileges
   before_action :check_current_user, only: [:show, :edit, :update]
+  before_action :check_manager_or_admin, only: [:index]
   # Security issue: only admin users can delete users
-  before_action :check_admin_user, only: [:create, :destroy , :index]
+  before_action :check_admin_user, only: [:create, :destroy]
 
   def new
     # if logged_in?

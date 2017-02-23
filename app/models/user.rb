@@ -1,6 +1,6 @@
 class User < ApplicationRecord
 
-  PRIVILEGE_OPTIONS = %w(student ta admin)
+  PRIVILEGE_OPTIONS = %w(student manager admin)
   STATUS_OPTIONS = %w(waiting approved)
 
   # Relation with Requests
@@ -11,7 +11,7 @@ class User < ApplicationRecord
 
   enum privilege: {
     student: 0,
-    ta: 1,
+    manager: 1,
     admin: 2
   }, _prefix: :privilege
 
