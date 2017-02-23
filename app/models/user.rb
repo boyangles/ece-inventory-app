@@ -33,6 +33,10 @@ class User < ApplicationRecord
     generate_authentication_token!
   }
 
+  after_create {
+    create_new_cart(self.id)
+  }
+
   # Modified to only allow duke emails
    # VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-\.]*duke\.edu\z/i
 
@@ -71,5 +75,10 @@ class User < ApplicationRecord
     begin
       self.auth_token = Devise.friendly_token
     end while self.class.exists?(auth_token: auth_token)
+  end
+
+  def create_new_cart(id)
+    @cart = Request.new(:status => :cart, :user_id => id, :reason => 'TBD')
+    @cart.save!
   end
 end

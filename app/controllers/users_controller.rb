@@ -46,10 +46,6 @@ class UsersController < ApplicationController
       flash.now[:danger] = "Unable to create user! Try again?"
       render action: 'new'
     end
-  
-	@cart = Request.new(:status => "cart", :user_id => @user.id, :reason => "TBD")
-	@cart.save!
-
 	end
 
   # PATCH/PUT /users/1

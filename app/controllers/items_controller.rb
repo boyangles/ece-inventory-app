@@ -28,14 +28,14 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
 
     outstanding_filter_params = {
-      :item_id => @item.id,
       :status => "outstanding"
     }
 
     if !current_user.privilege_admin?
       outstanding_filter_params[:user_id] = current_user.id
     end
-    # @request = Request.filter(outstanding_filter_params).paginate(page: params[:page], per_page: 10)
+
+    @requests = @item.requests.filter(outstanding_filter_params).paginate(page: params[:page], per_page: 10)
   end
 
   # GET /items/new
@@ -50,7 +50,7 @@ class ItemsController < ApplicationController
 
   # DELETE /items/1
   def destroy
-    Item.find(params[:id]).destroy
+    Item.find(params[:id]).destroy!
     flash[:success] = "Item deleted!"
     redirect_to items_url
   end

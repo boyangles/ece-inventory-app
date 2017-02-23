@@ -1,2 +1,0 @@
-class UserCart < ApplicationRecord
-end

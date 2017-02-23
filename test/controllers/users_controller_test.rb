@@ -6,34 +6,6 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     @user2 = users(:alex)
     @admin = users(:admin)
     @student = users(:student)
-
-    @cart_user = Request.new(
-        reason: 'For test',
-        status: 'cart',
-        request_type: 'disbursement',
-        user_id: @user.id)
-    @cart_user.save!
-
-    @cart_user2 = Request.new(
-        reason: 'For test',
-        status: 'cart',
-        request_type: 'disbursement',
-        user_id: @user2.id)
-    @cart_user2.save!
-
-    @cart_admin = Request.new(
-        reason: 'For test',
-        status: 'cart',
-        request_type: 'disbursement',
-        user_id: @admin.id)
-    @cart_admin.save!
-
-    @cart_student = Request.new(
-        reason: 'For test',
-        status: 'cart',
-        request_type: 'disbursement',
-        user_id: @student.id)
-    @cart_student.save!
   end
 
   test "redirect to login page with index when not logged in" do
@@ -121,7 +93,11 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
           }
       }
     end
+
     assert_redirected_to users_path
+
+    @new_user = User.find_by(:email => "cottonjoe@email.com")
+    assert Request.where(:user_id => @new_user.id).where(:status => :cart).exists?
   end
 
   test "cannot create new user through non admin account" do

@@ -10,7 +10,6 @@ describe Api::V1::RequestsController do
     it "returns info about a reporter on a hash" do
       req_response = json_response
       expect(req_response[:user_id]).to eql @req.user_id
-      expect(req_response[:item_id]).to eql @req.item_id
     end
 
     it { should respond_with 200 }
@@ -21,14 +20,12 @@ describe Api::V1::RequestsController do
       before(:each) do
         req_attribute_creation
         @req_attributes[:user_id] = @sample_user[:id]
-        @req_attributes[:item_id] = @sample_item[:id]
         post :create, @req_attributes
       end
 
       it "renders the json representation for the request record just created" do
         req_response = json_response
         expect(req_response[:user_id]).to eql @req_attributes[:user_id]
-        expect(req_response[:item_id]).to eql @req_attributes[:item_id]
       end
 
       it { should respond_with 201 }
@@ -38,8 +35,7 @@ describe Api::V1::RequestsController do
       before(:each) do
         req_attribute_creation
         @req_attributes[:user_id] = -1
-        @req_attributes[:item_id] = -1
-        post :create, @req_attributes
+        post :create, {request: @req_attributes}
       end
 
       it "renders JSON error" do
@@ -67,11 +63,11 @@ describe Api::V1::RequestsController do
       it { should respond_with 200 }
     end
 
-    context "when not successful in updating a request because of invalid item id" do
+    context "when not successful in updating a request because of invalid user id" do
       before(:each) do
         create_request_and_authorize_user
         patch :update, { id: @req.id,
-                         item_id: -1 }
+                         user_id: -1 }
       end
 
       it "renders error from JSON" do

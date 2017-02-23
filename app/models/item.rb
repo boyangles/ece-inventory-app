@@ -43,14 +43,14 @@ class Item < ApplicationRecord
     end
   end
 
-  def update_by_request(request)
-    case request.request_type.to_sym
-    when :disbursement
-      self[:quantity] = self[:quantity] - request[:quantity]
-    when :acquisition
-      self[:quantity] = self[:quantity] + request[:quantity]
-    when :destruction
-      self[:quantity] = self[:quantity] - request[:quantity]
+  def update_by_subrequest(subrequest, request_type)
+    case request_type
+    when "disbursement"
+      self[:quantity] = self[:quantity] - subrequest[:quantity]
+    when "acquisition"
+      self[:quantity] = self[:quantity] + subrequest[:quantity]
+    when "destruction"
+      self[:quantity] = self[:quantity] - subrequest[:quantity]
     else
       self[:quantity]
     end
