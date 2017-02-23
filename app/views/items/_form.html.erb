@@ -43,13 +43,6 @@
         </div>
       </div>
 
-        <div class="location">
-          <%= f.label :location, "location", class: "col-md-4 control-label" %>
-          <div class="col-md-8">
-            <%= f.text_field :location, class: "form-control",:placeholder=>"Hudson 125" %>
-          </div>
-        </div>
-
       <!-- For adding tags to items -->
       <p> <strong>Tags</strong></p>
       <% if Tag.all.count > item.tags.all.count %>
