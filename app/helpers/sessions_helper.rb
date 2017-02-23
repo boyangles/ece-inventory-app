@@ -45,10 +45,29 @@ module SessionsHelper
   def store_location
     session[:forwarding_url] = request.original_url if request.get?
   end
+
+  def is_manager_or_admin?
+    current_user && (current_user.privilege_admin? || current_user.privilege_manager?)
+  end
+
+  def is_admin?
+    current_user && current_user.privilege_admin?
+  end
+
+  # Checks that the user is a manager or admin
+  def check_manager_or_admin
+    unless current_user && (current_user.privilege_manager? || current_user.privilege_admin?)
+      flash[:danger] = "You do not have permission to perform this operation"
+      redirect_to root_path
+    end
+  end
   
   # Checks that the current user is an administrator
   def check_admin_user
-    redirect_to(root_url) unless current_user && current_user.privilege_admin?
+    unless current_user && current_user.privilege_admin?
+      flash[:danger] = "You do not have permission to perform this operation"
+      redirect_to root_path
+    end
   end
 
   # Confirms logged-in user
@@ -67,10 +86,10 @@ module SessionsHelper
     end
   end
 
-  # Confirms correct user, otherwise redirect to homepage
+  # Confirms correct user, otherwise redirect to homepage BUT ADMIN/MANAGER PRIVS OVERRIDES
   def check_current_user
     @user = User.find(params[:id])
-    redirect_to(root_url) unless current_user?(@user) || current_user.privilege_admin?
+    redirect_to(root_url) unless current_user?(@user) || is_manager_or_admin?
   end
 
 end

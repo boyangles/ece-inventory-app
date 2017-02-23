@@ -1,6 +1,7 @@
 class LogsController < ApplicationController
-  #TODO Add before_action (i.e. only admins can access logs)
-  before_action :check_logged_in_user, :check_admin_user
+
+  # TODO Should an admin/manager actually be able to create a tag? shouldn't that be restricted, or only restricted for API calls?
+  before_action :check_logged_in_user, :check_manager_or_admin
 
   def index
     @logs = Log.filter(params.slice(:item_id, 

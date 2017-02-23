@@ -21,7 +21,7 @@
     <%= f.password_field :password_confirmation, class: 'form-control' %>
   <% end %>
 
-  <% if logged_in? && current_user.privilege_admin? %>
+  <% if logged_in? && is_admin? %>
     <%= f.label :privilege, "Define Privilege" %>
     <%= f.select :privilege, User.privileges.keys.to_a %>
   <% end %>

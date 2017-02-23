@@ -2,9 +2,12 @@ require 'test_helper'
 
 class RequestTest < ActiveSupport::TestCase
   def setup
-    @user = users(:bernard)
-    @item = items(:item1)
-
+    @user = User.create!(username: 'user_requesttest',
+                         email: 'user_requesttest@example.com',
+                         privilege: 'admin',
+                         status: 'approved',
+                         password: 'password',
+                         password_confirmation: 'password')
     @request = Request.new(
       reason: 'For test',
       status: 'outstanding',

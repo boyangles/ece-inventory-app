@@ -21,10 +21,12 @@
       <%= f.text_field :description %>
     </p>
 
-    <p>
-      <%= f.label :quantity %><br>
-      <%= f.text_field :quantity %>
-    </p>
+    <% if !Item.exists?(item) || is_admin? %>
+        <p>
+          <%= f.label :quantity %><br>
+          <%= f.text_field :quantity %>
+        </p>
+    <% end %>
 
     <p>
       <%= f.label :model_number %><br>
@@ -34,7 +36,7 @@
     <!-- For adding tags to items -->
     <p> <strong>Tags</strong></p>
     <% if Tag.all.count > item.tags.all.count %>
-      <%= collection_select(:tag, :tag_id, Tag.all - item.tags.all, :id, :name, {:prompt => "-- select tags to add to item --"}, {:multiple=> true}) %>
+        <%= collection_select(:tag, :tag_id, Tag.all - item.tags.all, :id, :name, {:prompt => "-- select tags to add to item --"}, {:multiple=> true}) %>
 
     <% else %>
         <p>No more tags available</p>
@@ -48,6 +50,7 @@
         <p>No tags associated with <%= item.unique_name %></p>
     <% end %>
 
+    <!-- TODO: Make it so this asks confirmation dialog if the quantity is changed -->
     <div class="actions">
       <%= f.submit %>
     </div>

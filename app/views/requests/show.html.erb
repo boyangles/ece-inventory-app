@@ -48,7 +48,7 @@
 <% end %>
 
 
-<% if @request.outstanding? && current_user.privilege_admin? %>
+<% if @request.outstanding? && is_manager_or_admin? %>
   <%= render 'decisionform', request: @request %>
 <% end %>
 
