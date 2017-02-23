@@ -27,14 +27,6 @@ class ItemsController < ApplicationController
   # GET /items/1
   # GET /items/1.json
   def show
-    # TODO: How do I refactor this into a method? If I put it into a private method, it executes
-    # but doesn't return, so it still executes the rest of the code
-    if !Item.exists?(params[:id])
-      flash[:danger] = "Cannot find item with id #{params[:id]}"
-      redirect_to items_path and return
-    end
-    ########
-
     @item = Item.find(params[:id])
 
     outstanding_filter_params = {
