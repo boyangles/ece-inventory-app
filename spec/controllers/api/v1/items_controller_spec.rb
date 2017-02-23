@@ -3,6 +3,7 @@ require 'rails_helper'
 describe Api::V1::ItemsController do
   describe "GET #show" do
     before(:each) do
+      create_and_authenticate_admin_user
       @item = FactoryGirl.create :item
       get :show, id: @item.id
     end
@@ -19,8 +20,9 @@ describe Api::V1::ItemsController do
     # Successful item creation
     context "when is successfully created" do
       before(:each) do
+        create_and_authenticate_admin_user
         @item_attributes = FactoryGirl.attributes_for :item
-        post :create, { item: @item_attributes }
+        post :create, @item_attributes
       end
 
       it "renders the json representation for the item record just created" do
@@ -34,11 +36,12 @@ describe Api::V1::ItemsController do
     # Unsuccessful item creation
     context "when is not successfully created" do
       before(:each) do
+        create_and_authenticate_admin_user
         @item1 = FactoryGirl.create :item
         @item2_attributes = FactoryGirl.attributes_for :item
         @item2_attributes[:unique_name] = @item1[:unique_name]
 
-        post :create, { item: @item2_attributes }
+        post :create, @item2_attributes
       end
 
       it "renders JSON error" do
@@ -54,9 +57,10 @@ describe Api::V1::ItemsController do
     # Successful Update
     context "when is successfully updated" do
       before(:each) do
+        create_and_authenticate_admin_user
         @item = FactoryGirl.create :item
         patch :update, { id: @item.id,
-                         item: { description: "Sample description" } }
+                         description: "Sample description" }
       end
 
       it "renders json representation for updated item" do
@@ -70,11 +74,12 @@ describe Api::V1::ItemsController do
     # Unsuccessful Update
     context "when is not successfully updated" do
       before(:each) do
+        create_and_authenticate_admin_user
         @item1 = FactoryGirl.create :item
         @item2 = FactoryGirl.create :item
 
         patch :update, { id: @item2.id,
-                         item: { unique_name: @item1[:unique_name] } }
+                          unique_name: @item1[:unique_name] }
       end
 
       it "renders error from JSON" do
@@ -88,10 +93,17 @@ describe Api::V1::ItemsController do
 
   describe "DELETE #destroy" do
     before(:each) do
+      create_and_authenticate_admin_user
       @item = FactoryGirl.create :item
       delete :destroy, { id: @item.id }
     end
 
     it { should respond_with 204 }
+  end
+
+  private
+  def create_and_authenticate_admin_user
+    @user = FactoryGirl.create :user
+    api_authorization_header @user[:auth_token]
   end
 end

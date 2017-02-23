@@ -8,8 +8,7 @@ class ItemTest < ActiveSupport::TestCase
         unique_name: "item23" ,
         quantity: 234,
         model_number: "15",
-        description: "description",
-        location: "my cellar"
+        description: "description"
     )
   end
 
@@ -24,11 +23,6 @@ class ItemTest < ActiveSupport::TestCase
 
   test "description not required to be present" do
     @item.description = ""
-    assert @item.valid?
-  end
-
-  test "location not required to be present" do
-    @item.location = ""
     assert @item.valid?
   end
 

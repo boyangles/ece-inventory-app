@@ -8,6 +8,10 @@ end
 #Integration testing gem
 gem 'rails-controller-testing'
 
+# API Testing Swagger
+gem 'swagger-docs'
+gem 'ruby-swagger'
+
 # Capybara RSpec Selenium Testing
 gem 'capybara'
 # gem 'rspec-rails'
@@ -35,6 +39,9 @@ gem 'will_paginate', '3.1.0'
 gem 'bootstrap-will_paginate', '0.0.10'
 # Bootstrap sass gem
 gem 'bootstrap-sass', '3.3.6'
+gem 'jquery-turbolinks'
+gem 'best_in_place'
+gem 'bootstrap-x-editable-rails'
 # React-Rails
 gem 'react-rails'
 # Use postgresql as the database for Active Record

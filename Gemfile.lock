@@ -104,11 +104,16 @@ GEM
       babel-source (>= 4.0, < 6)
       execjs (~> 2.0)
     bcrypt (3.1.11)
+    best_in_place (3.1.0)
+      actionpack (>= 3.2)
+      railties (>= 3.2)
     bootstrap-sass (3.3.6)
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
     bootstrap-will_paginate (0.0.10)
       will_paginate
+    bootstrap-x-editable-rails (1.5.1.1)
+      railties (>= 3.0)
     builder (3.2.3)
     byebug (9.0.6)
     capybara (2.12.0)
@@ -161,6 +166,9 @@ GEM
       rails-dom-testing (>= 1, < 3)
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
+    jquery-turbolinks (2.1.0)
+      railties (>= 3.1.0)
+      turbolinks
     jwt (1.5.6)
     libv8 (3.16.14.17)
     listen (3.0.8)
@@ -242,6 +250,8 @@ GEM
     ref (2.0.0)
     responders (2.3.0)
       railties (>= 4.2.0, < 5.1)
+    ruby-swagger (0.1.1)
+      addressable
     sass (3.4.23)
     sass-rails (5.0.6)
       railties (>= 4.0.0, < 6)
@@ -263,6 +273,9 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
+    swagger-docs (0.2.9)
+      activesupport (>= 3)
+      rails (>= 3)
     therubyracer (0.12.3)
       libv8 (~> 3.16.14.15)
       ref
@@ -295,8 +308,10 @@ PLATFORMS
 
 DEPENDENCIES
   bcrypt (= 3.1.11)
+  best_in_place
   bootstrap-sass (= 3.3.6)
   bootstrap-will_paginate (= 0.0.10)
+  bootstrap-x-editable-rails
   byebug
   capybara
   coffee-rails (~> 4.2)
@@ -307,6 +322,7 @@ DEPENDENCIES
   httparty
   jbuilder (~> 2.5)
   jquery-rails
+  jquery-turbolinks
   listen (~> 3.0.5)
   omniauth-duke-oauth2!
   pg (~> 0.18)
@@ -320,10 +336,12 @@ DEPENDENCIES
   rspec-mocks!
   rspec-rails!
   rspec-support!
+  ruby-swagger
   sass-rails (~> 5.0)
   shoulda-matchers
   spring
   spring-watcher-listen (~> 2.0.0)
+  swagger-docs
   therubyracer
   turbolinks (~> 5)
   tzinfo-data
