@@ -75,9 +75,7 @@ class UsersController < ApplicationController
 
   def auth_token
     @user = User.find(params[:id])
-    if(current_user?(@user))
-      @user = User.find(params[:id])
-    else
+    unless current_user?(@user)
       flash[:danger] = "You are not User with ID #{@user.id}"
       redirect_to current_user
     end

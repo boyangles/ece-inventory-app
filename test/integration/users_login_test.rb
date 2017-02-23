@@ -6,9 +6,24 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
   # end
 
   def setup
-    @user = users(:bernard)
-    @admin = users(:bernard)
-    @non_admin = users(:alex)
+    @user = User.create!(username: 'user_userlogintest',
+                         email: 'user_userlogintest@example.com',
+                         privilege: 'admin',
+                         status: 'approved',
+                         password: 'password',
+                         password_confirmation: 'password')
+    @admin = User.create!(username: 'admin_userlogintest',
+                          email: 'admin_userlogintest@example.com',
+                          privilege: 'admin',
+                          status: 'approved',
+                          password: 'password',
+                          password_confirmation: 'password')
+    @non_admin = User.create!(username: 'nonadmin_userlogintest',
+                          email: 'nonadmin_userlogintest@example.com',
+                          privilege: 'student',
+                          status: 'approved',
+                          password: 'password',
+                          password_confirmation: 'password')
   end
 
   # Catches the bug where the flash persists for more than a single page
