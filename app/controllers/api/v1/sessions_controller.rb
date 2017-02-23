@@ -1,12 +1,25 @@
 class Api::V1::SessionsController < ApplicationController
-  def create
-    user_password = params[:sess][:password]
-    user_email = params[:sess][:email].downcase
-    user = user_email.present? && User.find_by(:email => user_email)
 
-    if user && user.authenticate(user_password)
+  respond_to :json
+  protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
+  swagger_controller :sessions, 'Sessions'
+
+  skip_before_action :verify_authenticity_token
+
+  swagger_api :create do
+    summary 'Returns all items'
+    notes 'These are some notes for everybody!'
+    param :form, :username, :string, :required, "Username"
+    param :form, :password, :string, :required, "Password"
+    response :unauthorized
+    response :requested_range_not_satisfiable
+  end
+
+  def create
+    user = User.find_by(:username => params[:username])
+    user.status = 'approved'
+    if user && user.authenticate(params[:password])
       if user.status_approved?
-        log_in user
         user.generate_authentication_token!
         user.save
         render json: user, status: 200, location: [:api, user]
@@ -14,14 +27,8 @@ class Api::V1::SessionsController < ApplicationController
         render json: { errors: 'Your account has not been approved by an administrator' }, status: 422
       end
     else
-      render json: { errors: 'Invalid email or password' }, status: 422
+      render json: { errors: 'Invalid username or password' }, status: 422
     end
   end
 
-  def destroy
-    user = User.find_by(auth_token: params[:id])
-    user.generate_authentication_token!
-    user.save
-    head 204
-  end
 end

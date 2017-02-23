@@ -3,6 +3,7 @@ require 'rails_helper'
 describe Api::V1::TagsController do
   describe "GET #show" do
     before(:each) do
+      create_and_authenticate_admin_user
       @tag = FactoryGirl.create :tag
       get :show, id: @tag.id
     end
@@ -19,8 +20,9 @@ describe Api::V1::TagsController do
     # Successful Create
     context "when create succesfully" do
       before(:each) do
+        create_and_authenticate_admin_user
         @tag_attributes = FactoryGirl.attributes_for :tag
-        post :create, { tag: @tag_attributes }
+        post :create, @tag_attributes
       end
 
       it "renders json representation for tag just created" do
@@ -34,11 +36,12 @@ describe Api::V1::TagsController do
     # Unsuccessful Create
     context "when unsuccesful creation" do
       before(:each) do
+        create_and_authenticate_admin_user
         @tag1 = FactoryGirl.create :tag
         @tag_attributes = FactoryGirl.attributes_for :tag
 
         @tag_attributes[:name] = @tag1[:name]
-        post :create, { tag: @tag_attributes }
+        post :create, @tag_attributes
       end
 
       it "renders JSON error" do
@@ -54,14 +57,15 @@ describe Api::V1::TagsController do
     # Successful Update
     context "when successfully update" do
       before(:each) do
+        create_and_authenticate_admin_user
         @tag = FactoryGirl.create :tag
         patch :update, { id: @tag.id,
-                         tag: { name: "sample name" } }
+                         name: @tag.name }
       end
 
       it "renders json representation of updated request" do
         tag_response = json_response
-        expect(tag_response[:name]).to eql "sample name"
+        expect(tag_response[:name]).to eql @tag.name
       end
 
       it { should respond_with 200 }
@@ -70,11 +74,12 @@ describe Api::V1::TagsController do
     # Unsuccessful Update
     context "when unsuccessful in updating" do
       before(:each) do
+        create_and_authenticate_admin_user
         @tag1 = FactoryGirl.create :tag
         @tag2 = FactoryGirl.create :tag
 
         patch :update, { id: @tag2.id,
-                          tag: { name: @tag1.name } }
+                          name: @tag1.name }
       end
 
       it "renders error from JSON" do
@@ -88,10 +93,17 @@ describe Api::V1::TagsController do
 
   describe "DELETE #destroy" do
     before(:each) do
+      create_and_authenticate_admin_user
       @tag = FactoryGirl.create :tag
       delete :destroy, {id: @tag.id }
     end
 
     it { should respond_with 204 }
+  end
+
+  private
+  def create_and_authenticate_admin_user
+    @user = FactoryGirl.create :user
+    api_authorization_header @user[:auth_token]
   end
 end

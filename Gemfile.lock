@@ -242,6 +242,8 @@ GEM
     ref (2.0.0)
     responders (2.3.0)
       railties (>= 4.2.0, < 5.1)
+    ruby-swagger (0.1.1)
+      addressable
     sass (3.4.23)
     sass-rails (5.0.6)
       railties (>= 4.0.0, < 6)
@@ -263,6 +265,9 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
+    swagger-docs (0.2.9)
+      activesupport (>= 3)
+      rails (>= 3)
     therubyracer (0.12.3)
       libv8 (~> 3.16.14.15)
       ref
@@ -320,10 +325,12 @@ DEPENDENCIES
   rspec-mocks!
   rspec-rails!
   rspec-support!
+  ruby-swagger
   sass-rails (~> 5.0)
   shoulda-matchers
   spring
   spring-watcher-listen (~> 2.0.0)
+  swagger-docs
   therubyracer
   turbolinks (~> 5)
   tzinfo-data
