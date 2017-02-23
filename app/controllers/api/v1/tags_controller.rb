@@ -1,5 +1,60 @@
-class Api::V1::TagsController < ApplicationController
+class Api::V1::TagsController < BaseController
+  # authentication_actions = [:index, :show, :update, :destroy]
+
+  before_action :authenticate_with_token!
+  protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
+
+  # TODO: Still needs admin stuff on most of these methods I believe
+
+
   respond_to :json
+
+  swagger_controller :tags, 'Tags'
+
+  # authentication_actions.each do |api_action|
+  #   swagger_api api_action do
+  #     param :header, :Authorization, :required, "Authorization Token"
+  #   end
+  # end
+
+  swagger_api :index do
+    summary 'Returns all Tags'
+    notes 'These are some notes for everybody!'
+    param :query, :page, :integer, :optional, "Page number"
+    response :unauthorized
+    response :not_acceptable, "The request you made is not acceptable"
+    response :requested_range_not_satisfiable
+  end
+
+  swagger_api :show do
+    summary "Fetches a single tag"
+    param :path, :id, :integer, :required, "id"
+    response :ok, "Success", :tag
+    response :unauthorized
+    response :not_found
+  end
+
+  swagger_api :create do
+    summary "Creates a new Tag"
+    param :form, :name, :string, :required, "Name"
+    response :unauthorized
+    response :not_acceptable
+  end
+
+  swagger_api :update do
+    summary "Updates an existing tag"
+    param :path, :id, :integer, :required, "id"
+    param :form, :name, :string, :required, "Name"
+    response :unauthorized
+    response :not_acceptable
+  end
+
+  swagger_api :destroy do
+    summary "Deletes a tag"
+    param :path, :id, :integer, :required, "id"
+    response :unauthorized
+    response :not_acceptable
+  end
 
   def index
     respond_with Tag.all
@@ -36,6 +91,6 @@ class Api::V1::TagsController < ApplicationController
 
   private
   def tag_params
-    params.fetch(:tag, {}).permit(:name)
+    params.permit(:name)
   end
 end

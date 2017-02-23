@@ -3,11 +3,12 @@ require 'api_constraints'
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get 'welcome/index'
+  root 'welcome#index'
 
-  # TODO: Deprecated... All test associated with this are irrelevant
-  # get '/signup', to: 'users#new'
-  # post '/signup', to: 'users#create'
+  # User auth token
+  get "users/:id/auth_token", to: 'users#auth_token', :as => 'auth_token'
 
+  # All resources
   resources :users
   resources :requests
     put 'requests/:id/clear' => 'requests#clear', :as => 'clear_request'    # Clears items from requests
@@ -17,6 +18,8 @@ Rails.application.routes.draw do
   
   resources :item_custom_fields, :only => [:index, :show, :create, :update, :destroy]
   resources :custom_fields, :only => [:create, :destroy]
+  resources :sessions
+  resources :logs
   resources :request_items, :except => [:index, :show]
 
   #Login and Sessions routes
@@ -24,15 +27,8 @@ Rails.application.routes.draw do
   post  '/login',   to: 'sessions#create'   #Handles actually logging in
   delete '/logout', to: 'sessions#destroy'  #Handles logging out
 
-
+  # Duke OAuth callback
   get '/auth/:provider/callback', to: 'sessions#create'
-
-  resources :sessions
-
-  #Log Routes
-  resources :logs
-
-  root 'welcome#index'
 
   ## Maps to app/controllers/api directory
   namespace :api, defaults: { format: :json } do
@@ -47,4 +43,8 @@ Rails.application.routes.draw do
       resources :sessions, :only => [:create, :destroy]
     end
   end
+
+  # Swagger API
+  get '/api' => redirect('/swagger/dist/index.html?url=/apidocs/api-docs.json')
+
 end
