@@ -25,7 +25,7 @@ gem 'responders'
 gem 'devise'
 
 # DUKE OAUTH GEM for net id verification
-gem "omniauth-duke-oauth2", :git => 'git@gitlab.oit.duke.edu:colab/omniauth-duke-oauth2.git', :ref => '5eaf6759'
+gem "omniauth-duke-oauth2", :git => 'http://gitlab.oit.duke.edu/colab/omniauth-duke-oauth2.git', :ref => '5eaf6759'
 gem "httparty"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -52,7 +52,7 @@ gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
 # See https://github.com/rails/execjs#readme for more supported runtimes
-# gem 'therubyracer', platforms: :ruby
+gem 'therubyracer', platforms: :ruby, group: [:production]
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
