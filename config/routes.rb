@@ -15,7 +15,9 @@ Rails.application.routes.draw do
     patch 'requests/:id/clear', to: 'requests#clear'
   resources :items
   resources :tags
-
+  
+  resources :item_custom_fields, :only => [:index, :show, :create, :update, :destroy]
+  resources :custom_fields, :only => [:create, :destroy]
   resources :sessions
   resources :logs
   resources :request_items, :except => [:index, :show]
