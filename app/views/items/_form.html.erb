@@ -1,7 +1,5 @@
-<div class="body">
-<%= form_for item, :html => {:class => "form-horizontal"} do |f| %>
+<%= form_for (item), :html => {:class => "form-horizontal"} do |f| %>
     <fieldset>
-      <legend>New Item</legend>
       <% if item.errors.any? %>
           <div id="error_explanation">
             <h2><%= pluralize(item.errors.count, "error") %> prohibited this item from being saved:</h2>
@@ -62,4 +60,3 @@
 
     </fieldset>
 <% end %>
-</div>
