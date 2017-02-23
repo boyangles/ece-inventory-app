@@ -9,6 +9,27 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     @user = users(:bernard)
     @admin = users(:bernard)
     @non_admin = users(:alex)
+
+    @request_user = Request.new(
+        reason: 'For test',
+        status: 'cart',
+        request_type: 'disbursement',
+        user_id: @user.id)
+    @request_user.save!
+
+    @request_admin = Request.new(
+        reason: 'For test',
+        status: 'cart',
+        request_type: 'disbursement',
+        user_id: @admin.id)
+    @request_admin.save!
+
+    @request_nonadmin = Request.new(
+        reason: 'For test',
+        status: 'cart',
+        request_type: 'disbursement',
+        user_id: @non_admin.id)
+    @request_nonadmin.save!
   end
 
   # Catches the bug where the flash persists for more than a single page
@@ -85,6 +106,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
   test "Create local account as admin, log out, then log in with local" do
     log_in_as(@admin)
     get new_user_path
+
     post users_path, params: {
         user: {
             username: "cotton eyed joe",
@@ -93,6 +115,15 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
             password_confirmation: "password"
         }
     }
+    @created_user = User.find_by(:username => "cotton eyed joe")
+
+    @cart = Request.new(
+      reason: 'For test',
+      status: 'cart',
+      request_type: 'disbursement',
+      user_id: @created_user.id)
+    @cart.save!
+
     delete logout_path
     assert_not is_logged_in?
     log_in_as(@user)

@@ -19,25 +19,25 @@ class RequestsController < ApplicationController
   # GET /requests/1
   def show
     @request = Request.find(params[:id])
-    @item = @request.item
-    @user = @request.user
+   
+	  @user = @request.user
   end
 
   # GET /requests/new
-  def new
-    @request = Request.new
-    
-    if !params[:item_id].blank?
-      @request[:item_id] = params[:item_id]
-    end
-    @item = @request.item
-
-  end
+  # Delete this?? soon-ish, plus edit routes.
+  # def new
+  #   @request = Request.new
+  #
+  #   # if !params[:item_id].blank?
+  #   #   @request[:item_id] = params[:item_id]
+  #   # end
+  #   # @item = @request.items
+  #
+  # end
 
   # GET /requests/1/edit
   def edit
     @request = Request.find(params[:id])
-    @item = @request.item
     @user = @request.user
   end
 
@@ -45,8 +45,6 @@ class RequestsController < ApplicationController
   def create
     @request = Request.new(request_params)
     @request.user_id = params[:user] ? params[:user][:id] : @request.user_id
-
-    @item = @request.item
 
     if !@request.approved?
       save_form(@request) and return
@@ -101,9 +99,19 @@ class RequestsController < ApplicationController
     end
 
     redirect_to requests_url
-  end
+  end  
 
-  
+
+  def find_cart(usr)
+    @request = Request.where(:status => "cart", :user_id => usr.id).first
+    if @request.nil?
+      @request = Request.new(:status => "cart", :user_id => usr.id, :reason => "TBD", :request_type => "disbursement")
+    end
+
+    if !@request.save(:validate => false)
+      flash[:error] = "Cart was not found"
+    end
+  end
  
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -148,10 +156,11 @@ class RequestsController < ApplicationController
     end
     # Never trust parameters from the scary internet, only allow the white list through.
     def request_params
-      params.fetch(:request, {}).permit(:user_id, :item_id, :quantity, :reason, :status, :request_type, :response)
+      # params.fetch(:request, {}).permit(:user_id, :item_id, :reason, :status, :request_type, :response)
+      params.fetch(:request, {}).permit(:user_id, :reason, :status, :request_type, :response)
     end
 
     def log_params
-      params.fetch(:request, {}).permit(:item_id, :quantity, :user_id, :request_type)
+      params.fetch(:request, {}).permit(:item_id, :user_id, :request_type)
     end
 end

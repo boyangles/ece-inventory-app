@@ -11,18 +11,20 @@
 </p>
 
 <p>
-  <strong>Item:</strong>
-  <%= @item.unique_name %>
+  <strong>Items:</strong>
+	<% if @request.request_items.empty? %>
+		<p>Your cart is empty!</p>
+  <% end %>
+  <% @request.request_items.each do |req_item| %>
+      <% item = Item.find(req_item.item_id) %>
+      <li><%= item.unique_name + ': '%>
+      <%= req_item.quantity %> </li>
+  <% end %>
 </p>
 
 <p>
   <strong>Request Type:</strong>
   <%= @request.request_type %>
-</p>
-
-<p>
-  <strong>Quantity:</strong>
-  <%= @request.quantity %>
 </p>
 
 <p>

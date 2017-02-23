@@ -5,7 +5,6 @@ Rails.application.routes.draw do
   get 'welcome/index'
   root 'welcome#index'
 
-
   # User auth token
   get "users/:id/auth_token", to: 'users#auth_token', :as => 'auth_token'
 
@@ -14,6 +13,7 @@ Rails.application.routes.draw do
   resources :requests
   resources :items
   resources :tags
+  resources :request_items
   resources :sessions
   resources :logs
 
