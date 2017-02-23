@@ -6,12 +6,10 @@ class RequestTest < ActiveSupport::TestCase
     @item = items(:item1)
 
     @request = Request.new(
-      quantity: 5,
       reason: 'For test',
       status: 'outstanding',
       request_type: 'disbursement',
-      user_id: @user.id,
-      item_id: @item.id)
+      user_id: @user.id)
   end
 
   test "should be valid" do
@@ -23,12 +21,11 @@ class RequestTest < ActiveSupport::TestCase
     assert_not @request.valid?
   end
 
-  test "item id should be present" do
-    @request.item_id = nil
-    assert_not @request.valid?
-  end
-
-  test "order should be most recent first" do
-    assert_equal requests(:most_recent), Request.first
+  test "there cannot be two 'cart' request for a single user at any time" do
+    @prev_request = Request.where(:user_id => @user.id).where(:status => :cart).first
+    @request1 = Request.new(reason: 'test1', status: 'cart',
+                            request_type: 'disbursement',
+                            user_id: @prev_request[:user_id])
+    assert_not @request1.valid?
   end
 end

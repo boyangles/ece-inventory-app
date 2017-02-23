@@ -31,16 +31,46 @@
     </p>
 
     <p>
-      <strong>Location:</strong>
-      <%= @item.location %>
-    </p>
-
-    <p>
       <strong>Tags:</strong>
       <% @item.tags.each do |tag| %>
           <%= tag.name + ', ' %>
       <% end %>
     </p>
+
+    <button data-toggle="collapse" data-target="#item_show_custom_field_collapse">
+      More details...
+    </button>
+
+    <div id="item_show_custom_field_collapse" class="collapse">
+      <table class="table table-hover">
+        <tbody>
+          <% @item_custom_fields.each do |icf| %>
+            <% field_content = ItemCustomField.field_content(@item.id, icf.custom_field_id) %>
+
+            <% if !current_user.privilege_student? ||
+                !icf.custom_field.private_indicator %>
+              <tr>
+                <td><b><%= icf.custom_field.field_name %></b></td>
+                <td>
+                  <% if current_user.privilege_student? %>
+                    <%= field_content %>
+                  <% else %>
+                      <a href="#" data-xeditable="true"
+                         data-pk="<%= icf.id %>"
+                         data-model="item_custom_field"
+                         data-name="<%= CustomField.find_icf_field_column(icf.custom_field_id).to_s %>"
+                         data-url="<%= item_custom_field_url(icf) %>"
+                         data-title="Enter modification">
+                        <%= field_content %>
+                      </a>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </aside>
 
   <div class="col-md-8">
@@ -60,21 +90,18 @@
   </div>
 </div>
 
-
-
-<%= link_to "New Request", new_request_url(:item_id => @item.id), :class => "btn btn-primary" %>
-
+<%= link_to "Add to Cart", new_request_item_url(:item_id => @item.id), :class => "btn btn-primary" %>
 <% if is_admin? %>
-    <%= link_to 'Remove item',
-                @item,
-                method: :delete,
-                data: { confirm: 'Are you sure you want to delete this item?' },
-                :class => "btn btn-primary" %>
-<% end %>
+  <%= link_to 'Remove item', 
+    @item, 
+    method: :delete, 
+    data: { confirm: 'Are you sure?' }, 
+    :class => "btn btn-primary" %>
+<% end %> 
 <% if is_manager_or_admin? %>
-    <%= link_to 'Edit item',
-                edit_item_path(@item),
-                :class => "btn btn-primary" %>
+  <%= link_to 'Edit item', 
+    edit_item_path(@item), 
+    :class => "btn btn-primary" %>
 <% end %>
 
 <br>

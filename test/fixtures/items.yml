@@ -8,33 +8,28 @@ item1:
   unique_name: 'item1'
   quantity: 100
   description: 'The quick brown fox jumped over the lazy dog'
-  location: '101 Perry Creek Drive'
   model_number: '0x12345'
 
 item2:
   unique_name: 'item2'
   quantity: 887
   description: 'The quick brgp eoaown fox jumped over the lazy dog'
-  location: '105 Perry Creek Drive'
   model_number: '0x125'
 
 item3:
   unique_name: 'item3'
   quantity: 1095
   description: 'Theaerigeag  quick brown fox jumped over the lazy dog'
-  location: '104 Perry Creek Drive'
   model_number: '0x332'
 
 item4:
   unique_name: 'item4'
   quantity: 683
   description: 'The coronation of the pope was spectacular'
-  location: '105 Old Markham Place'
   model_number: '0x48976'
 
 item5:
   unique_name: 'item5'
   quantity: 2323
   description: 'Very Cute'
-  location: '109 San Juan Drive'
   model_number: '0x666'

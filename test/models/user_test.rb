@@ -100,25 +100,17 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "associated request should be destroyed when user deleted" do
-    @user.save 
-    @item.save 
+    @user.save!
 
     Request.create!(
-      quantity: 5,
       reason: 'For test',
       status: 'outstanding',
       request_type: 'disbursement',
-      user_id: @user.id,
-      item_id: @item.id)
-    
-    Log.create!(
-      quantity: 5,
-      request_type: 'disbursement',
-      user_id: @user.id,
-      item_id: @item.id)
+      user_id: @user.id)
 
-    assert_difference ['Request.count', 'Log.count'], -1 do
-      @user.destroy
+    # One for cart, one for normal request
+    assert_difference ['Request.count'], -2 do
+      @user.destroy!
     end
   end
 

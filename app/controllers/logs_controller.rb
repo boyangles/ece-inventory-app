@@ -27,7 +27,7 @@ class LogsController < ApplicationController
       reject_to_new("Oversubscribed!") and return
     else
       save_form(@log)
-      @item.update_by_request(@log)
+      @item.update_by_subrequest(@log, @log.request_type)
       @item.save!
     end
   end

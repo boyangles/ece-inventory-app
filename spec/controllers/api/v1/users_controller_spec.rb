@@ -1,10 +1,10 @@
 require 'rails_helper'
+#require 'helpers/base_helper_spec'
 
 describe Api::V1::UsersController do
   describe "GET #show" do
     before(:each) do
-      @user = FactoryGirl.create :user
-      api_authorization_header @user[:auth_token]
+      create_and_authenticate_admin_user
       get :show, id: @user.id
     end
 
@@ -20,10 +20,11 @@ describe Api::V1::UsersController do
     # Successful user creation
     context "when is successfully created" do
       before(:each) do
+        create_and_authenticate_admin_user
         @user_attributes = FactoryGirl.attributes_for :user
         @user_attributes[:email] = @user_attributes[:email].downcase
 
-        post :create, { user: @user_attributes }
+        post :create, @user_attributes
       end
 
       it "renders the json representation for the user record just created" do
@@ -37,9 +38,10 @@ describe Api::V1::UsersController do
     # Unsucessful creation
     context "when is not created" do
       before(:each) do
+        create_and_authenticate_admin_user
         @invalid_user_attributes = { password: "password",
                                      password_confirmation: "invalid_password" }
-        post :create, { user: @invalid_user_attributes }
+        post :create, @invalid_user_attributes
       end
 
       it "renders JSON error" do
@@ -59,10 +61,9 @@ describe Api::V1::UsersController do
   describe "PUT/PATCH #update" do
     context "when is successfully updated" do
       before(:each) do
-        @user = FactoryGirl.create :user
-        api_authorization_header @user[:auth_token]
+        create_and_authenticate_admin_user
         patch :update, { id: @user.id,
-                         user: { email: "newmailexample@duke.edu" } }
+                        email: "newmailexample@duke.edu" }
       end
 
       it "renders json representation for updated user" do
@@ -73,12 +74,11 @@ describe Api::V1::UsersController do
       it { should respond_with 200 }
     end
 
-    context "when is not created" do
+    context "when is not created as email is empty" do
       before(:each) do
-        @user = FactoryGirl.create :user
-        api_authorization_header @user[:auth_token]
+        create_and_authenticate_admin_user
         patch :update, { id: @user.id,
-                         user: { email: "" } }
+                        email: "" }
       end
 
       # TODO: Change when validation of email is finalized
@@ -98,11 +98,16 @@ describe Api::V1::UsersController do
 
   describe "DELETE #destroy" do
     before(:each) do
-      @user = FactoryGirl.create :user
-      api_authorization_header @user[:auth_token]
+      create_and_authenticate_admin_user
       delete :destroy, { id: @user.id }
     end
 
     it { should respond_with 204 }
+  end
+
+  private
+  def create_and_authenticate_admin_user
+    @user = FactoryGirl.create :user
+    api_authorization_header @user[:auth_token]
   end
 end

@@ -8,32 +8,8 @@ class ItemTest < ActiveSupport::TestCase
         unique_name: "item23" ,
         quantity: 234,
         model_number: "15",
-        description: "description",
-        location: "my cellar"
+        description: "description"
     )
-  end
-
-  test "associated log and request should be destroyed when user deleted" do
-    @user.save
-    @item.save
-
-    Request.create!(
-        quantity: 5,
-        reason: 'For test',
-        status: 'outstanding',
-        request_type: 'disbursement',
-        user_id: @user.id,
-        item_id: @item.id)
-
-    Log.create!(
-        quantity: 5,
-        request_type: 'disbursement',
-        user_id: @user.id,
-        item_id: @item.id)
-
-    assert_difference ['Request.count', 'Log.count'], -1 do
-      @item.destroy
-    end
   end
 
   test "should be valid" do
@@ -47,11 +23,6 @@ class ItemTest < ActiveSupport::TestCase
 
   test "description not required to be present" do
     @item.description = ""
-    assert @item.valid?
-  end
-
-  test "location not required to be present" do
-    @item.location = ""
     assert @item.valid?
   end
 

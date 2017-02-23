@@ -46,7 +46,8 @@ class ItemsController < ApplicationController
       outstanding_filter_params[:user_id] = current_user.id
     end
 
-    @requests = Request.filter(outstanding_filter_params).paginate(page: params[:page], per_page: 10)
+    @requests = @item.requests.filter(outstanding_filter_params).paginate(page: params[:page], per_page: 10)
+    @item_custom_fields = ItemCustomField.where(item_id: @item.id)
   end
 
   # GET /items/new
@@ -61,7 +62,7 @@ class ItemsController < ApplicationController
 
   # DELETE /items/1
   def destroy
-    Item.find(params[:id]).destroy
+    Item.find(params[:id]).destroy!
     flash[:success] = "Item deleted!"
     redirect_to items_url
   end
@@ -105,7 +106,7 @@ class ItemsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
-    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :search, :model_search, :location)
+    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :search, :model_search)
   end
 
   def alert_if_quantity_changes(quantity)

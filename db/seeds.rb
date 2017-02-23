@@ -30,7 +30,8 @@ end
   username = Faker::Name.name
   email = "exampleApproved-#{n+1}@duke.edu"
   password = "password"
-  User.create!(username: username,
+ 
+  usr = User.create!(username: username,
                email: email,
                status: "approved",
                privilege: "admin",
@@ -46,10 +47,11 @@ User.create!(username: "student", email: "nonadminusername@duke.edu", status: "a
 User.create!(username: "manager", email: "manager123@duke.edu", status: "approved",
              privilege: "manager", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
 
+nonadmin = User.create!(username: "nonadmin", email: "nonadminusername@duke.edu", status: "approved",
+             privilege: "student", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
 
-User.create(username:"abcd", email: "f@duke.edu" , status: "approved",
-            privilege: "student", password: "yoyoyo", password_confirmation: "yoyoyo", auth_token: Devise.friendly_token)
-
+yo = User.create(username:"abcd", email: "f@duke.edu" , status: "approved",
+                 privilege: "student", password: "yoyoyo", password_confirmation: "yoyoyo", auth_token: Devise.friendly_token)
 
 items = %w[Resistor Transistor Oscilloscope RED_LED Green_LED Capacitor Screw Washer BOE-Bot Electrical_Tape Arduino_Kit
             QTI_Sensor Server_Motor Piezo_Speaker Seven_Segment_Display IC_Chip]
@@ -58,34 +60,31 @@ items.each do |item|
   quantity = Faker::Number.number(3)
   model_number = Faker::Number.hexadecimal(6)
   description = Faker::Lorem.paragraph(2, true, 1)
-  location = Faker::Address.city
 
   Item.create!(
     unique_name: item,
     quantity: quantity,
     model_number: model_number,
-    description: description,
-    location: location
-  )
+    description: description)
 end
+
+## Default Custom Fields
+CustomField.create!(field_name: 'location', private_indicator: false, field_type: 'short_text_type')
+CustomField.create!(field_name: 'restock_info', private_indicator: true, field_type: 'long_text_type')
 
 # Creating Requests:
 50.times do |n|
-  # Obtain random user:
-  user = User.offset(rand(User.count)).first
-  # Obtain random item:
-  item = Item.offset(rand(Item.count)).first
-  # Random reason:
-  reason = Faker::Lorem.paragraph(2, true, 3)
+ # Obtain random user:
+ user = User.offset(rand(User.count)).first
+ # Random reason:
+ reason = Faker::Lorem.paragraph(2, true, 3)
 
-  Request.create!(
-      user_id: user.id,
-      quantity: item.quantity,
-      reason: reason,
-      status: "outstanding",
-      request_type: "disbursement",
-      item_id: item.id
-  )
+ Request.create!(
+     user_id: user.id,
+     reason: reason,
+     status: "outstanding",
+     request_type: "disbursement",
+ )
 end
 
 # Creating Logs:

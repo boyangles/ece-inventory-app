@@ -10,7 +10,6 @@ class UsersController < ApplicationController
   # Security issue: only admin users can delete users
   before_action :check_admin_user, only: [:create, :destroy]
 
-
   def new
     # if logged_in?
     #   redirect_to root_path
@@ -48,7 +47,7 @@ class UsersController < ApplicationController
       flash.now[:danger] = "Unable to create user! Try again?"
       render action: 'new'
     end
-  end
+	end
 
   # PATCH/PUT /users/1
   def update
@@ -74,6 +73,16 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
 
+  def auth_token
+    @user = User.find(params[:id])
+    if(current_user?(@user))
+      @user = User.find(params[:id])
+    else
+      flash[:danger] = "You are not User with ID #{@user.id}"
+      redirect_to current_user
+    end
+  end
+
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_user
@@ -85,7 +94,5 @@ class UsersController < ApplicationController
     # Rails 4+ requires you to whitelist attributes in the controller.
     params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :privilege)
   end
-
-
 
 end
