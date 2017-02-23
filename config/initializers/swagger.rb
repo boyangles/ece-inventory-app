@@ -5,6 +5,7 @@ class Swagger::Docs::Config
     # Make a distinction between the APIs and API documentation paths.
     "apidocs/#{path}"
   end
+  def self.base_controller; ApplicationController end
 end
 
 Swagger::Docs::Config.register_apis({

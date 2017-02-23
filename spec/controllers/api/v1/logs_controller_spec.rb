@@ -3,6 +3,7 @@ require 'rails_helper'
 describe Api::V1::LogsController do
   describe "Get #show" do
     before(:each) do
+      create_and_authenticate_admin_user
       @log = FactoryGirl.create :log
       get :show, id: @log.id
     end
@@ -20,11 +21,12 @@ describe Api::V1::LogsController do
     # Successful creation
     context "when successfully created" do
       before(:each) do
+        create_and_authenticate_admin_user
         log_attribute_creation
 
         @log_attributes[:user_id] = @sample_user[:id]
         @log_attributes[:item_id] = @sample_item[:id]
-        post :create, {log: @log_attributes}
+        post :create, @log_attributes
       end
 
       it "renders json representation on creation" do
@@ -39,12 +41,13 @@ describe Api::V1::LogsController do
     # Unsuccessful creation
     context "when not successfully created" do
       before(:each) do
+        create_and_authenticate_admin_user
         log_attribute_creation
 
         @log_attributes[:user_id] = @sample_user[:id] + 1
         @log_attributes[:item_id] = @sample_item[:id] + 1
 
-        post :create, {log: @log_attributes}
+        post :create, @log_attributes
       end
 
       it "renders JSON error" do
@@ -60,9 +63,10 @@ describe Api::V1::LogsController do
     # Successful update
     context "when is successfully updated" do
       before(:each) do
+        create_and_authenticate_admin_user
         @log = FactoryGirl.create :log
         patch :update, { id: @log.id,
-                         log: { quantity: 52 } }
+                         quantity: 52 }
       end
 
       it "renders json representation on update" do
@@ -76,9 +80,10 @@ describe Api::V1::LogsController do
     #Unsuccessful update
     context "unsuccessful update" do
       before(:each) do
+        create_and_authenticate_admin_user
         @log = FactoryGirl.create :log
         patch :update, { id: @log.id,
-                         log: { item_id: @log.item_id + 1 } }
+                        item_id: -1 }
       end
 
       it "renders errors from JSON" do
@@ -92,8 +97,9 @@ describe Api::V1::LogsController do
 
   describe "DELETE #destroy" do
     before(:each) do
+      create_and_authenticate_admin_user
       @log = FactoryGirl.create :log
-      delete :destroy, {id: @log.id }
+      delete :destroy, { id: @log.id }
     end
 
     it { should respond_with 204 }
@@ -105,5 +111,10 @@ describe Api::V1::LogsController do
     @sample_item = FactoryGirl.create :item
 
     @log_attributes = FactoryGirl.attributes_for :log
+  end
+
+  def create_and_authenticate_admin_user
+    @user = FactoryGirl.create :user
+    api_authorization_header @user[:auth_token]
   end
 end

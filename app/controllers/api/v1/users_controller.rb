@@ -1,21 +1,26 @@
-class Api::V1::UsersController < ApplicationController
+class Api::V1::UsersController < BaseController
   # TODO: Include actions for #create
-  before_action :authenticate_with_token!, only: [:index, :show, :update, :destroy]
+
+  # authentication_actions = [:index, :show, :update, :destroy]
+
+  before_action :authenticate_with_token!
   before_action :auth_by_admin_privilege!, only: [:index]
   before_action -> { auth_by_same_user_or_admin!(params[:id]) }, only: [:show, :update, :destroy]
+  protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
   respond_to :json
 
-  protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
-  #skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
-  skip_before_action :verify_authenticity_token
-
   swagger_controller :users, 'Users'
+
+  # authentication_actions.each do |api_action|
+  #   swagger_api api_action do
+  #     param :header, :Authorization, :required, "Authorization Token"
+  #   end
+  # end
 
   swagger_api :index do
     summary 'Returns all Users'
     notes 'These are some notes for everybody!'
-    param :header, :auth_token, :string, :required, 'fuck'
     param :query, :page, :integer, :optional, "Page number"
     response :unauthorized
     response :not_acceptable, "The request you made is not acceptable"
@@ -37,6 +42,7 @@ class Api::V1::UsersController < ApplicationController
     param :form, :email, :string, :required, "Email"
     param :form, :password, :string, :required, "Password"
     param :form, :password_confirmation, :string, :required, "Password Confirmation"
+    param_list :form, :privilege, :string, :required, "Privilege", [ "admin", "ta", "student" ]
     response :unauthorized
     response :not_acceptable
   end
@@ -48,6 +54,7 @@ class Api::V1::UsersController < ApplicationController
     param :form, :email, :string, "Email"
     param :form, :password, :string, "Password"
     param :form, :password_confirmation, :string, "Password Confirmation"
+    param_list :form, :privilege, :string , "Privilege", [ "admin", "ta", "student" ]
     response :unauthorized
     response :not_acceptable
   end
