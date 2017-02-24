@@ -1,20 +1,11 @@
 class Api::V1::LogsController < BaseController
-  # authentication_actions = [:index, :show, :update, :destroy]
 
-  before_action :authenticate_with_token!
+  before_action :authenticate_with_token!, :auth_by_manager_privilege!
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
-
-  # TODO: Still needs admin checks on most of these methods
 
   respond_to :json
 
   swagger_controller :logs, 'Logs'
-
-  # authentication_actions.each do |api_action|
-  #   swagger_api api_action do
-  #     param :header, :Authorization, :required, "Authorization Token"
-  #   end
-  # end
 
   swagger_api :index do
     summary 'Returns all Logs'
