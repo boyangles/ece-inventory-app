@@ -1,8 +1,11 @@
 <%= form_for(request) do |f| %>
-  <p>
-    <%= f.label :response %><br>
-    <%= f.text_area :response %> 
-  </p>
+
+    <div class="form-group">
+      <%= f.label :response, "Response", class: "col-lg-2 control-label" %>
+      <div class="col-lg-10">
+        <%= f.text_area :response, class: "form-control", :rows => 3 %>
+      </div>
+    </div>
 
   <%= f.radio_button :status, 'approved', :checked => true %>
   <%= label :status_approved, 'Approve' %>

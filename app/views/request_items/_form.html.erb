@@ -1,25 +1,28 @@
-<%= form_for(request_item) do |f| %>
-    <% @form_obj = request_item %>
-    <% if @form_obj %>
-        <%= render 'shared/error_messages', object: @form_obj %>
-    <% end %>
+<%= form_for (request_item), :html => {:class => "form-horizontal"} do |f| %>
+    <fieldset>
+      <p>
+        <b>Item Requested</b>
+        <%= Item.find(@request_item.item_id).unique_name %>
+      </p>
 
-    <p>
-      <b>Item Requested</b>
-      <%= Item.find(@request_item.item_id).unique_name %>
-    </p>
+      <div class="form-group">
+        <%= f.label :quantity, "Quantity", class: "col-lg-2 control-label" %>
+        <div class="col-lg-10">
+          <%= f.text_field :quantity, class: "form-control",:placeholder=>"1" %>
+        </div>
+      </div>
 
-    <p>
-      <%= f.label :quantity %><br>
-      <%= f.number_field :quantity, :required => true %>
-    </p>
 
     <%= f.hidden_field :item_id, :value => request_item.item_id %>
     <%= f.hidden_field :request_id, :value => request_item.request_id %>
 
-    <div class="actions">
-      <%= f.submit "Add to Cart" %>
-    </div>
+
+      <div class="form-group">
+        <div class="col-lg-10 col-lg-offset-2">
+          <button type="submit" class="btn-default btn-lg btn-block">Add to Cart</button>
+        </div>
+      </div>
+
+
+  </fieldset>
 <% end %>
-
-
