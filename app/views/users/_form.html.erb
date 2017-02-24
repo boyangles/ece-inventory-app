@@ -1,30 +1,33 @@
 <%= form_for(@user, url: url) do |f| %>
-	<% @form_obj = @user %>
-  <%= render 'shared/error_messages', object: @form_obj %>
-      
-  <!-- Username -->
-  <%= f.label :username %>
-  <%= f.text_field :username, class: 'form-control' %>
+    <% @form_obj = @user %>
+    <%= render 'shared/error_messages', object: @form_obj %>
 
-  <!-- Email -->
-  <%= f.label :email %>
-  <%= f.email_field :email, class: 'form-control' %>
+    <% if !logged_in? || current_user?(@user) %>
+        <!-- Username -->
+        <%= f.label :username %>
+        <%= f.text_field :username, class: 'form-control' %>
 
-  <!-- If not logged in, or if editing your own info -->
-  <% if !logged_in? || current_user?(@user) %>
-    <!-- Password -->
-    <%= f.label :password %>
-    <%= f.password_field :password, class: 'form-control' %>
+        <!-- Email -->
+        <!-- TODO: Theres no reason why they should be able to edit their email -->
+        <!--<%= f.label :email %>-->
+        <!--<%= f.email_field :email, class: 'form-control' %>-->
 
-    <!-- Password Confirm -->
-    <%= f.label :password_confirmation, "Confirm Password" %>
-    <%= f.password_field :password_confirmation, class: 'form-control' %>
-  <% end %>
+        <!-- If not logged in, or if editing your own info -->
+        <!-- Password -->
+        <% if !@user.password_digest.blank? %>
+            <%= f.label :password %>
+            <%= f.password_field :password, class: 'form-control' %>
 
-  <% if logged_in? && current_user.privilege_admin? %>
-    <%= f.label :privilege, "Define Privilege" %>
-    <%= f.select :privilege, User.privileges.keys.to_a %>
-  <% end %>
+            <!-- Password Confirm -->
+            <%= f.label :password_confirmation, "Confirm Password" %>
+            <%= f.password_field :password_confirmation, class: 'form-control' %>
+        <% end %>
+    <% end %>
 
-  <%= f.submit yield(:button_text), class: "btn btn-primary" %>
+    <% if logged_in? && current_user.privilege_admin? %>
+        <%= f.label :privilege, "Define Privilege" %>
+        <%= f.select :privilege, User.privileges.keys.to_a %>
+    <% end %>
+
+    <%= f.submit yield(:button_text), class: "btn btn-primary" %>
 <% end %>

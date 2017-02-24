@@ -37,14 +37,11 @@ class User < ApplicationRecord
     create_new_cart(self.id)
   }
 
-  # Modified to only allow duke emails
-   # VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-\.]*duke\.edu\z/i
-
   validates :username, presence: true, length: { maximum: 50 },
-                       uniqueness: { case_sensitive: false }
+                       uniqueness: { case_sensitive: false }, :if => :username_changed?
   validates :email, presence: true, length: { maximum: 255 },
-                       uniqueness: { case_sensitive: false }
-  validates :password, presence: true, length: { minimum: 6 }, :if => :password
+                       uniqueness: { case_sensitive: false }, :if => :email_changed?
+  validates :password, presence: true, length: { minimum: 6 }, :if => :password_digest_changed?
   validates :privilege, :inclusion => { :in => PRIVILEGE_OPTIONS }
   validates :status, :inclusion => { :in => STATUS_OPTIONS }
   validates :auth_token, uniqueness: true

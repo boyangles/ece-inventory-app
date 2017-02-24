@@ -29,6 +29,10 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
+    if @user.password_digest.blank?
+      flash[:danger] = "A Duke Login cannot edit account"
+      redirect_to @user and return
+    end
     @user = User.find(params[:id])
   end
 
@@ -46,7 +50,7 @@ class UsersController < ApplicationController
       flash.now[:danger] = "Unable to create user! Try again?"
       render action: 'new'
     end
-	end
+  end
 
   # PATCH/PUT /users/1
   def update
@@ -61,6 +65,7 @@ class UsersController < ApplicationController
       flash[:success] = "Credentials updated successfully"
       redirect_to @user
     else
+      flash[:danger] = "Unable to edit user"
       render 'edit'
     end
   end
