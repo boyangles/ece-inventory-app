@@ -52,7 +52,6 @@ class Api::V1::UsersController < BaseController
     summary "Updates an existing user"
     param :path, :id, :integer, :required, "id"
     param :form, :username, :string, "Username"
-    param :form, :email, :string, "Email"
     param :form, :password, :string, "Password"
     param :form, :password_confirmation, :string, "Password Confirmation"
     param_list :form, :privilege, :string , "Privilege", [ "admin", "ta", "student" ]

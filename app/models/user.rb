@@ -2,6 +2,7 @@ class User < ApplicationRecord
 
   PRIVILEGE_OPTIONS = %w(student manager admin)
   STATUS_OPTIONS = %w(waiting approved)
+  DUKE_EMAIL_REGEX = /\A[\w+\-.]+@duke\.edu\z/i
 
   # Relation with Requests
   has_many :requests, dependent: :destroy
@@ -36,9 +37,6 @@ class User < ApplicationRecord
   after_create {
     create_new_cart(self.id)
   }
-
-  # Modified to only allow duke emails
-   # VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-\.]*duke\.edu\z/i
 
   validates :username, presence: true, length: { maximum: 50 },
                        uniqueness: { case_sensitive: false }
@@ -80,5 +78,10 @@ class User < ApplicationRecord
   def create_new_cart(id)
     @cart = Request.new(:status => :cart, :user_id => id, :reason => 'TBD')
     @cart.save!
+  end
+
+  ## Class Methods
+  def self.isDukeEmail?(email_address)
+    return email_address.match(DUKE_EMAIL_REGEX)
   end
 end
