@@ -44,6 +44,7 @@ class RequestsController < ApplicationController
           @item.update_by_subrequest(sub_request, @request.request_type)
           @item.save!
         end
+
       else
         reject_to_edit(@request, error_msg)
       end

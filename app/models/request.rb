@@ -30,9 +30,11 @@ class Request < ApplicationRecord
 
   scope :user_id, -> (user_id) { where user_id: user_id }
   scope :status, -> (status) { where status: status }
+	attr_accessor :curr_user
 
   after_update {
     create_cart_on_status_change_from_cart(self.user_id)
+		log_on_status_change()
   }
 
   # Validations
@@ -45,7 +47,7 @@ class Request < ApplicationRecord
     self.outstanding? && request_params[:status] == 'approved'
   end
 
-  def are_request_details_valid?
+	def are_request_details_valid?
     self.request_items.each do |sub_request|
       @item = Item.find(sub_request.item_id)
 
@@ -78,4 +80,23 @@ class Request < ApplicationRecord
       @cart.save!
     end
   end
+
+	def log_on_status_change()
+		old_status = self.status_was
+		new_status = self.status
+
+		if old_status == 'cart' && old_status!= new_status
+			create_log("placed_order")
+		elsif old_status == 'outstanding' && new_status != new_status
+			create_log(new_status)
+		end
+	end
+	
+	def create_log(action)
+		log = Log.new(:user_id => self.curr_user, :log_type => "request")
+		log.save!
+		reqlog = RequestLog.new(:log_id => log.id, :request_id => self.id, :action => action)
+		reqlog.save!
+	end 
+
 end
