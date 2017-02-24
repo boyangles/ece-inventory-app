@@ -1,6 +1,6 @@
 <h1>New Request</h1>
 
-<% if current_user.privilege_admin? %>
+<% if is_admin? %>
   <%= render 'disbursementform', request: @request %>
 <% else %>
   <%= render 'form', request: @request %>

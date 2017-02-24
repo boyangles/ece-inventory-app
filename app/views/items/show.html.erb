@@ -1,5 +1,7 @@
 <p id="notice"><%= notice %></p>
 
+<div class="jumbotron">
+
 <% provide(:title, @item.unique_name) %>
 <div class="row">
   <aside class="col-md-4">
@@ -33,7 +35,7 @@
     <p>
       <strong>Tags:</strong>
       <% @item.tags.each do |tag| %>
-        <%= tag.name + ', ' %>
+          <%= tag.name + ', ' %>
       <% end %>
     </p>
 
@@ -75,31 +77,30 @@
 
   <div class="col-md-8">
     <% if @item.requests.any? %>
-      <h3>
-        <%= (current_user.privilege_admin?) ? 
-            "Outstanding Requests" : 
-            "My Pending Requests" %>
-      </h3>
-      
-      <ol class="requests">
-        <%= render @requests %>
-      </ol>
+        <h3>
+          <%= (is_manager_or_admin?) ?
+                  "Outstanding Requests" :
+                  "My Pending Requests" %>
+        </h3>
 
-      <%= will_paginate @requests %>
+        <ol class="requests">
+          <%= render @requests %>
+        </ol>
+
+        <%= will_paginate @requests %>
     <% end %>
   </div>
 </div>
 
-
-
 <%= link_to "Add to Cart", new_request_item_url(:item_id => @item.id), :class => "btn btn-primary" %>
-<% if current_user.privilege_admin? %>
+<% if is_admin? %>
   <%= link_to 'Remove item', 
     @item, 
     method: :delete, 
     data: { confirm: 'Are you sure?' }, 
     :class => "btn btn-primary" %>
-  
+<% end %> 
+<% if is_manager_or_admin? %>
   <%= link_to 'Edit item', 
     edit_item_path(@item), 
     :class => "btn btn-primary" %>
@@ -109,3 +110,5 @@
 <br>
 <br>
 <%= link_to 'Back', items_path %>
+
+</div>

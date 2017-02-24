@@ -40,12 +40,12 @@ end
                auth_token: Devise.friendly_token)
 end
 
-admin = User.create!(username: "admin", email: "adminusername@duke.edu", status: "approved",
-             privilege: "admin", password: "password", password_confirmation: "password",
-                     auth_token: Devise.friendly_token)
-
-nonadmin = User.create!(username: "nonadmin", email: "nonadminusername@duke.edu", status: "approved",
+User.create!(username: "admin", email: "adminusername@duke.edu", status: "approved",
+             privilege: "admin", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
+User.create!(username: "student", email: "nonadminusername@duke.edu", status: "approved",
              privilege: "student", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
+User.create!(username: "manager", email: "manager123@duke.edu", status: "approved",
+             privilege: "manager", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
 
 yo = User.create(username:"abcd", email: "f@duke.edu" , status: "approved",
                  privilege: "student", password: "yoyoyo", password_confirmation: "yoyoyo", auth_token: Devise.friendly_token)

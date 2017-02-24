@@ -23,11 +23,11 @@
             <%= f.password_field :password_confirmation, class: 'form-control' %>
         <% end %>
     <% end %>
+  <% if logged_in? && is_admin? %>
+    <%= f.label :privilege, "Define Privilege" %>
+    <%= f.select :privilege, User.privileges.keys.to_a %>
+  <% end %>
 
-    <% if logged_in? && current_user.privilege_admin? %>
-        <%= f.label :privilege, "Define Privilege" %>
-        <%= f.select :privilege, User.privileges.keys.to_a %>
-    <% end %>
 
     <%= f.submit yield(:button_text), class: "btn btn-primary" %>
 <% end %>
