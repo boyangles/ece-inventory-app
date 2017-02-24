@@ -19,9 +19,18 @@ class Item < ApplicationRecord
   # Relation with Logs
   has_many :logs, dependent: :destroy
 
-  after_create {
+  attr_accessor :curr_user
+
+	after_create {
     create_custom_fields_for_items(self.id)
-  }
+  	create_log("created", false, self.quantity)
+	}
+
+	after_update {
+		create_log_on_quantity_change()
+		create_log_on_desc_update()
+	}
+
 
   def self.tagged_with_all(tag_filters)
     if tag_filters.length == 0
@@ -63,6 +72,37 @@ class Item < ApplicationRecord
       self[:quantity]
     end
   end
+
+	def create_log_on_desc_update()
+		if (self.unique_name != self.unique_name_was || self.description != self.description_was || self.model_number != self.model_number_was)
+			create_log("desc_updated", true, self.quantity - self.quantity_was)
+		end
+	end
+
+	def create_log_on_quantity_change()
+		quantity_increase = self.quantity - self.quantity_was
+		if quantity_increase != 0
+			# TODO: in future: grab reason for change!!
+			create_log("acquired_quantity", false, quantity_increase)
+		end
+	end
+
+	def create_log(action, desc_changed, quan_change)
+		old_name = ""
+		old_desc = ""
+		old_model = ""
+
+		if (desc_changed)
+			old_name = self.unique_name_was
+			old_desc = self.description_was
+			old_model = self.model_number_was
+		end
+
+		log = Log.new(:user_id => self.curr_user, :log_type => "item")
+		log.save!
+		itemlog = ItemLog.new(:log_id => log.id, :item_id => self.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => self.unique_name, :old_desc => old_desc, :new_desc => self.description, :old_model_num => old_model, :new_model_num => self.model_number)
+		itemlog.save!
+	end
 
   private
 

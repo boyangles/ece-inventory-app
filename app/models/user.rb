@@ -107,10 +107,10 @@ class User < ApplicationRecord
 	end
 
 	def create_log(action, old_priv, new_priv)
-		@log = Log.new(:user_id => self.curr_user, :log_type => "user")
-		@log.save!
-		@userlog = UserLog.new(:log_id => @log.id, :user_id => self.id, :action => action, :old_privilege => old_priv, :new_privilege => new_priv)
-		@userlog.save!
+		log = Log.new(:user_id => self.curr_user, :log_type => "user")
+		log.save!
+		userlog = UserLog.new(:log_id => log.id, :user_id => self.id, :action => action, :old_privilege => old_priv, :new_privilege => new_priv)
+		userlog.save!
 
 	end
 end
