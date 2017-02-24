@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170221074708) do
+ActiveRecord::Schema.define(version: 20170223221510) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,6 +34,21 @@ ActiveRecord::Schema.define(version: 20170221074708) do
     t.index ["item_id"], name: "index_item_custom_fields_on_item_id", using: :btree
   end
 
+  create_table "item_logs", force: :cascade do |t|
+    t.integer "log_id"
+    t.integer "item_id"
+    t.integer "action"
+    t.integer "quantity_change"
+    t.string  "old_name"
+    t.string  "new_name"
+    t.string  "old_desc"
+    t.string  "new_desc"
+    t.string  "old_model_num"
+    t.string  "new_model_num"
+    t.index ["item_id"], name: "index_item_logs_on_item_id", using: :btree
+    t.index ["log_id"], name: "index_item_logs_on_log_id", using: :btree
+  end
+
   create_table "item_tags", force: :cascade do |t|
     t.integer  "tag_id"
     t.integer  "item_id"
@@ -51,14 +66,10 @@ ActiveRecord::Schema.define(version: 20170221074708) do
   end
 
   create_table "logs", force: :cascade do |t|
-    t.integer  "quantity"
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.integer  "request_type", default: 0
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
     t.integer  "user_id"
-    t.integer  "item_id"
-    t.index ["item_id"], name: "index_logs_on_item_id", using: :btree
-    t.index ["user_id", "item_id", "created_at"], name: "index_logs_on_user_id_and_item_id_and_created_at", using: :btree
+    t.integer  "log_type",   default: 0
     t.index ["user_id"], name: "index_logs_on_user_id", using: :btree
   end
 
@@ -70,6 +81,14 @@ ActiveRecord::Schema.define(version: 20170221074708) do
     t.integer  "quantity",   default: 0
     t.index ["item_id"], name: "index_request_items_on_item_id", using: :btree
     t.index ["request_id"], name: "index_request_items_on_request_id", using: :btree
+  end
+
+  create_table "request_logs", force: :cascade do |t|
+    t.integer "log_id"
+    t.integer "request_id"
+    t.integer "action"
+    t.index ["log_id"], name: "index_request_logs_on_log_id", using: :btree
+    t.index ["request_id"], name: "index_request_logs_on_request_id", using: :btree
   end
 
   create_table "requests", force: :cascade do |t|
@@ -94,6 +113,18 @@ ActiveRecord::Schema.define(version: 20170221074708) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "user_logs", force: :cascade do |t|
+    t.integer  "log_id"
+    t.integer  "user_id"
+    t.integer  "action"
+    t.integer  "old_privilege"
+    t.integer  "new_privilege"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.index ["log_id"], name: "index_user_logs_on_log_id", using: :btree
+    t.index ["user_id"], name: "index_user_logs_on_user_id", using: :btree
+  end
+
   create_table "users", force: :cascade do |t|
     t.string   "username"
     t.datetime "created_at",                   null: false
@@ -111,7 +142,9 @@ ActiveRecord::Schema.define(version: 20170221074708) do
 
   add_foreign_key "item_custom_fields", "custom_fields"
   add_foreign_key "item_custom_fields", "items"
-  add_foreign_key "logs", "items"
+  add_foreign_key "item_logs", "logs"
   add_foreign_key "logs", "users"
+  add_foreign_key "request_logs", "logs"
   add_foreign_key "requests", "users"
+  add_foreign_key "user_logs", "logs"
 end

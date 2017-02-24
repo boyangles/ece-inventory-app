@@ -86,16 +86,16 @@ end
 
 # Creating Logs:
 # Disbursements:
-50.times do |n|
-  item = Item.offset(rand(Item.count)).first
-  quantity = Faker::Number.number(3)
-  user = User.offset(rand(User.count)).first
-  request_type = rand(0...3)
+#50.times do |n|
+#  item = Item.offset(rand(Item.count)).first
+#  quantity = Faker::Number.number(3)
+#  user = User.offset(rand(User.count)).first
+#  request_type = rand(0...3)
 
-  Log.create!(
-      item_id: item.id,
-      quantity: quantity,
-      user_id: user.id,
-      request_type: request_type
-  )
-end
+#  Log.create!(
+#      item_id: item.id,
+#      quantity: quantity,
+#      user_id: user.id,
+#      request_type: request_type
+# )
+# end
