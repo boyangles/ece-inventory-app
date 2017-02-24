@@ -2,7 +2,7 @@ class RequestLog < ApplicationRecord
 	include Loggable
 
 	enum action: {
-		order_placed: 0,
+		placed_order: 0,
 		cancelled: 1,
 		approved: 2,
 		denied: 3
