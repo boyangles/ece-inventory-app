@@ -42,12 +42,13 @@ class User < ApplicationRecord
 		# create a log and user log!
 		@log = Log.new(:user_id => self.curr_user, :log_type => "user")
 		@log.save!
-		@userlog = UserLog.new(:log_id => @log.id, :user_id => self.id, :action => "creation", :old_privilege => 0, :new_privilege => 0)
+		@userlog = UserLog.new(:log_id => @log.id, :user_id => self.id, :action => "creation", :old_privilege => 0, :new_privilege => self.privilege)
 		@userlog.save!
   }
 
-  # Modified to only allow duke emails
-   # VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-\.]*duke\.edu\z/i
+	after_destroy {
+		# TODO - log now has to ???
+	}
 
   validates :username, presence: true, length: { maximum: 50 },
                        uniqueness: { case_sensitive: false }

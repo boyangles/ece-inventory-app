@@ -9,8 +9,6 @@
 Tag.create([{ name: 'ECE110'}, { name: 'ECE230'}, { name: 'ECE559'}, { name: 'Resistor'}, { name: 'Transistor'},
            { name: 'Capacitor'}])
 
-Log.create!(log_type: "user")
-
 #Creating Users:
 
 12.times do |n|

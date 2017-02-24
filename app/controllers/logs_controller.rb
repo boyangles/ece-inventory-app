@@ -9,7 +9,7 @@ class LogsController < ApplicationController
     #                                :user_id, 
     #                                :request_type)
     #                  ).paginate(page: params[:page], per_page: 10)
-    @logs = Log.all
+    @logs = Log.all.paginate(page: params[:page], per_page: 10)
   if current_user.nil?
 	
 	end

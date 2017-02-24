@@ -1,12 +1,42 @@
 <li id="log-<%= log.id %>">
-  <%= link_to gravatar_for(log.user, size: 50), log.user %>
-  <span class="user"><%= link_to log.user.username, log.user %></span>
 
-  <div class="content">
-    <b>Quantity: </b><%= log.quantity %>
-    <b>Type: </b><%= log.request_type %>
-    <b>Item: </b><%= log.item.unique_name %>
-  </div>
+
+	<span class="user">
+		<% if !log.user_id.nil? %>
+			<% acting_user = User.find(log.user_id) %>
+			<%= link_to acting_user.username, user_path(acting_user) %>
+		<% else %>
+			Spicy Software Inc.
+  	<% end %>
+	</span>
+
+
+	<div class="content">
+		<% if log.user? %>
+			<% userlog = UserLog.find_by(:log_id => log.id) %>
+			<% user = User.find(userlog.user_id) %>
+			<% "HAVE TO ALSO QUERY DELETED TABLE!!" %>
+
+			<% if userlog.action_creation? %>
+					<%= "created" %>
+				<%= link_to user.username, user_path(user) %>
+				<%= " with privilege " + userlog.new_privilege %>
+			<% elsif userlog.action_deletion? %>
+				<%= "deleted - need to query deleted table tbd" %>
+				
+
+		 <% else %>
+				<%= "changed " %>
+				<%= link_to user.username, user_path(user) %>
+				<%= "'s privilege from " + userlog.old_privilege  + " to " + userlog.new_privilege %>
+			<% end %>
+
+		<% elsif log.request? %>
+
+		<% else %>
+		<% end %>
+
+	</div>
 
   <br>
   <span class="timestamp">

@@ -53,7 +53,7 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   def update
     @user = User.find(params[:id])
-
+		old_privilege = @user.privilege
     if (params[:password].blank? && !current_user?(@user))
       params.delete(:password)
       params.delete(:password_confirmation)
@@ -61,7 +61,12 @@ class UsersController < ApplicationController
 
     if @user.update_attributes(user_params)
       flash[:success] = "Credentials updated successfully"
-      redirect_to @user
+      
+			if old_privilege != @user.privilege 
+				log_privilege(old_privilege, @user)
+			end
+
+			redirect_to @user
     else
       render 'edit'
     end
@@ -94,4 +99,10 @@ class UsersController < ApplicationController
     params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :privilege)
   end
 
+	def log_privilege(old_pri, user)
+		log = Log.new(:user_id => current_user, :log_type => "user")
+		log.save!
+		userlog = UserLog.new(:log_id => log.id, :user_id => user.id, :action => "privilege_change", :old_privilege => old_pri, :new_privilege => user.privilege)
+		userlog.save!
+	end
 end
