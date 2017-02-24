@@ -1,12 +1,12 @@
 <% provide(:title, 'All Items') %>
 
-<% if is_manager_or_admin? %>
-  <%= link_to "New Item", new_item_url, :class => "btn btn-primary" %>
-<% end %>
-
 <div class="center_jumbotron">
   <h1>Items</h1>
 </div>
+
+<% if is_manager_or_admin? %>
+    <%= link_to "New Item", new_item_url, :class => "btn btn-primary" %>
+<% end %>
 
 <div class="search">
 	<%= form_for items_path, :method => 'get' do |f| %>
