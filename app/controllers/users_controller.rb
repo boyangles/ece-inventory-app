@@ -30,10 +30,27 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
-    if User.isDukeEmail?(@user.email)
-      flash[:danger] = "A Duke Login cannot edit account"
+    #  A   //   B      //  C
+    # duke // nonadmin // self ==> unable to edit -- 1
+    # duke // nonadmin // other ==> unable to edit -- 1
+    # duke // admin   // self ==> unable to edit -- 1
+    # duke // admin   // other ==> able to edit -- 0
+
+    # loc  // nonadmin // self ==> able to edit -- 0
+    # loc  // nonadmin // other ==> unable to edit -- 1
+    # loc  // admin   // self ==> able to edit -- 0
+    # loc  // admin   // other ==> able to edit -- 0
+
+    # (A && !B && C) + (A && !B && !C) + (A && B && C) + (!A && !B && !C)
+    # = (A && !B) + (A && B && C) + (!A && !B && !C)
+
+    if (User.isDukeEmail?(current_user.email) && !is_admin?) ||
+       (User.isDukeEmail?(current_user.email) && is_admin? && current_user?(@user)) ||
+       (!User.isDukeEmail?(current_user.email) && !is_admin? && !current_user?(@user))
+      flash[:danger] = "Cannot edit account"
       redirect_to @user and return
     end
+
     @user = User.find(params[:id])
   end
 

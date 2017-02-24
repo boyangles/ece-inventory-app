@@ -2,19 +2,13 @@
     <% @form_obj = @user %>
     <%= render 'shared/error_messages', object: @form_obj %>
 
-    <% if !logged_in? || current_user?(@user) %>
+    <% if current_user?(@user) %>
         <!-- Username -->
         <%= f.label :username %>
         <%= f.text_field :username, class: 'form-control' %>
 
-        <!-- Email -->
-        <!-- TODO: Theres no reason why they should be able to edit their email -->
-        <!--<%= f.label :email %>-->
-        <!--<%= f.email_field :email, class: 'form-control' %>-->
-
-        <!-- If not logged in, or if editing your own info -->
         <!-- Password -->
-        <% if !@user.password_digest.blank? %>
+        <% if current_user?(@user) %>
             <%= f.label :password %>
             <%= f.password_field :password, class: 'form-control' %>
 
@@ -23,7 +17,7 @@
             <%= f.password_field :password_confirmation, class: 'form-control' %>
         <% end %>
     <% end %>
-  <% if logged_in? && is_admin? %>
+  <% if is_admin? %>
     <%= f.label :privilege, "Define Privilege" %>
     <%= f.select :privilege, User.privileges.keys.to_a %>
   <% end %>
