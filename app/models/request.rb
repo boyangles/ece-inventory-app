@@ -85,10 +85,14 @@ class Request < ApplicationRecord
 		old_status = self.status_was
 		new_status = self.status
 
-		if old_status == 'cart' && old_status!= new_status
+		if old_status == 'cart' && new_status == 'outstanding' 
 			create_log("placed_order")
-		elsif old_status == 'outstanding' && new_status != new_status
+		elsif old_status != new_status
 			create_log(new_status)
+#		elsif old_status == 'cart' && new_status == 'approved' #admin direct
+#		create_log(new_status)
+#		elsif old_status == 'outstanding' && new_status != old_status
+#			create_log(new_status)
 		end
 	end
 	

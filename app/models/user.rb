@@ -38,15 +38,14 @@ class User < ApplicationRecord
 
   after_create {
     create_new_cart(self.id)
-    
-		# TODO: Extract to method
-		# create a log and user log!
-		@log = Log.new(:user_id => self.curr_user, :log_type => "user")
-		@log.save!
-		@userlog = UserLog.new(:log_id => @log.id, :user_id => self.id, :action => "created", :old_privilege => 0, :new_privilege => self.privilege)
-		@userlog.save!
-  }
+  
+		create_log("created", 0, self.privilege)
+	}
 
+	after_update {
+		log_on_privilege_change()
+	}
+	
 	after_destroy {
 		# TODO - log now has to ???
 	}
@@ -97,4 +96,21 @@ class User < ApplicationRecord
     @cart = Request.new(:status => :cart, :user_id => id, :reason => 'TBD')
     @cart.save!
   end
+
+	def log_on_privilege_change() 
+		old_privilege = self.privilege_was
+		new_privilege = self.privilege
+
+		if old_privilege != new_privilege
+			create_log("privilege_updated", old_privilege, new_privilege)
+		end
+	end
+
+	def create_log(action, old_priv, new_priv)
+		@log = Log.new(:user_id => self.curr_user, :log_type => "user")
+		@log.save!
+		@userlog = UserLog.new(:log_id => @log.id, :user_id => self.id, :action => action, :old_privilege => old_priv, :new_privilege => new_priv)
+		@userlog.save!
+
+	end
 end
