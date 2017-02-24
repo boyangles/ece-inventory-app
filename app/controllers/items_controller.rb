@@ -1,24 +1,26 @@
 class ItemsController < ApplicationController
   before_action :check_logged_in_user
+  before_action :check_manager_or_admin, only: [:create, :new, :edit, :update]
+  before_action :check_admin_user, only: [:destroy]
 
   # GET /items
   # GET /items.json
   def index
     @tags = Tag.all
-    
-    @required_tag_filters = (params[:required_tag_names]) ? 
-      params[:required_tag_names] : []
+
+    @required_tag_filters = (params[:required_tag_names]) ?
+        params[:required_tag_names] : []
     @excluded_tag_filters = (params[:excluded_tag_names]) ?
-      params[:excluded_tag_names] : []
+        params[:excluded_tag_names] : []
 
     items_req = Item.tagged_with_all(@required_tag_filters).select("id")
     items_exc = Item.tagged_with_none(@excluded_tag_filters).select("id")
     items_req_and_exc = Item.where(:id => items_req & items_exc)
 
     @items = items_req_and_exc.
-      filter_by_search(params[:search]).
-      filter_by_model_search(params[:model_search]).
-      order('unique_name ASC').paginate(page: params[:page], per_page: 10)
+        filter_by_search(params[:search]).
+        filter_by_model_search(params[:model_search]).
+        order('unique_name ASC').paginate(page: params[:page], per_page: 10)
   end
 
 
@@ -28,10 +30,10 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
 
     outstanding_filter_params = {
-      :status => "outstanding"
+        :status => "outstanding"
     }
 
-    if !current_user.privilege_admin?
+    if !is_manager_or_admin?
       outstanding_filter_params[:user_id] = current_user.id
     end
 
@@ -75,6 +77,9 @@ class ItemsController < ApplicationController
   def update
     @item = Item.find(params[:id])
 
+    # this isn't how it's going to work
+    # alert_if_quantity_changes(params[:quantity])
+
     add_tags_to_item(@item, params[:tag][:tag_id]) if params[:tag]
     remove_tags_from_item(@item, params[:tag_to_remove][:tag_id_remove]) if params[:tag_to_remove]
 
@@ -93,6 +98,12 @@ class ItemsController < ApplicationController
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
     params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :search, :model_search)
+  end
+
+  def alert_if_quantity_changes(quantity)
+    if(@item.quantity != quantity)
+      # idk
+    end
   end
 
 end

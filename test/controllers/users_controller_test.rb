@@ -2,10 +2,30 @@ require 'test_helper'
 
 class UsersControllerTest < ActionDispatch::IntegrationTest
   def setup
-    @user = users(:bernard)
-    @user2 = users(:alex)
-    @admin = users(:admin)
-    @student = users(:student)
+    @user = User.create!(username: 'user_userscontrollertest',
+                          email: 'user_userscontrollertest@example.com',
+                          privilege: 'admin',
+                          status: 'approved',
+                          password: 'password',
+                          password_confirmation: 'password')
+    @user2 = User.create!(username: 'user2_userscontrollertest',
+                          email: 'user2_userscontrollertest@example.com',
+                          privilege: 'student',
+                          status: 'approved',
+                          password: 'password',
+                          password_confirmation: 'password')
+    @admin = User.create!(username: 'admin_userscontrollertest',
+                          email: 'admin_userscontrollertest@example.com',
+                          privilege: 'admin',
+                          status: 'approved',
+                          password: 'password',
+                          password_confirmation: 'password')
+    @student = User.create!(username: 'student_userscontrollertest',
+                              email: 'student_userscontrollertest@example.com',
+                              privilege: 'student',
+                              status: 'approved',
+                              password: 'password',
+                              password_confirmation: 'password')
   end
 
   test "redirect to login page with index when not logged in" do
