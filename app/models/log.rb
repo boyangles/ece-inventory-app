@@ -1,9 +1,8 @@
 class Log < ApplicationRecord
-  include Filterable, Subscribable
+  include Filterable, Loggable #, Subscribable
 
   default_scope -> { order(created_at: :desc) }
 
-	LOG_TYPES = %w(user item request)
 	enum log_type: {
 		user: 0,
 		item: 1,

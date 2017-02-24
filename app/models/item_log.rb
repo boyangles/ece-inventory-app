@@ -1,0 +1,2 @@
+class ItemLog < ApplicationRecord
+end

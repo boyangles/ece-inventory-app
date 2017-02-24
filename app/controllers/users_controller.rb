@@ -102,7 +102,7 @@ class UsersController < ApplicationController
 	def log_privilege(old_pri, user)
 		log = Log.new(:user_id => current_user, :log_type => "user")
 		log.save!
-		userlog = UserLog.new(:log_id => log.id, :user_id => user.id, :action => "privilege_change", :old_privilege => old_pri, :new_privilege => user.privilege)
+		userlog = UserLog.new(:log_id => log.id, :user_id => user.id, :action => "privilege_updated", :old_privilege => old_pri, :new_privilege => user.privilege)
 		userlog.save!
 	end
 end

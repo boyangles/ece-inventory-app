@@ -17,11 +17,11 @@
 			<% user = User.find(userlog.user_id) %>
 			<% "HAVE TO ALSO QUERY DELETED TABLE!!" %>
 
-			<% if userlog.action_creation? %>
+			<% if userlog.created? %>
 					<%= "created" %>
 				<%= link_to user.username, user_path(user) %>
 				<%= " with privilege " + userlog.new_privilege %>
-			<% elsif userlog.action_deletion? %>
+			<% elsif userlog.deleted? %>
 				<%= "deleted - need to query deleted table tbd" %>
 				
 

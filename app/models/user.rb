@@ -39,10 +39,11 @@ class User < ApplicationRecord
   after_create {
     create_new_cart(self.id)
     
+		# TODO: Extract to method
 		# create a log and user log!
 		@log = Log.new(:user_id => self.curr_user, :log_type => "user")
 		@log.save!
-		@userlog = UserLog.new(:log_id => @log.id, :user_id => self.id, :action => "creation", :old_privilege => 0, :new_privilege => self.privilege)
+		@userlog = UserLog.new(:log_id => @log.id, :user_id => self.id, :action => "created", :old_privilege => 0, :new_privilege => self.privilege)
 		@userlog.save!
   }
 
