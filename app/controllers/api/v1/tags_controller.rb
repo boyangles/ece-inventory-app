@@ -1,21 +1,11 @@
 class Api::V1::TagsController < BaseController
-  # authentication_actions = [:index, :show, :update, :destroy]
 
-  before_action :authenticate_with_token!
+  before_action :authenticate_with_token!, :auth_by_admin_privilege!
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
-
-  # TODO: Still needs admin stuff on most of these methods I believe
-
 
   respond_to :json
 
   swagger_controller :tags, 'Tags'
-
-  # authentication_actions.each do |api_action|
-  #   swagger_api api_action do
-  #     param :header, :Authorization, :required, "Authorization Token"
-  #   end
-  # end
 
   swagger_api :index do
     summary 'Returns all Tags'
