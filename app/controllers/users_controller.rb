@@ -39,6 +39,7 @@ class UsersController < ApplicationController
 
     # TODO: Status is hardcoded for now until we decide what to do with it
     @user.status = "approved"
+		@user.curr_user = current_user
 
     if @user.save
       flash[:success] = "#{@user.username} created"

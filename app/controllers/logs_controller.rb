@@ -1,16 +1,20 @@
 class LogsController < ApplicationController
 
-  # TODO Should an admin/manager actually be able to create a tag? shouldn't that be restricted, or only restricted for API calls?
-  before_action :check_logged_in_user, :check_manager_or_admin
+  # TODO: no conscious log creation errr outside acquisition/destruction.
+	before_action :check_logged_in_user
 
-  def index
-    @logs = Log.filter(params.slice(:item_id, 
-                                    :quantity, 
-                                    :user_id, 
-                                    :request_type)
-                      ).paginate(page: params[:page], per_page: 10)
-    
-  end
+	def index
+    # @logs = Log.filter(params.slice(:item_id, 
+    #                                :quantity, 
+    #                                :user_id, 
+    #                                :request_type)
+    #                  ).paginate(page: params[:page], per_page: 10)
+    @logs = Log.all
+  if current_user.nil?
+	
+	end
+
+	end
 
   def new
     @log = Log.new
@@ -18,23 +22,23 @@ class LogsController < ApplicationController
 
   def create
     @log = Log.new(log_params)
-    @log.item_id = params[:item][:id]
-    @item = @log.item
+    # @log.item_id = params[:item][:id]
+    # @item = @log.item
 
-    if !@item
-      reject_to_new("Item does not exist") and return
-    elsif Log.oversubscribed?(@item, @log)
-      reject_to_new("Oversubscribed!") and return
-    else
-      save_form(@log)
-      @item.update_by_subrequest(@log, @log.request_type)
-      @item.save!
-    end
+    #if !@item
+    #  reject_to_new("Item does not exist") and return
+    #elsif Log.oversubscribed?(@item, @log)
+    #  reject_to_new("Oversubscribed!") and return
+    #else
+    save_form(@log)
+    #  @item.update_by_subrequest(@log, @log.request_type)
+    #  @item.save!
+    #end
   end
 
   private
     def log_params
-      params.fetch(:log, {}).permit(:item_id, :quantity, :user_id, :request_type)
+      params.fetch(:log, {}).permit(:user_id, :log_type)
     end
 
     def save_form(log)

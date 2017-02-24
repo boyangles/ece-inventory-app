@@ -6,8 +6,11 @@ class User < ApplicationRecord
   # Relation with Requests
   has_many :requests, dependent: :destroy
 
-  # Relation with Logs
-  has_many :logs, dependent: :destroy
+  # Relation with Logs - not necessarily one-to-many
+  # has_many :logs
+
+  # Relation with User_Logs
+  has_many :user_logs
 
   enum privilege: {
     student: 0,
@@ -35,6 +38,12 @@ class User < ApplicationRecord
 
   after_create {
     create_new_cart(self.id)
+    
+		# create a log and user log!
+		@log = Log.new(:user_id => self.curr_user, :log_type => "user")
+		@log.save!
+		@userlog = UserLog.new(:log_id => @log.id, :user_id => self.id, :action => "creation", :old_privilege => 0, :new_privilege => 0)
+		@userlog.save!
   }
 
   # Modified to only allow duke emails
@@ -49,6 +58,11 @@ class User < ApplicationRecord
   validates :status, :inclusion => { :in => STATUS_OPTIONS }
   validates :auth_token, uniqueness: true
 
+	# scope that gives us current_user
+	#scope :curr_user, lambda { |user| 
+	#	where("user.id = ?", user.id)
+	#}
+	attr_accessor :curr_user
 
   # Returns the hash digest for a given string, used in fixtures for testing
   def User.digest(string)
