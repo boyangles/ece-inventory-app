@@ -29,7 +29,7 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
-    if @user.password_digest.blank?
+    if @user.password_digest.blank? && !current_user.privilege_admin?
       flash[:danger] = "A Duke Login cannot edit account"
       redirect_to @user and return
     end
@@ -59,6 +59,11 @@ class UsersController < ApplicationController
     if (params[:password].blank? && !current_user?(@user))
       params.delete(:password)
       params.delete(:password_confirmation)
+      # bcrypt gem is forcing net id user to have a password, have to bypass for now
+      if @user.password_digest.blank?
+        @user.update_attribute(:privilege, user_params[:privilege])
+        redirect_to @user and return
+      end
     end
 
     if @user.update_attributes(user_params)
