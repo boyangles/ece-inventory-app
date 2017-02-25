@@ -76,12 +76,20 @@ CustomField.create!(field_name: 'restock_info', private_indicator: true, field_t
  # Random reason:
  reason = Faker::Lorem.paragraph(2, true, 3)
 
- Request.create!(
+ req = Request.create!(
      user_id: user.id,
      reason: reason,
      status: "outstanding",
      request_type: "disbursement",
  )
+
+ ## Create RequestItems for each
+ 3.times do
+   item = Item.offset(rand(Item.count)).first
+   RequestItem.create!(request_id: req.id,
+                       item_id: item.id,
+                       quantity: rand(1...50))
+ end
 end
 
 # Creating Logs:
