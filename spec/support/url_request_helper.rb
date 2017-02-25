@@ -23,5 +23,11 @@ module URLRequest
     def api_authorization_header(token)
       request.headers['Authorization'] = token
     end
+
+    def create_and_authenticate_user(user_sym)
+      user = FactoryGirl.create user_sym
+      api_authorization_header user[:auth_token]
+      return user
+    end
   end
 end

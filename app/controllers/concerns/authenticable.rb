@@ -29,7 +29,10 @@ module Authenticable
 
     render json: { errors: 'No sufficient privileges' },
                   status: :unauthorized unless
-        curr_user.privilege_admin? || curr_user.privilege_manager? || curr_user.id == user_to_show.id
+        curr_user &&
+            (curr_user.privilege_admin? ||
+                curr_user.privilege_manager? ||
+                curr_user.id == user_to_show.id)
   end
 
   def auth_by_check_requests_corresponds_to_current_user!

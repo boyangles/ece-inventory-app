@@ -3,7 +3,8 @@ require 'rails_helper'
 describe Api::V1::RequestsController do
   describe "GET #show" do
     before(:each) do
-      create_request_and_authorize_user
+      @req = FactoryGirl.create :request
+      @user = create_and_authenticate_user(:user_admin)
       get :show, id: @req.id
     end
 
@@ -50,7 +51,8 @@ describe Api::V1::RequestsController do
   describe "PUT/PATCH #update" do
     context "when a request is successfully updated with valid request and user" do
       before(:each) do
-        create_request_and_authorize_user
+        @req = FactoryGirl.create :request
+        @user = create_and_authenticate_user(:user_admin)
         patch :update, { id: @req.id,
                          reason: "Updated because I can." }
       end
@@ -65,7 +67,8 @@ describe Api::V1::RequestsController do
 
     context "when not successful in updating a request because of invalid user id" do
       before(:each) do
-        create_request_and_authorize_user
+        @req = FactoryGirl.create :request
+        @user = create_and_authenticate_user(:user_admin)
         patch :update, { id: @req.id,
                          user_id: -1 }
       end
@@ -81,7 +84,8 @@ describe Api::V1::RequestsController do
 
   describe "DELETE #destroy" do
     before(:each) do
-      create_request_and_authorize_user
+      @req = FactoryGirl.create :request
+      @user = create_and_authenticate_user(:user_admin)
       delete :destroy, { id: @req.id }
     end
 
@@ -96,11 +100,4 @@ describe Api::V1::RequestsController do
 
     @req_attributes = FactoryGirl.attributes_for :request
   end
-
-  def create_request_and_authorize_user
-    @req = FactoryGirl.create :request
-    @user = FactoryGirl.create :user
-    api_authorization_header @user[:auth_token]
-  end
-
 end

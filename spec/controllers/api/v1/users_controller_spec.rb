@@ -4,7 +4,7 @@ require 'rails_helper'
 describe Api::V1::UsersController do
   describe "GET #show" do
     before(:each) do
-      create_and_authenticate_admin_user
+      @user = create_and_authenticate_user(:user_admin)
       get :show, id: @user.id
     end
 
@@ -17,14 +17,60 @@ describe Api::V1::UsersController do
   end
 
   describe "POST #create" do
+    context "when privileges are not enough" do
+      before(:each) do
+        @user_attributes = FactoryGirl.attributes_for :user_admin
+      end
+
+      it "non-user cannot create anything" do
+        post :create, { user: @user_attributes }
+
+        expect_401_error
+      end
+
+      it "student cannot create anything" do
+        create_and_authenticate_user(:user_student)
+        post :create, { user: @user_attributes }
+
+        expect_401_error
+      end
+
+      it "manager cannot create anything" do
+        create_and_authenticate_user(:user_manager)
+        post :create, { user: @user_attributes }
+
+        expect_401_error
+      end
+    end
+
+    context "when enum values (status and privilege) are incorrect" do
+      before(:each) do
+        @user = create_and_authenticate_user(:user_admin)
+        @user_attributes = FactoryGirl.attributes_for :user_admin
+      end
+
+      it "Status is incorrect" do
+        @user_attributes[:status] = 'incorrect_status'
+        post :create, { user: @user_attributes }
+
+        expect_enum_error
+      end
+
+      it "Privilege is incorrect" do
+        @user_attributes[:privilege] = 'incorrect_privilege'
+        post :create, { user: @user_attributes }
+
+        expect_enum_error
+      end
+    end
+
     # Successful user creation
     context "when is successfully created" do
       before(:each) do
-        create_and_authenticate_admin_user
-        @user_attributes = FactoryGirl.attributes_for :user
-        @user_attributes[:email] = @user_attributes[:email].downcase
+        @user = create_and_authenticate_user(:user_admin)
+        @user_attributes = FactoryGirl.attributes_for :user_admin
 
-        post :create, @user_attributes
+        post :create, { user: @user_attributes }
       end
 
       it "renders the json representation for the user record just created" do
@@ -38,10 +84,10 @@ describe Api::V1::UsersController do
     # Unsucessful creation
     context "when is not created" do
       before(:each) do
-        create_and_authenticate_admin_user
+        @user = create_and_authenticate_user(:user_admin)
         @invalid_user_attributes = { password: "password",
                                      password_confirmation: "invalid_password" }
-        post :create, @invalid_user_attributes
+        post :create, { user: @invalid_user_attributes }
       end
 
       it "renders JSON error" do
@@ -61,7 +107,7 @@ describe Api::V1::UsersController do
   describe "PUT/PATCH #update" do
     context "when is successfully updated" do
       before(:each) do
-        create_and_authenticate_admin_user
+        @user = create_and_authenticate_user(:user_admin)
         patch :update, { id: @user.id,
                         email: "newmailexample@duke.edu" }
       end
@@ -76,7 +122,7 @@ describe Api::V1::UsersController do
 
     context "when is not created as email is empty" do
       before(:each) do
-        create_and_authenticate_admin_user
+        @user = create_and_authenticate_user(:user_admin)
         patch :update, { id: @user.id,
                         email: "" }
       end
@@ -98,7 +144,7 @@ describe Api::V1::UsersController do
 
   describe "DELETE #destroy" do
     before(:each) do
-      create_and_authenticate_admin_user
+      @user = create_and_authenticate_user(:user_admin)
       delete :destroy, { id: @user.id }
     end
 
@@ -106,8 +152,19 @@ describe Api::V1::UsersController do
   end
 
   private
-  def create_and_authenticate_admin_user
-    @user = FactoryGirl.create :user
-    api_authorization_header @user[:auth_token]
+  def expect_enum_error
+    user_response = json_response
+    expect(user_response).to have_key(:errors)
+    expect(user_response[:errors]).to include "Inputted params (Status or Privilege) are not as specified!"
+
+    should respond_with 422
+  end
+
+  private
+  def expect_401_error
+    user_response = json_response
+    expect(user_response).to have_key(:errors)
+
+    should respond_with 401
   end
 end
