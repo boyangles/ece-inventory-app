@@ -21,7 +21,7 @@ class UsersController < ApplicationController
   # GET /users/1
   def show
     @user = User.find(params[:id])
-    @requests = @user.requests.paginate(page: params[:page], per_page: 10)
+    @requests = @user.requests.where.not(status: "cart").paginate(page: params[:page], per_page: 10)
   end
 
   # GET /users/1/edit

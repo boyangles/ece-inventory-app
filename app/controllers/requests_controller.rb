@@ -16,7 +16,7 @@ class RequestsController < ApplicationController
       filter_params[:user_id] = current_user.id
     end
 
-    @requests = Request.filter(filter_params).paginate(page: params[:page], per_page: 10)
+    @requests = Request.where.not(status: "cancelled").where.not(status: "cart").filter(filter_params).paginate(page: params[:page], per_page: 10)
   end
 
   # GET /requests/1

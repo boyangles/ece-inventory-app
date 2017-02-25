@@ -6,7 +6,7 @@ class UserLog < ApplicationRecord
 
 	enum action: {
 		created: 0,
-		deleted: 1,
+		deactivated: 1,
 		privilege_updated: 2
 	}
 

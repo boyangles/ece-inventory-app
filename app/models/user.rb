@@ -1,7 +1,7 @@
 class User < ApplicationRecord
 
   PRIVILEGE_OPTIONS = %w(student manager admin)
-  STATUS_OPTIONS = %w(waiting approved)
+  STATUS_OPTIONS = %w(deactivated approved)
   DUKE_EMAIL_REGEX = /\A[\w+\-.]+@duke\.edu\z/i
 
   # Relation with Requests
@@ -20,7 +20,7 @@ class User < ApplicationRecord
   }, _prefix: :privilege
 
   enum status: {
-    waiting: 0,
+    deactivated: 0,
     approved: 1
   }, _prefix: :status
 
@@ -44,12 +44,9 @@ class User < ApplicationRecord
 
 	after_update {
 		log_on_privilege_change()
+		when_deactivated()
 	}
 	
-	after_destroy {
-		# TODO - log now has to ???
-	}
-
   validates :username, presence: true, length: { maximum: 50 },
                        uniqueness: { case_sensitive: false }
   validates :email, presence: true, length: { maximum: 255 },
@@ -96,6 +93,19 @@ class User < ApplicationRecord
     @cart = Request.new(:status => :cart, :user_id => id, :reason => 'TBD')
     @cart.save!
   end
+
+	def when_deactivated()
+		if self.status_was == "approved" && self.status == "deactivated"
+			create_log("deactivated", self.privilege, self.privilege)
+		end
+
+		# change all user's requests to cancelled
+		self.requests.each do |req|
+			if req.outstanding?
+				req.update("status": "cancelled")
+			end
+		end		 
+	end
 
 	def log_on_privilege_change() 
 		old_privilege = self.privilege_was
