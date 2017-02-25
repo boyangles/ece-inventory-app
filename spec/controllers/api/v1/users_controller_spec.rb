@@ -2,6 +2,59 @@ require 'rails_helper'
 #require 'helpers/base_helper_spec'
 
 describe Api::V1::UsersController do
+  describe "GET #index" do
+    context "testing privileges" do
+      it "non-user cannot see anything" do
+        get :index
+        expect_401_unauthorized
+      end
+
+      it "students cannot see anything" do
+        create_and_authenticate_user(:user_student)
+        get :index
+
+        expect_401_unauthorized
+      end
+
+      it "managers are validated" do
+        create_and_authenticate_user(:user_manager)
+        get :index
+
+        should respond_with 200
+      end
+
+      it "admins are validated" do
+        create_and_authenticate_user(:user_admin)
+        get :index
+
+        should respond_with 200
+      end
+    end
+
+    context "when enum values (status and privilege) are incorrect" do
+      before(:each) do
+        @user = create_and_authenticate_user(:user_admin)
+        @user_attributes = FactoryGirl.attributes_for :user_admin
+      end
+
+      it "Status is incorrect" do
+        @user_attributes[:status] = 'incorrect_status'
+        get :index, @user_attributes
+
+        user_response = expect_422_unprocessable_entity
+        expect(user_response[:errors]).to include "Filter params are not correct as specified!"
+      end
+
+      it "Privilege is incorrect" do
+        @user_attributes[:privilege] = 'incorrect_privilege'
+        get :index, @user_attributes
+
+        user_response = expect_422_unprocessable_entity
+        expect(user_response[:errors]).to include "Filter params are not correct as specified!"
+      end
+    end
+  end
+
   describe "GET #show" do
     before(:each) do
       @user = create_and_authenticate_user(:user_admin)
@@ -25,21 +78,21 @@ describe Api::V1::UsersController do
       it "non-user cannot create anything" do
         post :create, { user: @user_attributes }
 
-        expect_401_error
+        expect_401_unauthorized
       end
 
       it "student cannot create anything" do
         create_and_authenticate_user(:user_student)
         post :create, { user: @user_attributes }
 
-        expect_401_error
+        expect_401_unauthorized
       end
 
       it "manager cannot create anything" do
         create_and_authenticate_user(:user_manager)
         post :create, { user: @user_attributes }
 
-        expect_401_error
+        expect_401_unauthorized
       end
     end
 
@@ -53,14 +106,16 @@ describe Api::V1::UsersController do
         @user_attributes[:status] = 'incorrect_status'
         post :create, { user: @user_attributes }
 
-        expect_enum_error
+        user_response = expect_422_unprocessable_entity
+        expect(user_response[:errors]).to include "Inputted params (Status or Privilege) are not as specified!"
       end
 
       it "Privilege is incorrect" do
         @user_attributes[:privilege] = 'incorrect_privilege'
         post :create, { user: @user_attributes }
 
-        expect_enum_error
+        user_response = expect_422_unprocessable_entity
+        expect(user_response[:errors]).to include "Inputted params (Status or Privilege) are not as specified!"
       end
     end
 
@@ -149,22 +204,5 @@ describe Api::V1::UsersController do
     end
 
     it { should respond_with 204 }
-  end
-
-  private
-  def expect_enum_error
-    user_response = json_response
-    expect(user_response).to have_key(:errors)
-    expect(user_response[:errors]).to include "Inputted params (Status or Privilege) are not as specified!"
-
-    should respond_with 422
-  end
-
-  private
-  def expect_401_error
-    user_response = json_response
-    expect(user_response).to have_key(:errors)
-
-    should respond_with 401
   end
 end

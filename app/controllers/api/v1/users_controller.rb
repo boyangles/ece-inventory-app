@@ -74,7 +74,7 @@ class Api::V1::UsersController < BaseController
 
     if (!params[:status].blank? && !User::STATUS_OPTIONS.include?(filter_params[:status])) ||
         (!params[:privilege].blank? && !User::PRIVILEGE_OPTIONS.include?(filter_params[:privilege]))
-      render json: { errors: "Filter params are not as specified!" }, status: 422
+      render json: { errors: "Filter params are not correct as specified!" }, status: 422
     else
       render :json => User.filter(filter_params).map {
           |user| {
