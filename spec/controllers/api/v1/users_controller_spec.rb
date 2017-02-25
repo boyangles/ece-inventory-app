@@ -56,17 +56,55 @@ describe Api::V1::UsersController do
   end
 
   describe "GET #show" do
-    before(:each) do
-      @user = create_and_authenticate_user(:user_admin)
-      get :show, id: @user.id
+    context "privilege testing" do
+      it "non-user cannot see" do
+        @user = FactoryGirl.create :user
+        get :show, id: @user.id
+        expect_401_unauthorized
+      end
+
+      it "students cannot see other people" do
+        @user = create_and_authenticate_user(:user_student)
+        @user_other = FactoryGirl.create :user_manager
+        get :show, id: @user_other.id
+        expect_401_unauthorized
+      end
+
+      it "students should be able to see themselves" do
+        @user = create_and_authenticate_user(:user_student)
+        get :show, id: @user.id
+
+        should respond_with 200
+      end
+
+      it "managers are validated" do
+        @user = create_and_authenticate_user(:user_manager)
+        get :show, id: @user.id
+
+        should respond_with 200
+      end
+
+      it "admins are validated" do
+        @user = create_and_authenticate_user(:user_admin)
+        get :show, id: @user.id
+
+        should respond_with 200
+      end
     end
 
-    it "returns info about a reporter on a hash" do
-      user_response = json_response
-      expect(user_response[:email]).to eql @user.email
-    end
+    context "standard testing" do
+      before(:each) do
+        @user = create_and_authenticate_user(:user_admin)
+        get :show, id: @user.id
+      end
 
-    it { should respond_with 200 }
+      it "returns info about a reporter on a hash" do
+        user_response = json_response
+        expect(user_response[:email]).to eql @user.email
+      end
+
+      it { should respond_with 200 }
+    end
   end
 
   describe "POST #create" do
