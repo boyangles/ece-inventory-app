@@ -99,7 +99,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get new_user_path
     assert_difference 'User.count' do
       post users_path, params: {
-          admin: {
+          user: {
               username: "cotton eyed joe",
               email: "cottonjoe@email.com",
               password: "password",
@@ -119,7 +119,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get new_user_path
     assert_no_difference 'User.count' do
       post users_path, params: {
-          admin: {
+          user: {
               username: "cotton eyed joe",
               email: "cottonjoe@email.com",
               password: "password",
@@ -135,7 +135,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get new_user_path
     assert_no_difference 'User.count' do
       post users_path, params: {
-          admin: {
+          user: {
               username: "cotton eyed joe2",
               email: "cottonjoe2@email.com",
               password: "password",

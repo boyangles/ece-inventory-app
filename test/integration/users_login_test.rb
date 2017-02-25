@@ -6,9 +6,9 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
   # end
 
   def setup
-    @admin = User.create!(username: 'user_userlogintest',
+    @manager = User.create!(username: 'user_userlogintest',
                           email: 'user_userlogintest@example.com',
-                          privilege: 'admin',
+                          privilege: 'manager',
                           status: 'approved',
                           password: 'password',
                           password_confirmation: 'password')
@@ -102,7 +102,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     get new_user_path
 
     post users_path, params: {
-        admin: {
+        user: {
             username: "cotton eyed joe",
             email: "cottonjoe@email.com",
             password: "password",
@@ -116,7 +116,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
 
     delete logout_path
     assert_not is_logged_in?
-    log_in_as(@admin)
-    assert_redirected_to user_path(@admin)
+    log_in_as(@created_user)
+    assert_redirected_to user_path(@created_user)
   end
 end
