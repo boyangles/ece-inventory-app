@@ -2,8 +2,10 @@ class Api::V1::SessionsController < ApplicationController
 
   respond_to :json
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
+
   swagger_controller :sessions, 'Sessions'
 
+  # Skip this so you can enter a username and password and get user information back
   skip_before_action :verify_authenticity_token
 
   swagger_api :create do

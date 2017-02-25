@@ -15,7 +15,7 @@ Tag.create([{ name: 'ECE110'}, { name: 'ECE230'}, { name: 'ECE559'}, { name: 'Re
 
 12.times do |n|
   username = Faker::Name.name
-  email = "example-#{n+1}@duke.edu"
+  email = "example-#{n+1}@example.com"
   password = "password"
   User.create!(username: username,
                email: email,
@@ -28,7 +28,7 @@ end
 
 12.times do |n|
   username = Faker::Name.name
-  email = "exampleApproved-#{n+1}@duke.edu"
+  email = "exampleApproved-#{n+1}@example.com"
   password = "password"
  
   usr = User.create!(username: username,
@@ -40,14 +40,14 @@ end
                auth_token: Devise.friendly_token)
 end
 
-User.create!(username: "admin", email: "adminusername@duke.edu", status: "approved",
+User.create!(username: "admin", email: "adminusername@example.com", status: "approved",
              privilege: "admin", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
-User.create!(username: "student", email: "nonadminusername@duke.edu", status: "approved",
+User.create!(username: "student", email: "nonadminusername@example.com", status: "approved",
              privilege: "student", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
-User.create!(username: "manager", email: "manager123@duke.edu", status: "approved",
+User.create!(username: "manager", email: "manager123@example.com", status: "approved",
              privilege: "manager", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
 
-yo = User.create(username:"abcd", email: "f@duke.edu" , status: "approved",
+yo = User.create(username:"abcd", email: "f@example.com" , status: "approved",
                  privilege: "student", password: "yoyoyo", password_confirmation: "yoyoyo", auth_token: Devise.friendly_token)
 
 items = %w[Resistor Transistor Oscilloscope RED_LED Green_LED Capacitor Screw Washer BOE-Bot Electrical_Tape Arduino_Kit
@@ -76,12 +76,20 @@ CustomField.create!(field_name: 'restock_info', private_indicator: true, field_t
  # Random reason:
  reason = Faker::Lorem.paragraph(2, true, 3)
 
- Request.create!(
+ req = Request.create!(
      user_id: user.id,
      reason: reason,
      status: "outstanding",
      request_type: "disbursement",
  )
+
+ ## Create RequestItems for each
+ 3.times do
+   item = Item.offset(rand(Item.count)).first
+   RequestItem.create!(request_id: req.id,
+                       item_id: item.id,
+                       quantity: rand(1...50))
+ end
 end
 
 # Creating Logs:

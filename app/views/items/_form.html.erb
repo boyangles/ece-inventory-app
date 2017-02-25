@@ -1,57 +1,70 @@
-<%= form_for(item) do |f| %>
-    <% if item.errors.any? %>
-        <div id="error_explanation">
-          <h2><%= pluralize(item.errors.count, "error") %> prohibited this item from being saved:</h2>
+<%= form_for (item), :html => {:class => "form-horizontal"} do |f| %>
+    <fieldset>
+      <% if item.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(item.errors.count, "error") %> prohibited this item from being saved:</h2>
 
-          <ul>
-            <% item.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
-            <% end %>
-          </ul>
+            <ul>
+              <% item.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :unique_name, "Name", class: "col-md-4 control-label" %>
+        <div class="col-md-8">
+          <%= f.text_field :unique_name, class: "form-control", :placeholder=>"Name" %>
         </div>
-    <% end %>
+      </div>
 
-    <p>
-      <%= f.label :unique_name %><br>
-      <%= f.text_field :unique_name %>
-    </p>
+      <div class="form-group">
+        <%= f.label :description, "Description", class: "col-md-4 control-label" %>
+        <div class="col-md-8">
+          <%= f.text_field :description, class: "form-control", :placeholder=>"Description" %>
+        </div>
+      </div>
 
-    <p>
-      <%= f.label :description %><br>
-      <%= f.text_field :description %>
-    </p>
+      <% if !Item.exists?(item) || is_admin? %>
+          <div class="form-group">
+            <%= f.label :quantity, "Quantity", class: "col-md-4 control-label" %>
+            <div class="col-md-8">
+              <%= f.text_field :quantity, class: "form-control",:placeholder=>"0" %>
+            </div>
+          </div>
+      <% end %>
 
-    <% if !Item.exists?(item) || is_admin? %>
-        <p>
-          <%= f.label :quantity %><br>
-          <%= f.text_field :quantity %>
-        </p>
-    <% end %>
 
-    <p>
-      <%= f.label :model_number %><br>
-      <%= f.text_field :model_number %>
-    </p>
+      <div class="form-group">
+        <%= f.label :model_number, "Model Number", class: "col-md-4 control-label" %>
+        <div class="col-md-8">
+          <%= f.text_field :model_number, class: "form-control",:placeholder=>"0" %>
+        </div>
+      </div>
 
-    <!-- For adding tags to items -->
-    <p> <strong>Tags</strong></p>
-    <% if Tag.all.count > item.tags.all.count %>
-        <%= collection_select(:tag, :tag_id, Tag.all - item.tags.all, :id, :name, {:prompt => "-- select tags to add to item --"}, {:multiple=> true}) %>
+      <!-- For adding tags to items -->
+      <p> <strong>Tags</strong></p>
+      <% if Tag.all.count > item.tags.all.count %>
+          <%= collection_select(:tag, :tag_id, Tag.all - item.tags.all, :id, :name, {:prompt => "-- select tags to add to item --"}, {:multiple=> true}) %>
+      <% else %>
+          <p>No more tags available</p>
+      <% end %>
 
-    <% else %>
-        <p>No more tags available</p>
-    <% end %>
+      <!-- For removing tags from items -->
+      <p> <strong>Associated Tags</strong></p>
+      <% if item.tags.count > 0 %>
+          <%= collection_select(:tag_to_remove, :tag_id_remove, item.tags.all, :id, :name, {:prompt => "-- select tags to remove from item --"}, {:multiple=> true}) %>
+      <% else %>
+          <p>No tags associated with <%= item.unique_name %></p>
+      <% end %>
 
-    <!-- For removing tags from items -->
-    <p> <strong>Associated Tags</strong></p>
-    <% if item.tags.count > 0 %>
-        <%= collection_select(:tag_to_remove, :tag_id_remove, item.tags.all, :id, :name, {:prompt => "-- select tags to remove from item --"}, {:multiple=> true}) %>
-    <% else %>
-        <p>No tags associated with <%= item.unique_name %></p>
-    <% end %>
+      <div class="form-group">
+        <div class="col-lg-10 col-lg-offset-2">
+          <button type="submit" class="btn-default btn-lg btn-block">Submit</button>
+        </div>
+      </div>
 
-    <!-- TODO: Make it so this asks confirmation dialog if the quantity is changed -->
-    <div class="actions">
-      <%= f.submit %>
-    </div>
+    </fieldset>
+
 <% end %>

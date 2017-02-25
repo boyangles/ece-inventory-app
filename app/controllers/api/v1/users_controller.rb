@@ -4,8 +4,9 @@ class Api::V1::UsersController < BaseController
   # authentication_actions = [:index, :show, :update, :destroy]
 
   before_action :authenticate_with_token!
-  before_action :auth_by_admin_privilege!, only: [:index]
-  before_action -> { auth_by_same_user_or_admin!(params[:id]) }, only: [:show, :update, :destroy]
+  before_action :auth_by_manager_privilege!, only: [:index]
+  before_action :auth_by_admin_privilege!, only: [:new, :create, :update, :destroy]
+  before_action -> { auth_by_same_user_or_manager!(params[:id]) }, only: [:show]
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
   respond_to :json
@@ -51,7 +52,6 @@ class Api::V1::UsersController < BaseController
     summary "Updates an existing user"
     param :path, :id, :integer, :required, "id"
     param :form, :username, :string, "Username"
-    param :form, :email, :string, "Email"
     param :form, :password, :string, "Password"
     param :form, :password_confirmation, :string, "Password Confirmation"
     param_list :form, :privilege, :string , "Privilege", [ "admin", "ta", "student" ]
