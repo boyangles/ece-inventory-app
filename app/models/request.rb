@@ -13,7 +13,7 @@ class Request < ApplicationRecord
   default_scope -> { order(created_at: :desc) }
 
   # Data Options:
-  STATUS_OPTIONS = %w(outstanding approved denied cart)
+  STATUS_OPTIONS = %w(outstanding approved denied cart cancelled)
 
   enum request_type: {
       disbursement: 0,
@@ -25,7 +25,8 @@ class Request < ApplicationRecord
     outstanding: 0,
     approved: 1,
     denied: 2,
-    cart: 3
+    cart: 3,
+    cancelled: 4
   }
 
   scope :user_id, -> (user_id) { where user_id: user_id }
@@ -86,7 +87,7 @@ class Request < ApplicationRecord
 		new_status = self.status
 
 		if old_status == 'cart' && new_status == 'outstanding' 
-			create_log("placed_order")
+			create_log("placed")
 		elsif old_status != new_status
 			create_log(new_status)
 #		elsif old_status == 'cart' && new_status == 'approved' #admin direct
@@ -101,6 +102,10 @@ class Request < ApplicationRecord
 			curr = nil
 		else
 			curr = self.curr_user.id
+		end
+
+		if (action=="outstanding")
+			action = "placed"
 		end
 
 		log = Log.new(:user_id => curr, :log_type => "request")

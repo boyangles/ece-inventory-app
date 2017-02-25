@@ -1,6 +1,7 @@
 <li id="log-<%= log.id %>">
 
 	<span class="user">
+		<b>Initiating User: </b>
 		<% if !log.user_id.nil? %>
 			<% acting_user = User.find(log.user_id) %>
 			<%= link_to acting_user.username, user_path(acting_user) %>
@@ -9,47 +10,37 @@
   	<% end %>
 	</span>
 
-
-	<div class="content">
+<span class="content">
 		<% if log.user? %>
 			<% userlog = UserLog.find_by(:log_id => log.id) %>
 			<% user = User.find(userlog.user_id) %>
-			<% "HAVE TO ALSO QUERY DELETED TABLE!!" %>
+			<% object = user.username %>
+			<% object_path = user_path(user) %>
 
 			<% if userlog.created? %>
-					<%= "created" %>
-				<%= link_to user.username, user_path(user) %>
-				<%= " with privilege " + userlog.new_privilege %>
-			<% elsif userlog.deleted? %>
-				<%= "deleted - need to query deleted table tbd" %>
-				
-
-		 <% elsif userlog.privilege_updated? %>
-				<%= "changed " %>
-				<%= link_to user.username, user_path(user) %>
-				<%= "'s privilege from " + userlog.old_privilege  + " to " + userlog.new_privilege %>
+				<% result = " with privilege " + userlog.new_privilege %>
+		 	<% elsif userlog.privilege_updated? %>
+				<%= iresult = "from " + userlog.old_privilege  + " to " + userlog.new_privilege %>
 			<% end %>
+
+			<b>Affected User: </b>
+			<%= link_to object, object_path %>
+
+			<span><b>Action: </b>
+			<%= userlog.action %>
+			<%= result %></span>
+
 
 		<% elsif log.request? %>
 			<% reqlog = RequestLog.find_by(:log_id => log.id) %>
 			<% request = Request.find(reqlog.request_id) %>
 			<% user = User.find(request.user_id) %>			
 
-			<% if reqlog.placed_order? %>
-				placed an <%= link_to "order", request_path(request) %> 
-			<% elsif reqlog.approved? %>
-				approved
-				<%= link_to user.username, user_path(user) %>
-				's <%= link_to "request", request_path(request) %>
-			<% elsif reqlog.denied? %>
-				denied
-				<%= link_to user.username, user_path(user) %>
-				's <%= link_to "request", request_path(request) %>
-			<% elsif reqlog.cancelled? %>
-				deleted
-				<%= link_to user.username, user_path(user) %>
-				's <%= link_to "request", request_path(request) %>
-			<% end %>
+			<b>Action : </b>
+			<%= reqlog.action %>
+		
+			<%= link_to "Request", request_path(request) %>
+			for <%= link_to user.username, user_path(user) %>
 
 			for
 			<% if request.request_items.empty? %>
@@ -65,6 +56,8 @@
 			</ul>
 
 		<% elsif log.item? %>
+			<% "this view is sucky but I am not dealing with it rn I don't even know how I wrote it the first time. bye." %>
+
 			<% itemlog = ItemLog.find_by(:log_id => log.id) %>
 			<% item = Item.find(itemlog.item_id) %>
 			
@@ -111,7 +104,7 @@
 
 		<% end %>
 
-	</div>
+	</span>
 
   <br>
   <span class="timestamp">

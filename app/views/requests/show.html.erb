@@ -57,10 +57,18 @@
 <% end %>
 
 <% if @request.cart? %>
-		<%= link_to 'Edit', edit_request_path(@request) %> |
-    <%= link_to 'Clear', clear_request_path(@request), method: :put %>
+    <%= link_to 'Clear Items in Cart', clear_request_path(@request), method: :put %> |
 <% elsif @request.outstanding? %>
- 		<%= link_to 'Edit', edit_request_path(@request) %> |
-   	<%= link_to 'Destroy', @request, method: :delete, data: { confirm: 'Are you sure?' } %>
-<% end %> |
+ 		<%= link_to 'Edit', edit_request_path(@request) %> | 
+<% end %> 
 <%= link_to 'Back', :back %>
+
+<div><% if @request.outstanding? %>
+	<%= render 'cancelorderform', request: @request %>
+<% end %></div>
+
+<div><% if @request.cancelled? %>
+	<%= render 'reviveorderform', request: @request %>
+<% end %></div>
+
+
