@@ -12,12 +12,12 @@
 	<%= form_for items_path, :method => 'get' do |f| %>
   	<p class="submit_bar">
 			<%= f.label "Search by Item Name" %><br>
-    	<%= text_field_tag :search, params[:search] %>
+    	<%= text_field_tag :search, params[:search], :placeholder => "Item 1" %>
 	 	</p>
 
 		<p>
 			<%= f.label "Search by Model Number" %>
-			<%= text_field_tag :model_search, params[:model_search] %>
+			<%= text_field_tag :model_search, params[:model_search], :placeholder => "A234"  %>
 		</p>
 
   	<h3>Required Tags</h3>
