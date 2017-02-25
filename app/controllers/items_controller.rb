@@ -88,6 +88,7 @@ class ItemsController < ApplicationController
       flash[:success] = "Item updated successfully"
       redirect_to @item
     else
+			flash.now[]
       flash.now[:danger] = "Unable to edit!"
       render 'edit'
     end

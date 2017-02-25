@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170224014744) do
+ActiveRecord::Schema.define(version: 20170225015830) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,6 +45,7 @@ ActiveRecord::Schema.define(version: 20170224014744) do
     t.string  "new_desc"
     t.string  "old_model_num"
     t.string  "new_model_num"
+    t.integer "curr_quantity"
     t.index ["item_id"], name: "index_item_logs_on_item_id", using: :btree
     t.index ["log_id"], name: "index_item_logs_on_log_id", using: :btree
   end

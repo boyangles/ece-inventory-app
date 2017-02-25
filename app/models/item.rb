@@ -83,7 +83,7 @@ class Item < ApplicationRecord
 		quantity_increase = self.quantity - self.quantity_was
 		if quantity_increase != 0
 			# TODO: in future: grab reason for change!!
-			create_log("acquired_quantity", false, quantity_increase)
+			create_log("acquired_destroyed_quantity", false, quantity_increase)
 		end
 	end
 
@@ -106,7 +106,7 @@ class Item < ApplicationRecord
 
 		log = Log.new(:user_id => curr, :log_type => "item")
 		log.save!
-		itemlog = ItemLog.new(:log_id => log.id, :item_id => self.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => self.unique_name, :old_desc => old_desc, :new_desc => self.description, :old_model_num => old_model, :new_model_num => self.model_number)
+		itemlog = ItemLog.new(:log_id => log.id, :item_id => self.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => self.unique_name, :old_desc => old_desc, :new_desc => self.description, :old_model_num => old_model, :new_model_num => self.model_number, :curr_quantity => self.quantity)
 		itemlog.save!
 	end
 
