@@ -76,6 +76,7 @@ class ItemsController < ApplicationController
 
   def update
     @item = Item.find(params[:id])
+		@item.curr_user = current_user
 
     # this isn't how it's going to work
     # alert_if_quantity_changes(params[:quantity])

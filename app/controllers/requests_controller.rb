@@ -3,6 +3,11 @@ class RequestsController < ApplicationController
   before_action :check_logged_in_user
   before_action :check_requests_corresponds_to_current_user, only: [:edit, :update, :destroy, :show]
 
+	def create
+		# just to pass in current_user for logs
+		@request.curr_user = current_user
+	end
+	
   # GET /requests
   def index
     filter_params = params.slice(:status)

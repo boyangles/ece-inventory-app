@@ -88,6 +88,12 @@ class Item < ApplicationRecord
 	end
 
 	def create_log(action, desc_changed, quan_change)
+		if self.curr_user.nil?
+			curr = nil
+		else
+			curr = self.curr_user.id
+		end
+
 		old_name = ""
 		old_desc = ""
 		old_model = ""
@@ -98,7 +104,7 @@ class Item < ApplicationRecord
 			old_model = self.model_number_was
 		end
 
-		log = Log.new(:user_id => self.curr_user, :log_type => "item")
+		log = Log.new(:user_id => curr, :log_type => "item")
 		log.save!
 		itemlog = ItemLog.new(:log_id => log.id, :item_id => self.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => self.unique_name, :old_desc => old_desc, :new_desc => self.description, :old_model_num => old_model, :new_model_num => self.model_number)
 		itemlog.save!

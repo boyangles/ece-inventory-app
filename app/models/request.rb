@@ -97,7 +97,13 @@ class Request < ApplicationRecord
 	end
 	
 	def create_log(action)
-		log = Log.new(:user_id => self.curr_user, :log_type => "request")
+		if self.curr_user.nil?
+			curr = nil
+		else
+			curr = self.curr_user.id
+		end
+
+		log = Log.new(:user_id => curr, :log_type => "request")
 		log.save!
 		reqlog = RequestLog.new(:log_id => log.id, :request_id => self.id, :action => action)
 		reqlog.save!
