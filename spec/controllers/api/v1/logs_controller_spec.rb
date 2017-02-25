@@ -107,14 +107,14 @@ describe Api::V1::LogsController do
 
   private
   def log_attribute_creation
-    @sample_user = FactoryGirl.create :user
+    @sample_user = FactoryGirl.create :admin
     @sample_item = FactoryGirl.create :item
 
     @log_attributes = FactoryGirl.attributes_for :log
   end
 
   def create_and_authenticate_admin_user
-    @user = FactoryGirl.create :user
-    api_authorization_header @user[:auth_token]
+    @admin = FactoryGirl.create :admin
+    api_authorization_header @admin[:auth_token]
   end
 end

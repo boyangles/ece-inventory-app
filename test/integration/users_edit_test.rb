@@ -2,21 +2,21 @@ require 'test_helper'
 
 class UsersEditTest < ActionDispatch::IntegrationTest
   def setup
-    @user = User.create!(username: 'user_usersedittest',
-                         email: 'user_usersedittest@example.com',
-                         privilege: 'admin',
-                         status: 'approved',
-                         password: 'password',
-                         password_confirmation: 'password')
+    @admin = User.create!(username: 'user_usersedittest',
+                          email: 'user_usersedittest@example.com',
+                          privilege: 'admin',
+                          status: 'approved',
+                          password: 'password',
+                          password_confirmation: 'password')
   end
 
   test "handling unsucessful edits" do
     # Required because authorization clause in before_action for UserController
-    log_in_as(@user)
-    get edit_user_path(@user)
+    log_in_as(@admin)
+    get edit_user_path(@admin)
     assert_template 'users/edit'
-    patch user_path(@user), params: {
-        user: {
+    patch user_path(@admin), params: {
+        admin: {
             username: "",
             email: "sample@invalid",
             password: "bad",
@@ -29,17 +29,17 @@ class UsersEditTest < ActionDispatch::IntegrationTest
 
   test "handling successful edits with friendly forwarding" do
     # Required because authorization clause in before_action for UserController
-    get edit_user_path(@user)
-    log_in_as(@user)
-    assert_redirected_to edit_user_url(@user)
+    get edit_user_path(@admin)
+    log_in_as(@admin)
+    assert_redirected_to edit_user_url(@admin)
 
-    get edit_user_path(@user)
+    get edit_user_path(@admin)
     assert_template 'users/edit'
     username = "Bonkers Amaldoss"
     email = "bonkers@duke.edu"
 
-    patch user_path(@user), params: {
-        user: {
+    patch user_path(@admin), params: {
+        admin: {
             username: username,
             email: email,
             password: "password",
@@ -48,9 +48,9 @@ class UsersEditTest < ActionDispatch::IntegrationTest
     }
 
     assert_not flash.empty?
-    assert_redirected_to @user
-    @user.reload
-    assert_equal username.downcase, @user.username
-    assert_equal email.downcase, @user.email
+    assert_redirected_to @admin
+    @admin.reload
+    assert_equal username.downcase, @admin.username
+    assert_equal email.downcase, @admin.email
   end
 end

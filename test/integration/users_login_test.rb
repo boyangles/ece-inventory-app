@@ -6,12 +6,12 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
   # end
 
   def setup
-    @user = User.create!(username: 'user_userlogintest',
-                         email: 'user_userlogintest@example.com',
-                         privilege: 'admin',
-                         status: 'approved',
-                         password: 'password',
-                         password_confirmation: 'password')
+    @admin = User.create!(username: 'user_userlogintest',
+                          email: 'user_userlogintest@example.com',
+                          privilege: 'admin',
+                          status: 'approved',
+                          password: 'password',
+                          password_confirmation: 'password')
     @admin = User.create!(username: 'admin_userlogintest',
                           email: 'admin_userlogintest@example.com',
                           privilege: 'admin',
@@ -50,7 +50,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     # Step 2
     post login_path, params: {
         session: {
-            username: @user.username,
+            username: @admin.username,
             password: 'password'
         }
     }
@@ -58,7 +58,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     assert is_logged_in?
 
     # Verify that redirect to user page
-    assert_redirected_to @user
+    assert_redirected_to @admin
     follow_redirect!
     assert_template 'users/show'
 
@@ -69,7 +69,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", logout_path
 
     # Step 5
-    assert_select "a[href=?]", user_path(@user)
+    assert_select "a[href=?]", user_path(@admin)
 
     # Logout time:
     delete logout_path
@@ -78,7 +78,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_select "a[href=?]", login_path
     assert_select "a[href=?]", logout_path, count: 0
-    assert_select "a[href=?]", user_path(@user), count: 0
+    assert_select "a[href=?]", user_path(@admin), count: 0
   end
 
   # Logged in users should never be able to see the login page
@@ -102,7 +102,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     get new_user_path
 
     post users_path, params: {
-        user: {
+        admin: {
             username: "cotton eyed joe",
             email: "cottonjoe@email.com",
             password: "password",
@@ -116,7 +116,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
 
     delete logout_path
     assert_not is_logged_in?
-    log_in_as(@user)
-    assert_redirected_to user_path(@user)
+    log_in_as(@admin)
+    assert_redirected_to user_path(@admin)
   end
 end

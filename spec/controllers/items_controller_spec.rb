@@ -4,8 +4,8 @@ RSpec.describe "Create Item Tests", :type => :feature do
 
 
   it "Navigate to new item as admin" do
-    @user = FactoryGirl.create(:admin)
-    login_user(@user)
+    @admin = FactoryGirl.create(:admin)
+    login_user(@admin)
     visit items_path
     expect(page).to have_content 'New Item'
     click_link 'New Item'
@@ -14,7 +14,7 @@ RSpec.describe "Create Item Tests", :type => :feature do
   end
 
   after :each do
-    User.destroy(@user)
+    User.destroy(@admin)
   end
 
 end

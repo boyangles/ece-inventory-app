@@ -2,13 +2,13 @@ require 'test_helper'
 
 class LogTest < ActiveSupport::TestCase
   def setup
-    @user = users(:bernard)
+    @admin = users(:bernard)
     @item = items(:item1)
 
     @log = Log.new(
       quantity: 5,
       request_type: 'disbursement',
-      user_id: @user.id,
+      user_id: @admin.id,
       item_id: @item.id)
   end
 
