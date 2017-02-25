@@ -2,6 +2,7 @@ class User < ApplicationRecord
 
   PRIVILEGE_OPTIONS = %w(student manager admin)
   STATUS_OPTIONS = %w(waiting approved)
+  DUKE_EMAIL_REGEX = /\A[\w+\-.]+@duke\.edu\z/i
 
   # Relation with Requests
   has_many :requests, dependent: :destroy
@@ -38,7 +39,6 @@ class User < ApplicationRecord
 
   after_create {
     create_new_cart(self.id)
-  
 		create_log("created", 0, self.privilege)
 	}
 
@@ -119,4 +119,9 @@ class User < ApplicationRecord
 		userlog.save!
 
 	end
+  
+	## Class Methods
+  def self.isDukeEmail?(email_address)
+    return email_address.match(DUKE_EMAIL_REGEX)
+  end
 end
