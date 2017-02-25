@@ -9,6 +9,6 @@ class ItemLog < ApplicationRecord
 		desc_updated: 4
 	}
 
-	validates :action, :inclusion => { :in => USER_LOGGED_ACTIONS }
+	validates :action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }
 
 end

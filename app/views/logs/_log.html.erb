@@ -83,7 +83,7 @@
 					logged the destruction of <%= 0 - itemlog.quantity_change %>
 				<% end %>
 				<%= link_to item.unique_name, item_path(item) %>
-				for a total of <%= itemlog.curr_quantity %>
+				to a new total of <%= itemlog.curr_quantity %>
 	
 			<% elsif itemlog.admin_corr_quantity? %>
 					corrected the quantity of <%= link_to item.unique_name, item_path(item) %>
