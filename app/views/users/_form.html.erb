@@ -8,18 +8,17 @@
         <%= f.text_field :username, class: 'form-control' %>
 
         <!-- Password -->
-        <% if current_user?(@user) %>
-            <%= f.label :password %>
-            <%= f.password_field :password, class: 'form-control' %>
-            <!-- Password Confirm -->
-            <%= f.label :password_confirmation, "Confirm Password" %>
-            <%= f.password_field :password_confirmation, class: 'form-control' %>
-        <% end %>
+        <%= f.label :password %>
+        <%= f.password_field :password, class: 'form-control' %>
+        <!-- Password Confirm -->
+        <%= f.label :password_confirmation, "Confirm Password" %>
+        <%= f.password_field :password_confirmation, class: 'form-control' %>
     <% end %>
-  <% if is_admin? %>
-    <%= f.label :privilege, "Define Privilege" %>
-    <%= f.select :privilege, User.privileges.keys.to_a %>
-  <% end %>
+
+    <% if is_admin? %>
+        <%= f.label :privilege, "Define Privilege" %>
+        <%= f.select :privilege, User.privileges.keys.to_a %>
+    <% end %>
 
 
     <%= f.submit yield(:button_text), class: "btn btn-primary" %>
