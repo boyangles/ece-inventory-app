@@ -48,7 +48,7 @@ class Api::V1::UsersController < BaseController
     param :form, 'user[password]', :string, :required, "Password"
     param :form, 'user[password_confirmation]', :string, :required, "Password Confirmation"
     param_list :form, 'user[privilege]', :string, :required, "Privilege; must be: student/manager/admin", [ "student", "manager", "admin" ]
-    param_list :form, 'user[status]', :string, :optional, "Status; must be: approved/waiting"
+    param_list :form, 'user[status]', :string, :optional, "Status; must be: approved/waiting", [ "approved", "waiting" ]
     response :unauthorized
     response :created
     response :unprocessable_entity
