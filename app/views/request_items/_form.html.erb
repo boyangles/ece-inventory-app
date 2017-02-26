@@ -1,0 +1,28 @@
+<%= form_for (request_item), :html => {:class => "form-horizontal"} do |f| %>
+    <fieldset>
+      <p>
+        <b>Item Requested</b>
+        <%= Item.find(@request_item.item_id).unique_name %>
+      </p>
+
+      <div class="form-group">
+        <%= f.label :quantity, "Quantity", class: "col-lg-2 control-label" %>
+        <div class="col-lg-10">
+          <%= f.number_field :quantity, class: "form-control",:placeholder=>Item.find(@request_item.item_id).quantity %>
+        </div>
+      </div>
+
+
+    <%= f.hidden_field :item_id, :value => request_item.item_id %>
+    <%= f.hidden_field :request_id, :value => request_item.request_id %>
+
+
+      <div class="form-group">
+        <div class="col-lg-10 col-lg-offset-2">
+          <button type="submit" class="btn-default btn-lg btn-block">Add to Cart</button>
+        </div>
+      </div>
+
+
+  </fieldset>
+<% end %>

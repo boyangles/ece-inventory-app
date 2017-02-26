@@ -2,8 +2,18 @@ require 'test_helper'
 
 class UsersIndexTest < ActionDispatch::IntegrationTest
   def setup
-    @admin = users(:bernard)
-    @non_admin = users(:alex)
+    @admin = User.create!(username: 'admin_usersindextest',
+                          email: 'admin_usersindextest@example.com',
+                          privilege: 'admin',
+                          status: 'approved',
+                          password: 'password',
+                          password_confirmation: 'password')
+    @non_admin = User.create!(username: 'nonadmin_usersindextest',
+                              email: 'nonadmin_usersindextest@example.com',
+                              privilege: 'student',
+                              status: 'approved',
+                              password: 'password',
+                              password_confirmation: 'password')
   end
 
   test "index, pagination, and deletion as administrator" do

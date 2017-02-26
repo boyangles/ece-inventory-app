@@ -1,19 +1,15 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
   # Editing/updating a user credential only can be done when logged in
-  before_action :check_logged_in_user, except: [:new, :create, :confirm_email]
+  before_action :check_logged_in_user, except: [:new, :create]
 
   # Check_current_user allows users to edit/update currently. Be aware that any method added to check_current_user will be
   # bypassed by admin privileges
   before_action :check_current_user, only: [:show, :edit, :update]
-  # Security issue: only admin users can delete users
-  before_action :check_admin_user, only: [:create, :destroy , :index, :approve_user]
-
+  before_action :check_manager_or_admin, only: [:index]
+  before_action :check_admin_user, only: [:new, :create, :destroy]
 
   def new
-    # if logged_in?
-    #   redirect_to root_path
-    # end
     @user = User.new
   end
 
@@ -30,6 +26,27 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
+    #  A   //   B      //  C
+    # duke // nonadmin // self ==> unable to edit -- 1
+    # duke // nonadmin // other ==> unable to edit -- 1
+    # duke // admin   // self ==> unable to edit -- 1
+    # duke // admin   // other ==> able to edit -- 0
+
+    # loc  // nonadmin // self ==> able to edit -- 0
+    # loc  // nonadmin // other ==> unable to edit -- 1
+    # loc  // admin   // self ==> able to edit -- 0
+    # loc  // admin   // other ==> able to edit -- 0
+
+    # (A && !B && C) + (A && !B && !C) + (A && B && C) + (!A && !B && !C)
+    # = (A && !B) + (A && B && C) + (!A && !B && !C)
+
+    if (User.isDukeEmail?(current_user.email) && !is_admin?) ||
+       (User.isDukeEmail?(current_user.email) && is_admin? && current_user?(@user)) ||
+       (!User.isDukeEmail?(current_user.email) && !is_admin? && !current_user?(@user))
+      flash[:danger] = "Cannot edit account"
+      redirect_to @user and return
+    end
+
     @user = User.find(params[:id])
   end
 
@@ -53,15 +70,16 @@ class UsersController < ApplicationController
   def update
     @user = User.find(params[:id])
 
-    if (params[:password].blank? && !current_user?(@user))
-      params.delete(:password)
-      params.delete(:password_confirmation)
+    if user_params[:password].blank? && !current_user?(@user)
+      user_params.delete(:password)
+      user_params.delete(:password_confirmation)
     end
 
     if @user.update_attributes(user_params)
       flash[:success] = "Credentials updated successfully"
       redirect_to @user
     else
+      flash[:danger] = "Unable to edit user"
       render 'edit'
     end
   end
@@ -71,6 +89,14 @@ class UsersController < ApplicationController
     User.find(params[:id]).destroy
     flash[:success] = "User account deleted!"
     redirect_to users_url
+  end
+
+  def auth_token
+    @user = User.find(params[:id])
+    unless current_user?(@user)
+      flash[:danger] = "You are not User with ID #{@user.id}"
+      redirect_to current_user
+    end
   end
 
   private
@@ -84,7 +110,5 @@ class UsersController < ApplicationController
     # Rails 4+ requires you to whitelist attributes in the controller.
     params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :privilege)
   end
-
-
 
 end

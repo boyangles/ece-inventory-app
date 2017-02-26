@@ -1,0 +1,13 @@
+<h1>Authentication Token for API Requests</h1>
+
+
+<p>Auth token here: <%= @user.auth_token %></p>
+</br>
+</br>
+<p>
+  To make API requests, copy your authentication token above, then click on the API Debugger link below. Paste your authentication
+  token whenever you see the 'Authentication Token' field, and the request will go through if you have the correct privileges.
+</p>
+
+<%= link_to 'API Debugger', '/api' %> |
+<%= link_to 'Back', url_for(:back) %>

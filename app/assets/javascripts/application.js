@@ -12,9 +12,16 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery.turbolinks
+//= require best_in_place
 //= require turbolinks
+//= require turbolinks-compatibility
 //= require bootstrap-sprockets
-//= require react
-//= require react_ujs
-//= require components
+//= require bootstrap3-editable/bootstrap-editable
 //= require_tree .
+//= require bootstrap-tagsinput
+
+$(document).on('ready page:load', function () {
+    /* Activating Best In Place */
+    $(".best_in_place").best_in_place();
+});

@@ -1,7 +1,9 @@
 class User < ApplicationRecord
+  include Filterable
 
-  PRIVILEGE_OPTIONS = %w(student ta admin)
+  PRIVILEGE_OPTIONS = %w(student manager admin)
   STATUS_OPTIONS = %w(waiting approved)
+  DUKE_EMAIL_REGEX = /\A[\w+\-.]+@duke\.edu\z/i
 
   # Relation with Requests
   has_many :requests, dependent: :destroy
@@ -11,7 +13,7 @@ class User < ApplicationRecord
 
   enum privilege: {
     student: 0,
-    ta: 1,
+    manager: 1,
     admin: 2
   }, _prefix: :privilege
 
@@ -19,6 +21,12 @@ class User < ApplicationRecord
     waiting: 0,
     approved: 1
   }, _prefix: :status
+
+  # Filterable params:
+  scope :email,     ->    (email)     { where email: email }
+  scope :status,    ->    (status)    { where status: status }
+  scope :privilege, ->    (privilege) { where privilege: privilege }
+
 
   before_validation {
     # Only downcase if the fields are there
@@ -33,8 +41,9 @@ class User < ApplicationRecord
     generate_authentication_token!
   }
 
-  # Modified to only allow duke emails
-   # VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-\.]*duke\.edu\z/i
+  after_create {
+    create_new_cart(self.id)
+  }
 
   validates :username, presence: true, length: { maximum: 50 },
                        uniqueness: { case_sensitive: false }
@@ -71,5 +80,15 @@ class User < ApplicationRecord
     begin
       self.auth_token = Devise.friendly_token
     end while self.class.exists?(auth_token: auth_token)
+  end
+
+  def create_new_cart(id)
+    @cart = Request.new(:status => :cart, :user_id => id, :reason => 'TBD')
+    @cart.save!
+  end
+
+  ## Class Methods
+  def self.isDukeEmail?(email_address)
+    return email_address.match(DUKE_EMAIL_REGEX)
   end
 end

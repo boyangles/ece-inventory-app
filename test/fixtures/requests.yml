@@ -1,33 +1,63 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-# This model initially had no columns defined. If you add columns to the
-# model remove the '{}' from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-request1:
-  quantity: 15
-  reason: 'For jokes'
+## In this section, I create multiple requests for all users defined in users.yml
+<% users = User.all %>
+<% users.each do |user| %>
+request_<%= user.id %>_outstanding_disbursement:
+  reason: <%= "Reason number #{user.id} for user #{user.email}" %>
   status: 0
   request_type: 0
-  created_at: <%= 10.minutes.ago %>
+  user_id: <%= user.id %>
 
+request_<%= user.id %>_outstanding_acquisition:
+  reason: <%= "Reason number #{user.id} for user #{user.email}" %>
+  status: 0
+  request_type: 1
+  user_id: <%= user.id %>
 
-request2:
-  quantity: 1222
-  reason: 'For jokes'
+request_<%= user.id %>_outstanding_destruction:
+  reason: <%= "Reason number #{user.id} for user #{user.email}" %>
+  status: 0
+  request_type: 2
+  user_id: <%= user.id %>
+
+request_<%= user.id %>_approved_disbursement:
+  reason: <%= "Reason number #{user.id} for user #{user.email}" %>
   status: 1
   request_type: 0
-  created_at: <%= 3.years.ago %>
+  user_id: <%= user.id %>
 
-request3:
-  quantity: 35
-  reason: 'For 3 jokes'
-  status: 0
-  request_type: 0
-  created_at: <%= 2.hours.ago %>
+request_<%= user.id %>_approved_acquisition:
+  reason: <%= "Reason number #{user.id} for user #{user.email}" %>
+  status: 1
+  request_type: 1
+  user_id: <%= user.id %>
 
-most_recent:
-  quantity: 255
-  reason: 'For 4 jokes'
-  status: 0
+request_<%= user.id %>_approved_destruction:
+  reason: <%= "Reason number #{user.id} for user #{user.email}" %>
+  status: 1
+  request_type: 2
+  user_id: <%= user.id %>
+
+request_<%= user.id %>_denied_disbursement:
+  reason: <%= "Reason number #{user.id} for user #{user.email}" %>
+  status: 2
   request_type: 0
-  created_at: <%= Time.zone.now %>
+  user_id: <%= user.id %>
+
+request_<%= user.id %>_denied_acquisition:
+  reason: <%= "Reason number #{user.id} for user #{user.email}" %>
+  status: 2
+  request_type: 1
+  user_id: <%= user.id %>
+
+request_<%= user.id %>_denied_destruction:
+  reason: <%= "Reason number #{user.id} for user #{user.email}" %>
+  status: 2
+  request_type: 2
+  user_id: <%= user.id %>
+
+request_<%= user.id %>_cart_disbursement:
+  reason: <%= "Reason number #{user.id} for user #{user.email}" %>
+  status: 3
+  request_type: 0
+  user_id: <%= user.id %>
+<% end %>

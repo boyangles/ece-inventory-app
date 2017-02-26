@@ -4,44 +4,38 @@ describe Api::V1::RequestsController do
   describe "GET #show" do
     before(:each) do
       @req = FactoryGirl.create :request
+      @user = create_and_authenticate_user(:user_admin)
       get :show, id: @req.id
     end
 
     it "returns info about a reporter on a hash" do
       req_response = json_response
       expect(req_response[:user_id]).to eql @req.user_id
-      expect(req_response[:item_id]).to eql @req.item_id
     end
 
     it { should respond_with 200 }
   end
 
   describe "POST #create" do
-    context "when is successfully created" do
+    context "when a request is successfully created with valid user and item ids" do
       before(:each) do
         req_attribute_creation
-
         @req_attributes[:user_id] = @sample_user[:id]
-        @req_attributes[:item_id] = @sample_item[:id]
-        post :create, {request: @req_attributes}
+        post :create, @req_attributes
       end
 
       it "renders the json representation for the request record just created" do
         req_response = json_response
         expect(req_response[:user_id]).to eql @req_attributes[:user_id]
-        expect(req_response[:item_id]).to eql @req_attributes[:item_id]
       end
 
       it { should respond_with 201 }
     end
 
-    context "when is not created" do
+    context "when a request is not created because of invalid user and item ids" do
       before(:each) do
         req_attribute_creation
-
-        @req_attributes[:user_id] = @sample_user[:id] + 1
-        @req_attributes[:item_id] = @sample_item[:id] + 1
-
+        @req_attributes[:user_id] = -1
         post :create, {request: @req_attributes}
       end
 
@@ -55,26 +49,28 @@ describe Api::V1::RequestsController do
   end
 
   describe "PUT/PATCH #update" do
-    context "when is successfully updated" do
+    context "when a request is successfully updated with valid request and user" do
       before(:each) do
         @req = FactoryGirl.create :request
+        @user = create_and_authenticate_user(:user_admin)
         patch :update, { id: @req.id,
-                         request: { reason: "Because I can." } }
+                         reason: "Updated because I can." }
       end
 
       it "renders json representation for updated request" do
         req_response = json_response
-        expect(req_response[:reason]).to eql "Because I can."
+        expect(req_response[:reason]).to eql "Updated because I can."
       end
 
       it { should respond_with 200 }
     end
 
-    context "when not successful in updating" do
+    context "when not successful in updating a request because of invalid user id" do
       before(:each) do
         @req = FactoryGirl.create :request
+        @user = create_and_authenticate_user(:user_admin)
         patch :update, { id: @req.id,
-                         request: { item_id: @req.item_id + 1 } }
+                         user_id: -1 }
       end
 
       it "renders error from JSON" do
@@ -89,6 +85,7 @@ describe Api::V1::RequestsController do
   describe "DELETE #destroy" do
     before(:each) do
       @req = FactoryGirl.create :request
+      @user = create_and_authenticate_user(:user_admin)
       delete :destroy, { id: @req.id }
     end
 
@@ -97,8 +94,9 @@ describe Api::V1::RequestsController do
 
   private
   def req_attribute_creation
-    @sample_user = FactoryGirl.create :user
+    @sample_user = FactoryGirl.create :user_admin
     @sample_item = FactoryGirl.create :item
+    api_authorization_header @sample_user[:auth_token]
 
     @req_attributes = FactoryGirl.attributes_for :request
   end

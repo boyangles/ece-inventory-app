@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   
   #Makes the sessions helper available in all our controllers
   include Authenticable
+  include Renderable
 
   include SessionsHelper
   include RequestsHelper

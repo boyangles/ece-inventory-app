@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe User do
-  before { @user = FactoryGirl.build(:user) }
+  before { @user = FactoryGirl.build(:user_admin) }
 
   subject{ @user }
 
@@ -25,7 +25,7 @@ describe User do
     end
 
     it "generates another token when one has already been taken" do
-      existing_user = FactoryGirl.create(:user, auth_token: "auniquetoken123")
+      existing_user = FactoryGirl.create(:user_admin, auth_token: "auniquetoken123")
       @user.generate_authentication_token!
       expect(@user.auth_token).not_to eql existing_user.auth_token
     end
@@ -35,8 +35,8 @@ describe User do
 end
 
 RSpec.describe "sign in tests", :type => :feature do
-  it "displays the user's username after successful login" do
-    @user = FactoryGirl.create(:approved_user)
+  it "displays the students's username after successful login" do
+    @user = FactoryGirl.create(:user_student)
     visit login_path
     fill_in "Username", :with => @user.username
     fill_in "Password", :with => @user.password
@@ -50,7 +50,7 @@ RSpec.describe "sign in tests", :type => :feature do
   end
 
   it "login with admin user" do
-    @user = FactoryGirl.create(:admin)
+    @user = FactoryGirl.create(:user_admin)
     visit login_path
     fill_in "Username", with: @user.username
     fill_in "Password", with: @user.password
@@ -59,13 +59,12 @@ RSpec.describe "sign in tests", :type => :feature do
     expect(page).to have_content @user.privilege
     expect(page).to have_content "Users"
     expect(page).to have_content "Items"
-    expect(page).to have_content "Tags"
     expect(page).to have_content "Home"
     expect(page).to have_content "Account"
 
   end
 
   after :each do
-    User.delete(@user)
+    User.destroy(@user)
   end
 end

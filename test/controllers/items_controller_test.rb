@@ -5,8 +5,8 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
   #   assert true
   # end
   def setup
-    @user = users(:bernard)
-    @user2 = users(:alex)
+    @admin = users(:bernard)
+    @student1 = users(:alex)
   end
 
   test "go to home page instead of items page if not logged in" do

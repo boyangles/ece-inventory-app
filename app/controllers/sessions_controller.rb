@@ -10,7 +10,9 @@ class SessionsController < ApplicationController
                                     email: request.env['omniauth.auth']['info']['email'])
       # TODO: Hardcoded now to just approve all users through duke net ID.
       user.status = "approved"
-      user.save(:validate => false)
+      user.password = user.password_confirmation = SecureRandom.urlsafe_base64(n=12)
+
+      user.save!
       log_in(user)
       redirect_back_or user and return
     else
