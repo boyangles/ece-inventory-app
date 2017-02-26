@@ -1,15 +1,17 @@
 class Api::V1::UsersController < BaseController
   # TODO: Include actions for #create
   before_action :authenticate_with_token!
+  before_action :auth_by_approved_status!
   before_action :auth_by_manager_privilege!, only: [:index]
-  before_action :auth_by_admin_privilege!, only: [:new, :create, :destroy]
+  before_action :auth_by_admin_privilege!, only: [:create, :update_status, :destroy]
   before_action -> { auth_by_same_user_or_manager!(params[:id]) }, only: [:show]
   before_action -> { auth_by_same_user!(params[:id]) }, only: [:update_password]
+  before_action -> { auth_by_not_same_user!(params[:id]) }, only: [:update_status]
   before_action :set_user, only: [:show, :destroy]
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:update_password].each do |api_action|
+  [:update_password, :update_status].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -56,6 +58,15 @@ class Api::V1::UsersController < BaseController
     param :path, :id, :integer, :required, "User ID"
     param :form, 'user[password]', :string, :required, "Password"
     param :form, 'user[password_confirmation]', :string, :required, "Password Confirmation"
+    response :unauthorized
+    response :ok
+    response :unprocessable_entity
+  end
+
+  swagger_api :update_status do
+    summary "Updates the status of an existing user"
+    param :path, :id, :integer, :required, "User ID"
+    param_list :form, 'user[status]', :string, :required, "Approved or Disabled; must be: approved/waiting", [:waiting, :approved]
     response :unauthorized
     response :ok
     response :unprocessable_entity
@@ -128,6 +139,31 @@ class Api::V1::UsersController < BaseController
 
     if user.update(password_params)
       render json: { message: 'Password Updated!' } , status: 200
+    else
+      render json: { errors: user.errors }, status: 422
+    end
+  end
+
+  def update_status
+    status_params = user_params.slice(:status)
+
+    if status_params[:status].blank? || !User::STATUS_OPTIONS.include?(status_params[:status])
+      render json: {
+          errors: "Inputted status is not approved/waiting!"
+      }, status: 422 and return
+    end
+
+    user = User.find(params[:id])
+
+    if user.update(status_params)
+      render :json => user.instance_eval {
+          |u| {
+            :id => u.id,
+            :email => u.email,
+            :status => u.status,
+            :permission => u.privilege
+        }
+      }
     else
       render json: { errors: user.errors }, status: 422
     end

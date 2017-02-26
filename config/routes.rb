@@ -40,6 +40,11 @@ Rails.application.routes.draw do
           put :update_password
           patch :update_password
         end
+
+        member do
+          put :update_status
+          patch :update_status
+        end
       end
       resources :requests, :only => [:index, :show, :create, :update, :destroy]
       resources :items, :only => [:index, :show, :create, :update, :destroy]

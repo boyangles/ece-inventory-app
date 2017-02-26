@@ -17,5 +17,10 @@ FactoryGirl.define do
     factory :user_manager do
       privilege "manager"
     end
+
+    factory :user_admin_unapproved do
+      privilege "admin"
+      status "waiting"
+    end
   end
 end

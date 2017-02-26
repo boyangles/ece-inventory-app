@@ -31,6 +31,15 @@ describe Api::V1::UsersController do
       end
     end
 
+    context "testing status" do
+      it "unapproved user can't do anything" do
+        create_and_authenticate_user(:user_admin_unapproved)
+        get :index
+
+        expect_401_unauthorized
+      end
+    end
+
     context "when enum values (status and privilege) are incorrect" do
       before(:each) do
         @user = create_and_authenticate_user(:user_admin)
@@ -92,6 +101,15 @@ describe Api::V1::UsersController do
       end
     end
 
+    context "testing status" do
+      it "unapproved user can't do anything" do
+        @user = create_and_authenticate_user(:user_admin_unapproved)
+        get :show, id: @user.id
+
+        expect_401_unauthorized
+      end
+    end
+
     context "standard testing" do
       before(:each) do
         @user = create_and_authenticate_user(:user_admin)
@@ -128,6 +146,19 @@ describe Api::V1::UsersController do
 
       it "manager cannot create anything" do
         create_and_authenticate_user(:user_manager)
+        post :create, { user: @user_attributes }
+
+        expect_401_unauthorized
+      end
+    end
+
+    context "testing status" do
+      before(:each) do
+        @user_attributes = FactoryGirl.attributes_for :user_admin
+      end
+
+      it "unapproved user can't do anything" do
+        create_and_authenticate_user(:user_admin_unapproved)
         post :create, { user: @user_attributes }
 
         expect_401_unauthorized
@@ -211,7 +242,7 @@ describe Api::V1::UsersController do
         update_password_and_expect_unauthorized(user_other)
       end
 
-      it "managers cannot update cannot update password of others" do
+      it "managers cannot update password of others" do
         create_and_authenticate_user(:user_manager)
         user_other = FactoryGirl.create :user_student
 
@@ -241,6 +272,15 @@ describe Api::V1::UsersController do
       end
     end
 
+    context "testing status" do
+      it "unapproved user can't do anything" do
+        create_and_authenticate_user(:user_admin_unapproved)
+        user_other = FactoryGirl.create :user_manager
+
+        update_password_and_expect_unauthorized(user_other)
+      end
+    end
+
     context "testing password mismatch" do
       before(:each) do
         @user = create_and_authenticate_user(:user_admin)
@@ -261,6 +301,65 @@ describe Api::V1::UsersController do
     end
   end
 
+  describe "PUT/PATCH #update_status" do
+    context "testing privileges" do
+      it "non-users cannot update anybody's status" do
+        user = FactoryGirl.create :user_student
+
+        update_status_and_expect_unauthorized(user, 'approved')
+      end
+
+      it "students cannot update anybody's status" do
+        user = create_and_authenticate_user(:user_student)
+        user_other = FactoryGirl.create :user_manager
+
+        update_status_and_expect_unauthorized(user, 'approved')
+        update_status_and_expect_unauthorized(user_other, 'approved')
+      end
+
+      it "managers cannot update anybody's status" do
+        user = create_and_authenticate_user(:user_manager)
+        user_other = FactoryGirl.create :user_student
+
+        update_status_and_expect_unauthorized(user, 'approved')
+        update_status_and_expect_unauthorized(user_other, 'approved')
+      end
+
+      it  "admins cannot update status of self" do
+        user = create_and_authenticate_user(:user_admin)
+        update_status_and_expect_unauthorized(user, 'approved')
+      end
+
+      it "admins can update status of others" do
+        create_and_authenticate_user(:user_admin)
+        user_other = FactoryGirl.create :user_student
+
+        update_status_and_expect_ok(user_other, 'approved')
+      end
+    end
+
+    context "testing status" do
+      it "unapproved user cannot update anybody's status" do
+        user = create_and_authenticate_user(:user_admin_unapproved)
+        user_other = FactoryGirl.create :user_student
+
+        update_status_and_expect_unauthorized(user, 'approved')
+        update_status_and_expect_unauthorized(user_other, 'approved')
+      end
+    end
+
+    context "enum for status" do
+      it "incorrect status" do
+        create_and_authenticate_user(:user_admin)
+        user_other = FactoryGirl.create :user_student
+
+        update_status(user_other, 'incorrect_status')
+        user_response = expect_422_unprocessable_entity
+        expect(user_response[:errors]).to include "Inputted status is not approved/waiting!"
+      end
+    end
+  end
+
   describe "DELETE #destroy" do
     before(:each) do
       @user = create_and_authenticate_user(:user_admin)
@@ -270,8 +369,10 @@ describe Api::V1::UsersController do
     it { should respond_with 204 }
   end
 
+  ## Private methods
+
   private
-  def update_password_and_expect_unauthorized(input_user)
+  def update_password(input_user)
     patch :update_password, {
         id: input_user.id,
         user: {
@@ -279,19 +380,39 @@ describe Api::V1::UsersController do
             password_confirmation: 'new_password'
         }
     }
+  end
 
+  private
+  def update_password_and_expect_unauthorized(input_user)
+    update_password(input_user)
     expect_401_unauthorized
   end
 
+  private
   def update_password_and_expect_ok(input_user)
-    patch :update_password, {
+    update_password(input_user)
+    should respond_with 200
+  end
+
+  private
+  def update_status(input_user, input_status)
+    patch :update_status, {
         id: input_user.id,
         user: {
-            password: 'new_password',
-            password_confirmation: 'new_password'
+            status: input_status
         }
     }
+  end
 
+  private
+  def update_status_and_expect_unauthorized(input_user, input_status)
+    update_status(input_user, input_status)
+    expect_401_unauthorized
+  end
+
+  private
+  def update_status_and_expect_ok(input_user, input_status)
+    update_status(input_user, input_status)
     should respond_with 200
   end
 end
