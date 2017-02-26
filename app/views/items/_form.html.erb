@@ -38,19 +38,21 @@
       <!-- For adding tags to items -->
       <p> <strong>Tags</strong></p>
       <% if Tag.all.count > item.tags.all.count %>
-        <%= collection_select(:tag, :tag_id, Tag.all - item.tags.all, :id, :name, {:prompt => "-- select tags to add to item --"}, {:multiple=> true}) %>
-
+          <div class="form-group">
+            <label for="select" class="col-lg-2 control-label">select tags to add to item</label>
+            <select multiple data-role="tagsinput">
+              <option value="Amsterdam">Amsterdam</option>
+              <option value="Washington">Washington</option>
+              <option value="Sydney">Sydney</option>
+              <option value="Beijing">Beijing</option>
+              <option value="Cairo">Cairo</option>
+            </select>
+          </div>
       <% else %>
           <p>No more tags available</p>
       <% end %>
 
-      <!-- For removing tags from items -->
-      <p> <strong>Associated Tags</strong></p>
-      <% if item.tags.count > 0 %>
-          <%= collection_select(:tag_to_remove, :tag_id_remove, item.tags.all, :id, :name, {:prompt => "-- select tags to remove from item --"}, {:multiple=> true}) %>
-      <% else %>
-          <p>No tags associated with <%= item.unique_name %></p>
-      <% end %>
+
 
         <div class="form-group">
           <div class="col-lg-10 col-lg-offset-2">

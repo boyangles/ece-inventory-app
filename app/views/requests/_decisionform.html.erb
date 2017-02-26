@@ -7,10 +7,19 @@
       </div>
     </div>
 
-  <%= f.radio_button :status, 'approved', :checked => true %>
-  <%= label :status_approved, 'Approve' %>
-  <%= f.radio_button :status, 'denied' %>
-  <%= label :status_denied, 'Deny'%>
+    <div class="form-group">
+      <label class="col-lg-2 control-label">Decision</label>
+      <div class="col-lg-10">
+        <div class="radio">
+          <%= f.radio_button :status, 'approved', :checked => true %>
+          <%= label :status_approved, 'Approve' %>
+        </div>
+        <div class="radio">
+          <%= f.radio_button :status, 'denied' %>
+          <%= label :status_denied, 'Deny'%>
+        </div>
+      </div>
+    </div>
 
 	<% f.fields_for :request_items do |ff|  %>
 		<% ri = ff.object %>
