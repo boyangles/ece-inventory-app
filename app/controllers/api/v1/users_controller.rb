@@ -6,8 +6,8 @@ class Api::V1::UsersController < BaseController
   before_action :auth_by_admin_privilege!, only: [:create, :update_status, :update_privilege, :destroy]
   before_action -> { auth_by_same_user_or_manager!(params[:id]) }, only: [:show]
   before_action -> { auth_by_same_user!(params[:id]) }, only: [:update_password]
-  before_action -> { auth_by_not_same_user!(params[:id]) }, only: [:update_status, :update_privilege]
-  before_action :set_user, only: [:show, :destroy]
+  before_action -> { auth_by_not_same_user!(params[:id]) }, only: [:update_status, :update_privilege, :destroy]
+  before_action :set_user, only: [:show, :update_password, :update_privilege, :update_status, :destroy]
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
@@ -85,7 +85,7 @@ class Api::V1::UsersController < BaseController
     summary "Deletes a user"
     param :path, :id, :integer, :required, "id"
     response :unauthorized
-    response :not_acceptable
+    response :no_content
   end
 
   def index
@@ -107,7 +107,7 @@ class Api::V1::UsersController < BaseController
   end
 
   def show
-    render_simple_user(User.find(params[:id]), 200)
+    render_simple_user(@user, 200)
   end
 
   def create
@@ -130,12 +130,10 @@ class Api::V1::UsersController < BaseController
   def update_password
     password_params = user_params.slice(:password, :password_confirmation)
 
-    user = User.find(params[:id])
-
-    if user.update(password_params)
+    if @user.update(password_params)
       render json: { message: 'Password Updated!' } , status: 200
     else
-      render json: { errors: user.errors }, status: 422
+      render json: { errors: @user.errors }, status: 422
     end
   end
 
@@ -144,7 +142,7 @@ class Api::V1::UsersController < BaseController
     render_client_error("Inputted status is not approved/waiting!", 422) and
         return unless enum_processable?(status_params[:status], User::STATUS_OPTIONS)
 
-    update_user_and_render(User.find(params[:id]), status_params)
+    update_user_and_render(@user, status_params)
   end
 
   def update_privilege
@@ -152,13 +150,12 @@ class Api::V1::UsersController < BaseController
     render_client_error("Inputted privilege is not student/manager/admin!", 422) and
         return unless enum_processable?(privilege_params[:privilege], User::PRIVILEGE_OPTIONS)
 
-    update_user_and_render(User.find(params[:id]), privilege_params)
+    update_user_and_render(@user, privilege_params)
   end
 
   def destroy
-    user = User.find(params[:id])
-    user.destroy
-    head 204
+    @user.destroy
+    render json: { message: 'Successfully deleted!' }, status: 204
   end
 
   private

@@ -404,15 +404,49 @@ describe Api::V1::UsersController do
   end
 
   describe "DELETE #destroy" do
-    before(:each) do
-      @user = create_and_authenticate_user(:user_admin)
-      delete :destroy, { id: @user.id }
+    it "non-users cannot delete anybody" do
+      user = FactoryGirl.create :user_student
+      delete_action_and_expect_unauthorized(:destroy, user, "Not authenticated")
     end
 
-    it { should respond_with 204 }
+    it "students cannot delete anybody (themselves or others)" do
+      user = create_and_authenticate_user(:user_student)
+      user_other = FactoryGirl.create :user_manager
+
+      delete_action_and_expect_unauthorized(:destroy, user, "No sufficient privileges")
+      delete_action_and_expect_unauthorized(:destroy, user_other, "No sufficient privileges")
+    end
+
+    it "managers cannot delete anybody (themselves or others)" do
+      user = create_and_authenticate_user(:user_manager)
+      user_other = FactoryGirl.create :user_student
+
+      delete_action_and_expect_unauthorized(:destroy, user, "No sufficient privileges")
+      delete_action_and_expect_unauthorized(:destroy, user_other, "No sufficient privileges")
+    end
+
+    it "admins cannot delete themselves" do
+      user = create_and_authenticate_user(:user_admin)
+      delete_action_and_expect_unauthorized(:destroy, user, "Action cannot be done on yourself")
+    end
+
+    it "admins can delete others" do
+      create_and_authenticate_user(:user_admin)
+      user_other = FactoryGirl.create :user_manager
+
+      delete :destroy, { id: user_other.id }
+      should respond_with 204
+    end
   end
 
   ## Private methods
+
+  private
+  def delete_action_and_expect_unauthorized(action, input_obj, expected_error_msg)
+    delete action, { id: input_obj.id }
+    response = expect_401_unauthorized
+    expect(response[:errors]).to include expected_error_msg
+  end
 
   private
   def update_action(action, obj_type, input_obj, param_hash)
