@@ -42,6 +42,14 @@ class Api::V1::CustomFieldsController < BaseController
     response :unauthorized
   end
 
+  swagger_api :destroy do
+    summary "Deletes a CustomField"
+    param :path, :id, :integer, :required, "Custom Field ID"
+    response :unauthorized
+    response :no_content
+    response :not_found
+  end
+
   def index
     filter_params = params.slice(:field_name, :private_indicator, :field_type)
 
@@ -78,7 +86,8 @@ class Api::V1::CustomFieldsController < BaseController
   end
 
   def destroy
-
+    @custom_field.destroy
+    head 204
   end
 
   def update_name

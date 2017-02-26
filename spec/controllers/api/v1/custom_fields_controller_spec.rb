@@ -168,7 +168,7 @@ describe Api::V1::CustomFieldsController do
     end
 
     context "not found (404)" do
-      before(:each) do
+      it "custom field not found" do
         create_and_authenticate_user(:user_admin)
         get :show, { id: -1 }
         response = expect_404_not_found
@@ -244,7 +244,51 @@ describe Api::V1::CustomFieldsController do
 
   describe "DELETE #destroy" do
     context "privilege tests (401)" do
+      before(:each) do
+        initialize_all_fields
+      end
 
+      it "no auth_token -> no access" do
+        delete :destroy, { id: @field_public_float.id }
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'Not authenticated'
+      end
+
+      it "student auth_token -> no access" do
+        create_and_authenticate_user(:user_student)
+        delete :destroy, { id: @field_private_integer }
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'No sufficient privileges'
+      end
+
+      it "manager auth_token -> no access" do
+        create_and_authenticate_user(:user_manager)
+        delete :destroy, { id: @field_private_short_text }
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'No sufficient privileges'
+      end
+
+      it "admin auth_token -> full access" do
+        create_and_authenticate_user(:user_admin)
+        delete :destroy, { id: @field_public_long_text }
+        should respond_with 204
+      end
+
+      it "unapproved -> no access" do
+        create_and_authenticate_user(:user_admin_unapproved)
+        delete :destroy, { id: @field_public_long_text }
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'Account is not approved for this action'
+      end
+    end
+
+    context "not found (404)" do
+      it "custom field not found" do
+        create_and_authenticate_user(:user_admin)
+        delete :destroy, { id: -1 }
+        response = expect_404_not_found
+        expect(response[:errors]).to include 'Custom Field not found!'
+      end
     end
   end
 
