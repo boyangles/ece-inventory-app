@@ -4,6 +4,11 @@
     <%= render 'shared/error_messages', object: @form_obj %>
   <% end %>
 
+	<% if is_admin? %>
+		<br><%= f.label 'User to Make Request For' %></br>
+		<%= collection_select(:user, :id, User.where(:status => 1), :id, :username, {:prompt => true}, {:required => true}, {:selected => current_user}) %>
+	<% end %>
+
 	<p>
 		<b>Items Requested</b>
 

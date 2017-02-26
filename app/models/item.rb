@@ -1,4 +1,5 @@
 class Item < ApplicationRecord
+	include Loggable
 	
 	ITEM_STATUS_OPTIONS = %w(active deactive)
 	
@@ -7,11 +8,18 @@ class Item < ApplicationRecord
 		deactive: 1
 	}
 
+	enum last_action: {
+		acquired_destroyed_quantity: 0,
+		admin_corr_quantity: 1,
+		disbursed: 2
+	}
+
   validates :unique_name, presence: true, length: { maximum: 50 },
             uniqueness: { case_sensitive: false }
   validates :quantity, presence: true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   validates :description, length: { maximum: 255 }
 	validates :status, :inclusion => { :in => ITEM_STATUS_OPTIONS }
+	validates :last_action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }
 
   # Relation with Tags
   has_many :tags, -> { distinct },  :through => :item_tags
