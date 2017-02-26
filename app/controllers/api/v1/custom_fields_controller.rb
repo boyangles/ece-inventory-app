@@ -7,6 +7,12 @@ class Api::V1::CustomFieldsController < BaseController
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
+  [:update_name, :update_privacy, :update_type, :clear_field_content].each do |api_action|
+    swagger_api api_action do
+      param :header, :Authorization, :string, :required, 'Authentication token'
+    end
+  end
+
   respond_to :json
 
   swagger_controller :custom_fields, 'CustomFields'
@@ -43,10 +49,20 @@ class Api::V1::CustomFieldsController < BaseController
   end
 
   swagger_api :destroy do
-    summary "Deletes a CustomField"
+    summary "Deletes a Custom Field"
     param :path, :id, :integer, :required, "Custom Field ID"
     response :unauthorized
     response :no_content
+    response :not_found
+  end
+
+  swagger_api :update_name do
+    summary "Updates the name of a Custom Field"
+    param :path, :id, :integer, :required, "Custom Field ID"
+    param :form, 'custom_field[field_name]', :string, :required, "Updated Field Name"
+    response :unauthorized
+    response :ok
+    response :unprocessable_entity
     response :not_found
   end
 
@@ -91,7 +107,12 @@ class Api::V1::CustomFieldsController < BaseController
   end
 
   def update_name
-
+    field_name_params = custom_field_params.slice(:field_name)
+    if @custom_field.update(field_name_params)
+      render :json => @custom_field, status: 200
+    else
+      render :json => { errors: @custom_field.errors }, status: 422
+    end
   end
 
   def update_privacy
