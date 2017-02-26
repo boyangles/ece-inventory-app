@@ -39,8 +39,8 @@ RSpec.describe "User Controller Tests", :type => :feature do
 
     it "does not get user as student" do
       login(:student)
-      user = FactoryGirl.create(:student)
-      visit user_path(user)
+      @user = FactoryGirl.create(:student)
+      visit user_path(@user)
       expect(page).to have_current_path root_path
     end
   end
@@ -64,48 +64,48 @@ RSpec.describe "User Controller Tests", :type => :feature do
     describe "PATCH update" do
       it "updates an existing student priv to admin as adminUser and logs in as student user" do
         login(:admin)
-        user = FactoryGirl.create(:student)
-        visit user_path(user)
-        expect(page).to have_current_path user_path(user)
+        @user = FactoryGirl.create(:student)
+        visit user_path(@user)
+        expect(page).to have_current_path user_path(@user)
         find_link('Edit').click
-        expect(page).to have_current_path edit_user_path(user)
+        expect(page).to have_current_path edit_user_path(@user)
         select('admin', from: 'Privilege')
         find_button('Save changes').click
-        expect(page).to have_current_path user_path(user)
+        expect(page).to have_current_path user_path(@user)
         find('.dropdown-toggle').click
         find_link('Log out').click
         expect(page).to have_current_path root_path
         visit login_path
-        fill_in('Username', with: user.username)
+        fill_in('Username', with: @user.username)
         fill_in('Password', with: 'password')
         find_button('Log in').click
-        expect(page).to have_current_path user_path(user)
+        expect(page).to have_current_path user_path(@user)
         expect(page).to have_content 'admin'
       end
 
       it "cannot edit as manager" do
         login(:manager)
-        user = FactoryGirl.create(:student)
-        visit user_path(user)
+        @user = FactoryGirl.create(:student)
+        visit user_path(@user)
         expect(page).not_to have_selector(:link_or_button, 'Edit')
-        visit edit_user_path(user)
+        visit edit_user_path(@user)
         expect(page).to have_content 'Cannot edit account'
       end
 
       it "cannot edit as student" do
         login(:student)
-        user = FactoryGirl.create(:student)
-        visit user_path(user)
+        @user = FactoryGirl.create(:student)
+        visit user_path(@user)
         expect(page).to have_current_path root_path
-        visit edit_user_path(user)
+        visit edit_user_path(@user)
         expect(page).to have_current_path root_path
       end
     end
 
-    describe "DELETE destroy" do
+    describe "DELETE destroy", :skip_after do
       it "can delete users as admin" do
         login(:admin)
-        user = FactoryGirl.create(:manager)
+        @user = FactoryGirl.create(:manager)
         visit users_path
         first(:link, 'delete').click
         expect(page).to have_content 'User account deleted'
@@ -118,6 +118,15 @@ RSpec.describe "User Controller Tests", :type => :feature do
         expect(page).not_to have_selector(:link, 'delete')
       end
     end
+
+    after :each do |example|
+      unless example.metadata[:skip_after]
+        if(@user != nil)
+          User.destroy(@user)
+        end
+      end
+    end
+
   end
 
   private
