@@ -488,30 +488,6 @@ describe Api::V1::CustomFieldsController do
     end
   end
 
-  describe "PUT/PATCH clear_field_content" do
-    context "privilege tests (401)" do
-      it "no auth_token -> no access" do
-
-      end
-
-      it "student auth_token -> no access" do
-
-      end
-
-      it "manager auth_token -> no access" do
-
-      end
-
-      it "admin auth_token -> no access" do
-
-      end
-
-      it "unapproved -> no access" do
-
-      end
-    end
-  end
-
   ## Private methods
   private
   def initialize_all_fields

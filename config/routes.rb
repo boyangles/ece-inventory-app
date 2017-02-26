@@ -58,9 +58,6 @@ Rails.application.routes.draw do
 
           put :update_type
           patch :update_type
-
-          put :clear_field_content
-          patch :clear_field_content
         end
       end
 

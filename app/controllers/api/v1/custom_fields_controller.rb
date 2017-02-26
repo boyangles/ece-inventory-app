@@ -1,13 +1,13 @@
 class Api::V1::CustomFieldsController < BaseController
   before_action :authenticate_with_token!
   before_action :auth_by_approved_status!
-  before_action :auth_by_admin_privilege!, only: [:create, :update_name, :update_privacy, :update_type, :clear_field_content, :destroy]
-  before_action :render_404_if_custom_field_unknown, only: [:update_name, :update_privacy, :update_type, :destroy, :clear_field_content, :show]
-  before_action :set_custom_field, only: [:update_name, :update_privacy, :update_type, :destroy, :clear_field_content, :show]
+  before_action :auth_by_admin_privilege!, only: [:create, :update_name, :update_privacy, :update_type, :destroy]
+  before_action :render_404_if_custom_field_unknown, only: [:update_name, :update_privacy, :update_type, :destroy, :show]
+  before_action :set_custom_field, only: [:update_name, :update_privacy, :update_type, :destroy, :show]
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:update_name, :update_privacy, :update_type, :clear_field_content].each do |api_action|
+  [:update_name, :update_privacy, :update_type].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -155,10 +155,6 @@ class Api::V1::CustomFieldsController < BaseController
     else
       render :json => { errors: @custom_field.errors }, status: 422
     end
-  end
-
-  def clear_field_content
-
   end
 
   private
