@@ -8,8 +8,8 @@ class RequestsUpdateTest < ActionDispatch::IntegrationTest
     @item4 = items(:item4)
     @item5 = items(:item5)
 
-    @user = users(:bernard)
-    @user2 = users(:alex)
+    @admin = users(:bernard)
+    @student1 = users(:alex)
     @admin = users(:admin)
   end
 end

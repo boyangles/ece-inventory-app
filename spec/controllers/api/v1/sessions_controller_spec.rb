@@ -4,17 +4,17 @@ include SessionsHelper
 describe Api::V1::SessionsController do
   describe 'POST #create' do
     before(:each) do
-      @user = create_and_authenticate_user(:user_admin)
+      @admin = create_and_authenticate_user(:user_admin)
     end
 
     context 'when credentials are correct' do
       before(:each) do
-        post_credentials(@user.username, @user.password)
+        post_credentials(@admin.username, @admin.password)
       end
 
       it 'returns the user record corresponding to the given credentials' do
-        @user.reload
-        expect(json_response[:auth_token]).to eql @user.auth_token
+        @admin.reload
+        expect(json_response[:auth_token]).to eql @admin.auth_token
       end
 
       it { should respond_with 200 }
@@ -22,7 +22,7 @@ describe Api::V1::SessionsController do
 
     context 'when password credentials are incorrect' do
       before(:each) do
-        post_credentials(@user.username, "")
+        post_credentials(@admin.username, "")
       end
 
       it 'returns a json with error' do
@@ -35,10 +35,10 @@ describe Api::V1::SessionsController do
     # TODO: Skipping because user status is hardcoded in sessions controller
     context 'when user is not approved' do
       before(:each) do
-        @user[:status] = 'waiting'
-        @user.save
+        @admin[:status] = 'waiting'
+        @admin.save
 
-        post_credentials(@user.username, @user.password)
+        post_credentials(@admin.username, @admin.password)
       end
 
       xit 'returns a json with error indicating status' do

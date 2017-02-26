@@ -107,7 +107,7 @@ describe Api::V1::LogsController do
 
   private
   def log_attribute_creation
-    @sample_user = FactoryGirl.create :user
+    @sample_user = FactoryGirl.create :user_admin
     @sample_item = FactoryGirl.create :item
 
     @log_attributes = FactoryGirl.attributes_for :log
