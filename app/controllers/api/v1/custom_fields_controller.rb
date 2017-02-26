@@ -66,6 +66,16 @@ class Api::V1::CustomFieldsController < BaseController
     response :not_found
   end
 
+  swagger_api :update_privacy do
+    summary  "Updates the privacy setting of a Custom Field"
+    param :path, :id, :integer, :required, "Custom Field ID"
+    param :form, 'custom_field[private_indicator]', :boolean, :required, "Updated is Private?"
+    response :unauthorized
+    response :ok
+    response :unprocessable_entity
+    response :not_found
+  end
+
   def index
     filter_params = params.slice(:field_name, :private_indicator, :field_type)
 
@@ -116,7 +126,12 @@ class Api::V1::CustomFieldsController < BaseController
   end
 
   def update_privacy
-
+    field_name_params = custom_field_params.slice(:private_indicator)
+    if @custom_field.update(field_name_params)
+      render :json => @custom_field, status: 200
+    else
+      render :json => { errors: @custom_field.errors }, status: 422
+    end
   end
 
   def update_type
