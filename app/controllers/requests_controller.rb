@@ -50,6 +50,14 @@ class RequestsController < ApplicationController
       else
         reject_to_edit(@request, error_msg)
       end
+		elsif @request.has_status_change_to_outstanding?(request_params)
+			items_valid, error_msg = @request.are_items_valid?
+
+			if items_valid
+				update_to_index(@request, request_params)
+			else
+				reject_to_edit(@request, error_msg)
+			end
     else
       update_to_index(@request, request_params)
     end

@@ -1,0 +1,13 @@
+<%= form_for(item) do |f| %>
+
+	<% if !Item.exists?(item.id) || is_admin? %>
+		<div class="form-group">
+			<%= f.label :quantity, "Quantity", class: "col-md-4 control-label" %>
+      <div class="col-md-8">
+      <%= f.text_field :quantity, class: "form-control",:placeholder=>"0" %>
+      </div>
+    </div>
+  <% end %>
+
+  <%= f.submit %>
+<% end %>

@@ -52,15 +52,29 @@ class Request < ApplicationRecord
     self.request_items.each do |sub_request|
       @item = Item.find(sub_request.item_id)
 
-      if !@item
-        return false, "Item doesn't exist anymore!"
+      if @item.deactive?
+        return false, @item.unique_name  + " doesn't exist anymore! Cannot be disbursed."
       elsif Request.component_oversubscribed?(@item, self, sub_request)
         return false, "Item named #{@item.unique_name} is oversubscribed. Requested #{sub_request.quantity}, but only has #{@item.quantity}."
-      end
+	    end
     end
 
     return true, ""
   end
+
+	def are_items_valid?
+    self.request_items.each do |sub_request|
+      @item = Item.find(sub_request.item_id)
+
+      if @item.deactive?
+        return false, @item.unique_name  + " doesn't exist anymore! Please remove from cart."
+	    end
+    end
+
+    return true, ""
+  end
+
+
 
   private
 

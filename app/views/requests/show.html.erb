@@ -17,7 +17,7 @@
   <% end %>
   <% @request.request_items.each do |req_item| %>
       <% item = Item.find(req_item.item_id) %>
-      <p><%= item.unique_name + ': '%>
+      <p><%= link_to item.unique_name, item_path(item.id) %>: 
 			<%= req_item.quantity %></p>
   <% end %>
 </p>
@@ -64,6 +64,7 @@
 
 <div><% if @request.outstanding? %>
 	<%= render 'cancelorderform', request: @request %>
+ 		<%= link_to 'Edit', edit_request_path(@request) %> |
 <% end %></div>
 
 <div><% if @request.cancelled? %>
