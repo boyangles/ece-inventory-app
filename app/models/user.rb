@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  include Filterable
 
   PRIVILEGE_OPTIONS = %w(student manager admin)
   STATUS_OPTIONS = %w(deactivated approved)
@@ -23,6 +24,12 @@ class User < ApplicationRecord
     deactivated: 0,
     approved: 1
   }, _prefix: :status
+
+  # Filterable params:
+  scope :email,     ->    (email)     { where email: email }
+  scope :status,    ->    (status)    { where status: status }
+  scope :privilege, ->    (privilege) { where privilege: privilege }
+
 
   before_validation {
     # Only downcase if the fields are there
