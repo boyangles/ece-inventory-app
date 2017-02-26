@@ -167,7 +167,11 @@ RSpec.describe "Item Controller Tests", :type => :feature do
 
   def verify_new_item_form_fields
     expect(page).to have_current_path new_item_path
-    verify_item_parameters
+    expect(page).to have_content 'Name'
+    expect(page).to have_content 'Quantity'
+    expect(page).to have_content 'Description'
+    expect(page).to have_content 'Model Number'
+    expect(page).to have_content 'Tags'
     expect(page).to have_selector(:link_or_button, 'Submit')
   end
 

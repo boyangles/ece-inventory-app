@@ -5,7 +5,7 @@
 </div>
 
 <% if is_manager_or_admin? %>
-    <%= link_to "New Item", new_item_url, :class => "btn btn-primary" %>
+    <%= link_to "Create New Item", new_item_url, :class => "btn btn-primary btn-lg btn-block" %>
 <% end %>
 
 <div class="search">
@@ -24,8 +24,8 @@
   	<div class="tags">
       <% @tags.each do |tag| %>
           <label class="checkbox-inline">
-    	      <%= check_box_tag 'required_tag_names[]', 
-      	      tag.name, 
+    	      <%= check_box_tag 'required_tag_names[]',
+      	      tag.name,
               (@required_tag_filters.include? tag.name) %><br>
             <%= tag.name %>
           </label>
@@ -36,8 +36,8 @@
 		<div class="tags">
       <% @tags.each do |tag| %>
         <label class="checkbox-inline">
-    	    <%= check_box_tag 'excluded_tag_names[]', 
-      	  tag.name, 
+    	    <%= check_box_tag 'excluded_tag_names[]',
+      	  tag.name,
           (@excluded_tag_filters.include? tag.name) %><br>
     	  <%= tag.name %>
         </label>
