@@ -3,15 +3,15 @@ class Api::V1::UsersController < BaseController
   before_action :authenticate_with_token!
   before_action :auth_by_approved_status!
   before_action :auth_by_manager_privilege!, only: [:index]
-  before_action :auth_by_admin_privilege!, only: [:create, :update_status, :destroy]
+  before_action :auth_by_admin_privilege!, only: [:create, :update_status, :update_privilege, :destroy]
   before_action -> { auth_by_same_user_or_manager!(params[:id]) }, only: [:show]
   before_action -> { auth_by_same_user!(params[:id]) }, only: [:update_password]
-  before_action -> { auth_by_not_same_user!(params[:id]) }, only: [:update_status]
+  before_action -> { auth_by_not_same_user!(params[:id]) }, only: [:update_status, :update_privilege]
   before_action :set_user, only: [:show, :destroy]
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:update_password, :update_status].each do |api_action|
+  [:update_password, :update_status, :update_privilege].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -72,6 +72,15 @@ class Api::V1::UsersController < BaseController
     response :unprocessable_entity
   end
 
+  swagger_api :update_privilege do
+    summary "Updates the privilege of an existing user"
+    param :path, :id, :integer, :required, "User ID"
+    param_list :form, 'user[privilege]', :string, :required, "Privilege; must be: student/manager/admin", [ "student", "manager", "admin" ]
+    response :unauthorized
+    response :ok
+    response :unprocessable_entity
+  end
+
   swagger_api :destroy do
     summary "Deletes a user"
     param :path, :id, :integer, :required, "id"
@@ -82,23 +91,12 @@ class Api::V1::UsersController < BaseController
   def index
     filter_params = params.slice(:email, :status, :privilege)
 
-    if (!params[:status].blank? && !User::STATUS_OPTIONS.include?(filter_params[:status])) ||
-        (!params[:privilege].blank? && !User::PRIVILEGE_OPTIONS.include?(filter_params[:privilege]))
-      render json: { errors: "Filter params are not correct as specified!" }, status: 422
-    else
-      render :json => User.filter(filter_params).map {
-          |user| {
-            :id => user.id,
-            :email => user.email,
-            :status => user.status,
-            :permission => user.privilege
-          }
-      }
-    end
-  end
+    render_client_error("Inputted status is not approved/waiting!", 422) and
+        return unless enum_processable?(filter_params[:status], User::STATUS_OPTIONS)
+    render_client_error("Inputted privilege is not student/manager/admin!", 422) and
+        return unless enum_processable?(filter_params[:privilege], User::PRIVILEGE_OPTIONS)
 
-  def show
-    render :json => User.find(params[:id]).instance_eval {
+    render :json => User.filter(filter_params).map {
         |user| {
           :id => user.id,
           :email => user.email,
@@ -108,27 +106,24 @@ class Api::V1::UsersController < BaseController
     }
   end
 
+  def show
+    render_simple_user(User.find(params[:id]), 200)
+  end
+
   def create
-    if (!user_params[:status].blank? && !User::STATUS_OPTIONS.include?(user_params[:status])) ||
-        (!user_params[:privilege].blank? && !User::PRIVILEGE_OPTIONS.include?(user_params[:privilege]))
-      render json: { errors: "Inputted params (Status or Privilege) are not as specified!" }, status: 422 and return
-    end
+    render_client_error("Inputted status is not approved/waiting!", 422) and
+        return unless enum_processable?(user_params[:status], User::STATUS_OPTIONS)
+    render_client_error("Inputted privilege is not student/manager/admin!", 422) and
+        return unless enum_processable?(user_params[:privilege], User::PRIVILEGE_OPTIONS)
 
     user = User.new(user_params)
     user[:username] = (user_params[:username].blank?) ? user_params[:email] : user_params[:username]
     user[:status] = (user_params[:status].blank?) ? 'approved' : user_params[:status]
 
     if user.save
-      render :json => user.instance_eval {
-          |u| {
-            :id => u.id,
-            :email => u.email,
-            :status => u.status,
-            :permission => u.privilege
-        }
-      }, status: 201
+      render_simple_user(user, 201)
     else
-      render json: { errors: user.errors }, status: 422
+      render_client_error(user.errors, 422)
     end
   end
 
@@ -146,27 +141,18 @@ class Api::V1::UsersController < BaseController
 
   def update_status
     status_params = user_params.slice(:status)
+    render_client_error("Inputted status is not approved/waiting!", 422) and
+        return unless enum_processable?(status_params[:status], User::STATUS_OPTIONS)
 
-    if status_params[:status].blank? || !User::STATUS_OPTIONS.include?(status_params[:status])
-      render json: {
-          errors: "Inputted status is not approved/waiting!"
-      }, status: 422 and return
-    end
+    update_user_and_render(User.find(params[:id]), status_params)
+  end
 
-    user = User.find(params[:id])
+  def update_privilege
+    privilege_params = user_params.slice(:privilege)
+    render_client_error("Inputted privilege is not student/manager/admin!", 422) and
+        return unless enum_processable?(privilege_params[:privilege], User::PRIVILEGE_OPTIONS)
 
-    if user.update(status_params)
-      render :json => user.instance_eval {
-          |u| {
-            :id => u.id,
-            :email => u.email,
-            :status => u.status,
-            :permission => u.privilege
-        }
-      }
-    else
-      render json: { errors: user.errors }, status: 422
-    end
+    update_user_and_render(User.find(params[:id]), privilege_params)
   end
 
   def destroy
@@ -180,7 +166,41 @@ class Api::V1::UsersController < BaseController
     @user = User.find(params[:id])
   end
 
+  private
   def user_params
     params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :privilege, :status)
+  end
+
+  private
+  def render_simple_user(user, status_number)
+    render :json => user.instance_eval {
+        |u| {
+          :id => u.id,
+          :email => u.email,
+          :status => u.status,
+          :permission => u.privilege
+      }
+    }, status: status_number
+  end
+
+  private
+  def update_user_and_render(user, update_params)
+    if user.update(update_params)
+      render_simple_user(user, 200)
+    else
+      render_client_error(user.errors, 422)
+    end
+  end
+
+  private
+  def render_client_error(error_hash, status_number)
+    render json: {
+        errors: error_hash
+    }, status: status_number
+  end
+
+  private
+  def enum_processable?(enum_value, possible_enums)
+    return enum_value.blank? || possible_enums.include?(enum_value)
   end
 end

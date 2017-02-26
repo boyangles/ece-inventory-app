@@ -39,11 +39,12 @@ Rails.application.routes.draw do
         member do
           put :update_password
           patch :update_password
-        end
 
-        member do
           put :update_status
           patch :update_status
+
+          put :update_privilege
+          patch :update_privilege
         end
       end
       resources :requests, :only => [:index, :show, :create, :update, :destroy]

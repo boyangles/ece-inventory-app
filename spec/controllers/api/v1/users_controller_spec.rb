@@ -51,7 +51,7 @@ describe Api::V1::UsersController do
         get :index, @user_attributes
 
         user_response = expect_422_unprocessable_entity
-        expect(user_response[:errors]).to include "Filter params are not correct as specified!"
+        expect(user_response[:errors]).to include "Inputted status is not approved/waiting!"
       end
 
       it "Privilege is incorrect" do
@@ -59,7 +59,7 @@ describe Api::V1::UsersController do
         get :index, @user_attributes
 
         user_response = expect_422_unprocessable_entity
-        expect(user_response[:errors]).to include "Filter params are not correct as specified!"
+        expect(user_response[:errors]).to include "Inputted privilege is not student/manager/admin!"
       end
     end
   end
@@ -176,7 +176,7 @@ describe Api::V1::UsersController do
         post :create, { user: @user_attributes }
 
         user_response = expect_422_unprocessable_entity
-        expect(user_response[:errors]).to include "Inputted params (Status or Privilege) are not as specified!"
+        expect(user_response[:errors]).to include "Inputted status is not approved/waiting!"
       end
 
       it "Privilege is incorrect" do
@@ -184,7 +184,7 @@ describe Api::V1::UsersController do
         post :create, { user: @user_attributes }
 
         user_response = expect_422_unprocessable_entity
-        expect(user_response[:errors]).to include "Inputted params (Status or Privilege) are not as specified!"
+        expect(user_response[:errors]).to include "Inputted privilege is not student/manager/admin!"
       end
     end
 
@@ -232,52 +232,75 @@ describe Api::V1::UsersController do
     context "testing privileges" do
       it "non-users cannot update" do
         user = FactoryGirl.create :user_student
-        update_password_and_expect_unauthorized(user)
+        update_action_and_expect_unauthorized(:update_password, :user, user, {
+            password: 'password',
+            password_confirmation: 'password'
+        })
       end
 
       it "students cannot update password of others" do
         create_and_authenticate_user(:user_student)
         user_other = FactoryGirl.create :user_manager
 
-        update_password_and_expect_unauthorized(user_other)
+        update_action_and_expect_unauthorized(:update_password, :user, user_other, {
+            password: 'password',
+            password_confirmation: 'password'
+        })
       end
 
       it "managers cannot update password of others" do
         create_and_authenticate_user(:user_manager)
         user_other = FactoryGirl.create :user_student
 
-        update_password_and_expect_unauthorized(user_other)
+        update_action_and_expect_unauthorized(:update_password, :user, user_other, {
+            password: 'password',
+            password_confirmation: 'password'
+        })
       end
 
       it "admins cannot update password of others" do
         create_and_authenticate_user(:user_admin)
         user_other = FactoryGirl.create :user_student
 
-        update_password_and_expect_unauthorized(user_other)
+        update_action_and_expect_unauthorized(:update_password, :user, user_other, {
+            password: 'password',
+            password_confirmation: 'password'
+        })
       end
 
       it "students can update password of self" do
         user = create_and_authenticate_user(:user_student)
-        update_password_and_expect_ok(user)
+        update_action_and_expect_ok(:update_password, :user, user, {
+            password: 'password',
+            password_confirmation: 'password'
+        })
       end
 
       it "managers can update password of self" do
         user = create_and_authenticate_user(:user_manager)
-        update_password_and_expect_ok(user)
+        update_action_and_expect_ok(:update_password, :user, user, {
+            password: 'password',
+            password_confirmation: 'password'
+        })
       end
 
       it "admins can update password of self" do
         user = create_and_authenticate_user(:user_admin)
-        update_password_and_expect_ok(user)
+        update_action_and_expect_ok(:update_password, :user, user, {
+            password: 'password',
+            password_confirmation: 'password'
+        })
       end
     end
 
     context "testing status" do
       it "unapproved user can't do anything" do
-        create_and_authenticate_user(:user_admin_unapproved)
-        user_other = FactoryGirl.create :user_manager
+        user = create_and_authenticate_user(:user_admin_unapproved)
 
-        update_password_and_expect_unauthorized(user_other)
+        update_action_and_expect_unauthorized(:update_password, :user, user, {
+            password: 'password',
+            password_confirmation: 'password'
+        })
       end
     end
 
@@ -301,61 +324,81 @@ describe Api::V1::UsersController do
     end
   end
 
-  describe "PUT/PATCH #update_status" do
+  describe "PUT/PATCH #update_status and #update_privilege" do
     context "testing privileges" do
-      it "non-users cannot update anybody's status" do
+      it "non-users cannot update anybody's status or privilege" do
         user = FactoryGirl.create :user_student
 
-        update_status_and_expect_unauthorized(user, 'approved')
+        update_action_and_expect_unauthorized(:update_status, :user, user, { status: 'approved' })
+        update_action_and_expect_unauthorized(:update_privilege, :user, user, { privilege: 'admin' })
       end
 
-      it "students cannot update anybody's status" do
+      it "students cannot update anybody's status or privilege" do
         user = create_and_authenticate_user(:user_student)
         user_other = FactoryGirl.create :user_manager
 
-        update_status_and_expect_unauthorized(user, 'approved')
-        update_status_and_expect_unauthorized(user_other, 'approved')
+        update_action_and_expect_unauthorized(:update_status, :user, user, { status: 'approved' })
+        update_action_and_expect_unauthorized(:update_status, :user, user_other, { status: 'approved' })
+
+        update_action_and_expect_unauthorized(:update_privilege, :user, user, { privilege: 'admin' })
+        update_action_and_expect_unauthorized(:update_privilege, :user, user_other, { privilege: 'admin' })
       end
 
-      it "managers cannot update anybody's status" do
+      it "managers cannot update anybody's status or privilege" do
         user = create_and_authenticate_user(:user_manager)
         user_other = FactoryGirl.create :user_student
 
-        update_status_and_expect_unauthorized(user, 'approved')
-        update_status_and_expect_unauthorized(user_other, 'approved')
+        update_action_and_expect_unauthorized(:update_status, :user, user, { status: 'approved' })
+        update_action_and_expect_unauthorized(:update_status, :user, user_other, { status: 'approved' })
+
+        update_action_and_expect_unauthorized(:update_privilege, :user, user, { privilege: 'admin' })
+        update_action_and_expect_unauthorized(:update_privilege, :user, user_other, { privilege: 'admin' })
       end
 
-      it  "admins cannot update status of self" do
+      it  "admins cannot update status or privilege of self" do
         user = create_and_authenticate_user(:user_admin)
-        update_status_and_expect_unauthorized(user, 'approved')
+        update_action_and_expect_unauthorized(:update_status, :user, user, { status: 'approved' })
+        update_action_and_expect_unauthorized(:update_privilege, :user, user, { privilege: 'admin' })
       end
 
-      it "admins can update status of others" do
+      it "admins can update status or privilege of others" do
         create_and_authenticate_user(:user_admin)
         user_other = FactoryGirl.create :user_student
 
-        update_status_and_expect_ok(user_other, 'approved')
+        update_action_and_expect_ok(:update_status, :user, user_other, { status: 'approved' })
+        update_action_and_expect_ok(:update_privilege, :user, user_other, { privilege: 'admin' })
       end
     end
 
     context "testing status" do
-      it "unapproved user cannot update anybody's status" do
+      it "unapproved user cannot update anybody's status or privilege" do
         user = create_and_authenticate_user(:user_admin_unapproved)
         user_other = FactoryGirl.create :user_student
 
-        update_status_and_expect_unauthorized(user, 'approved')
-        update_status_and_expect_unauthorized(user_other, 'approved')
+        update_action_and_expect_unauthorized(:update_status, :user, user, { status: 'approved' })
+        update_action_and_expect_unauthorized(:update_status, :user, user_other, { status: 'approved' })
+
+        update_action_and_expect_unauthorized(:update_privilege, :user, user, { privilege: 'admin' })
+        update_action_and_expect_unauthorized(:update_privilege, :user, user_other, { privilege: 'admin' })
       end
     end
 
-    context "enum for status" do
-      it "incorrect status" do
+    context "enum for status and privilges" do
+      before(:each) do
         create_and_authenticate_user(:user_admin)
-        user_other = FactoryGirl.create :user_student
+        @user_other = FactoryGirl.create :user_student
+      end
 
-        update_status(user_other, 'incorrect_status')
-        user_response = expect_422_unprocessable_entity
-        expect(user_response[:errors]).to include "Inputted status is not approved/waiting!"
+      it "incorrect status" do
+        update_action(:update_status, :user, @user_other, { status: 'incorrect_status' })
+        user_response_status = expect_422_unprocessable_entity
+        expect(user_response_status[:errors]).to include "Inputted status is not approved/waiting!"
+      end
+
+      it "incorrect privilege" do
+        update_action(:update_privilege, :user, @user_other, { privilege: 'incorrect_privilege' })
+        user_response_privilege = expect_422_unprocessable_entity
+        expect(user_response_privilege[:errors]).to include "Inputted privilege is not student/manager/admin!"
       end
     end
   end
@@ -372,47 +415,22 @@ describe Api::V1::UsersController do
   ## Private methods
 
   private
-  def update_password(input_user)
-    patch :update_password, {
-        id: input_user.id,
-        user: {
-            password: 'new_password',
-            password_confirmation: 'new_password'
-        }
+  def update_action(action, obj_type, input_obj, param_hash)
+    patch action, {
+        id: input_obj.id,
+        obj_type => param_hash
     }
   end
 
   private
-  def update_password_and_expect_unauthorized(input_user)
-    update_password(input_user)
+  def update_action_and_expect_unauthorized(action, obj_type, input_obj, param_hash)
+    update_action(action, obj_type, input_obj, param_hash)
     expect_401_unauthorized
   end
 
   private
-  def update_password_and_expect_ok(input_user)
-    update_password(input_user)
-    should respond_with 200
-  end
-
-  private
-  def update_status(input_user, input_status)
-    patch :update_status, {
-        id: input_user.id,
-        user: {
-            status: input_status
-        }
-    }
-  end
-
-  private
-  def update_status_and_expect_unauthorized(input_user, input_status)
-    update_status(input_user, input_status)
-    expect_401_unauthorized
-  end
-
-  private
-  def update_status_and_expect_ok(input_user, input_status)
-    update_status(input_user, input_status)
+  def update_action_and_expect_ok(action, obj_type, input_obj, param_hash)
+    update_action(action, obj_type, input_obj, param_hash)
     should respond_with 200
   end
 end
