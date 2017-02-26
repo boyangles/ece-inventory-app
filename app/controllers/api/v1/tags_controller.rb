@@ -30,7 +30,7 @@ class Api::V1::TagsController < BaseController
     summary "Creates a new tag"
     param :form, 'tag[name]', :string, :required, "Name"
     response :unauthorized
-    response :ok
+    response :created
     response :unprocessable_entity
   end
 
@@ -47,7 +47,7 @@ class Api::V1::TagsController < BaseController
     summary "Deletes a tag"
     param :path, :id, :integer, :required, "id"
     response :unauthorized
-    response :not_acceptable
+    response :no_content
     response :not_found
   end
 
@@ -81,8 +81,7 @@ class Api::V1::TagsController < BaseController
   end
 
   def destroy
-    tag = Tag.find(params[:id])
-    tag.destroy
+    @tag.destroy
     head 204
   end
 

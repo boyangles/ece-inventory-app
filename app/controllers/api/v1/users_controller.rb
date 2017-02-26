@@ -160,7 +160,7 @@ class Api::V1::UsersController < BaseController
 
   def destroy
     @user.destroy
-    render json: { message: 'Successfully deleted!' }, status: 204
+    head 204
   end
 
   private

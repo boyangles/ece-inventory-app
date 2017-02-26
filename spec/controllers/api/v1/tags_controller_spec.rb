@@ -156,12 +156,28 @@ describe Api::V1::TagsController do
   end
 
   describe "DELETE #destroy" do
-    before(:each) do
+    it "insufficient privileges" do
+      tag = FactoryGirl.create :tag
+      delete :destroy, { id: tag.id }
+
+      tag_response = expect_401_unauthorized
+      expect(tag_response[:errors]).to include "Not authenticated"
+    end
+
+    it "tag not found" do
+      create_and_authenticate_user(:user_admin)
+      delete :destroy, { id: -1 }
+
+      tag_response = expect_404_not_found
+      expect(tag_response[:errors]).to include "Tag not found!"
+    end
+
+    it "normal deletion" do
       create_and_authenticate_user(:user_admin)
       @tag = FactoryGirl.create :tag
       delete :destroy, {id: @tag.id}
-    end
 
-    it { should respond_with 204 }
+      should respond_with 204
+    end
   end
 end
