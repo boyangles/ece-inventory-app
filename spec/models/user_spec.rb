@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe User do
-  before { @user = FactoryGirl.build(:admin) }
+  before { @user = FactoryGirl.build(:user_admin) }
 
   subject{ @user }
 
@@ -25,7 +25,7 @@ describe User do
     end
 
     it "generates another token when one has already been taken" do
-      existing_user = FactoryGirl.create(:admin, auth_token: "auniquetoken123")
+      existing_user = FactoryGirl.create(:user_admin, auth_token: "auniquetoken123")
       @user.generate_authentication_token!
       expect(@user.auth_token).not_to eql existing_user.auth_token
     end
@@ -36,7 +36,7 @@ end
 
 RSpec.describe "sign in tests", :type => :feature do
   it "displays the students's username after successful login" do
-    @user = FactoryGirl.create(:student)
+    @user = FactoryGirl.create(:user_student)
     visit login_path
     fill_in "Username", :with => @user.username
     fill_in "Password", :with => @user.password
@@ -50,7 +50,7 @@ RSpec.describe "sign in tests", :type => :feature do
   end
 
   it "login with admin user" do
-    @user = FactoryGirl.create(:admin)
+    @user = FactoryGirl.create(:user_admin)
     visit login_path
     fill_in "Username", with: @user.username
     fill_in "Password", with: @user.password

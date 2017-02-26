@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 def create_and_authenticate_admin_user
-  @admin = FactoryGirl.create :admin
+  @admin = FactoryGirl.create :user_admin
   api_authorization_header @admin[:auth_token]
 end
 

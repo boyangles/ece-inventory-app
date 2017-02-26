@@ -10,7 +10,7 @@ describe Authenticable do
 
   describe "#current_user_by_auth" do
     before do
-      @admin = FactoryGirl.create :admin
+      @admin = FactoryGirl.create :user_admin
       request.headers['Authorization'] = @admin.auth_token
       authentication.stub(:request).and_return(request)
     end
@@ -22,7 +22,7 @@ describe Authenticable do
 
   describe "#authenticate_with_token" do
     before do
-      @admin = FactoryGirl.create :admin
+      @admin = FactoryGirl.create :user_admin
       authentication.stub(:current_user_by_auth).and_return(nil)
       response.stub(:response_code).and_return(401)
       response.stub(:body).and_return({'errors' => 'Not authenticated'}.to_json)
@@ -39,7 +39,7 @@ describe Authenticable do
   describe "#user_signed_in?" do
     context "when there is a user on 'session'" do
       before do
-        @admin = FactoryGirl.create :admin
+        @admin = FactoryGirl.create :user_admin
         authentication.stub(:current_user_by_auth).and_return(@admin)
       end
 
@@ -48,7 +48,7 @@ describe Authenticable do
 
     context "when there is no user on 'session'" do
       before do
-        @admin = FactoryGirl.create :admin
+        @admin = FactoryGirl.create :user_admin
         authentication.stub(:current_user_by_auth).and_return(nil)
       end
 

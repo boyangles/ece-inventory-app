@@ -1,28 +1,26 @@
 FactoryGirl.define do
-  factory :admin, class: User do
+  factory :user do
     username { FFaker::Name.name }
-    email { FFaker::Internet.email }
+    email { FFaker::Internet.email.downcase }
     password "password"
     password_confirmation "password"
     status "approved"
-    privilege "admin"
-  end
 
-  factory :manager, class: User do
-    username { FFaker::Name.name }
-    email { FFaker::Internet.email }
-    password "password"
-    password_confirmation "password"
-    status "approved"
-    privilege "manager"
-  end
+    factory :user_admin do
+      privilege "admin"
+    end
 
-  factory :student, class: User do
-    username { FFaker::Name.name }
-    email { FFaker::Internet.email }
-    password "password"
-    password_confirmation "password"
-    status "approved"
-    privilege "student"
+    factory :user_student do
+      privilege "student"
+    end
+
+    factory :user_manager do
+      privilege "manager"
+    end
+
+    factory :user_admin_unapproved do
+      privilege "admin"
+      status "waiting"
+    end
   end
 end

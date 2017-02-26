@@ -3,7 +3,7 @@ require 'rails_helper'
 describe Api::V1::TagsController do
   describe "GET #show" do
     before(:each) do
-      create_and_authenticate_admin_user
+      create_and_authenticate_user(:user_admin)
       @tag = FactoryGirl.create :tag
       get :show, id: @tag.id
     end
@@ -20,7 +20,7 @@ describe Api::V1::TagsController do
     # Successful Create
     context "when create succesfully" do
       before(:each) do
-        create_and_authenticate_admin_user
+        create_and_authenticate_user(:user_admin)
         @tag_attributes = FactoryGirl.attributes_for :tag
         post :create, @tag_attributes
       end
@@ -36,7 +36,7 @@ describe Api::V1::TagsController do
     # Unsuccessful Create
     context "when unsuccesful creation" do
       before(:each) do
-        create_and_authenticate_admin_user
+        create_and_authenticate_user(:user_admin)
         @tag1 = FactoryGirl.create :tag
         @tag_attributes = FactoryGirl.attributes_for :tag
 
@@ -57,7 +57,7 @@ describe Api::V1::TagsController do
     # Successful Update
     context "when successfully update" do
       before(:each) do
-        create_and_authenticate_admin_user
+        create_and_authenticate_user(:user_admin)
         @tag = FactoryGirl.create :tag
         patch :update, { id: @tag.id,
                          name: @tag.name }
@@ -74,7 +74,7 @@ describe Api::V1::TagsController do
     # Unsuccessful Update
     context "when unsuccessful in updating" do
       before(:each) do
-        create_and_authenticate_admin_user
+        create_and_authenticate_user(:user_admin)
         @tag1 = FactoryGirl.create :tag
         @tag2 = FactoryGirl.create :tag
 
@@ -93,17 +93,11 @@ describe Api::V1::TagsController do
 
   describe "DELETE #destroy" do
     before(:each) do
-      create_and_authenticate_admin_user
+      create_and_authenticate_user(:user_admin)
       @tag = FactoryGirl.create :tag
       delete :destroy, {id: @tag.id }
     end
 
     it { should respond_with 204 }
-  end
-
-  private
-  def create_and_authenticate_admin_user
-    @admin = FactoryGirl.create :admin
-    api_authorization_header @admin[:auth_token]
   end
 end

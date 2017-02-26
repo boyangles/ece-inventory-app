@@ -13,6 +13,13 @@ module Authenticable
                   status: :unauthorized unless user_signed_in?
   end
 
+  def auth_by_approved_status!
+    curr_user = current_user_by_auth
+
+    render json: { errors: 'Account is not approved for this action' },
+           status: :unauthorized unless curr_user && curr_user.status_approved?
+  end
+
   def auth_by_admin_privilege!
     render json: { errors: 'No sufficient privileges' },
                   status: :unauthorized unless current_user_by_auth.privilege_admin?
@@ -29,7 +36,26 @@ module Authenticable
 
     render json: { errors: 'No sufficient privileges' },
                   status: :unauthorized unless
-        curr_user.privilege_admin? || curr_user.privilege_manager? || curr_user.id == user_to_show.id
+        curr_user &&
+            (curr_user.privilege_admin? ||
+                curr_user.privilege_manager? ||
+                curr_user.id == user_to_show.id)
+  end
+
+  def auth_by_same_user!(user_id)
+    user = User.find(user_id)
+    curr_user = current_user_by_auth
+
+    render json: { errors: 'No sufficient privileges' },
+           status: :unauthorized unless curr_user && curr_user.id == user.id
+  end
+
+  def auth_by_not_same_user!(user_id)
+    user = User.find(user_id)
+    curr_user = current_user_by_auth
+
+    render json: { errors: 'Action cannot be done on yourself' },
+           status: :unauthorized unless curr_user && curr_user.id != user.id
   end
 
   def auth_by_check_requests_corresponds_to_current_user!

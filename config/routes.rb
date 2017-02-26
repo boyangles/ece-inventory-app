@@ -35,7 +35,18 @@ Rails.application.routes.draw do
     scope module: :v1,
           constraints: ApiConstraints.new(version: 1, default: true) do
       # List of resources
-      resources :users, :only => [:index, :show, :create, :update, :destroy]
+      resources :users, :only => [:index, :show, :create, :destroy] do
+        member do
+          put :update_password
+          patch :update_password
+
+          put :update_status
+          patch :update_status
+
+          put :update_privilege
+          patch :update_privilege
+        end
+      end
       resources :requests, :only => [:index, :show, :create, :update, :destroy]
       resources :items, :only => [:index, :show, :create, :update, :destroy]
       resources :tags, :only => [:index, :show, :create, :update, :destroy]

@@ -4,51 +4,51 @@ RSpec.describe "Item Controller Tests", :type => :feature do
 
   describe "GET index" do
     it "gets all items as admin and checks New Item option is listed" do
-      login(:admin)
+      login(:user_admin)
       check_items_index('admin')
     end
 
     it "gets all items as manager" do
-      login(:manager)
+      login(:user_manager)
       check_items_index('manager')
     end
 
     it "gets all items as student" do
-      login(:student)
+      login(:user_student)
       check_items_index('student')
     end
   end
 
   describe "GET show" do
     it "gets a specific item and displays info as admin" do
-      login(:admin)
+      login(:user_admin)
       navigate_to_new_item
     end
 
     it "gets a specific item and displays info as manager" do
-      login(:manager)
+      login(:user_manager)
       navigate_to_new_item
     end
 
     it "gets a specific item and displays info as student" do
-      login(:student)
+      login(:user_student)
       navigate_to_new_item
     end
   end
 
   describe "POST create" do
     it "can create an item as an admin" do
-      login(:admin)
+      login(:user_admin)
       create_new_item
     end
 
     it "can create an item as manager" do
-      login(:manager)
+      login(:user_manager)
       create_new_item
     end
 
     it "cannot create an item as student" do
-      login(:student)
+      login(:user_student)
       visit items_path
       expect(page).not_to have_selector(:link_or_button, 'New Item')
       visit new_item_path
@@ -60,7 +60,7 @@ RSpec.describe "Item Controller Tests", :type => :feature do
 
   describe "PATCH update" do
     it "can update an item as admin" do
-      login(:admin)
+      login(:user_admin)
       navigate_to_new_item
       find_link('Edit item').click
       verify_item_parameters
@@ -76,7 +76,7 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     end
 
     it "can update item except quantity as manager" do
-      login(:manager)
+      login(:user_manager)
       navigate_to_new_item
       find_link('Edit item').click
       expect(page).to have_no_content('Quantity')
@@ -89,7 +89,7 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     end
 
     it "cannot update item as student" do
-      login(:student)
+      login(:user_student)
       navigate_to_new_item
       expect(page).not_to have_selector(:link_or_button, 'Edit item')
       visit edit_item_path(@item.id)
@@ -99,20 +99,20 @@ RSpec.describe "Item Controller Tests", :type => :feature do
 
   describe "DELETE destroy" do
     it "can delete an item as admin" do
-      login(:admin)
+      login(:user_admin)
       navigate_to_new_item
       # TODO: Figure out driver to accept confirmation dialog
       expect(page).to have_selector(:link_or_button, 'Remove item')
     end
 
     it "cannot delete item as manager" do
-      login(:manager)
+      login(:user_manager)
       navigate_to_new_item
       expect(page).not_to have_selector(:link_or_button, 'Remove item')
     end
 
     it "cannot delete item as student" do
-      login(:student)
+      login(:user_student)
       navigate_to_new_item
       expect(page).not_to have_selector(:link_or_button, 'Remove item')
     end

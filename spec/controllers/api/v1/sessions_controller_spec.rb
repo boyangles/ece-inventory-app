@@ -4,7 +4,7 @@ include SessionsHelper
 describe Api::V1::SessionsController do
   describe 'POST #create' do
     before(:each) do
-      create_and_authenticate_admin_user
+      @admin = create_and_authenticate_user(:user_admin)
     end
 
     context 'when credentials are correct' do
@@ -64,11 +64,5 @@ describe Api::V1::SessionsController do
   def post_credentials(input_username, input_password)
     credentials = { :username => input_username, :password => input_password }
     post :create, credentials
-  end
-
-  private
-  def create_and_authenticate_admin_user
-    @admin = FactoryGirl.create :admin
-    api_authorization_header @admin[:auth_token]
   end
 end
