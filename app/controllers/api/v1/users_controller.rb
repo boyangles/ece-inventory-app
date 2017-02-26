@@ -4,10 +4,11 @@ class Api::V1::UsersController < BaseController
   before_action :auth_by_approved_status!
   before_action :auth_by_manager_privilege!, only: [:index]
   before_action :auth_by_admin_privilege!, only: [:create, :update_status, :update_privilege, :destroy]
+  before_action :render_404_if_user_unknown, only: [:show, :update_password, :update_privilege, :update_status, :destroy]
   before_action -> { auth_by_same_user_or_manager!(params[:id]) }, only: [:show]
   before_action -> { auth_by_same_user!(params[:id]) }, only: [:update_password]
-  before_action -> { auth_by_not_same_user!(params[:id]) }, only: [:update_status, :update_privilege]
-  before_action :set_user, only: [:show, :destroy]
+  before_action -> { auth_by_not_same_user!(params[:id]) }, only: [:update_status, :update_privilege, :destroy]
+  before_action :set_user, only: [:show, :update_password, :update_privilege, :update_status, :destroy]
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
@@ -47,7 +48,7 @@ class Api::V1::UsersController < BaseController
     param :form, 'user[password]', :string, :required, "Password"
     param :form, 'user[password_confirmation]', :string, :required, "Password Confirmation"
     param_list :form, 'user[privilege]', :string, :required, "Privilege; must be: student/manager/admin", [ "student", "manager", "admin" ]
-    param_list :form, 'user[status]', :string, :optional, "Status; must be: approved/waiting"
+    param_list :form, 'user[status]', :string, :optional, "Status; must be: approved/waiting", [ "approved", "waiting" ]
     response :unauthorized
     response :created
     response :unprocessable_entity
@@ -61,6 +62,7 @@ class Api::V1::UsersController < BaseController
     response :unauthorized
     response :ok
     response :unprocessable_entity
+    response :not_found
   end
 
   swagger_api :update_status do
@@ -70,6 +72,7 @@ class Api::V1::UsersController < BaseController
     response :unauthorized
     response :ok
     response :unprocessable_entity
+    response :not_found
   end
 
   swagger_api :update_privilege do
@@ -79,13 +82,15 @@ class Api::V1::UsersController < BaseController
     response :unauthorized
     response :ok
     response :unprocessable_entity
+    response :not_found
   end
 
   swagger_api :destroy do
     summary "Deletes a user"
     param :path, :id, :integer, :required, "id"
     response :unauthorized
-    response :not_acceptable
+    response :no_content
+    response :not_found
   end
 
   def index
@@ -107,7 +112,7 @@ class Api::V1::UsersController < BaseController
   end
 
   def show
-    render_simple_user(User.find(params[:id]), 200)
+    render_simple_user(@user, 200)
   end
 
   def create
@@ -130,12 +135,10 @@ class Api::V1::UsersController < BaseController
   def update_password
     password_params = user_params.slice(:password, :password_confirmation)
 
-    user = User.find(params[:id])
-
-    if user.update(password_params)
+    if @user.update(password_params)
       render json: { message: 'Password Updated!' } , status: 200
     else
-      render json: { errors: user.errors }, status: 422
+      render json: { errors: @user.errors }, status: 422
     end
   end
 
@@ -144,7 +147,7 @@ class Api::V1::UsersController < BaseController
     render_client_error("Inputted status is not approved/waiting!", 422) and
         return unless enum_processable?(status_params[:status], User::STATUS_OPTIONS)
 
-    update_user_and_render(User.find(params[:id]), status_params)
+    update_user_and_render(@user, status_params)
   end
 
   def update_privilege
@@ -152,12 +155,11 @@ class Api::V1::UsersController < BaseController
     render_client_error("Inputted privilege is not student/manager/admin!", 422) and
         return unless enum_processable?(privilege_params[:privilege], User::PRIVILEGE_OPTIONS)
 
-    update_user_and_render(User.find(params[:id]), privilege_params)
+    update_user_and_render(@user, privilege_params)
   end
 
   def destroy
-    user = User.find(params[:id])
-    user.destroy
+    @user.destroy
     head 204
   end
 
@@ -167,40 +169,13 @@ class Api::V1::UsersController < BaseController
   end
 
   private
+  def render_404_if_user_unknown
+      render json: { errors: 'User not found!' }, status: 404 unless
+          User.exists?(params[:id])
+  end
+
+  private
   def user_params
     params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :privilege, :status)
-  end
-
-  private
-  def render_simple_user(user, status_number)
-    render :json => user.instance_eval {
-        |u| {
-          :id => u.id,
-          :email => u.email,
-          :status => u.status,
-          :permission => u.privilege
-      }
-    }, status: status_number
-  end
-
-  private
-  def update_user_and_render(user, update_params)
-    if user.update(update_params)
-      render_simple_user(user, 200)
-    else
-      render_client_error(user.errors, 422)
-    end
-  end
-
-  private
-  def render_client_error(error_hash, status_number)
-    render json: {
-        errors: error_hash
-    }, status: status_number
-  end
-
-  private
-  def enum_processable?(enum_value, possible_enums)
-    return enum_value.blank? || possible_enums.include?(enum_value)
   end
 end

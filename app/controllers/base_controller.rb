@@ -18,4 +18,14 @@ class BaseController < ApplicationController
       end
     end
   end
+
+  def render_client_error(error_hash, status_number)
+    render json: {
+        errors: error_hash
+    }, status: status_number
+  end
+
+  def enum_processable?(enum_value, possible_enums)
+    return enum_value.blank? || possible_enums.include?(enum_value)
+  end
 end

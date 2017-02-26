@@ -1,26 +1,25 @@
 <p id="notice"><%= notice %></p>
 
+<h1>Requests</h1>
+
 <div class="row">
-  <div class="col-md-8 col-md-offset-2">
-    <h1>Requests</h1>
+  <div class="col-md-9 col-md-offset-1">
 
     <% if @requests.any? %>
-      <h3>No. Requests (<%= @requests.count %>)</h3>
-      <ol class="requests">
-        <%= render @requests %>
-      </ol>
+        <h3>No. Requests (<%= @requests.count %>)</h3>
+        <ol class="requests">
+          <%= render @requests %>
+        </ol>
 
-      <%= will_paginate @requests %>
+        <%= will_paginate @requests %>
     <% end %>
-    
+
     <br>
 
     <%= link_to "Outstanding Requests", requests_path(:status => "outstanding"), class: "btn btn-lg btn-primary" %>
-    <%= link_to "Approved Requests", requests_path(:status => "approved"), class: "btn btn-lg btn-primary" %>
-    <%= link_to "Denied Requests", requests_path(:status => "denied"), class: "btn btn-lg btn-primary" %>
-    <%= link_to "Cart", requests_path(:status => "cart"), class: "btn btn-lg btn-primary" %>
-    <%= link_to "View All", requests_path, class: "btn btn-lg btn-primary" %>
+    <%= link_to "Approved Requests", requests_path(:status => "approved"), class: "btn btn-lg btn-success" %>
+    <%= link_to "Denied Requests", requests_path(:status => "denied"), class: "btn btn-lg btn-danger" %>
+    <%= link_to "Cart", requests_path(:status => "cart"), class: "btn btn-lg btn-warning" %>
+    <%= link_to "View All", requests_path, class: "btn btn-lg btn-default" %>
   </div>
 </div>
-
-

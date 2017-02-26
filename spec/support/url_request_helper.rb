@@ -47,5 +47,13 @@ module URLRequest
 
       return user_response
     end
+
+    def expect_404_not_found
+      response = json_response
+      expect(response).to have_key(:errors)
+      should respond_with 404
+
+      return response
+    end
   end
 end

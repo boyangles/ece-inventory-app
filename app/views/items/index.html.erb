@@ -5,27 +5,27 @@
 </div>
 
 <% if is_manager_or_admin? %>
-    <%= link_to "New Item", new_item_url, :class => "btn btn-primary" %>
+    <%= link_to "Create New Item", new_item_url, :class => "btn btn-primary btn-lg btn-block" %>
 <% end %>
 
 <div class="search">
 	<%= form_for items_path, :method => 'get' do |f| %>
   	<p class="submit_bar">
 			<%= f.label "Search by Item Name" %><br>
-    	<%= text_field_tag :search, params[:search] %>
+    	<%= text_field_tag :search, params[:search], :placeholder => "Item 1" %>
 	 	</p>
 
 		<p>
 			<%= f.label "Search by Model Number" %>
-			<%= text_field_tag :model_search, params[:model_search] %>
+			<%= text_field_tag :model_search, params[:model_search], :placeholder => "A234"  %>
 		</p>
 
   	<h3>Required Tags</h3>
   	<div class="tags">
       <% @tags.each do |tag| %>
           <label class="checkbox-inline">
-    	      <%= check_box_tag 'required_tag_names[]', 
-      	      tag.name, 
+    	      <%= check_box_tag 'required_tag_names[]',
+      	      tag.name,
               (@required_tag_filters.include? tag.name) %><br>
             <%= tag.name %>
           </label>
@@ -36,8 +36,8 @@
 		<div class="tags">
       <% @tags.each do |tag| %>
         <label class="checkbox-inline">
-    	    <%= check_box_tag 'excluded_tag_names[]', 
-      	  tag.name, 
+    	    <%= check_box_tag 'excluded_tag_names[]',
+      	  tag.name,
           (@excluded_tag_filters.include? tag.name) %><br>
     	  <%= tag.name %>
         </label>
@@ -58,9 +58,10 @@
 
 <% if is_manager_or_admin? %>
 
-    <button data-toggle="collapse" data-target="#item_index_custom_field_list">
+    <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#item_index_custom_field_list">
       Custom Fields...
     </button>
+
 
     <div id="item_index_custom_field_list" class="collapse">
       <table class="table table-hover">
