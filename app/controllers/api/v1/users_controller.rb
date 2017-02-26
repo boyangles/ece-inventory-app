@@ -43,7 +43,7 @@ class Api::V1::UsersController < BaseController
 
   swagger_api :create do
     summary "Creates a local User"
-    param :form, 'user[username]', :string, :optional, "Username"
+    param :form, 'user[username]', :string, :required, "Username"
     param :form, 'user[email]', :string, :required, "Email"
     param :form, 'user[password]', :string, :required, "Password"
     param :form, 'user[password_confirmation]', :string, :required, "Password Confirmation"
