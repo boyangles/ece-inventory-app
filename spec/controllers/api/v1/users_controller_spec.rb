@@ -5,12 +5,12 @@ describe Api::V1::UsersController do
   describe "GET #show" do
     before(:each) do
       create_and_authenticate_admin_user
-      get :show, id: @user.id
+      get :show, id: @admin.id
     end
 
     it "returns info about a reporter on a hash" do
       user_response = json_response
-      expect(user_response[:email]).to eql @user.email
+      expect(user_response[:email]).to eql @admin.email
     end
 
     it { should respond_with 200 }
@@ -21,7 +21,7 @@ describe Api::V1::UsersController do
     context "when is successfully created" do
       before(:each) do
         create_and_authenticate_admin_user
-        @user_attributes = FactoryGirl.attributes_for :user
+        @user_attributes = FactoryGirl.attributes_for :admin
         @user_attributes[:email] = @user_attributes[:email].downcase
 
         post :create, @user_attributes
@@ -62,7 +62,7 @@ describe Api::V1::UsersController do
     context "when is successfully updated" do
       before(:each) do
         create_and_authenticate_admin_user
-        patch :update, { id: @user.id,
+        patch :update, { id: @admin.id,
                         email: "newmailexample@duke.edu" }
       end
 
@@ -77,7 +77,7 @@ describe Api::V1::UsersController do
     context "when is not created as email is empty" do
       before(:each) do
         create_and_authenticate_admin_user
-        patch :update, { id: @user.id,
+        patch :update, { id: @admin.id,
                         email: "" }
       end
 
@@ -99,7 +99,7 @@ describe Api::V1::UsersController do
   describe "DELETE #destroy" do
     before(:each) do
       create_and_authenticate_admin_user
-      delete :destroy, { id: @user.id }
+      delete :destroy, { id: @admin.id }
     end
 
     it { should respond_with 204 }
@@ -107,7 +107,7 @@ describe Api::V1::UsersController do
 
   private
   def create_and_authenticate_admin_user
-    @user = FactoryGirl.create :user
-    api_authorization_header @user[:auth_token]
+    @admin = FactoryGirl.create :admin
+    api_authorization_header @admin[:auth_token]
   end
 end

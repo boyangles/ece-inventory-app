@@ -90,7 +90,7 @@ describe Api::V1::RequestsController do
 
   private
   def req_attribute_creation
-    @sample_user = FactoryGirl.create :user
+    @sample_user = FactoryGirl.create :admin
     @sample_item = FactoryGirl.create :item
     api_authorization_header @sample_user[:auth_token]
 
@@ -99,8 +99,8 @@ describe Api::V1::RequestsController do
 
   def create_request_and_authorize_user
     @req = FactoryGirl.create :request
-    @user = FactoryGirl.create :user
-    api_authorization_header @user[:auth_token]
+    @admin = FactoryGirl.create :admin
+    api_authorization_header @admin[:auth_token]
   end
 
 end

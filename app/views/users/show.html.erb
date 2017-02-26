@@ -34,6 +34,6 @@
   <%= @user.privilege %>
 </p>
 
-<%= link_to 'Edit', edit_user_path(@user) %> |
+<%= link_to 'Edit', edit_user_path(@user) if is_admin? %> |
 <%= link_to 'Back', url_for(:back) %> |
 <%= link_to 'Authentication Token', auth_token_path %>
