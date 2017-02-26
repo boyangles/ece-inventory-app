@@ -34,8 +34,8 @@ module URLRequest
   module ErrorsHelpers
     def expect_422_unprocessable_entity
       user_response = json_response
-      expect(user_response).to have_key(:errors)
       should respond_with 422
+      expect(user_response).to have_key(:errors)
 
       return user_response
     end
