@@ -42,6 +42,7 @@ gem 'bootstrap-sass', '3.3.6'
 gem 'jquery-turbolinks'
 gem 'best_in_place'
 gem 'bootstrap-x-editable-rails'
+gem 'bootstrap-tagsinput-rails'
 # React-Rails
 gem 'react-rails'
 # Use postgresql as the database for Active Record

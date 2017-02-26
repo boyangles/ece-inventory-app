@@ -1,14 +1,12 @@
 <p id="notice"><%= notice %></p>
 
-<div class="jumbotron">
-
 <% provide(:title, @item.unique_name) %>
 <div class="row">
   <aside class="col-md-4">
     <section class="item_info">
-      <h1>
+      <h2>
         <%= @item.unique_name %>
-      </h1>
+      </h2>
     </section>
 
 
@@ -39,7 +37,7 @@
       <% end %>
     </p>
 
-    <button data-toggle="collapse" data-target="#item_show_custom_field_collapse">
+    <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#item_show_custom_field_collapse">
       More details...
     </button>
 
@@ -110,5 +108,3 @@
 <br>
 <br>
 <%= link_to 'Back', items_path %>
-
-</div>

@@ -110,6 +110,8 @@ GEM
     bootstrap-sass (3.3.6)
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
+    bootstrap-tagsinput-rails (0.4.2.1)
+      railties (>= 3.1)
     bootstrap-will_paginate (0.0.10)
       will_paginate
     bootstrap-x-editable-rails (1.5.1.1)
@@ -310,6 +312,7 @@ DEPENDENCIES
   bcrypt (= 3.1.11)
   best_in_place
   bootstrap-sass (= 3.3.6)
+  bootstrap-tagsinput-rails
   bootstrap-will_paginate (= 0.0.10)
   bootstrap-x-editable-rails
   byebug
