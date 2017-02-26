@@ -24,6 +24,14 @@ class Api::V1::CustomFieldsController < BaseController
     response :ok
   end
 
+  swagger_api :show do
+    summary "Fetches a specific custom field"
+    param :path, :id, :integer, :required, "Custom Field ID"
+    response :ok, "Success", :custom_field
+    response :unauthorized
+    response :not_found
+  end
+
   def index
     filter_params = params.slice(:field_name, :private_indicator, :field_type)
 
@@ -40,7 +48,11 @@ class Api::V1::CustomFieldsController < BaseController
   end
 
   def show
-
+    if current_user_by_auth.privilege_student? && @custom_field.private_indicator
+      render_client_error("Students may not view private fields", 401)
+    else
+      render :json => @custom_field, status: 200
+    end
   end
 
   def create

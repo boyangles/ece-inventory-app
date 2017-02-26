@@ -115,7 +115,65 @@ describe Api::V1::CustomFieldsController do
 
   describe "GET #show" do
     context "privilege tests (401)" do
+      before(:each) do
+        initialize_all_fields
+      end
 
+      it "no auth_token -> no access" do
+        get :show, { id: @field_public_float.id }
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'Not authenticated'
+      end
+
+      it "student auth_token -> private field denial" do
+        create_and_authenticate_user(:user_student)
+        get :show, { id: @field_private_float.id }
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'Students may not view private fields'
+      end
+
+      it "student auth_token -> public field acceptance" do
+        create_and_authenticate_user(:user_student)
+        get :show, { id: @field_public_float.id }
+        should respond_with 200
+
+        expect(json_response[:private_indicator]).to be_falsey
+        expect(json_response[:field_type]).to eql('float_type')
+      end
+
+      it "manager auth_token -> full access" do
+        create_and_authenticate_user(:user_manager)
+        get :show, { id: @field_private_float.id }
+        should respond_with 200
+
+        expect(json_response[:private_indicator]).to be_truthy
+        expect(json_response[:field_type]).to eql('float_type')
+      end
+
+      it "admin auth_token -> full access" do
+        create_and_authenticate_user(:user_admin)
+        get :show, { id: @field_private_float.id }
+        should respond_with 200
+
+        expect(json_response[:private_indicator]).to be_truthy
+        expect(json_response[:field_type]).to eql('float_type')
+      end
+
+      it "unapproved -> no access" do
+        create_and_authenticate_user(:user_admin_unapproved)
+        get :show, { id: @field_public_float.id }
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'Account is not approved for this action'
+      end
+    end
+
+    context "not found (404)" do
+      before(:each) do
+        create_and_authenticate_user(:user_admin)
+        get :show, { id: -1 }
+        response = expect_404_not_found
+        expect(response[:errors]).to include 'Custom Field not found!'
+      end
     end
   end
 
