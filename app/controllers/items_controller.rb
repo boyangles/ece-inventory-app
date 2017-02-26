@@ -63,7 +63,7 @@ class ItemsController < ApplicationController
   # POST /items.json
   def create
     @item = Item.new(item_params)
-
+		@item.last_action = "created"
 		@item.curr_user = current_user
 
     add_tags_to_item(@item, params[:tag][:tag_id]) if params[:tag]

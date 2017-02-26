@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   resources :requests
     put 'requests/:id/clear' => 'requests#clear', :as => 'clear_request'    # Clears items from requests
     patch 'requests/:id/clear', to: 'requests#clear'
+	#	get 'requests/:id/placeorder' => 'requests#place', :as => 'place_order'
   resources :items do
 		member do
 			get :edit_quantity

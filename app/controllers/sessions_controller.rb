@@ -16,7 +16,7 @@ class SessionsController < ApplicationController
       log_in(user)
       redirect_back_or user and return
     else
-      user = User.find_by(username: params[:session][:username].downcase)
+      user = User.where(username: params[:session][:username].downcase).where(status:'approved').take
       if user && user.authenticate(params[:session][:password])
         # Log in and redirect to the user profile page
         log_in user

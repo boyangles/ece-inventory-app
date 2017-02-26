@@ -1,8 +1,14 @@
 <%= form_for(request) do |f| %>
-  
-  <%= f.hidden_field :status, :value => "outstanding" %>
 
-	<div class="actions">
+	<% if is_admin? || is_manager? %>
+		<%= f.hidden_field :status, :value => "approved" %>
+		<br><%= f.label 'User to Make Request For' %></br>
+		<%= collection_select(:user, :id, User.where(:status=>1), :id, :username, {:required => true}, {:selected => current_user.id}) %>
+	<% else %>  
+ 	 	<%= f.hidden_field :status, :value => "outstanding" %>
+	<% end %>	
+
+<div class="actions">
   	<%= f.submit "Place Order" %>
 	</div>
 <% end %>

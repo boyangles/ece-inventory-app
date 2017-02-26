@@ -60,7 +60,8 @@ items.each do |item|
     unique_name: item,
     quantity: quantity,
     model_number: model_number,
-    description: description)
+    description: description,
+    last_action: "created")
 end
 
 ## Default Custom Fields

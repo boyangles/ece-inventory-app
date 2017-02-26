@@ -4,12 +4,6 @@
     <%= render 'shared/error_messages', object: @form_obj %>
   <% end %>
 
-	<% if is_admin? || is_manager? %>
-		<br><%= f.label 'User to Make Request For' %></br>
-		<%= collection_select(:user, :id, User.where(:status=>1), :id, :username, {:required => true}, {:selected => current_user}) %>
-
-	<% end %>
-
 	<p>
 		<b>Items Requested</b>
 
@@ -39,12 +33,19 @@
     <%= f.text_area :reason, :required => true %>
   </p>
 
-  <%= f.hidden_field :user_id, :value => (request.user_id) ? request.user_id : current_user.id %>
-  <%= f.hidden_field :status, :value => request.status %>
+ 	<%= f.hidden_field :status, :value => request.status %>
+	<%= f.hidden_field :user_id, :value => (request.user_id) ? request.user_id : current_user.id %>
+
 
 	<p>
-	<% if @request.cart? %>
-		<%= link_to "Place Order", request_path(params[:id], :status => "outstanding") %>
+	<% if !request.request_items.empty? %>
+		<% if @request.cart? %>
+			<div class="btn btn-primary"><%= link_to "Place Order", request_path(params[:id], :status => "outstanding") %></div>
+		<% end %>
+
+		<% if is_admin? || is_manager? %>
+			<div class="btn btn-primary"><%= link_to "Disburse to Another User", root_path %></div>
+		<% end %>
 	<% end %>
 	</p>
 

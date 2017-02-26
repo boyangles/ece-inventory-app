@@ -48,6 +48,10 @@ class Request < ApplicationRecord
     self.outstanding? && request_params[:status] == 'approved'
   end
 
+	def has_status_change_to_outstanding?(request_params)
+		self.cart? && request_params[:status] == 'outstanding'
+	end
+
 	def are_request_details_valid?
     self.request_items.each do |sub_request|
       @item = Item.find(sub_request.item_id)

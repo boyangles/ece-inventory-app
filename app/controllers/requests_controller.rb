@@ -38,7 +38,7 @@ class RequestsController < ApplicationController
     if @request.has_status_change_to_approved?(request_params)
       request_valid, error_msg = @request.are_request_details_valid?
 
-      if request_valid
+	    if request_valid
         update_to_index(@request, request_params)
 
         @request.request_items.each do |sub_request|
@@ -63,7 +63,11 @@ class RequestsController < ApplicationController
     end
   end
 
-  def clear
+#	def place
+#		@request.update!(request_params)
+#	end  
+
+	def clear
     @request.items.destroy_all
     redirect_to request_path(@request)
   end
@@ -87,10 +91,14 @@ class RequestsController < ApplicationController
   end
 
   def update_to_index(req, params)
-    req.update_attributes!(params)
 
-    flash[:success] = "Operation successful!"
-    redirect_to request_path(req)
+		if req.update_attributes(params)
+			flash[:success] = "Operation successful!"
+    	redirect_to request_path(req)	
+		else
+ 			flash[:error] = "You loser"
+			redirect_back(fallback_location: request_path(req)) 
+		end
   end
 
   def reject_to_edit(request, msg)
@@ -105,7 +113,7 @@ class RequestsController < ApplicationController
                                       :status,
                                       :request_type,
                                       :response,
-                                      request_items_attributes: [:id, :quantity])
+                                      request_items_attributes: [:id, :quantity, :request_id, :item_id])
   end
 
   def log_params
