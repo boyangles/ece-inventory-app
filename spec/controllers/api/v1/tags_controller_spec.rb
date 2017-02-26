@@ -96,6 +96,30 @@ describe Api::V1::TagsController do
   end
 
   describe "PUT/PATCH #update" do
+    context "when unauthenticated" do
+      before(:each) do
+        @tag = FactoryGirl.create :tag
+        patch :update, {id: @tag.id,
+                        tag: {name: @tag.name}}
+      end
+
+      it "renders json error" do
+        tag_response = expect_401_unauthorized
+        expect(tag_response[:errors]).to include "Not authenticated"
+      end
+    end
+
+    context "when unknown tag" do
+      it "unknown tag" do
+        create_and_authenticate_user(:user_admin)
+        patch :update, {id: -1,
+                        tag: {name: 'Hello'}}
+
+        response = expect_404_not_found
+        expect(response[:errors]).to include "Tag not found!"
+      end
+    end
+
     # Successful Update
     context "when successfully update" do
       before(:each) do
@@ -125,11 +149,9 @@ describe Api::V1::TagsController do
       end
 
       it "renders error from JSON" do
-        tag_response = json_response
-        expect(tag_response).to have_key(:errors)
+        tag_response = expect_422_unprocessable_entity
+        expect(tag_response[:errors][:name]).to include "has already been taken"
       end
-
-      it { should respond_with 422 }
     end
   end
 

@@ -37,9 +37,9 @@ class Api::V1::TagsController < BaseController
   swagger_api :update do
     summary "Updates an existing tag"
     param :path, :id, :integer, :required, "id"
-    param :form, :name, :string, :required, "Name"
+    param :form, 'tag[name]', :string, :required, "Name"
     response :unauthorized
-    response :not_acceptable
+    response :ok
     response :not_found
   end
 
@@ -60,7 +60,7 @@ class Api::V1::TagsController < BaseController
   end
 
   def show
-    respond_with Tag.find(params[:id])
+    respond_with @tag
   end
 
   def create
@@ -73,12 +73,10 @@ class Api::V1::TagsController < BaseController
   end
 
   def update
-    tag = Tag.find(params[:id])
-
-    if tag.update(tag_params)
-      render json: tag, status: 200, location: [:api, tag]
+    if @tag.update(tag_params)
+      render json: @tag, status: 200
     else
-      render json: { errors: tag.errors }, status: 422
+      render json: { errors: @tag.errors }, status: 422
     end
   end
 
