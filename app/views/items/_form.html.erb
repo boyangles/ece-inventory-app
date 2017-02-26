@@ -15,21 +15,21 @@
       <div class="form-group">
         <%= f.label :unique_name, "Unique Name", class: "col-lg-2 control-label" %>
         <div class="col-lg-10">
-          <%= f.text_field :unique_name, class: "form-control", :placeholder=>"Electrical Part" %>
+          <%= f.text_field :unique_name, class: "form-control", :placeholder=>"Name" %>
         </div>
       </div>
 
       <div class="form-group">
-        <%= f.label :quantity, "Quantity", class: "col-lg-2 control-label" %>
+        <%= f.label :description, "Description", class: "col-lg-2 control-label" %>
         <div class="col-lg-10">
-          <%= f.number_field :quantity, class: "form-control",:placeholder=>123 %>
+          <%= f.text_field :description, class: "form-control",:placeholder=>"Description" %>
         </div>
       </div>
 
       <% if !Item.exists?(item.id) || is_admin? %>
           <div class="form-group">
-            <%= f.label :quantity, "Quantity", class: "col-md-4 control-label" %>
-            <div class="col-md-8">
+            <%= f.label :quantity, "Quantity", class: "col-lg-2 control-label" %>
+            <div class="col-lg-10">
               <%= f.text_field :quantity, class: "form-control",:placeholder=>"0" %>
             </div>
           </div>
@@ -37,10 +37,9 @@
 
 
       <div class="form-group">
-
         <%= f.label :model_number, "Model Number", class: "col-lg-2 control-label" %>
         <div class="col-lg-10">
-          <%= f.text_field :model_number, class: "form-control",:placeholder=>"A-3423" %>
+          <%= f.text_field :model_number, class: "form-control",:placeholder=>"0" %>
         </div>
       </div>
 
@@ -53,16 +52,8 @@
         </div>
       </div>
 
-      <!-- For removing tags from items -->
-      <p> <strong>Associated Tags</strong></p>
-      <% if item.tags.count > 0 %>
-          <%= collection_select(:tag_to_remove, :tag_id_remove, item.tags.all, :id, :name, {:prompt => "-- select tags to remove from item --"}, {:multiple=> true}) %>
-      <% else %>
-          <p>No tags associated with <%= item.unique_name %></p>
-      <% end %>
-
       <div class="form-group">
-        <div class="col-lg-10 col-lg-offset-2">
+        <div class="col-lg-8 col-lg-offset-2">
           <button type="submit" class="btn-default btn-lg btn-block">Submit</button>
         </div>
       </div>
