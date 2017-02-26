@@ -97,14 +97,14 @@ class User < ApplicationRecord
 	def when_deactivated()
 		if self.status_was == "approved" && self.status == "deactivated"
 			create_log("deactivated", self.privilege, self.privilege)
-		end
 
-		# change all user's requests to cancelled
-		self.requests.each do |req|
-			if req.outstanding?
-				req.update("status": "cancelled")
-			end
-		end		 
+			# change all user's requests to cancelled
+			self.requests.each do |req|
+				if req.outstanding?
+					req.update("status": "cancelled")
+				end
+			end		 
+		end
 	end
 
 	def log_on_privilege_change() 

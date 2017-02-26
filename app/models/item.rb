@@ -1,8 +1,17 @@
 class Item < ApplicationRecord
+	
+	ITEM_STATUS_OPTIONS = %w(active deactive)
+	
+	enum status: {
+		active: 0,
+		deactive: 1
+	}
+
   validates :unique_name, presence: true, length: { maximum: 50 },
             uniqueness: { case_sensitive: false }
   validates :quantity, presence: true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   validates :description, length: { maximum: 255 }
+	validates :status, :inclusion => { :in => ITEM_STATUS_OPTIONS }
 
   # Relation with Tags
   has_many :tags, -> { distinct },  :through => :item_tags
@@ -27,8 +36,9 @@ class Item < ApplicationRecord
 	}
 
 	after_update {
-		create_log_on_quantity_change()
+	#	create_log_on_quantity_change() #due to complications with quantity change -> moving this log into the controller. :/
 		create_log_on_desc_update()
+		create_log_on_destruction()
 	}
 
 
@@ -85,6 +95,12 @@ class Item < ApplicationRecord
 		end
 	end
 
+	def create_log_on_destruction()
+		if self.status == 'deactive' && self.status_was == 'active'
+			create_log("deleted", self.quantity)
+		end
+	end
+	
 	def create_log(action, quan_change)
 		if self.curr_user.nil?
 			curr = nil

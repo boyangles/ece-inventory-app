@@ -17,7 +17,7 @@ Tag.create([{ name: 'ECE110'}, { name: 'ECE230'}, { name: 'ECE559'}, { name: 'Re
   password = "password"
   User.create!(username: username,
                email: email,
-               status: "waiting",
+               status: "deactivated",
                privilege: "admin",
                password: password,
                password_confirmation: password)

@@ -58,7 +58,6 @@
 
 <% if @request.cart? %>
     <%= link_to 'Clear Items in Cart', clear_request_path(@request), method: :put %> |
-<% elsif @request.outstanding? %>
  		<%= link_to 'Edit', edit_request_path(@request) %> | 
 <% end %> 
 <%= link_to 'Back', :back %>

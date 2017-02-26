@@ -39,6 +39,11 @@
       <% end %>
     </p>
 
+		<% if @item.deactive? %>
+			<strong>Status:</strong>
+			<%= @item.status %>
+		<% end %>
+
     <button data-toggle="collapse" data-target="#item_show_custom_field_collapse">
       More details...
     </button>
@@ -92,15 +97,13 @@
   </div>
 </div>
 
-<%= link_to "Add to Cart", new_request_item_url(:item_id => @item.id), :class => "btn btn-primary" %>
-<% if is_admin? %>
-  <%= link_to 'Remove item', 
-    @item, 
-    method: :delete, 
-    data: { confirm: 'Are you sure?' }, 
-    :class => "btn btn-primary" %>
+<% if @item.active? %>
+	<%= link_to "Add to Cart", new_request_item_url(:item_id => @item.id), :class => "btn btn-primary" %>
+<% end %>
+<% if is_admin? and @item.active? %>
+ <%= render 'deactivateitemform', item: @item %>
 <% end %> 
-<% if is_manager_or_admin? %>
+<% if is_manager_or_admin? and @item.active? %>
   <%= link_to 'Edit item', 
     edit_item_path(@item), 
     :class => "btn btn-primary" %>
