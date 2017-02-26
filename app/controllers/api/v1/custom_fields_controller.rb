@@ -32,6 +32,16 @@ class Api::V1::CustomFieldsController < BaseController
     response :not_found
   end
 
+  swagger_api :create do
+    summary "Creates a Custom Field"
+    param :form, 'custom_field[field_name]', :string, :required, "Field Name"
+    param :form, 'custom_field[private_indicator]', :boolean, :required, "Private?"
+    param_list :form, 'custom_field[field_type]', :string, :required, "Field Type; must be short_text_type/long_text_type/integer_type/float_type",
+               ["short_text_type", "long_text_type", "integer_type", "float_type"]
+    response :created
+    response :unauthorized
+  end
+
   def index
     filter_params = params.slice(:field_name, :private_indicator, :field_type)
 
@@ -56,7 +66,15 @@ class Api::V1::CustomFieldsController < BaseController
   end
 
   def create
+    render_client_error("Inputted Field Type is not short_text_type/long_text_type/integer_type/float_type!", 422) and
+        return unless enum_processable?(custom_field_params[:field_type], CustomField::FIELD_TYPE_OPTIONS)
 
+    custom_field = CustomField.new(custom_field_params)
+    if custom_field.save
+      render :json => custom_field, status: 201
+    else
+      render_client_error(custom_field.errors, 422)
+    end
   end
 
   def destroy

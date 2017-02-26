@@ -179,7 +179,66 @@ describe Api::V1::CustomFieldsController do
 
   describe "POST #create" do
     context "privilege tests (401)" do
+      it "no auth_token -> no access" do
+        post_public_short_text_field
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'Not authenticated'
+      end
 
+      it "student auth_token -> no access" do
+        create_and_authenticate_user(:user_student)
+        post_public_short_text_field
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'No sufficient privileges'
+      end
+
+      it "manager auth_token -> no access" do
+        create_and_authenticate_user(:user_student)
+        post_public_short_text_field
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'No sufficient privileges'
+      end
+
+      it "admin auth_token -> full access" do
+        create_and_authenticate_user(:user_admin)
+        post_public_short_text_field
+        should respond_with 201
+      end
+
+      it "unapproved -> no access" do
+        create_and_authenticate_user(:user_admin_unapproved)
+        post_public_short_text_field
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'Account is not approved for this action'
+      end
+    end
+
+    context "incorrect input tests (422)" do
+      before(:each) do
+        create_and_authenticate_user(:user_admin)
+      end
+
+      it "field type -> not enum" do
+        post :create, {
+            field_name: 'sample_field',
+            private_indicator: false,
+            field_type: 'incorrect_field_type'
+        }
+        response = expect_422_unprocessable_entity
+        expect(response[:errors]).to include 'Inputted Field Type is not short_text_type/long_text_type/integer_type/float_type!'
+      end
+
+      it "field name -> taken" do
+        custom_field = post_public_short_text_field
+        post :create, {
+            field_name: custom_field.field_name,
+            private_indicator: false,
+            field_type: 'float'
+        }
+
+        response = expect_422_unprocessable_entity
+        expect(response[:errors][:field_name]).to include 'has already been taken'
+      end
     end
   end
 
@@ -234,5 +293,16 @@ describe Api::V1::CustomFieldsController do
     @field_private_long_text = FactoryGirl.create :field_private_long_text
     @field_private_integer = FactoryGirl.create :field_private_integer
     @field_private_float = FactoryGirl.create :field_private_float
+  end
+
+  private
+  def post_public_short_text_field
+    post :create, {
+        field_name: 'sample_field',
+        private_indicator: false,
+        field_type: 'short_text_type'
+    }
+
+    return CustomField.find_by(:field_name => 'sample_field')
   end
 end
