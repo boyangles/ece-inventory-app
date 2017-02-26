@@ -49,6 +49,18 @@ describe Api::V1::TagsController do
   end
 
   describe "POST #create" do
+    context "when unauthenticated" do
+      before(:each) do
+        @tag_attributes = FactoryGirl.attributes_for :tag
+        post :create, {tag: @tag_attributes}
+      end
+
+      it "renders json error" do
+        tag_response = expect_401_unauthorized
+        expect(tag_response[:errors]).to include "Not authenticated"
+      end
+    end
+
     # Successful Create
     context "when create succesfully" do
       before(:each) do
@@ -77,11 +89,9 @@ describe Api::V1::TagsController do
       end
 
       it "renders JSON error" do
-        tag_response = json_response
-        expect(tag_response).to have_key(:errors)
+        tag_response = expect_422_unprocessable_entity
+        expect(tag_response[:errors][:name]).to include "has already been taken"
       end
-
-      it { should respond_with 422 }
     end
   end
 

@@ -27,10 +27,11 @@ class Api::V1::TagsController < BaseController
   end
 
   swagger_api :create do
-    summary "Creates a new Tag"
-    param :form, :name, :string, :required, "Name"
+    summary "Creates a new tag"
+    param :form, 'tag[name]', :string, :required, "Name"
     response :unauthorized
-    response :not_acceptable
+    response :ok
+    response :unprocessable_entity
   end
 
   swagger_api :update do
@@ -65,7 +66,7 @@ class Api::V1::TagsController < BaseController
   def create
     tag = Tag.new(tag_params)
     if tag.save
-      render json: tag, status: 201, location: [:api, tag]
+      render json: tag, status: 201
     else
       render json: { errors: tag.errors }, status: 422
     end
