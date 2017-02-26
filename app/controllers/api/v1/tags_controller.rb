@@ -1,5 +1,6 @@
 class Api::V1::TagsController < BaseController
   before_action :authenticate_with_token!
+  before_action :auth_by_approved_status!
   before_action :auth_by_manager_privilege!, only: [:create, :update, :destroy]
   before_action :render_404_if_tag_unknown, only: [:show, :update, :destroy]
   before_action :set_tag, only: [:show, :update, :destroy]
