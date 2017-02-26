@@ -1,6 +1,6 @@
 class TagsController < ApplicationController
 
-  before_action :check_logged_in_user, :check_admin_user
+  before_action :check_logged_in_user, :check_manager_or_admin
 
   def show
   end
