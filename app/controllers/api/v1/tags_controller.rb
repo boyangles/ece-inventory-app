@@ -1,6 +1,8 @@
 class Api::V1::TagsController < BaseController
   before_action :authenticate_with_token!
   before_action :auth_by_manager_privilege!, only: [:create, :update, :destroy]
+  before_action :render_404_if_tag_unknown, only: [:show, :update, :destroy]
+  before_action :set_tag, only: [:show, :update, :destroy]
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
@@ -37,6 +39,7 @@ class Api::V1::TagsController < BaseController
     param :form, :name, :string, :required, "Name"
     response :unauthorized
     response :not_acceptable
+    response :not_found
   end
 
   swagger_api :destroy do
@@ -44,6 +47,7 @@ class Api::V1::TagsController < BaseController
     param :path, :id, :integer, :required, "id"
     response :unauthorized
     response :not_acceptable
+    response :not_found
   end
 
   def index
@@ -86,6 +90,12 @@ class Api::V1::TagsController < BaseController
   private
   def set_tag
     @tag = Tag.find(params[:id])
+  end
+
+  private
+  def render_404_if_tag_unknown
+    render json: { errors: 'Tag not found!' }, status: 404 unless
+        Tag.exists?(params[:id])
   end
 
   private

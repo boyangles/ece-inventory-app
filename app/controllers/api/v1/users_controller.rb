@@ -4,6 +4,7 @@ class Api::V1::UsersController < BaseController
   before_action :auth_by_approved_status!
   before_action :auth_by_manager_privilege!, only: [:index]
   before_action :auth_by_admin_privilege!, only: [:create, :update_status, :update_privilege, :destroy]
+  before_action :render_404_if_user_unknown, only: [:show, :update_password, :update_privilege, :update_status, :destroy]
   before_action -> { auth_by_same_user_or_manager!(params[:id]) }, only: [:show]
   before_action -> { auth_by_same_user!(params[:id]) }, only: [:update_password]
   before_action -> { auth_by_not_same_user!(params[:id]) }, only: [:update_status, :update_privilege, :destroy]
@@ -61,6 +62,7 @@ class Api::V1::UsersController < BaseController
     response :unauthorized
     response :ok
     response :unprocessable_entity
+    response :not_found
   end
 
   swagger_api :update_status do
@@ -70,6 +72,7 @@ class Api::V1::UsersController < BaseController
     response :unauthorized
     response :ok
     response :unprocessable_entity
+    response :not_found
   end
 
   swagger_api :update_privilege do
@@ -79,6 +82,7 @@ class Api::V1::UsersController < BaseController
     response :unauthorized
     response :ok
     response :unprocessable_entity
+    response :not_found
   end
 
   swagger_api :destroy do
@@ -86,6 +90,7 @@ class Api::V1::UsersController < BaseController
     param :path, :id, :integer, :required, "id"
     response :unauthorized
     response :no_content
+    response :not_found
   end
 
   def index
@@ -161,6 +166,12 @@ class Api::V1::UsersController < BaseController
   private
   def set_user
     @user = User.find(params[:id])
+  end
+
+  private
+  def render_404_if_user_unknown
+      render json: { errors: 'User not found!' }, status: 404 unless
+          User.exists?(params[:id])
   end
 
   private

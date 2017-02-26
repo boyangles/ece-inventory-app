@@ -22,18 +22,30 @@ describe Api::V1::TagsController do
   end
 
   describe "GET #show" do
-    before(:each) do
-      create_and_authenticate_user(:user_admin)
-      @tag = FactoryGirl.create :tag
-      get :show, id: @tag.id
+    it "unauthorized user has no access" do
+      tag = FactoryGirl.create :tag
+      get :show, id: tag.id
+      response = expect_401_unauthorized
+      expect(response[:errors]).to include "Not authenticated"
     end
 
-    it "returns info about a reporter on a hash" do
+    it "authorized user has access" do
+      create_and_authenticate_user(:user_student)
+      tag = FactoryGirl.create :tag
+      get :show, id: tag.id
+
       tag_response = json_response
-      expect(tag_response[:name]).to eql @tag.name
+      expect(tag_response[:name]).to eql tag.name
+      should respond_with 200
     end
 
-    it { should respond_with 200 }
+    it "unknown tag" do
+      create_and_authenticate_user(:user_admin)
+      get :show, id: -1
+
+      response = expect_404_not_found
+      expect(response[:errors]).to include "Tag not found!"
+    end
   end
 
   describe "POST #create" do
