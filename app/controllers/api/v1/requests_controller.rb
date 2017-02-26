@@ -1,20 +1,12 @@
 class Api::V1::RequestsController < BaseController
-  # authentication_actions = [:index, :show, :update, :destroy]
 
   before_action :authenticate_with_token!
+  before_action :auth_by_check_requests_corresponds_to_current_user!, only: [:edit, :update, :destroy, :show]
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
-
-  # TODO: Still needs admin stuff on most of these methods I believe
 
   respond_to :json
 
   swagger_controller :requests, 'Requests'
-
-  # authentication_actions.each do |api_action|
-  #   swagger_api api_action do
-  #     param :header, :Authorization, :required, "Authorization Token"
-  #   end
-  # end
 
   swagger_api :index do
     summary 'Returns all requests'
@@ -35,27 +27,26 @@ class Api::V1::RequestsController < BaseController
 
   swagger_api :create do
     summary "Creates a new request"
+    notes 'Request types: disbursement, acquisition, destruction. Status: outstanding, approved, denied'
     param :form, :user_id, :number, :required, "User ID"
-    param :form, :item_id, :number, :required, "Item ID"
-    param :form, :quantity, :number, :required, "Quantity"
     param :form, :reason, :string, :required, "Reason"
     param_list :form, :request_type, :string, :required, "Request Type", ["disbursement", "acquisition", "destruction"]
-    param_list :form, :status, :string, :required, "Status", ["outstanding", "approved", "denied"]
-    param :form, :response, :string, :required, "Response"
+    param_list :form, :status, :string, :required, "Status", ["cart", "outstanding", "approved", "denied"]
+    param :form, :response, :string, :description, "Admin Response"
     response :unauthorized
     response :not_acceptable
   end
 
   swagger_api :update do
-    summary "Updates an existing request"
+    summary 'Updates an existing request'
+    notes 'Request types: disbursement, acquisition, destruction. Status: cart, outstanding, approved, denied'
     param :path, :id, :integer, :required, "id"
-    param :form, :user_id, :number, "User ID"
-    param :form, :item_id, :number, "Item ID"
-    param :form, :quantity, :number, "Quantity"
-    param :form, :reason, :string, "Reason"
-    param_list :form, :request_type, :string, "Request Type", ["disbursement", "acquisition", "destruction"]
-    param_list :form, :status, :string, "Status", ["outstanding", "approved", "denied"]
-    param :form, :response, :string, "Response"
+    param :form, :user_id, :number, :description, "User ID"
+    param :form, :item_id, :number, :description, "Item ID"
+    param :form, :reason, :string, :description, "Reason"
+    param_list :form, :request_type, :string, :optional, "Request Type", ["disbursement", "acquisition", "destruction"]
+    param_list :form, :status, :string, :optional, "Status", ["cart", "outstanding", "approved", "denied"]
+    param :form, :response, :string, :description,  "Admin Response"
     response :unauthorized
     response :not_acceptable
   end

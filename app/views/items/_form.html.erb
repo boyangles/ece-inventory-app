@@ -19,7 +19,6 @@
         </div>
       </div>
 
-
       <div class="form-group">
         <%= f.label :quantity, "Quantity", class: "col-lg-2 control-label" %>
         <div class="col-lg-10">
@@ -27,8 +26,18 @@
         </div>
       </div>
 
+      <% if !Item.exists?(item.id) || is_admin? %>
+          <div class="form-group">
+            <%= f.label :quantity, "Quantity", class: "col-md-4 control-label" %>
+            <div class="col-md-8">
+              <%= f.text_field :quantity, class: "form-control",:placeholder=>"0" %>
+            </div>
+          </div>
+      <% end %>
+
 
       <div class="form-group">
+
         <%= f.label :model_number, "Model Number", class: "col-lg-2 control-label" %>
         <div class="col-lg-10">
           <%= f.text_field :model_number, class: "form-control",:placeholder=>"A-3423" %>
@@ -44,8 +53,6 @@
         </div>
       </div>
 
-
-
       <!-- For removing tags from items -->
       <p> <strong>Associated Tags</strong></p>
       <% if item.tags.count > 0 %>
@@ -54,11 +61,12 @@
           <p>No tags associated with <%= item.unique_name %></p>
       <% end %>
 
-        <div class="form-group">
-          <div class="col-lg-10 col-lg-offset-2">
-            <button type="submit" class="btn-default btn-lg btn-block">Submit</button>
-          </div>
+      <div class="form-group">
+        <div class="col-lg-10 col-lg-offset-2">
+          <button type="submit" class="btn-default btn-lg btn-block">Submit</button>
         </div>
+      </div>
 
     </fieldset>
+
 <% end %>
