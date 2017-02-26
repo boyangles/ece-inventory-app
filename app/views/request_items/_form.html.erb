@@ -8,7 +8,7 @@
       <div class="form-group">
         <%= f.label :quantity, "Quantity", class: "col-lg-2 control-label" %>
         <div class="col-lg-10">
-          <%= f.text_field :quantity, class: "form-control",:placeholder=>"1" %>
+          <%= f.number_field :quantity, class: "form-control",:placeholder=>Item.find(@request_item.item_id).quantity %>
         </div>
       </div>
 

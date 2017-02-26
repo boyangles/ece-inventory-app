@@ -23,7 +23,7 @@
       <div class="form-group">
         <%= f.label :quantity, "Quantity", class: "col-lg-2 control-label" %>
         <div class="col-lg-10">
-          <%= f.text_field :quantity, class: "form-control",:placeholder=>"1" %>
+          <%= f.number_field :quantity, class: "form-control",:placeholder=>123 %>
         </div>
       </div>
 
@@ -35,24 +35,24 @@
         </div>
       </div>
 
-      <!-- For adding tags to items -->
-      <p> <strong>Tags</strong></p>
-      <% if Tag.all.count > item.tags.all.count %>
+      <div class="form-group">
+        <label for="select" class="col-lg-2 control-label">Tags</label>
+        <div class="col-lg-10">
           <div class="form-group">
-            <label for="select" class="col-lg-2 control-label">select tags to add to item</label>
-            <select multiple data-role="tagsinput">
-              <option value="Amsterdam">Amsterdam</option>
-              <option value="Washington">Washington</option>
-              <option value="Sydney">Sydney</option>
-              <option value="Beijing">Beijing</option>
-              <option value="Cairo">Cairo</option>
-            </select>
+            <%=collection_select(:tag, :tag_id, Tag.all - item.tags.all, :id, :name, {:prompt => "-- select tags to add to item --"}, {:multiple=> true, :class=>"form-control", :id=>"select"},) %>
           </div>
+        </div>
+      </div>
+
+
+
+      <!-- For removing tags from items -->
+      <p> <strong>Associated Tags</strong></p>
+      <% if item.tags.count > 0 %>
+          <%= collection_select(:tag_to_remove, :tag_id_remove, item.tags.all, :id, :name, {:prompt => "-- select tags to remove from item --"}, {:multiple=> true}) %>
       <% else %>
-          <p>No more tags available</p>
+          <p>No tags associated with <%= item.unique_name %></p>
       <% end %>
-
-
 
         <div class="form-group">
           <div class="col-lg-10 col-lg-offset-2">
