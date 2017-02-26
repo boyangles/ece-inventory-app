@@ -76,6 +76,17 @@ class Api::V1::CustomFieldsController < BaseController
     response :not_found
   end
 
+  swagger_api :update_type do
+    summary "Updates the field type of a Custom Field"
+    param :path, :id, :integer, :required, "Custom Field ID"
+    param_list :form, 'custom_field[field_type]', :string, :required, "Field Type; must be short_text_type/long_text_type/integer_type/float_type",
+               ["short_text_type", "long_text_type", "integer_type", "float_type"]
+    response :unauthorized
+    response :ok
+    response :unprocessable_entity
+    response :not_found
+  end
+
   def index
     filter_params = params.slice(:field_name, :private_indicator, :field_type)
 
@@ -126,8 +137,8 @@ class Api::V1::CustomFieldsController < BaseController
   end
 
   def update_privacy
-    field_name_params = custom_field_params.slice(:private_indicator)
-    if @custom_field.update(field_name_params)
+    private_indicator_params = custom_field_params.slice(:private_indicator)
+    if @custom_field.update(private_indicator_params)
       render :json => @custom_field, status: 200
     else
       render :json => { errors: @custom_field.errors }, status: 422
@@ -135,7 +146,15 @@ class Api::V1::CustomFieldsController < BaseController
   end
 
   def update_type
+    field_type_params = custom_field_params.slice(:field_type)
+    render_client_error("Inputted Field Type is not short_text_type/long_text_type/integer_type/float_type!", 422) and
+        return unless enum_processable?(field_type_params[:field_type], CustomField::FIELD_TYPE_OPTIONS)
 
+    if @custom_field.update(field_type_params)
+      render :json => @custom_field, status: 200
+    else
+      render :json => { errors: @custom_field.errors }, status: 422
+    end
   end
 
   def clear_field_content

@@ -26,6 +26,7 @@ class CustomField < ApplicationRecord
   validates :private_indicator, :inclusion => { in: [ true, false ] }
   validates :field_type, :inclusion => { :in => FIELD_TYPE_OPTIONS }
 
+  after_update :clear_associated_field_entries, if: :field_type_changed?
   after_create {
     create_items_for_custom_fields(self.id)
   }
