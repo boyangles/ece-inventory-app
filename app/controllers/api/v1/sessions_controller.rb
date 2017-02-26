@@ -5,26 +5,22 @@ class Api::V1::SessionsController < ApplicationController
 
   swagger_controller :sessions, 'Sessions'
 
-  # Skip this so you can enter a username and password and get user information back
-  skip_before_action :verify_authenticity_token
-
   swagger_api :create do
-    summary 'Returns all items'
-    notes 'These are some notes for everybody!'
-    param :form, :username, :string, :required, "Username"
+    summary 'Login to session'
+    notes 'Creates an authentication token'
+    param :form, :email, :string, :required, "Email"
     param :form, :password, :string, :required, "Password"
-    response :unauthorized
-    response :requested_range_not_satisfiable
+    response :ok
+    response :unprocessable_entity
   end
 
   def create
-    user = User.find_by(:username => params[:username])
-    user.status = 'approved'
+    user = User.find_by(:email => params[:email])
     if user && user.authenticate(params[:password])
       if user.status_approved?
         user.generate_authentication_token!
         user.save
-        render json: user, status: 200, location: [:api, user]
+        render_user_with_auth_token(user, 200)
       else
         render json: { errors: 'Your account has not been approved by an administrator' }, status: 422
       end

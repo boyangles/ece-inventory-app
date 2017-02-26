@@ -167,25 +167,4 @@ class Api::V1::UsersController < BaseController
   def user_params
     params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :privilege, :status)
   end
-
-  private
-  def render_simple_user(user, status_number)
-    render :json => user.instance_eval {
-        |u| {
-          :id => u.id,
-          :email => u.email,
-          :status => u.status,
-          :permission => u.privilege
-      }
-    }, status: status_number
-  end
-
-  private
-  def update_user_and_render(user, update_params)
-    if user.update(update_params)
-      render_simple_user(user, 200)
-    else
-      render_client_error(user.errors, 422)
-    end
-  end
 end
