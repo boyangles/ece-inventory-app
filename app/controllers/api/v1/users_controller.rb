@@ -191,16 +191,4 @@ class Api::V1::UsersController < BaseController
       render_client_error(user.errors, 422)
     end
   end
-
-  private
-  def render_client_error(error_hash, status_number)
-    render json: {
-        errors: error_hash
-    }, status: status_number
-  end
-
-  private
-  def enum_processable?(enum_value, possible_enums)
-    return enum_value.blank? || possible_enums.include?(enum_value)
-  end
 end
