@@ -197,41 +197,67 @@ describe Api::V1::UsersController do
     end
   end
 
-  describe "PUT/PATCH #update" do
-    context "when is successfully updated" do
-      before(:each) do
-        @user = create_and_authenticate_user(:user_admin)
-        patch :update, { id: @user.id,
-                        email: "newmailexample@duke.edu" }
+  describe "PUT/PATCH #update_password" do
+    context "testing privileges" do
+      it "non-users cannot update" do
+        user = FactoryGirl.create :user_student
+        update_password_and_expect_unauthorized(user)
       end
 
-      it "renders json representation for updated user" do
-        user_response = json_response
-        expect(user_response[:email]).to eql "newmailexample@duke.edu"
+      it "students cannot update password of others" do
+        create_and_authenticate_user(:user_student)
+        user_other = FactoryGirl.create :user_manager
+
+        update_password_and_expect_unauthorized(user_other)
       end
 
-      it { should respond_with 200 }
+      it "managers cannot update cannot update password of others" do
+        create_and_authenticate_user(:user_manager)
+        user_other = FactoryGirl.create :user_student
+
+        update_password_and_expect_unauthorized(user_other)
+      end
+
+      it "admins cannot update password of others" do
+        create_and_authenticate_user(:user_admin)
+        user_other = FactoryGirl.create :user_student
+
+        update_password_and_expect_unauthorized(user_other)
+      end
+
+      it "students can update password of self" do
+        user = create_and_authenticate_user(:user_student)
+        update_password_and_expect_ok(user)
+      end
+
+      it "managers can update password of self" do
+        user = create_and_authenticate_user(:user_manager)
+        update_password_and_expect_ok(user)
+      end
+
+      it "admins can update password of self" do
+        user = create_and_authenticate_user(:user_admin)
+        update_password_and_expect_ok(user)
+      end
     end
 
-    context "when is not created as email is empty" do
+    context "testing password mismatch" do
       before(:each) do
         @user = create_and_authenticate_user(:user_admin)
-        patch :update, { id: @user.id,
-                        email: "" }
+
+        patch :update_password, {
+            id: @user.id,
+            user: {
+                password: 'new_password',
+                password_confirmation: 'incorrect_new_password'
+            }
+        }
       end
 
-      # TODO: Change when validation of email is finalized
-      xit "renders error from JSON" do
-        user_response = json_response
-        expect(user_response).to have_key(:errors)
+      it "mismatched passwords" do
+        user_response = expect_422_unprocessable_entity
+        expect(user_response[:errors][:password_confirmation]).to include "doesn't match Password"
       end
-
-      xit "renders the json errors on why the user couldn't be created" do
-        user_response = json_response
-        expect(user_response[:errors][:email]).to include "can't be blank"
-      end
-
-      xit { should respond_with 422 }
     end
   end
 
@@ -242,5 +268,30 @@ describe Api::V1::UsersController do
     end
 
     it { should respond_with 204 }
+  end
+
+  private
+  def update_password_and_expect_unauthorized(input_user)
+    patch :update_password, {
+        id: input_user.id,
+        user: {
+            password: 'new_password',
+            password_confirmation: 'new_password'
+        }
+    }
+
+    expect_401_unauthorized
+  end
+
+  def update_password_and_expect_ok(input_user)
+    patch :update_password, {
+        id: input_user.id,
+        user: {
+            password: 'new_password',
+            password_confirmation: 'new_password'
+        }
+    }
+
+    should respond_with 200
   end
 end

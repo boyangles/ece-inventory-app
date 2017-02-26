@@ -1,23 +1,23 @@
 class Api::V1::UsersController < BaseController
   # TODO: Include actions for #create
-
   before_action :authenticate_with_token!
   before_action :auth_by_manager_privilege!, only: [:index]
-  before_action :auth_by_admin_privilege!, only: [:new, :create, :update, :destroy]
+  before_action :auth_by_admin_privilege!, only: [:new, :create, :destroy]
   before_action -> { auth_by_same_user_or_manager!(params[:id]) }, only: [:show]
-  before_action :set_user, only: [:show, :update, :destroy]
+  before_action -> { auth_by_same_user!(params[:id]) }, only: [:update_password]
+  before_action :set_user, only: [:show, :destroy]
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
+
+  [:update_password].each do |api_action|
+    swagger_api api_action do
+      param :header, :Authorization, :string, :required, 'Authentication token'
+    end
+  end
 
   respond_to :json
 
   swagger_controller :users, 'Users'
-
-  # authentication_actions.each do |api_action|
-  #   swagger_api api_action do
-  #     param :header, :Authorization, :required, "Authorization Token"
-  #   end
-  # end
 
   swagger_api :index do
     summary 'Returns all Users'
@@ -51,15 +51,14 @@ class Api::V1::UsersController < BaseController
     response :unprocessable_entity
   end
 
-  swagger_api :update do
-    summary "Updates an existing user"
-    param :path, :id, :integer, :required, "id"
-    param :form, :username, :string, "Username"
-    param :form, :password, :string, "Password"
-    param :form, :password_confirmation, :string, "Password Confirmation"
-    param_list :form, :privilege, :string , "Privilege", [ "admin", "ta", "student" ]
+  swagger_api :update_password do
+    summary "Updates an existing user password"
+    param :path, :id, :integer, :required, "User ID"
+    param :form, 'user[password]', :string, :required, "Password"
+    param :form, 'user[password_confirmation]', :string, :required, "Password Confirmation"
     response :unauthorized
-    response :not_acceptable
+    response :ok
+    response :unprocessable_entity
   end
 
   swagger_api :destroy do
@@ -122,11 +121,13 @@ class Api::V1::UsersController < BaseController
     end
   end
 
-  def update
+  def update_password
+    password_params = user_params.slice(:password, :password_confirmation)
+
     user = User.find(params[:id])
 
-    if user.update(user_params)
-      render json: user, status: 200, location: [:api, user]
+    if user.update(password_params)
+      render json: { message: 'Password Updated!' } , status: 200
     else
       render json: { errors: user.errors }, status: 422
     end

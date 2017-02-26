@@ -35,6 +35,14 @@ module Authenticable
                 curr_user.id == user_to_show.id)
   end
 
+  def auth_by_same_user!(user_id)
+    user = User.find(user_id)
+    curr_user = current_user_by_auth
+
+    render json: { errors: 'No sufficient privileges' },
+           status: :unauthorized unless curr_user && curr_user.id == user.id
+  end
+
   def auth_by_check_requests_corresponds_to_current_user!
     @user = Request.find(params[:id]).user
     render json: {errors: 'No sufficient privileges' },
