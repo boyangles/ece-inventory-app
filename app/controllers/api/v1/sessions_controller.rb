@@ -14,6 +14,14 @@ class Api::V1::SessionsController < ApplicationController
     response :unprocessable_entity
   end
 
+  swagger_api :destroy do
+    summary 'Logout of a session'
+    notes 'Removes your authorization token'
+    param :path, :id, :string, :required, "Authorization Token"
+    response :no_content
+    response :unprocessable_entity
+  end
+
   def create
     user = User.find_by(:email => params[:email])
     if user && user.authenticate(params[:password])
@@ -26,6 +34,18 @@ class Api::V1::SessionsController < ApplicationController
       end
     else
       render json: { errors: 'Invalid username or password' }, status: 422
+    end
+  end
+
+  def destroy
+    user = User.find_by(auth_token: params[:id])
+
+    if user
+      user.generate_authentication_token!
+      user.save
+      head 204
+    else
+      render json: { errors: 'Invalid authorization token' }, status: 422
     end
   end
 

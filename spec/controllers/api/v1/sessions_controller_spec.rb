@@ -49,15 +49,19 @@ describe Api::V1::SessionsController do
     end
   end
 
-  # describe "DELETE #destroy" do
-  #   before(:each) do
-  #     create_and_authenticate_admin_user
-  #     log_in @user
-  #     delete :destroy, id: @user.auth_token
-  #   end
-  #
-  #   it { should respond_with 204 }
-  # end
+  describe "DELETE #destroy" do
+    it "user doesn't exist" do
+      delete :destroy, id: 'invalid_auth_token'
+      response = expect_422_unprocessable_entity
+      expect(response[:errors]).to include "Invalid authorization token"
+    end
+
+    it "user exists" do
+      user = FactoryGirl.create :user_admin
+      delete :destroy, id: user.auth_token
+      should respond_with 204
+    end
+  end
 
   private
   def post_credentials(input_email, input_password)
