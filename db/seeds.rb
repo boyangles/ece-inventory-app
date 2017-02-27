@@ -36,6 +36,8 @@ end
                password: password,
                password_confirmation: password,
                auth_token: Devise.friendly_token)
+
+  Log.create!(user_id: usr)
 end
 
 User.create!(username: "admin", email: "adminusername@example.com", status: "approved",
@@ -90,6 +92,7 @@ CustomField.create!(field_name: 'restock_info', private_indicator: true, field_t
                        quantity: rand(1...50))
  end
 end
+
 
 # Creating Logs:
 # Disbursements:

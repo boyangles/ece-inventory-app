@@ -1,6 +1,21 @@
 <%# app/views/logs/index.html.erb %>
 <% provide(:title, 'Logs') %>
 
+<div class="search">
+  <%= form_for logs_path, :method => 'get' do |f| %>
+      <p class="submit_bar">
+        <%= f.label "Search by User Name" %><br>
+        <%= text_field_tag :user_search, params[:user_search], :placeholder => "User" %>
+      </p>
+
+      <p>
+        <%= f.label "Search by Item Name" %>
+        <%= text_field_tag :item_search, params[:item_search], :placeholder => "Item"  %>
+      </p>
+
+      <%= submit_tag "Search", class: "btn btn-primary" %>
+  <% end %>
+</div>
 
 <div class="row">
   <div class="col-md-8 col-md-offset-2">

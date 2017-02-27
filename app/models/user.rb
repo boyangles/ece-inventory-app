@@ -135,9 +135,14 @@ class User < ApplicationRecord
 		userlog = UserLog.new(:log_id => log.id, :user_id => self.id, :action => action, :old_privilege => old_priv, :new_privilege => new_priv)
 		userlog.save!
 
-	end
-  
-	## Class Methods
+  end
+
+
+  ## Class Methods
+  def self.filter_by_search(search_input)
+    where("username ILIKE ?", "%#{search_input}%")
+  end
+
   def self.isDukeEmail?(email_address)
     return email_address.match(DUKE_EMAIL_REGEX)
   end
