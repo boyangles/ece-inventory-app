@@ -28,8 +28,10 @@
 </p>
 
 <p>
+	<% if !is_manager_or_admin? %>
   <strong>Reason:</strong>
   <%= @request.reason %>
+	<% end %>
 </p>
 
 
@@ -47,26 +49,31 @@
   </p>
 <% end %>
 
-
 <% if @request.outstanding? && is_manager_or_admin? %>
   <%= render 'decisionform', request: @request %>
 <% end %>
 
-<% if !@request.request_items.empty? && @request.cart? %>
+<% if !@request.request_items.empty? && @request.cart? && is_manager_or_admin? %>
 	<%= render 'placeorderform', request: @request %>
 <% end %>
 
 <% if @request.cart? %>
     <%= link_to 'Clear Items in Cart', clear_request_path(@request), method: :put %> |
- 		<%= link_to 'Edit', edit_request_path(@request) %> | 
-<% end %> 
-<%= link_to 'Back', :back %>
 
-<div><% if @request.outstanding? %>
+		<% if is_manager_or_admin? %>
+			<%= link_to 'Edit', edit_request_path(@request) %> |
+		<% else %>
+	 		<%= link_to 'Edit/Supply Reason to Submit', edit_request_path(@request) %> | 
+		<% end %>
+<% end %> 
+
+<% if @request.outstanding? %>
 	<%= render 'cancelorderform', request: @request %>
  		<%= link_to 'Edit', edit_request_path(@request) %> |
-<% end %></div>
+<% end %>
 
-<div><% if @request.cancelled? %>
+<% if @request.cancelled? %>
 	<%= render 'reviveorderform', request: @request %>
-<% end %></div>
+<% end %>
+
+<%= link_to 'Back', :back %>

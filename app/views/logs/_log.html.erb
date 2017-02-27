@@ -20,7 +20,7 @@
 			<% if userlog.created? %>
 				<% result = " with privilege " + userlog.new_privilege %>
 		 	<% elsif userlog.privilege_updated? %>
-				<%= iresult = "from " + userlog.old_privilege  + " to " + userlog.new_privilege %>
+				<% result = "from " + userlog.old_privilege  + " to " + userlog.new_privilege %>
 			<% end %>
 
 			<b>Affected User: </b>
@@ -80,7 +80,7 @@
 	
 			<% elsif itemlog.admin_corr_quantity? %>
 					corrected the quantity of <%= link_to item.unique_name, item_path(item) %>
-					from <%= itemlog.curr_quality - itemlog.quantity_change %>
+					from <%= itemlog.curr_quantity - itemlog.quantity_change %>
 					to <%= itemlog.curr_quantity %>
 
 			<% elsif itemlog.disbursed? %>

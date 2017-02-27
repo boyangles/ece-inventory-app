@@ -37,7 +37,7 @@
 <% if @user.status_deactivated? %>
 	<p><strong>Status: </strong>
 	<%= @user.status %></p>
-<% else %>
+<% elsif is_admin? %>
 	<%= render 'deactivateuserform', user: @user %>
 <% end %>
 

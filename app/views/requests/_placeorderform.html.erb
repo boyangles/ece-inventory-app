@@ -1,17 +1,27 @@
 <%= form_for(request) do |f| %>
 
-	<% if is_admin? || is_manager? %>
+	<% if is_manager_or_admin? %>
+
+		<%= f.label :reason, "Reason", class: "col-lg-2 control-label" %>
+		<% if request.reason=="TBD" %>
+			<%= f.text_area :reason, :value => "", :required => true, class: "form-control", :rows => 2 %>
+		<% else %>
+			<%= f.text_area :reason, :required => true, class: "form-control", :rows => 2 %>
+		<% end %>	
+
 		<%= f.label :response, "Response", class: "col-lg-2 control-label" %>
-		<%= f.text_area :response, class: "form-control", :rows => 3 %>
+		<%= f.text_area :response, class: "form-control", :rows => 2 %>
 
 		<%= f.hidden_field :status, :value => "approved" %>
 		<br><%= f.label 'User to Make Request For' %></br>
+		<div class="form-control">
 		<%= collection_select(:user, :id, User.where(:status=>1), :id, :username, {:required => true}, {:selected => current_user.id}) %>
-	<% else %>  
- 	 	<%= f.hidden_field :status, :value => "outstanding" %>
-	<% end %>	
+		</div>
+	<% else %>
+		<%= f.hidden_field :status, :value => "outstanding" %>
+	<% end %>
 
 <div class="actions">
-  	<%= f.submit "Place Order" %>
+  	<%= f.submit "Place Order", class: "btn btn-primary" %>
 	</div>
 <% end %>
