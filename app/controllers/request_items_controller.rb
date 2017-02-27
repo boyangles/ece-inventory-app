@@ -9,7 +9,7 @@ class RequestItemsController < ApplicationController
     end
 
 		if !RequestItem.where(item_id: params[:item_id]).where(request_id: grab_cart(current_user).id).take.nil?
-			flash[:success] = "This item has already been added to your cart! Edit cart to increase quantity."
+			flash[:warning] = "This item has already been added to your cart! Edit cart to increase quantity."
 			redirect_to request_path(grab_cart(current_user).id)
 		else
     	# look for cart to link request to item

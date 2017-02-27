@@ -70,18 +70,12 @@
             <tbody>
             <% @item_custom_fields.each do |icf| %>
                 <% field_content = ItemCustomField.field_content(@item.id, icf.custom_field_id) %>
-
-    <button data-toggle="collapse" data-target="#item_show_custom_field_collapse">
-    <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#item_show_custom_field_collapse">
-      More details...
-    </button>
-
-                <% if !current_user.privilege_student? ||
+               <% if is_manager_or_admin? ||
                     !icf.custom_field.private_indicator %>
                     <tr>
                       <td><b><%= icf.custom_field.field_name %></b></td>
                       <td>
-                        <% if current_user.privilege_student? %>
+                        <% if !is_manager_or_admin? %>
                             <%= field_content %>
                         <% else %>
                             <a href="#" data-xeditable="true"
