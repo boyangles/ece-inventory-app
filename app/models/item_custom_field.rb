@@ -17,5 +17,17 @@ class ItemCustomField < ApplicationRecord
     return selected_icf[relevant_icf_column]
   end
 
+  def self.clear_field_content(input_item_id, input_custom_field_id)
+    clear_params = {
+        short_text_content: nil,
+        long_text_content: nil,
+        integer_content: nil,
+        float_content: nil
+    }
+
+    ItemCustomField.find_by(:item_id => input_item_id, :custom_field_id => input_custom_field_id)
+        .update_attributes!(clear_params)
+  end
+
   ## Instance Methods:
 end

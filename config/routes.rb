@@ -76,7 +76,8 @@ Rails.application.routes.draw do
           put :clear_field_entries
           patch :clear_field_entries
 
-          get :show_tag_associations
+          put :update_field_entry
+          patch :update_field_entry
         end
       end
 

@@ -38,4 +38,12 @@ class BaseController < ApplicationController
 
     return true
   end
+
+  def all_custom_field_names_exist?(custom_field_filters)
+    custom_field_filters.each do |cf|
+      return false unless CustomField.exists?(:field_name => cf)
+    end
+
+    return true
+  end
 end
