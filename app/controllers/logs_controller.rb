@@ -41,10 +41,9 @@ class LogsController < ApplicationController
       else
         fourthLayer = thirdLayer
       end
-
       @logs = Log.where(id: fourthLayer).paginate(page: params[:page], per_page: 10)
-
     end
+
   end
 
   def new
@@ -74,7 +73,7 @@ class LogsController < ApplicationController
 
   def save_form(log)
     if log.save
-      flash[:success] = "Log succesfully saved!"
+      flash[:success] = "Log successfully saved!"
       redirect_to(logs_path)
     else
       flash.now[:danger] = "Log could not be successfully saved"

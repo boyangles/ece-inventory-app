@@ -14,12 +14,6 @@
         <%= text_field_tag :item_search, params[:item_search], :placeholder => "Item"  %>
       </p>
 
-
-      <!--<div class="input-group input-daterange">-->
-        <!--<input id = "startDate" type="text" class="form-control" value="" placeholder="yyyy/mm/dd">-->
-        <!--<div class="input-group-addon">to</div>-->
-        <!--<input id = "endDate" type="text" class="form-control" value="" placeholder="yyyy/mm/dd">-->
-      <!--</div>-->
       <%= f.label "From Date:" %>
       <%= text_field_tag :start_date, params[:start_date], 'data-behaviour' => 'datepicker' %>
       <script type="text/javascript">
@@ -35,22 +29,6 @@
       <%= submit_tag "Search", class: "btn btn-primary" %>
   <% end %>
 </div>
-
-<!--<script>-->
-//    $('.input-daterange input').each(function() {
-//        $(this).datepicker('clearDates');
-//    });
-//    $.ajax({
-//        type: 'POST',
-//        url: '',
-//        data: {'start_date' : $("input[name='report[start_date]']").val(),
-//            'end_date' : $("input[name='report[end_date]']").val() },
-//        success: function(data){
-//            //data is whatever you RETURN from your controller.
-//            //an array, string, object...something
-//        }
-//    });`
-<!--</script>-->
 
 <div class="row">
   <div class="col-md-8 col-md-offset-2">
