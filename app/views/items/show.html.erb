@@ -108,7 +108,10 @@
                         "Outstanding Requests" :
                         "My Pending Requests" %>
               </h3>
-
+							<p><% if @item.deactive? %>
+									(Requests with deactivated items will not be approved)
+								<% end %>
+							</p>
               <ol class="requests">
                 <%= render @requests %>
               </ol>

@@ -18,7 +18,12 @@
   <% @request.request_items.each do |req_item| %>
       <% item = Item.find(req_item.item_id) %>
       <p><%= link_to item.unique_name, item_path(item.id) %>: 
-			<%= req_item.quantity %></p>
+				<%= req_item.quantity %>
+				
+				<% if @request.cart? || @request.outstanding? %>
+					<%= link_to "x", req_item, method: :delete, data: {confirm: "Are you sure you want to remove " + item.unique_name + "?"}, class: "pull-right" %>	
+				<% end %>
+			</p>
   <% end %>
 </p>
 

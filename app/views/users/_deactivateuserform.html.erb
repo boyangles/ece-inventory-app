@@ -3,6 +3,8 @@
   <%= f.hidden_field :status, :value => "deactivated" %>
 	
 	<div class="actions">
-  	<%= f.submit "Delete User", data: {confirm: 'Are you sure?'} %>
+  	<div class="text-right">
+			<%= f.submit "Delete User", data: {confirm: 'Are you sure?'}, class: 'btn btn-xs' %>
+		</div>
 	</div>
 <% end %>
