@@ -294,25 +294,197 @@ describe Api::V1::CustomFieldsController do
 
   describe "PUT/PATCH #update_name" do
     context "privilege tests (401)" do
+      before(:each) do
+        initialize_all_fields
+      end
 
+      it "no auth_token -> no access" do
+        update_field_attribute(:update_name, @field_public_integer.id, :field_name, 'updated_field_name')
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'Not authenticated'
+      end
+
+      it "student auth_token -> no access" do
+        create_and_authenticate_user(:user_student)
+        update_field_attribute(:update_name, @field_public_integer.id, :field_name, 'updated_field_name')
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'No sufficient privileges'
+      end
+
+      it "manager auth_token -> no access" do
+        create_and_authenticate_user(:user_manager)
+        update_field_attribute(:update_name, @field_public_integer.id, :field_name, 'updated_field_name')
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'No sufficient privileges'
+      end
+
+      it "admin auth_token -> full access" do
+        create_and_authenticate_user(:user_admin)
+        update_field_attribute(:update_name, @field_public_integer.id, :field_name, 'updated_field_name')
+        should respond_with 200
+      end
+
+      it "unapproved -> no access" do
+        create_and_authenticate_user(:user_admin_unapproved)
+        update_field_attribute(:update_name, @field_public_integer.id, :field_name, 'updated_field_name')
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'Account is not approved for this action'
+      end
+    end
+
+    context "incorrect inputs (422)" do
+      it "field name renamed to one already taken" do
+        initialize_all_fields
+        create_and_authenticate_user(:user_admin)
+        update_field_attribute(:update_name, @field_public_integer.id, :field_name, @field_private_short_text.field_name)
+        response = expect_422_unprocessable_entity
+        expect(response[:errors][:field_name]).to include 'has already been taken'
+      end
+    end
+
+    context "not found (404)" do
+      it "id is not available" do
+        create_and_authenticate_user(:user_admin)
+        update_field_attribute(:update_name, -1, :field_name, 'updated_field_name')
+        response = expect_404_not_found
+        expect(response[:errors]).to include 'Custom Field not found!'
+      end
     end
   end
 
   describe "PUT/PATCH #update_privacy" do
     context "privilege tests (401)" do
+      before(:each) do
+        initialize_all_fields
+      end
 
+      it "no auth_token -> no access" do
+        update_field_attribute(:update_privacy, @field_public_integer.id, :private_indicator, true)
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'Not authenticated'
+      end
+
+      it "student auth_token -> no access" do
+        create_and_authenticate_user(:user_student)
+        update_field_attribute(:update_privacy, @field_public_integer.id, :private_indicator, true)
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'No sufficient privileges'
+      end
+
+      it "manager auth_token -> no access" do
+        create_and_authenticate_user(:user_manager)
+        update_field_attribute(:update_privacy, @field_public_integer.id, :private_indicator, true)
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'No sufficient privileges'
+      end
+
+      it "admin auth_token -> full access" do
+        create_and_authenticate_user(:user_admin)
+        update_field_attribute(:update_privacy, @field_public_integer.id, :private_indicator, true)
+        should respond_with 200
+      end
+
+      it "unapproved -> no access" do
+        create_and_authenticate_user(:user_admin_unapproved)
+        update_field_attribute(:update_privacy, @field_public_integer.id, :private_indicator, true)
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'Account is not approved for this action'
+      end
+    end
+
+    context "not found (404)" do
+      it "id is not available" do
+        create_and_authenticate_user(:user_admin)
+        update_field_attribute(:update_privacy, -1, :private_indicator, true)
+        response = expect_404_not_found
+        expect(response[:errors]).to include 'Custom Field not found!'
+      end
     end
   end
 
   describe "PUT/PATCH #update_type" do
     context "privilege tests (401)" do
+      before(:each) do
+        initialize_all_fields
+      end
 
+      it "no auth_token -> no access" do
+        update_field_attribute(:update_type, @field_public_integer.id, :field_type, 'short_text_type')
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'Not authenticated'
+      end
+
+      it "student auth_token -> no access" do
+        create_and_authenticate_user(:user_student)
+        update_field_attribute(:update_type, @field_public_integer.id, :field_type, 'short_text_type')
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'No sufficient privileges'
+      end
+
+      it "manager auth_token -> no access" do
+        create_and_authenticate_user(:user_manager)
+        update_field_attribute(:update_type, @field_public_integer.id, :field_type, 'short_text_type')
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'No sufficient privileges'
+
+      end
+
+      it "admin auth_token -> full access" do
+        create_and_authenticate_user(:user_admin)
+        update_field_attribute(:update_type, @field_public_integer.id, :field_type, 'short_text_type')
+        should respond_with 200
+      end
+
+      it "unapproved -> no access" do
+        create_and_authenticate_user(:user_admin_unapproved)
+        update_field_attribute(:update_type, @field_public_integer.id, :field_type, 'short_text_type')
+        response = expect_401_unauthorized
+        expect(response[:errors]).to include 'Account is not approved for this action'
+      end
     end
-  end
 
-  describe "PUT/PATCH clear_field_content" do
-    context "privilege tests (401)" do
+    context "incorrect input (422)" do
+      it "enum -> incorrect" do
+        create_and_authenticate_user(:user_admin)
+        initialize_all_fields
+        update_field_attribute(:update_type, @field_public_float, :field_type, 'incorrect_type')
+        response = expect_422_unprocessable_entity
+        expect(response[:errors]).to include 'Inputted Field Type is not short_text_type/long_text_type/integer_type/float_type!'
+      end
+    end
 
+    context "not found (404)" do
+      it "id is not available" do
+        create_and_authenticate_user(:user_admin)
+        update_field_attribute(:update_type, -1, :field_type, 'short_text_type')
+        response = expect_404_not_found
+        expect(response[:errors]).to include 'Custom Field not found!'
+      end
+    end
+
+    context "regular operation (200)" do
+      it "Item custom field is cleared" do
+        @item = FactoryGirl.create :item
+        initialize_all_fields
+        icfs = ItemCustomField.where(:item_id => @item.id, :custom_field_id => @field_public_integer.id)
+
+        icfs.update_all( :short_text_content => 'my short text content',
+                         :long_text_content => 'long text content',
+                         :integer_content => 15,
+                         :float_content => 3.1415 )
+
+        create_and_authenticate_user(:user_admin)
+        update_field_attribute(:update_type, @field_public_integer.id, :field_type, 'float_type')
+        expect respond_with 200
+
+        icfs = ItemCustomField.where(:item_id => @item.id, :custom_field_id => @field_public_integer.id)
+        icfs.each do |icf|
+          expect(icf.short_text_content).to be_nil
+          expect(icf.long_text_content).to be_nil
+          expect(icf.integer_content).to be_nil
+          expect(icf.float_content).to be_nil
+        end
+      end
     end
   end
 
@@ -348,5 +520,14 @@ describe Api::V1::CustomFieldsController do
     }
 
     return CustomField.find_by(:field_name => 'sample_field')
+  end
+
+  def update_field_attribute(field_function, object_id, field_key, field_value)
+    patch field_function, {
+        id: object_id,
+        custom_field: {
+            field_key => field_value
+        }
+    }
   end
 end
