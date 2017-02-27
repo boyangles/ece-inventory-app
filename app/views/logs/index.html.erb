@@ -1,6 +1,7 @@
 <%# app/views/logs/index.html.erb %>
 <% provide(:title, 'Logs') %>
 
+
 <div class="search">
   <%= form_for logs_path, :method => 'get' do |f| %>
       <p class="submit_bar">
@@ -13,30 +14,64 @@
         <%= text_field_tag :item_search, params[:item_search], :placeholder => "Item"  %>
       </p>
 
+
+      <!--<div class="input-group input-daterange">-->
+        <!--<input id = "startDate" type="text" class="form-control" value="" placeholder="yyyy/mm/dd">-->
+        <!--<div class="input-group-addon">to</div>-->
+        <!--<input id = "endDate" type="text" class="form-control" value="" placeholder="yyyy/mm/dd">-->
+      <!--</div>-->
+      <%= f.label "From Date:" %>
+      <%= text_field_tag :start_date, params[:start_date], 'data-behaviour' => 'datepicker' %>
+      <script type="text/javascript">
+          $('[data-behaviour~=datepicker]').datepicker();
+      </script>
+
+      <%= f.label "To Date:" %>
+      <%= text_field_tag :end_date, params[:end_date], 'data-behaviour' => 'datepicker' %>
+      <script type="text/javascript">
+          $('[data-behaviour~=datepicker]').datepicker();
+      </script>
+
       <%= submit_tag "Search", class: "btn btn-primary" %>
   <% end %>
 </div>
+
+<!--<script>-->
+//    $('.input-daterange input').each(function() {
+//        $(this).datepicker('clearDates');
+//    });
+//    $.ajax({
+//        type: 'POST',
+//        url: '',
+//        data: {'start_date' : $("input[name='report[start_date]']").val(),
+//            'end_date' : $("input[name='report[end_date]']").val() },
+//        success: function(data){
+//            //data is whatever you RETURN from your controller.
+//            //an array, string, object...something
+//        }
+//    });`
+<!--</script>-->
 
 <div class="row">
   <div class="col-md-8 col-md-offset-2">
     <h1>Logs</h1>
 
     <%= link_to "Report Acquisition and Damages", new_log_path, class: "btn btn-lg btn-primary" %>
-    
-     <%= link_to "View Disbursements", logs_path(:request_type => "disbursement"), class: "btn btn-lg btn-primary" %>
+
+    <%= link_to "View Disbursements", logs_path(:request_type => "disbursement"), class: "btn btn-lg btn-primary" %>
     <%= link_to "View Acquisitions", logs_path(:request_type => "acquisition"), class: "btn btn-lg btn-primary" %>
     <%= link_to "View Destructions", logs_path(:request_type => "destruction"), class: "btn btn-lg btn-primary" %>
     <%= link_to "View All", logs_path, class: "btn btn-lg btn-primary" %>
     <% if @logs.any? %>
-      <h3>No. Logs (<%= @logs.count %>)</h3>
-      <ol class="logs">
-        <%= render @logs %>
-      </ol>
+        <h3>No. Logs (<%= @logs.count %>)</h3>
+        <ol class="logs">
+          <%= render @logs %>
+        </ol>
 
-      <%= will_paginate @logs %>
+        <%= will_paginate @logs %>
     <% end %>
 
     <br>
 
- </div>
+  </div>
 </div>
