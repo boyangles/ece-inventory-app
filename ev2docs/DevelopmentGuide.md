@@ -15,19 +15,19 @@ The database consists of tables with the model classes as the primary (lookup) k
 |-------------|:------------------------------------------------------------------------------------------------------------------:|
 | User        | username, password_digest, email, created_at, updated_at, status, privilege, auth_token |
 | Item        | unique_name, quantity, model_number, description, location, status, last_action                                                         |
-| Custom_Fields | field_name, private_indicator, field_type | 
-| Item_Custom_Fields | item_id, custom_field_id, short_text_content, long_text_content, integer_content, float_content|
+| Custom_Field | field_name, private_indicator, field_type | 
+| Item_Custom_Field | item_id, custom_field_id, short_text_content, long_text_content, integer_content, float_content|
 | Tag         | name                                                                                    |
-| Item_Tags   | tag_id, item_id                                                                            |
+| Item_Tag   | tag_id, item_id                                                                            |
 |Request     | reason, created_at, updated_at, status, response, user_id   |
-| Request_Items | request_id, item_id, created_at, updated_at, quantity|
-| Logs        | created_at, user_id, log_type|
-| Item_Logs | log_id, item_id, action, curr_quantity, quantity_change, old_name, new_name, old_desc, new_desc, old_model_num, new_model_num, |
-| User_Logs | log_id, user_id, action, old_privilege, new_privilege |
-| Request_Logs | log_id, request_id, action |
-| Stack_Exchanges | created_at, updated_at |
+| Request_Item | request_id, item_id, created_at, updated_at, quantity|
+| Log        | created_at, user_id, log_type|
+| Item_Log | log_id, item_id, action, curr_quantity, quantity_change, old_name, new_name, old_desc, new_desc, old_model_num, new_model_num, |
+| User_Log | log_id, user_id, action, old_privilege, new_privilege |
+| Request_Log | log_id, request_id, action |
+| Stack_Exchange | created_at, updated_at |
 
-The user, item, request, and tag models are directly mentioned in the handout, but the account request and log classes are two additional model classes created to satisfy the requirements. Account Requests allow the admin to approve users before they begin using the inventory app; logs track every transaction that ever takes place (including updates to the request statuses and disembursements that require no request from a user).
+The User, Item, Custom_Field, Tag, Request, and Log refer to items explicitly mentioned in the requirements. The additional fields are to improve and enhance associations and navigation between the classes. They will all be discussed in detail below.
 
 In many cases, a table contains a field that is already a model class. For instance, the Request table contains the fields item_id and user_id. In these cases, a foreign key relation is established to speed-up the lookup of an item in the request table.  
 
