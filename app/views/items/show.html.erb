@@ -104,8 +104,12 @@
 <% end %> 
 <% if is_manager_or_admin? and @item.active? %>
   <%= link_to 'Edit item', 
-    edit_item_path(@item), 
+    edit_item_path(@item.id), 
     :class => "btn btn-primary" %>
+	<%= link_to 'Edit quantity',
+		edit_quantity_item_path(@item.id),
+		:class => "btn btn-primary" %>
+
 <% end %>
 
 <br>

@@ -17,6 +17,11 @@ class Item < ApplicationRecord
 		desc_updated: 5
 	}
 
+	enum admin_action: {
+		acquisition_or_destruction: 0,
+		administrative_correction: 1
+	}
+
   validates :unique_name, presence: true, length: { maximum: 50 },
             uniqueness: { case_sensitive: false }
   validates :quantity, presence: true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}

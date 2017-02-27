@@ -1,6 +1,9 @@
 <%= form_for(request) do |f| %>
 
 	<% if is_admin? || is_manager? %>
+		<%= f.label :response, "Response", class: "col-lg-2 control-label" %>
+		<%= f.text_area :response, class: "form-control", :rows => 3 %>
+
 		<%= f.hidden_field :status, :value => "approved" %>
 		<br><%= f.label 'User to Make Request For' %></br>
 		<%= collection_select(:user, :id, User.where(:status=>1), :id, :username, {:required => true}, {:selected => current_user.id}) %>

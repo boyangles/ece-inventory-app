@@ -52,6 +52,10 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
   end
 
+	def edit_quantity
+		@item = Item.find(params[:id])
+	end
+
   # DELETE /items/1
   def destroy
     Item.find(params[:id]).destroy!
@@ -95,6 +99,20 @@ class ItemsController < ApplicationController
       render 'edit'
     end
   end
+
+	def update_quantity
+		@item = Item.find(params[:id])
+
+		# add action to last_action
+
+    if @item.update_attributes(item_params)
+      flash[:success] = "Item updated successfully"
+      redirect_to @item
+    else
+      flash.now[:danger] = "Unable to edit!"
+      render 'edit'
+    end
+	end
 
   private
 
