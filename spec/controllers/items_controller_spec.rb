@@ -193,15 +193,15 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     expect(page).to have_content 'Excluded Tags'
     expect(page).to have_selector(:link_or_button, 'Search')
 
-    if user == 'admin' || user == 'manager'
-      expect(page).to have_selector(:link_or_button, 'Custom Fields')
-    end
     if user == 'admin'
+      expect(page).to have_selector(:link_or_button, 'Custom Fields')
       expect(page).to have_selector(:link_or_button, 'New Item')
-    end
-    if user == 'student'
-      expect(page).not_to have_selector(:link_or_button, 'New Item')
+    elsif user == 'manager'
+      expect(page).to have_selector(:link_or_button, 'New Item')
       expect(page).not_to have_selector(:link_or_button, 'Custom Fields')
+    elsif user == 'student'
+      expect(page).not_to have_selector(:link_or_button, 'Custom Fields')
+      expect(page).not_to have_selector(:link_or_button, 'New Item')
     end
   end
 end

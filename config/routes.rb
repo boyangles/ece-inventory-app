@@ -58,14 +58,30 @@ Rails.application.routes.draw do
 
           put :update_type
           patch :update_type
+        end
+      end
 
-          put :clear_field_content
-          patch :clear_field_content
+      resources :items, :only => [:index, :show, :create, :destroy] do
+        member do
+          post :create_tag_associations
+
+          delete :destroy_tag_associations
+
+          put :update_general
+          patch :update_general
+
+          put :fix_quantity
+          patch :fix_quantity
+
+          put :clear_field_entries
+          patch :clear_field_entries
+
+          put :update_field_entry
+          patch :update_field_entry
         end
       end
 
       resources :requests, :only => [:index, :show, :create, :update, :destroy]
-      resources :items, :only => [:index, :show, :create, :update, :destroy]
       resources :tags, :only => [:index, :show, :create, :update, :destroy]
       resources :logs, :only => [:index, :show, :create, :update, :destroy]
       resources :sessions, :only => [:create, :destroy]
