@@ -43,12 +43,12 @@ class Api::V1::UsersController < BaseController
 
   swagger_api :create do
     summary "Creates a local User"
-    param :form, 'user[username]', :string, :optional, "Username"
+    param :form, 'user[username]', :string, :required, "Username"
     param :form, 'user[email]', :string, :required, "Email"
     param :form, 'user[password]', :string, :required, "Password"
     param :form, 'user[password_confirmation]', :string, :required, "Password Confirmation"
     param_list :form, 'user[privilege]', :string, :required, "Privilege; must be: student/manager/admin", [ "student", "manager", "admin" ]
-    param_list :form, 'user[status]', :string, :optional, "Status; must be: approved/waiting"
+    param_list :form, 'user[status]', :string, :optional, "Status; must be: approved/waiting", [ "approved", "waiting" ]
     response :unauthorized
     response :created
     response :unprocessable_entity

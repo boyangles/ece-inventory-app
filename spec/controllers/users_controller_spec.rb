@@ -55,7 +55,7 @@ RSpec.describe "User Controller Tests", :type => :feature do
       fill_in('Username', with: username)
       fill_in('Password', with: "password")
       fill_in('Confirm Password', with: "password")
-      select('student', from: 'Privilege')
+      select('student', from: 'user[privilege]')
       find_button('Create User').click
       expect(page).to have_current_path users_path
       expect(page).to have_content(username.downcase + ' created')
@@ -69,7 +69,7 @@ RSpec.describe "User Controller Tests", :type => :feature do
         expect(page).to have_current_path user_path(@user)
         find_link('Edit').click
         expect(page).to have_current_path edit_user_path(@user)
-        select('admin', from: 'Privilege')
+        select('admin', from: 'user[privilege]')
         find_button('Save changes').click
         expect(page).to have_current_path user_path(@user)
         find('.dropdown-toggle').click
