@@ -19,10 +19,10 @@ The database consists of tables with the model classes as the primary (lookup) k
 | Item_Custom_Fields | item_id, custom_field_id, short_text_content, long_text_content, integer_content, float_content|
 | Tag         | name                                                                                    |
 | Item_Tags   | tag_id, item_id                                                                            |
-|Request     | reason, created_at, updated_at, status, request_type, response, user_id   |
+|Request     | reason, created_at, updated_at, status, response, user_id   |
 | Request_Items | request_id, item_id, created_at, updated_at, quantity|
-| Logs        | created_at, updated_at, request_type, user_id, log_type|
-| Item_Logs | log_id, item_id, action, quantity_change, old_name, new_name, old_desc, new_desc, old_model_num, new_model_num, curr_quantity |
+| Logs        | created_at, user_id, log_type|
+| Item_Logs | log_id, item_id, action, curr_quantity, quantity_change, old_name, new_name, old_desc, new_desc, old_model_num, new_model_num, |
 | User_Logs | log_id, user_id, action, old_privilege, new_privilege |
 | Request_Logs | log_id, request_id, action |
 | Stack_Exchanges | created_at, updated_at |
@@ -89,50 +89,96 @@ Item tags exist to keep track of the many relationships between various items an
 
 ### Custom_Fields
 ##### FIELDS
+* **field_name** - 
+* **private_indicator** -
+* **field_type** -
 
 ##### ASSOCIATIONS
-
+* has-many ITEMS through ITEM_CUSTOM_FIELDS
+* has-many ITEM_CUSTOM_FIELDS
 
 ### Item_Custom_Fields
 ##### FIELDS
+* **item_id** -
+* **custom_field_id** -
+* **short_text_content** -
+* **long_text_content** -
+* **integer_content** -
+* **float_content** - 
 
 ##### ASSOCIATIONS
+* belongs-to CUSTOM_FIELDS
+* belongs-to ITEMS
 
 ### Requests
+Requests are the means through which item disbursements are handled. All users have access to an initial request, referred to as a cart, to which they can add items and corresponding quantities at will. Requests can then be submitted for approval via students or for direct logging of disbursements via managers or administrators. 
+
 ##### FIELDS
+* **user_id** - This keeps track of the user to whom the request disbursement is going. The administrator or manager who files a request on behalf of another user is not noted directly with the quest, but is noted in the corresponding log entry which is generated.
+* **created_at**/**updated_at** - Gives the time of creation and updating respectively for requests.
+* **status** - Requests have four enum options for requests. At the very beginning, they are "cart"s; every user can only be associated with a single cart. After carts are submitted for approval, they become "outstanding" while they wait for administrative response. If an admin or manager directly submits their cart, or if they approve outstanding requests, those requests become "approved"; admin and managers can also classify requests as "denied".
+* **reason** - Users must supply a reason before they are allowed to submit a request. This text area is mandatory. 
+* **response** - Administrators are allowed to add a response to a request if they choose to approve or deny an outstanding request.
 
 ##### ASSOCIATIONS
+* has-many ITEMS, through REQUEST_ITEMS
+* has-many REQUEST_ITEMS
+* belongs-to USERS
 
 ### Request_Items
+Request_Items exist for each instance of an item within a request. This object also keeps track of the quantity of the specific item in the specific request.
+request_id, item_id, created_at, updated_at, quantity|
 ##### FIELDS
+* **request_id** - This is the id of the request with which the request_item is associated.
+* **item_id** - This is the id of the item with which the request_item is associated.
+* **quantity** - This field specifies the quantity of the item included on the specific request.
+* **created_at**/**updated_at** - These fields keep track of the date and time at which the request_item is created and updated.
 
 ##### ASSOCIATIONS
+* belongs-to REQUESTS
+* belongs-to ITEMS
 
 ### Logs
-##### FIELDS
+This is the overall log table which includes entries for every action taken in the system related to user, item, and request workflow. Logs are automatically generated in the models of each of these classes upon creation and update, and cannot be modified by any user. 
 
-##### ASSOCIATIONS
+##### FIELDS
+* **created_at** - This field reports when logs were created, and is an additional field by which users can search logs.
+* **user_id** - This field specifies the user who did the initiating action which caused the corresponding log entry. 
+* **log_type** - This is an enum which specifies which object was directly edited to generate this log. Because we do not want to include extraneous columns within the log table in order to accommodate the different classes, this will allow us to query the sub-log tables (item_logs, user_logs, and request_logs) in order to grab the details of each log. The enums for this are "request", "user", and "item".
+
+This object has no associations, due to its split nature.
 
 ### Item_Logs
-##### FIELDS
+Item_Logs keeps the specific information related to every transaction that has to do with item creation, deletion, or field change.
 
-##### ASSOCIATIONS
+##### FIELDS
+* **log_id** - This references the entry in the log table which this item_log belongs to. In this way, we can query the Item_Logs in order to find the specific information for any entry in the log table whose log_type is "item".
+* **item_id** - This field references the exact item affected by this log.
+* **action** - This specifies the exact change that the item underwent. Item actions have 6 enum options: they can be created, deleted, acquired or destroyed, corrected by the administrator (quantity specifically), or had their name/description/model_number updated. This allows us to know what to show in the view.
+* **curr_quality**/**quantity_change** - These fields reflect the new quantity value of the item and the quality change from the previous value respectively. These values will be accessed if an item is destroyed/lost/disbursed (quantity_change is negative) or acquired (quantity_change is positive), or if an administrator makes a quantity correction.
+* **old_name**/**new_name** - These field will be checked if the action reported is a description update; they track the names of the item before and after the change.
+* **old_desc**/**new_desc** - These field will be checked if the action reported is a description update; they track the descriptions of the item before and after the change.
+* **old_model_num**/**new_model_num** - These field will be checked if the action reported is a description update; they track the model numbers of the item before and after the change.
 
 ### User_Logs
-##### FIELDS
+User_Logs keeps track of the details of every transaction that has to do with user creation, deletion, or privilege change.
 
-##### ASSOCIATIONS
+##### FIELDS
+* **log_id** - This references the entry in the log table which this user_log belongs to. In this way, we can query the User_Logs in order to find the specific information for any entry in the log table whose log_type is "user".
+* **user_id** - This references the specific user whose creation/deletion/privilege-change has caused this automatic logging.
+* **action** - This specifies the exact change that the user underwent. User actions have 3 enum options: they can be created, deleted, or have their privilege changed.
+* **old_privilege**/**new_privilege** - These field will be checked if the action reported is a privilege change; they track the privileges of the user before and after the change.
 
 ### Request_Logs
+Request_Logs keep track of the details of every transaction that has to do with a request status change, from cart to outstanding, cancelled, approved, and/or denied.
+log_id, request_id, action
 ##### FIELDS
-
-##### ASSOCIATIONS
+* **log_id** - This references the entry in the log table which this request_log belongs to. In this way, we can query the Request_Logs in order to find the specific information for any entry in the log table whose log_type is "request".
+* **request_id** - This references the specific request whose status change has caused this automatic logging.
+* **action** - This specifies the exact change that the request underwent. Request actions have 4 options: they can be "placed" (when the carts are submitted), approved, denied, or cancelled.
 
 ### Stack Exchanges
-##### FIELDS
-
-##### ASSOCIATIONS
-
+Stack Exchanges is a class provided by OAuth in order to allow for NetID login functionality. We do not touch Stack Exchanges.
 
  
 ## Deployment
