@@ -45,7 +45,7 @@ class Request < ApplicationRecord
   validate :cart_cannot_be_duplicated
 
   def has_status_change_to_approved?(request_params)
-    self.outstanding? && request_params[:status] == 'approved'
+    self.outstanding? && request_params[:status] == 'approved' || self.cart? && request_params[:status] == 'approved'
   end
 
 	def has_status_change_to_outstanding?(request_params)

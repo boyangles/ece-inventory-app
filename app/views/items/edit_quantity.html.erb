@@ -3,13 +3,7 @@
 
     <%= render 'quantitychangedform', item: @item %>
 
-   <div class="form-group">
-      <div class="col-lg-10 col-lg-offset-2">
-        <button type="submit" class="btn-default btn-lg btn-block">Submit</button>
-      </div>
-    </div>
-
-   <%= link_to 'Back', :back %>
+   <%= link_to 'Cancel Edit', :back %>
 <% else %>
     <%= controller.redirect_to items_path %>
 <% end %>

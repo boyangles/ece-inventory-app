@@ -1,7 +1,7 @@
 <% if is_manager_or_admin? %>
     <h1>Editing Item</h1>
 
-    <%= render 'form', item: @item %>
+    <%= render 'noquantityform', item: @item %>
 
     <p> <strong>Associated Tags</strong></p>
     <% if @item.tags.count > 0 %>

@@ -93,6 +93,7 @@ class ItemsController < ApplicationController
 
     if @item.update_attributes(item_params)
       flash[:success] = "Item updated successfully"
+			puts(@item.last_action)
       redirect_to @item
     else
       flash.now[:danger] = "Unable to edit!"
@@ -119,7 +120,7 @@ class ItemsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
-    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :search, :model_search, :status)
+    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :search, :model_search, :status, :last_action)
   end
 
   def alert_if_quantity_changes(quantity)

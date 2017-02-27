@@ -16,12 +16,7 @@ class Item < ApplicationRecord
 		deleted: 4,
 		desc_updated: 5
 	}
-
-	enum admin_action: {
-		acquisition_or_destruction: 0,
-		administrative_correction: 1
-	}
-
+	
   validates :unique_name, presence: true, length: { maximum: 50 },
             uniqueness: { case_sensitive: false }
   validates :quantity, presence: true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
@@ -52,7 +47,7 @@ class Item < ApplicationRecord
 	}
 
 	after_update {
-	#	create_log_on_quantity_change() #due to complications with quantity change -> moving this log into the controller. :/
+		create_log_on_quantity_change()
 		create_log_on_desc_update()
 		create_log_on_destruction()
 	}
@@ -90,6 +85,7 @@ class Item < ApplicationRecord
     case request_type
     when "disbursement"
       self[:quantity] = self[:quantity] - subrequest[:quantity]
+			self[:last_action] = 'disbursed'
     when "acquisition"
       self[:quantity] = self[:quantity] + subrequest[:quantity]
     when "destruction"
@@ -106,8 +102,7 @@ class Item < ApplicationRecord
 
 		quantity_increase = self.quantity - self.quantity_was
 		if quantity_increase != 0
-			# TODO: in future: grab reason for change!!
-			create_log("acquired_destroyed_quantity", quantity_increase)
+			create_log(self.last_action, quantity_increase)
 		end
 	end
 

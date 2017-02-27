@@ -43,6 +43,27 @@
 		<%= @item.status %>
 	    <% end %>
 	</p>
+<% if @item.active? %>
+	<%= link_to "Add to Cart", new_request_item_url(:item_id => @item.id), :class => "btn btn-primary" %>
+<% end %>
+<% if is_manager_or_admin? and @item.active? %>
+  <%= link_to 'Edit Item Details', 
+    edit_item_path(@item.id), 
+    :class => "btn btn-primary" %>
+	<%= link_to 'Edit Item Quantity', 
+		edit_quantity_item_path(@item.id),
+		:class => "btn btn-primary" %>
+<% if is_admin? and @item.active? %>
+ <%= render 'deactivateitemform', item: @item %>
+<% end %> 
+<% end %>
+
+<br>
+<br>
+<br>
+<%= link_to 'Back', :back%>
+
+
       </div>
       <div class="tab-pane fade" id="profile">
           <table class="table table-hover">
@@ -102,20 +123,4 @@
 </div>
 
 
-<% if @item.active? %>
-	<%= link_to "Add to Cart", new_request_item_url(:item_id => @item.id), :class => "btn btn-primary" %>
-<% end %>
-<% if is_admin? and @item.active? %>
- <%= render 'deactivateitemform', item: @item %>
-<% end %> 
-<% if is_manager_or_admin? and @item.active? %>
-  <%= link_to 'Edit item', 
-    edit_item_path(@item.id), 
-    :class => "btn btn-primary" %>
-<% end %>
-
-<br>
-<br>
-<br>
-<%= link_to 'Back', items_path %>
 
