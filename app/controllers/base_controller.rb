@@ -28,4 +28,14 @@ class BaseController < ApplicationController
   def enum_processable?(enum_value, possible_enums)
     return enum_value.blank? || possible_enums.include?(enum_value)
   end
+
+  def all_tag_names_exist?(tag_filters)
+    tag_filters.each do |t|
+      if !Tag.exists?(:name => t)
+        return false
+      end
+    end
+
+    return true
+  end
 end
