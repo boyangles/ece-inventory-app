@@ -10,13 +10,21 @@ class LogsController < ApplicationController
       # users = User.filter_by_search(params[:user_search])
       # items = Item.filter_by_search(params[:item_search])
       # @logs = Log.joins("JOIN users ON logs.user_id = users.id")
-      if params[:item_search].blank?
-        @logs = Log.where(user_id: User.select(:id).where("username ILIKE ?", "%#{params[:user_search]}%")).paginate(page: params[:page], per_page: 10)
-      else
-        @logs = Log.where(id: ItemLog.select(:log_id).where(item_id: Item.select(:id).where("unique_name ILIKE ?", "%#{params[:item_search]}"))).paginate(page: params[:page], per_page: 10)
-      end
-    end
 
+      userLogs = Log.where(user_id: User.select(:id).where("username ILIKE ?", "%#{params[:user_search]}%")).paginate(page: params[:page], per_page: 10)
+      itemLogs = Log.where(id: ItemLog.select(:log_id).where(item_id: Item.select(:id).where("unique_name ILIKE ?", "%#{params[:item_search]}"))).paginate(page: params[:page], per_page: 10)
+
+      if params[:item_search].blank?
+        @logs = userLogs
+        return
+      elsif params[:user_search].blank?
+        @logs = itemLogs
+        return
+      else
+        @logs = Log.where(id: userLogs & itemLogs).paginate(page: params[:page], per_page: 10)
+      end
+
+    end
   end
 
   def new
