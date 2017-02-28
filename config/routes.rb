@@ -92,6 +92,12 @@ Rails.application.routes.draw do
         member do
           put :decision
           patch :decision
+
+          post :create_req_items
+          delete :destroy_req_items
+
+          put :update_req_items
+          patch :update_req_items
         end
       end
       resources :tags, :only => [:index, :show, :create, :update, :destroy]
