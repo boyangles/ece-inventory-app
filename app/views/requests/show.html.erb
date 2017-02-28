@@ -7,7 +7,7 @@
 
 <p>
   <strong>User:</strong>
-  <%= @user.username %>
+  <%= link_to @user.username, user_path(@user.id) %>
 </p>
 
 <p>
@@ -28,12 +28,7 @@
 </p>
 
 <p>
-  <strong>Request Type:</strong>
-  <%= @request.request_type %>
-</p>
-
-<p>
-	<% if !is_manager_or_admin? %>
+	<% if !@request.cart? && !@request.cancelled? ||  !is_manager_or_admin? %>
   <strong>Reason:</strong>
   <%= @request.reason %>
 	<% end %>

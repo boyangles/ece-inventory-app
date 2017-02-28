@@ -42,7 +42,6 @@ class Request < ApplicationRecord
   validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
   validates :status, :inclusion => { :in => STATUS_OPTIONS }
   validates :user_id, presence: true
-  validate :cart_cannot_be_duplicated
 
   def has_status_change_to_approved?(request_params)
     self.outstanding? && request_params[:status] == 'approved' || self.cart? && request_params[:status] == 'approved'
@@ -93,10 +92,15 @@ class Request < ApplicationRecord
   def create_cart_on_status_change_from_cart(id)
     old_status = self.status_was
     new_status = self.status
+		cond2 = old_status == 'cart' && old_status != new_status
+		cond1 = self.user_id_was != self.user_id
 
-    if old_status == 'cart' && old_status != new_status
-      @cart = Request.new(:status => :cart, :user_id => id, :reason => 'TBD')
+    if cond1
+      @cart = Request.new(:status => :cart, :user_id => self.user_id_was, :reason => 'TBD')
       @cart.save!
+		elsif cond2
+			@cart = Request.new(:status => :cart, :user_id => self.user_id, :reason=> 'TBD')
+			@cart.save!
     end
   end
 

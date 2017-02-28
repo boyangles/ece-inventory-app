@@ -12,6 +12,8 @@
 				<p class="label label-success"><%= request.status %></p>
 			<% elsif request.denied? %>
 				<p class="label label-danger"><%= request.status %></p>
+			<% elsif request.cancelled? %>
+				<p class="label label-default"><%= request.status %></p>
 			<% end %>
 		</div>
   </div>

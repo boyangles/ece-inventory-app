@@ -1,5 +1,6 @@
 <p id="notice"><%= notice %></p>
 
+<% if @item.active? || is_manager_or_admin? %>
 <% provide(:title, @item.unique_name) %>
 <div class="row">
     <section class="item_info">
@@ -120,4 +121,7 @@
 </div>
 
 
+<% else %>
+<h1>This item has been deleted! #SorryNotSorry</h1>
 
+<% end %>
