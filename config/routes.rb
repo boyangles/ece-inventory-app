@@ -81,7 +81,12 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :requests, :only => [:index, :show, :create, :update, :destroy]
+      resources :requests, :only => [:index, :show, :create, :update, :destroy] do
+        member do
+          put :decision
+          patch :decision
+        end
+      end
       resources :tags, :only => [:index, :show, :create, :update, :destroy]
       resources :logs, :only => [:index, :show, :create, :update, :destroy]
       resources :sessions, :only => [:create, :destroy]
