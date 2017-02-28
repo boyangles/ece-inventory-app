@@ -2,8 +2,19 @@ class Api::V1::RequestsController < BaseController
 
   before_action :authenticate_with_token!
   before_action :auth_by_approved_status!
+  before_action :auth_by_manager_privilege!, only: [:decision]
+  before_action :render_404_if_request_unknown, only: [:decision]
+  before_action :set_request, only: [:decision]
+
+  before_action -> { render_422_if_request_not_outstanding_and_disbursement!(params[:id]) }, only: [:decision]
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
+
+  [:decision].each do |api_action|
+    swagger_api api_action do
+      param :header, :Authorization, :string, :required, 'Authentication token'
+    end
+  end
 
   respond_to :json
 
@@ -16,6 +27,15 @@ class Api::V1::RequestsController < BaseController
     param :form, 'request[reason]', :string, :optional, "Reason for request"
     param :form, 'request[email]', :string, :required, "Email address of requesting user"
     param :query, :request_items, :string, :optional, "Example --> item1: 15, item2: 34, item15: 14"
+    response :ok
+    response :unauthorized
+    response :unprocessable_entity
+  end
+
+  swagger_api :decision do
+    summary "Approve or Deny a Disbursement that is Outstanding"
+    param :path, :id, :integer, :required, "Request ID"
+    param_list :form, 'request[status]', :string, :required, "Status to update to (approved/denied)"
     response :ok
     response :unauthorized
     response :unprocessable_entity
@@ -58,6 +78,37 @@ class Api::V1::RequestsController < BaseController
     end
   end
 
+  def decision
+    case request_params[:status]
+      when 'approved'
+        request_valid, error_msg = @request.are_request_details_valid?
+
+        if request_valid
+          if !@request.update(request_params)
+            render_client_error(@request.errors, 422) and return
+          end
+
+          @request.request_items.each do |sub_request|
+            item = Item.find(sub_request.item_id)
+            item.update_by_subrequest(sub_request, @request.request_type)
+            item.save!
+          end
+          render_request_with_sub_requests(@request, @request.user)
+        else
+          render_client_error(error_msg, 422) and return
+        end
+      when 'denied'
+        if @request.update(request_params)
+          render_request_with_sub_requests(@request, @request.user)
+        else
+          render_client_error(@request.errors, 422)
+        end
+      else
+        render_client_error("Enum incorrect: #{request_params[:status]}. Must be approved/denied", 422)
+    end
+
+  end
+
   private
   def handle_disbursement_creation(req_item_array, user)
     if current_user_by_auth.privilege_student? && current_user_by_auth.id != user.id
@@ -95,14 +146,60 @@ class Api::V1::RequestsController < BaseController
     end
   end
 
+  #TODO: Refactor
   private
   def handle_acquisition_creation(req_item_array, user)
+    @req = Request.create({:user_id => user.id, :reason => request_params[:reason],
+                           :status => 'approved', :request_type => 'acquisition'})
 
+    render_client_error(@req.errors, 422) and return unless @req
+
+    req_item_array.each do |req_item|
+      RequestItem.create({:request_id => @req.id,
+                          :item_id => req_item[:key].id,
+                          :quantity => req_item[:value]})
+    end
+
+    request_valid, error_msg = @req.are_request_details_valid?
+    if request_valid
+      @req.request_items.each do |sub_request|
+        item = Item.find(sub_request.item_id)
+        item.update_by_subrequest(sub_request, @req.request_type)
+        item.save!
+      end
+      render_request_with_sub_requests(@req, user)
+    else
+      @req.destroy!
+      render_client_error(error_msg, 422) and return
+    end
   end
 
+  #Refactor
   private
   def handle_destruction_creation(req_item_array, user)
+    @req = Request.create({:user_id => user.id, :reason => request_params[:reason],
+                           :status => 'approved', :request_type => 'destruction'})
 
+    render_client_error(@req.errors, 422) and return unless @req
+
+    req_item_array.each do |req_item|
+      RequestItem.create({:request_id => @req.id,
+                          :item_id => req_item[:key].id,
+                          :quantity => req_item[:value]})
+    end
+
+    request_valid, error_msg = @req.are_request_details_valid?
+    if request_valid
+      @req.request_items.each do |sub_request|
+        item = Item.find(sub_request.item_id)
+        item.update_by_subrequest(sub_request, @req.request_type)
+        item.save!
+      end
+      render_request_with_sub_requests(@req, user)
+    else
+      @req.destroy!
+      render_client_error(error_msg, 422) and return
+    end
   end
 
   private
@@ -130,8 +227,16 @@ class Api::V1::RequestsController < BaseController
 
   private
   def render_404_if_request_unknown
-    render json: { errors: 'User not found!' }, status: 404 unless
+    render json: { errors: 'Request not found!' }, status: 404 unless
         Request.exists?(params[:id])
+  end
+
+  private
+  def render_422_if_request_not_outstanding_and_disbursement!(request_id)
+    req = Request.find(request_id)
+
+    render json: { errors: 'Request is not outstanding and disbursement' }, status: 422 unless
+        req && req.outstanding? && req.disbursement?
   end
 
   private
