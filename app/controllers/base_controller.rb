@@ -46,4 +46,25 @@ class BaseController < ApplicationController
 
     return true
   end
+
+  def key_value_query_string_to_hash_array(key_value_query)
+    kv_pairs = (key_value_query.blank?) ? [] : key_value_query.split(",").map(&:strip)
+    my_result = []
+
+    kv_pairs.each do |kv|
+      my_pairs = (kv.blank?) ? [] : kv.split(":").map(&:strip)
+      if my_pairs.length < 2
+        return [], "Not enough colons in entry in query #{kv}"
+      elsif my_pairs.length > 2
+        return [], "Too many colons in query #{kv}"
+      else
+        my_result.push({
+          :key => my_pairs[0],
+          :value => my_pairs[1]
+        })
+      end
+    end
+
+    return my_result, nil
+  end
 end
