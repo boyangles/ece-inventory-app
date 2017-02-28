@@ -123,10 +123,4 @@ class ItemsController < ApplicationController
     params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :search, :model_search, :status, :last_action)
   end
 
-  def alert_if_quantity_changes(quantity)
-    if(@item.quantity != quantity)
-      # idk
-    end
-  end
-
 end

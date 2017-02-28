@@ -62,7 +62,7 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     it "can update an item as admin" do
       login(:user_admin)
       navigate_to_new_item
-      find_link('Edit item').click
+      find_link('Edit Item Details').click
       verify_item_parameters
       updated_name = Faker::Name.name
       fill_in('Name', with: updated_name)
@@ -78,7 +78,7 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     it "can update item except quantity as manager" do
       login(:user_manager)
       navigate_to_new_item
-      find_link('Edit item').click
+      find_link('Edit Item Details').click
       expect(page).to have_no_content('Quantity')
       updated_name = Faker::Name.name
       fill_in('Name', with: updated_name)
@@ -91,7 +91,7 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     it "cannot update item as student" do
       login(:user_student)
       navigate_to_new_item
-      expect(page).not_to have_selector(:link_or_button, 'Edit item')
+      expect(page).not_to have_selector(:link_or_button, 'Edit Item Details')
       visit edit_item_path(@item.id)
       expect(page).to have_content 'You do not have permission to perform this operation'
     end
@@ -102,19 +102,19 @@ RSpec.describe "Item Controller Tests", :type => :feature do
       login(:user_admin)
       navigate_to_new_item
       # TODO: Figure out driver to accept confirmation dialog
-      expect(page).to have_selector(:link_or_button, 'Remove item')
+      expect(page).to have_selector(:link_or_button, 'Delete Item')
     end
 
     it "cannot delete item as manager" do
       login(:user_manager)
       navigate_to_new_item
-      expect(page).not_to have_selector(:link_or_button, 'Remove item')
+      expect(page).not_to have_selector(:link_or_button, 'Delete Item')
     end
 
     it "cannot delete item as student" do
       login(:user_student)
       navigate_to_new_item
-      expect(page).not_to have_selector(:link_or_button, 'Remove item')
+      expect(page).not_to have_selector(:link_or_button, 'Delete Item')
     end
   end
 
