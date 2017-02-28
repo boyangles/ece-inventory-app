@@ -26,7 +26,7 @@ class Api::V1::UsersController < BaseController
     summary 'Returns all Users'
     notes 'Search users'
     param :query, :email, :string, :optional, "Email Address"
-    param_list :query, :status, :string, :optional, "Approved or Disabled; must be: approved/waiting", [:waiting, :approved]
+    param_list :query, :status, :string, :optional, "Approved or Disabled; must be: approved/deactivated", [:deactivated, :approved]
     param_list :query, :privilege, :string, :optional, "User Permission; must be: student/manager/admin", [:student, :manager, :admin]
     response :ok
     response :unauthorized
@@ -43,12 +43,12 @@ class Api::V1::UsersController < BaseController
 
   swagger_api :create do
     summary "Creates a local User"
-    param :form, 'user[username]', :string, :optional, "Username"
+    param :form, 'user[username]', :string, :required, "Username"
     param :form, 'user[email]', :string, :required, "Email"
     param :form, 'user[password]', :string, :required, "Password"
     param :form, 'user[password_confirmation]', :string, :required, "Password Confirmation"
     param_list :form, 'user[privilege]', :string, :required, "Privilege; must be: student/manager/admin", [ "student", "manager", "admin" ]
-    param_list :form, 'user[status]', :string, :optional, "Status; must be: approved/waiting", [ "approved", "waiting" ]
+    param_list :form, 'user[status]', :string, :optional, "Status; must be: approved/deactivated", [ "approved", "deactivated" ]
     response :unauthorized
     response :created
     response :unprocessable_entity
@@ -68,7 +68,7 @@ class Api::V1::UsersController < BaseController
   swagger_api :update_status do
     summary "Updates the status of an existing user"
     param :path, :id, :integer, :required, "User ID"
-    param_list :form, 'user[status]', :string, :required, "Approved or Disabled; must be: approved/waiting", [:waiting, :approved]
+    param_list :form, 'user[status]', :string, :required, "Approved or Disabled; must be: approved/deactivated", [:deactivated, :approved]
     response :unauthorized
     response :ok
     response :unprocessable_entity
@@ -96,7 +96,7 @@ class Api::V1::UsersController < BaseController
   def index
     filter_params = params.slice(:email, :status, :privilege)
 
-    render_client_error("Inputted status is not approved/waiting!", 422) and
+    render_client_error("Inputted status is not approved/deactivated!", 422) and
         return unless enum_processable?(filter_params[:status], User::STATUS_OPTIONS)
     render_client_error("Inputted privilege is not student/manager/admin!", 422) and
         return unless enum_processable?(filter_params[:privilege], User::PRIVILEGE_OPTIONS)
@@ -116,7 +116,7 @@ class Api::V1::UsersController < BaseController
   end
 
   def create
-    render_client_error("Inputted status is not approved/waiting!", 422) and
+    render_client_error("Inputted status is not approved/deactivated!", 422) and
         return unless enum_processable?(user_params[:status], User::STATUS_OPTIONS)
     render_client_error("Inputted privilege is not student/manager/admin!", 422) and
         return unless enum_processable?(user_params[:privilege], User::PRIVILEGE_OPTIONS)
@@ -144,7 +144,7 @@ class Api::V1::UsersController < BaseController
 
   def update_status
     status_params = user_params.slice(:status)
-    render_client_error("Inputted status is not approved/waiting!", 422) and
+    render_client_error("Inputted status is not approved/deactivated!", 422) and
         return unless enum_processable?(status_params[:status], User::STATUS_OPTIONS)
 
     update_user_and_render(@user, status_params)

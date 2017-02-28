@@ -1,0 +1,8 @@
+<%= form_for(item) do |f| %>
+  
+  <%= f.hidden_field :status, :value => "deactive" %>
+
+	<div class="col-lg-2 col-lg-offset-9">
+  	<%= f.submit "Delete Item", data: {confirm: 'Are you sure you want to delete this item?'}, class: 'btn btn-primary' %>
+	</div>
+<% end %>

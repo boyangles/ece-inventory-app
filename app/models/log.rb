@@ -1,23 +1,17 @@
 class Log < ApplicationRecord
-  include Filterable, Subscribable
-
-  belongs_to :item
-  belongs_to :user
+  include Filterable, Loggable #, Subscribable
 
   default_scope -> { order(created_at: :desc) }
 
-  enum request_type: {
-    disbursement: 0,
-    acquisition: 1,
-    destruction: 2
-  }
+	enum log_type: {
+		user: 0,
+		item: 1,
+		request: 2		
+	}#, prefix: :type 
   
-  scope :item_id,       -> (item_id)      { where item_id: item_id }
-  scope :quantity,      -> (quantity)     { where quantity: quantity }
   scope :user_id,       -> (user_id)      { where user_id: user_id }
-  scope :request_type,  -> (request_type) { where request_type: request_type }
-
-  validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
-
-  # Methods:
+	
+	validates :log_type, :inclusion => { :in => LOG_TYPES }
+  
+	# Methods:
 end

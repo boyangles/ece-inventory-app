@@ -13,7 +13,14 @@ Rails.application.routes.draw do
   resources :requests
     put 'requests/:id/clear' => 'requests#clear', :as => 'clear_request'    # Clears items from requests
     patch 'requests/:id/clear', to: 'requests#clear'
-  resources :items
+	#	get 'requests/:id/placeorder' => 'requests#place', :as => 'place_order'
+  resources :items do
+		member do
+			get :edit_quantity
+			put :update_quantity
+			patch :update_quantity	# in order to create separate form to specify quantity change - javascript?
+		end
+	end
   resources :tags
   
   resources :item_custom_fields, :only => [:index, :show, :create, :update, :destroy]
@@ -61,8 +68,27 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :items, :only => [:index, :show, :create, :destroy] do
+        member do
+          post :create_tag_associations
+
+          delete :destroy_tag_associations
+
+          put :update_general
+          patch :update_general
+
+          put :fix_quantity
+          patch :fix_quantity
+
+          put :clear_field_entries
+          patch :clear_field_entries
+
+          put :update_field_entry
+          patch :update_field_entry
+        end
+      end
+
       resources :requests, :only => [:index, :show, :create, :update, :destroy]
-      resources :items, :only => [:index, :show, :create, :update, :destroy]
       resources :tags, :only => [:index, :show, :create, :update, :destroy]
       resources :logs, :only => [:index, :show, :create, :update, :destroy]
       resources :sessions, :only => [:create, :destroy]

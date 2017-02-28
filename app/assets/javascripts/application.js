@@ -20,6 +20,10 @@
 //= require bootstrap3-editable/bootstrap-editable
 //= require_tree .
 //= require bootstrap-tagsinput
+//= require bootstrap-datepicker
+//= require bootstrap-datepicker/core
+//= require bootstrap-datepicker/locales/bootstrap-datepicker.es.js
+//= require bootstrap-datepicker/locales/bootstrap-datepicker.fr.js
 
 $(document).on('ready page:load', function () {
     /* Activating Best In Place */

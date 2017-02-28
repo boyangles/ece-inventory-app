@@ -62,11 +62,10 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     it "can update an item as admin" do
       login(:user_admin)
       navigate_to_new_item
-      find_link('Edit item').click
+      find_link('Edit Item Details').click
       verify_item_parameters
       updated_name = Faker::Name.name
       fill_in('Name', with: updated_name)
-      fill_in('Quantity', with: 123)
       fill_in('Description', with: 'updated description')
       fill_in('Model Number', with: '12n20')
       find_button('Submit').click
@@ -78,7 +77,7 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     it "can update item except quantity as manager" do
       login(:user_manager)
       navigate_to_new_item
-      find_link('Edit item').click
+      find_link('Edit Item Details').click
       expect(page).to have_no_content('Quantity')
       updated_name = Faker::Name.name
       fill_in('Name', with: updated_name)
@@ -88,10 +87,22 @@ RSpec.describe "Item Controller Tests", :type => :feature do
       verify_item_fields(updated_item)
     end
 
+    it "can update quantity as admin" do
+      login(:user_admin)
+      navigate_to_new_item
+      find_link('Edit Item Quantity').click
+      expect(page).to have_content('Quantity')
+      fill_in('Quantity', with: 333)
+      find_button('Update Item').click
+      updated_item = Item.find_by(unique_name: @item.unique_name)
+      expect(page).to have_current_path item_path(updated_item.id)
+      verify_item_fields(updated_item)
+    end
+
     it "cannot update item as student" do
       login(:user_student)
       navigate_to_new_item
-      expect(page).not_to have_selector(:link_or_button, 'Edit item')
+      expect(page).not_to have_selector(:link_or_button, 'Edit Item Details')
       visit edit_item_path(@item.id)
       expect(page).to have_content 'You do not have permission to perform this operation'
     end
@@ -102,19 +113,19 @@ RSpec.describe "Item Controller Tests", :type => :feature do
       login(:user_admin)
       navigate_to_new_item
       # TODO: Figure out driver to accept confirmation dialog
-      expect(page).to have_selector(:link_or_button, 'Remove item')
+      expect(page).to have_selector(:link_or_button, 'Delete Item')
     end
 
     it "cannot delete item as manager" do
       login(:user_manager)
       navigate_to_new_item
-      expect(page).not_to have_selector(:link_or_button, 'Remove item')
+      expect(page).not_to have_selector(:link_or_button, 'Delete Item')
     end
 
     it "cannot delete item as student" do
       login(:user_student)
       navigate_to_new_item
-      expect(page).not_to have_selector(:link_or_button, 'Remove item')
+      expect(page).not_to have_selector(:link_or_button, 'Delete Item')
     end
   end
 
@@ -124,7 +135,7 @@ RSpec.describe "Item Controller Tests", :type => :feature do
         User.destroy(@user)
       end
       if(@item != nil)
-        Item.destroy(@item.id)
+        @item.deactivate
       end
     end
   end
@@ -151,7 +162,6 @@ RSpec.describe "Item Controller Tests", :type => :feature do
 
   def verify_item_parameters
     expect(page).to have_content 'Name'
-    expect(page).to have_content 'Quantity'
     expect(page).to have_content 'Description'
     expect(page).to have_content 'Model Number'
     expect(page).to have_content 'Tags'
@@ -193,15 +203,15 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     expect(page).to have_content 'Excluded Tags'
     expect(page).to have_selector(:link_or_button, 'Search')
 
-    if user == 'admin' || user == 'manager'
-      expect(page).to have_selector(:link_or_button, 'Custom Fields')
-    end
     if user == 'admin'
+      expect(page).to have_selector(:link_or_button, 'Custom Fields')
       expect(page).to have_selector(:link_or_button, 'New Item')
-    end
-    if user == 'student'
-      expect(page).not_to have_selector(:link_or_button, 'New Item')
+    elsif user == 'manager'
+      expect(page).to have_selector(:link_or_button, 'New Item')
       expect(page).not_to have_selector(:link_or_button, 'Custom Fields')
+    elsif user == 'student'
+      expect(page).not_to have_selector(:link_or_button, 'Custom Fields')
+      expect(page).not_to have_selector(:link_or_button, 'New Item')
     end
   end
 end

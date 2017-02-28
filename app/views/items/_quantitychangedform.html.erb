@@ -1,0 +1,35 @@
+<%= form_for(item) do |f| %>
+
+	<% if Item.exists?(item.id) %>
+		<div class="form-group">
+			<%= f.label :quantity, "Quantity", class: "col-md-4 control-label" %>
+      <div class="col-md-8">
+      <%= f.number_field :quantity, class: "form-control",:placeholder=>"0" %>
+      </div>
+    </div>
+
+		<div class="form-group">
+			<div class="col-md-8">
+				<% if is_admin? %>
+					<label class="col-lg-2 control-labbel">How should this quantity change be logged?</label>
+					<div class= "radio">
+						<%= f.radio_button :last_action, 'acquired_destroyed_quantity', :checked => true %>
+						<%= label :acquired_destroyed, 'Acquisition or Loss' %>
+					</div>
+					<div class="radio">
+						<%= f.radio_button :last_action, 'admin_corr_quantity' %>
+						<%= label :admin_corr, 'Administrative Correction' %>
+					</div>
+					<% msg = ""	%>			
+					<!--<= collection_select(:item, :id, Item.admin_actions, :id, :last_action, :required => true)>-->
+				<% elsif current_user.privilege_manager? %>
+					<% msg = "This will be logged as an acquisition or loss." %>
+					<%= f.hidden_field :last_action, :value => "acquired_destroyed_quantity" %>
+				<% end %>
+			</div>
+		</div>
+
+  <% end %>
+
+  <%= f.submit :confirm => "Are you sure?" + msg, class: 'btn btn-primary' %>
+<% end %>

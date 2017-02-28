@@ -15,13 +15,13 @@ class UsersController < ApplicationController
 
   # GET /users
   def index
-    @users = User.where(status: 1).paginate(page: params[:page], per_page: 10)
+    @users = User.where(status: 'approved').paginate(page: params[:page], per_page: 10)
   end
 
   # GET /users/1
   def show
     @user = User.find(params[:id])
-    @requests = @user.requests.paginate(page: params[:page], per_page: 10)
+    @requests = @user.requests.where.not(status: "cart").paginate(page: params[:page], per_page: 10)
   end
 
   # GET /users/1/edit
@@ -56,6 +56,7 @@ class UsersController < ApplicationController
 
     # TODO: Status is hardcoded for now until we decide what to do with it
     @user.status = "approved"
+		@user.curr_user = current_user
 
     if @user.save
       flash[:success] = "#{@user.username} created"
@@ -69,6 +70,7 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   def update
     @user = User.find(params[:id])
+		@user.curr_user = current_user
 
     if user_params[:password].blank? && !current_user?(@user)
       user_params.delete(:password)
@@ -76,8 +78,8 @@ class UsersController < ApplicationController
     end
 
     if @user.update_attributes(user_params)
-      flash[:success] = "Credentials updated successfully"
-      redirect_to @user
+      flash[:success] = "Credentials updated successfully"      
+			redirect_to @user
     else
       flash[:danger] = "Unable to edit user"
       render 'edit'
@@ -108,7 +110,8 @@ class UsersController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def user_params
     # Rails 4+ requires you to whitelist attributes in the controller.
-    params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :privilege)
+    params.fetch(:user, {}).permit(:username, :email, :password, :password_confirmation, :privilege, :status)
   end
 
+	
 end
