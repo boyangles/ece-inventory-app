@@ -4,9 +4,9 @@
 
   <tbody>
       <tr>
-        <th><%= tag.name %></th>
-        <td><%= link_to 'Edit', edit_tag_path(tag) %></td>
-        <td><%= link_to 'Destroy', tag, method: :delete %></td>
+        <%= tag.name %> |
+        <%= link_to 'Edit', edit_tag_path(tag) %> |
+        <%= link_to 'Destroy', tag, method: :delete %>
       </tr>
   </tbody>
 </table>

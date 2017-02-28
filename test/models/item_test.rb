@@ -2,13 +2,13 @@ require 'test_helper'
 
 class ItemTest < ActiveSupport::TestCase
   def setup
-    @user = users(:bernard)
-    @item = items(:item1)
+    @admin = users(:bernard)
     @item  = Item.create!(
         unique_name: "item23" ,
         quantity: 234,
         model_number: "15",
-        description: "description"
+        description: "description",
+        last_action: 0
     )
   end
 

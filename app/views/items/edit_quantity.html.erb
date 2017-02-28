@@ -1,0 +1,9 @@
+<% if is_manager_or_admin? %>
+    <h1>Editing Item Quantity</h1>
+
+    <%= render 'quantitychangedform', item: @item %>
+
+   <%= link_to 'Cancel Edit', :back %>
+<% else %>
+    <%= controller.redirect_to items_path %>
+<% end %>

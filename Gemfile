@@ -12,6 +12,9 @@ gem 'rails-controller-testing'
 gem 'swagger-docs'
 gem 'ruby-swagger'
 
+# Datepicker
+gem 'bootstrap-datepicker-rails'
+
 # Capybara RSpec Selenium Testing
 gem 'capybara'
 # gem 'rspec-rails'
@@ -42,6 +45,7 @@ gem 'bootstrap-sass', '3.3.6'
 gem 'jquery-turbolinks'
 gem 'best_in_place'
 gem 'bootstrap-x-editable-rails'
+gem 'bootstrap-tagsinput-rails'
 # React-Rails
 gem 'react-rails'
 # Use postgresql as the database for Active Record

@@ -107,9 +107,13 @@ GEM
     best_in_place (3.1.0)
       actionpack (>= 3.2)
       railties (>= 3.2)
+    bootstrap-datepicker-rails (1.6.4.1)
+      railties (>= 3.0)
     bootstrap-sass (3.3.6)
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
+    bootstrap-tagsinput-rails (0.4.2.1)
+      railties (>= 3.1)
     bootstrap-will_paginate (0.0.10)
       will_paginate
     bootstrap-x-editable-rails (1.5.1.1)
@@ -309,7 +313,9 @@ PLATFORMS
 DEPENDENCIES
   bcrypt (= 3.1.11)
   best_in_place
+  bootstrap-datepicker-rails
   bootstrap-sass (= 3.3.6)
+  bootstrap-tagsinput-rails
   bootstrap-will_paginate (= 0.0.10)
   bootstrap-x-editable-rails
   byebug

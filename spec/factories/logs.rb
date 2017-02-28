@@ -1,7 +1,6 @@
 FactoryGirl.define do
   factory :log do
-    quantity { Faker::Number.number(3) }
-    association :user, factory: :user, id: 200
-    association :item, factory: :item, id: 201
+    user_id 200
+    log_type 0
   end
 end

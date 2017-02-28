@@ -8,8 +8,8 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     @item4 = items(:item4)
     @item5 = items(:item5)
 
-    @user = users(:bernard)
-    @user2 = users(:alex)
+    @admin = users(:bernard)
+    @student1 = users(:alex)
     @admin = users(:admin)
   end
 
@@ -17,23 +17,23 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     get users_path
     assert_redirected_to login_url
 
-    get user_path(@user)
+    get user_path(@admin)
     assert_redirected_to login_url
 
-    get edit_user_path(@user)
+    get edit_user_path(@admin)
     assert_redirected_to login_url
   end
 
   test "redirect to homepage when logged in as different user and not admin" do
-    log_in_as(@user2)
+    log_in_as(@student1)
 
     Request.create!(
         reason: 'For test',
         status: 'outstanding',
         request_type: 'disbursement',
-        user_id: @user.id)
+        user_id: @admin.id)
 
-    @req = Request.find_by(:user_id => @user.id)
+    @req = Request.find_by(:user_id => @admin.id)
 
     get edit_request_path(@req)
     assert flash.empty?

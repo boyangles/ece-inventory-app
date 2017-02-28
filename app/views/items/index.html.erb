@@ -4,96 +4,100 @@
   <h1>Items</h1>
 </div>
 
-<% if is_manager_or_admin? %>
-    <%= link_to "New Item", new_item_url, :class => "btn btn-primary" %>
-<% end %>
+<p><% if is_manager_or_admin? %>
+    <%= link_to "Create New Item", new_item_url, :class => "btn btn-primary btn-lg btn-block" %>
+<% end %></p>
 
-<div class="search">
-	<%= form_for items_path, :method => 'get' do |f| %>
-  	<p class="submit_bar">
-			<%= f.label "Search by Item Name" %><br>
-    	<%= text_field_tag :search, params[:search] %>
-	 	</p>
 
-		<p>
-			<%= f.label "Search by Model Number" %>
-			<%= text_field_tag :model_search, params[:model_search] %>
-		</p>
-
-  	<h3>Required Tags</h3>
-  	<div class="tags">
-      <% @tags.each do |tag| %>
-          <label class="checkbox-inline">
-    	      <%= check_box_tag 'required_tag_names[]', 
-      	      tag.name, 
-              (@required_tag_filters.include? tag.name) %><br>
-            <%= tag.name %>
-          </label>
-  	  <% end %>
-		</div>
-
-  	<h3>Excluded Tags</h3>
-		<div class="tags">
-      <% @tags.each do |tag| %>
-        <label class="checkbox-inline">
-    	    <%= check_box_tag 'excluded_tag_names[]', 
-      	  tag.name, 
-          (@excluded_tag_filters.include? tag.name) %><br>
-    	  <%= tag.name %>
-        </label>
-  	<% end %>
-		</div>
-
-		<%= submit_tag "Search", class: "btn btn-primary" %>
-	<% end %>
-</div>
-
-<%= will_paginate %>
-
-<ul class="items">
-  <%= render @items %>
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
+  <% if is_admin? %>
+  <li><a href="#profile" data-toggle="tab">Custom Fields</a></li>
+  <% end %>
 </ul>
+<div id="myTabContent" class="tab-content">
+  <div class="tab-pane fade active in" id="home">
+    <div class="search">
+      <%= form_for items_path, :method => 'get' do |f| %>
+          <p class="submit_bar">
+            <%= f.label "Search by Item Name" %><br>
+            <%= text_field_tag :search, params[:search], :placeholder => "Item 1" %>
+          </p>
 
-<%= will_paginate %>
+          <p>
+            <%= f.label "Search by Model Number" %>
+            <%= text_field_tag :model_search, params[:model_search], :placeholder => "A234"  %>
+          </p>
 
-<% if !current_user.privilege_student? %>
+          <h3>Required Tags</h3>
+          <div class="tags">
+            <% @tags.each do |tag| %>
+                <label class="checkbox-inline">
+                  <%= check_box_tag 'required_tag_names[]',
+                                    tag.name,
+                                    (@required_tag_filters.include? tag.name) %><br>
+                  <%= tag.name %>
+                </label>
+            <% end %>
+          </div>
 
-    <button data-toggle="collapse" data-target="#item_index_custom_field_list">
-      Custom Fields...
-    </button>
+          <h3>Excluded Tags</h3>
+          <div class="tags">
+            <% @tags.each do |tag| %>
+                <label class="checkbox-inline">
+                  <%= check_box_tag 'excluded_tag_names[]',
+                                    tag.name,
+                                    (@excluded_tag_filters.include? tag.name) %><br>
+                  <%= tag.name %>
+                </label>
+            <% end %>
+          </div>
 
-    <div id="item_index_custom_field_list" class="collapse">
-      <table class="table table-hover">
-        <tbody>
-        <% CustomField.all.each do |cf| %>
-            <tr>
-              <td><b><%= cf.field_name %></b></td>
-              <td><%= cf.private_indicator ? 'private' : 'public' %></td>
-              <td><%= CustomField.pretty_field_type(cf.id) %></td>
-              <td>
-                <%= link_to cf, method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-default" do %>
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                <% end %>
-              </td>
-            </tr>
-        <% end %>
+          <%= submit_tag "Search", class: "btn btn-primary" %>
+      <% end %>
 
-        <%= form_for :custom_field, url: custom_fields_path, method: 'post' do |cff| %>
-            <td><%= cff.text_field :field_name, class: "form-control" %></td>
-            <td>Private? <%= cff.check_box :private_indicator, class: "form-control" %></td>
-            <td><%= cff.select :field_type, [['Short Text', 'short_text_type'],
-                                             ['Long Text', 'long_text_type'],
-                                             ['Integer', 'integer_type'],
-                                             ['Float', 'float_type']],
-                               {}, class: "form-control" %></td>
-            <td>
-              <%= button_tag(type: 'submit', class: "btn btn-primary") do %>
-                  <span class="glyphicon glyphicon-plus-sign"></span>
-              <% end %>
-            </td>
-        <% end %>
-        </tbody>
-      </table>
+      <%= will_paginate %>
+
+      <ul class="items">
+        <%= render @items %>
+      </ul>
+
+      <%= will_paginate %>
     </div>
+  </div>
+          <% if is_admin? %>
+  <div class="tab-pane fade" id="profile">
+          <table class="table table-hover">
+            <tbody>
+            <% CustomField.all.each do |cf| %>
+                <tr>
+                  <td><b><%= cf.field_name %></b></td>
+                  <td><%= cf.private_indicator ? 'private' : 'public' %></td>
+                  <td><%= CustomField.pretty_field_type(cf.id) %></td>
+                  <td>
+                    <%= link_to cf, method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-default" do %>
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    <% end %>
+                  </td>
+                </tr>
+            <% end %>
 
-<% end %>
+            <%= form_for :custom_field, url: custom_fields_path, method: 'post' do |cff| %>
+                <td><%= cff.text_field :field_name, class: "form-control" %></td>
+                <td>Private? <%= cff.check_box :private_indicator, class: "form-control" %></td>
+                <td><%= cff.select :field_type, [['Short Text', 'short_text_type'],
+                                                 ['Long Text', 'long_text_type'],
+                                                 ['Integer', 'integer_type'],
+                                                 ['Float', 'float_type']],
+                                   {}, class: "form-control" %></td>
+                <td>
+                  <%= button_tag(type: 'submit', class: "btn btn-primary") do %>
+                      <span class="glyphicon glyphicon-plus-sign"></span>
+                  <% end %>
+                </td>
+            <% end %>
+            </tbody>
+          </table>
+  </div>
+  <% end %>
+</div>

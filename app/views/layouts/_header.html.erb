@@ -1,4 +1,4 @@
-<header class="navbar navbar-fixed-top navbar-inverse">
+<header class="navbar navbar-fixed-top navbar-default">
   <div class="container">
     <%= link_to "ECE Inventory", root_path, id: "logo" %>
     <nav>
@@ -11,6 +11,7 @@
         
             <% if is_manager_or_admin? %>
                 <li><%= link_to "Users", users_path %></li>
+                <li><%= link_to "Tags", tags_path %></li>
             <% end %>
         
             <li class="dropdown">
@@ -27,9 +28,7 @@
                                            "My Requests" %>
                 <li><%= link_to request_label, requests_path %></li>
                 
-                <% if is_admin? %>
                   <li><%= link_to "Logs", logs_path %></li>
-                <% end %>
 
                 <li class="divider"></li>
 

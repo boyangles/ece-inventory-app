@@ -3,28 +3,51 @@
   <%= render 'shared/error_messages', object: @form_obj %>
       
   <!-- Username -->
-  <%= f.label :username %>
-  <%= f.text_field :username, class: 'form-control' %>
+    <div class="form-group">
+      <%= f.label :username %>
+      <div class="col-lg-10">
+        <%= f.text_field :username, class: 'form-control' %>
+      </div>
+    </div>
 
   <!-- Email -->
-  <%= f.label :email %>
-  <%= f.email_field :email, class: 'form-control' %>
+    <div class="form-group">
+      <%= f.label :email %>
+      <div class="col-lg-10">
+        <%= f.email_field :email, class: 'form-control' %>
+      </div>
+    </div>
 
   <!-- If not logged in, or if editing your own info -->
   <% if !logged_in? || current_user?(@user) %>
     <!-- Password -->
-    <%= f.label :password %>
-    <%= f.password_field :password, class: 'form-control' %>
+        <div class="form-group">
+          <%= f.label :password %>
+          <div class="col-lg-10">
+            <%= f.password_field :password, class: 'form-control',:placeholder=>"pass" %>
+          </div>
+        </div>
 
     <!-- Password Confirm -->
-    <%= f.label :password_confirmation, "Confirm Password" %>
-    <%= f.password_field :password_confirmation, class: 'form-control' %>
+        <div class="form-group">
+          <%= f.label :password_confirmation, "Confirm Password" %>
+          <div class="col-lg-10">
+            <%= f.password_field :password_confirmation, class: 'form-control',:placeholder=>"pass" %>
+          </div>
+        </div>
   <% end %>
 
   <% if logged_in? && is_admin? %>
-    <%= f.label :privilege, "Define Privilege" %>
-    <%= f.select :privilege, User.privileges.keys.to_a %>
+        <div class="form-group">
+          <%= f.label :privilege, "Define Privilege" %>
+          <div class="col-lg-10">
+            <div class="form-group">
+              <%= f.select :privilege, User.privileges.keys.to_a , { :prompt => 'Select One' }, { class: "form-control", :id => "select" } %>
+            </div>
+          </div>
+        </div>
   <% end %>
 
-  <%= f.submit yield(:button_text), class: "btn btn-primary" %>
+    <%= f.submit yield(:button_text), class: "btn btn-primary" %>
+
 <% end %>

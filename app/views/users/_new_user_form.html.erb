@@ -3,19 +3,40 @@
     <%= render 'shared/error_messages', object: @form_obj %>
 
     <!-- Username -->
-    <%= f.label :username %>
-    <%= f.text_field :username, class: 'form-control' %>
+    <div class="form-group">
+      <%= f.label :username %>
+      <div class="col-lg-10">
+        <%= f.text_field :username, class: 'form-control',:placeholder=>"user" %>
+      </div>
+    </div>
 
     <!-- Password -->
-    <%= f.label :password %>
-    <%= f.password_field :password, class: 'form-control' %>
+    <div class="form-group">
+      <%= f.label :password %>
+      <div class="col-lg-10">
+        <%= f.password_field :password, class: 'form-control' ,:placeholder=>"Minimum 6 characters"%>
+      </div>
+    </div>
 
     <!-- Password Confirm -->
-    <%= f.label :password_confirmation, "Confirm Password" %>
-    <%= f.password_field :password_confirmation, class: 'form-control' %>
+    <div class="form-group">
+      <%= f.label :password_confirmation, "Confirm Password" %>
+      <div class="col-lg-10">
+        <%= f.password_field :password_confirmation, class: 'form-control',:placeholder=>"Minimum 6 characters"%>
+      </div>
+    </div>
 
-    <%= f.label :privilege, "Define Privilege" %>
-    <%= f.select :privilege, User.privileges.keys.to_a %>
+
+    <div class="form-group">
+      <%= f.label :privilege, "Define Privilege" %>
+      <div class="col-lg-10">
+        <div class="form-group">
+          <%= f.select :privilege, User.privileges.keys.to_a , { :prompt => 'Select One' }, { class: "form-control", :id => "select" } %>
+        </div>
+      </div>
+    </div>
+
+
 
     <%= f.submit yield(:button_text), class: "btn btn-primary" %>
 <% end %>
