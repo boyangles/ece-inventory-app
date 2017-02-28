@@ -1,0 +1,8 @@
+<%= form_for(request) do |f| %>
+  
+  <%= f.hidden_field :status, :value => "cancelled" %>
+
+	<div class="actions">
+  	<%= f.submit "Cancel Order", data: {confirm: 'Are you sure? Admins will not see nor act on cancelled requests'}, class: "btn btn-primary" %>
+	</div>
+<% end %>

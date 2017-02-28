@@ -4,21 +4,17 @@
 # model remove the '{}' from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 log1:
-  quantity: 15
-  request_type: 0
+  log_type: 0
   created_at: <%= 10.minutes.ago %>
 
 log2:
-  quantity: 1222
-  request_type: 0
+  log_type: 0
   created_at: <%= 3.years.ago %>
 
 log3:
-  quantity: 35
-  request_type: 0
+  log_type: 0
   created_at: <%= 2.hours.ago %>
 
 most_recent:
-  quantity: 255
-  request_type: 0
+  log_type: 0
   created_at: <%= Time.zone.now %>

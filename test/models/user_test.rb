@@ -100,6 +100,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "associated request should be destroyed when user deleted" do
+    skip "we don't delete users anymore"
     @admin.save!
 
     Request.create!(
@@ -110,7 +111,7 @@ class UserTest < ActiveSupport::TestCase
 
     # One for cart, one for normal request
     assert_difference ['Request.count'], -2 do
-      @admin.destroy!
+      @admin.deactivate
     end
   end
 

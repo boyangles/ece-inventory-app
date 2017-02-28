@@ -1,13 +1,24 @@
 <li id="request-<%= request.id %>">
   <%= link_to gravatar_for(request.user, size:50), request.user %>
-  <span class="user"><%= link_to request.user.username, request.user %></span>
+  <span class="user">
+		<strong>Requested by: </strong><%= link_to request.user.username, request.user %>
+	</span>
   
   <div class="content">
-    <b>Type: </b><%= request.request_type %>
-    <b>Status: </b><%= request.status %>
+   <div class="pull-right">
+			<% if request.outstanding? %>
+				<p class="label label-warning"><%= request.status %></p>
+			<% elsif request.approved? %>			
+				<p class="label label-success"><%= request.status %></p>
+			<% elsif request.denied? %>
+				<p class="label label-danger"><%= request.status %></p>
+			<% elsif request.cancelled? %>
+				<p class="label label-default"><%= request.status %></p>
+			<% end %>
+		</div>
   </div>
 
-  <span><%= link_to 'Show Details', request%></span>
+  <span><%= link_to 'Show Request Details', request%></span>
   <br>
   <span class="timestamp">
     Posted <%= time_ago_in_words(request.created_at) %> ago.

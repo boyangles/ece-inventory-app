@@ -1,0 +1,18 @@
+/Applications/Xcode.app/Contents/Developer/usr/bin/make  install-recursive
+Making install in include
+Making install in libxml
+make[4]: Nothing to be done for `install-exec-am'.
+ /usr/local/bin/gmkdir -p '/Users/jf/Desktop/Spring 2017/ECE458/ece-inventory-app/vendor/bundle/ruby/2.3.0/gems/nokogiri-1.7.0.1/ports/x86_64-apple-darwin14.5.0/libxml2/2.9.4/include/libxml2/libxml'
+ /usr/local/bin/ginstall -c -m 644 SAX.h entities.h encoding.h parser.h parserInternals.h xmlerror.h HTMLparser.h HTMLtree.h debugXML.h tree.h list.h hash.h xpath.h xpathInternals.h xpointer.h xinclude.h xmlIO.h xmlmemory.h nanohttp.h nanoftp.h uri.h valid.h xlink.h xmlversion.h DOCBparser.h catalog.h threads.h globals.h c14n.h xmlautomata.h xmlregexp.h xmlmodule.h xmlschemas.h schemasInternals.h xmlschemastypes.h xmlstring.h xmlunicode.h xmlreader.h relaxng.h dict.h '/Users/jf/Desktop/Spring 2017/ECE458/ece-inventory-app/vendor/bundle/ruby/2.3.0/gems/nokogiri-1.7.0.1/ports/x86_64-apple-darwin14.5.0/libxml2/2.9.4/include/libxml2/libxml'
+ /usr/local/bin/ginstall -c -m 644 SAX2.h xmlexports.h xmlwriter.h chvalid.h pattern.h xmlsave.h schematron.h '/Users/jf/Desktop/Spring 2017/ECE458/ece-inventory-app/vendor/bundle/ruby/2.3.0/gems/nokogiri-1.7.0.1/ports/x86_64-apple-darwin14.5.0/libxml2/2.9.4/include/libxml2/libxml'
+make[4]: Nothing to be done for `install-exec-am'.
+make[4]: Nothing to be done for `install-data-am'.
+Making install in .
+ /usr/local/bin/gmkdir -p '/Users/jf/Desktop/Spring 2017/ECE458/ece-inventory-app/vendor/bundle/ruby/2.3.0/gems/nokogiri-1.7.0.1/ports/x86_64-apple-darwin14.5.0/libxml2/2.9.4/lib'
+ /bin/sh ./libtool   --mode=install /usr/local/bin/ginstall -c   libxml2.la '/Users/jf/Desktop/Spring 2017/ECE458/ece-inventory-app/vendor/bundle/ruby/2.3.0/gems/nokogiri-1.7.0.1/ports/x86_64-apple-darwin14.5.0/libxml2/2.9.4/lib'
+libtool: install: /usr/local/bin/ginstall -c .libs/libxml2.lai /Users/jf/Desktop/Spring 2017/ECE458/ece-inventory-app/vendor/bundle/ruby/2.3.0/gems/nokogiri-1.7.0.1/ports/x86_64-apple-darwin14.5.0/libxml2/2.9.4/lib/libxml2.la
+ginstall: target '2017/ECE458/ece-inventory-app/vendor/bundle/ruby/2.3.0/gems/nokogiri-1.7.0.1/ports/x86_64-apple-darwin14.5.0/libxml2/2.9.4/lib/libxml2.la' is not a directory
+make[3]: *** [install-libLTLIBRARIES] Error 1
+make[2]: *** [install-am] Error 2
+make[1]: *** [install-recursive] Error 1
+make: *** [install] Error 2

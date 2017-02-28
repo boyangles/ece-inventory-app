@@ -20,7 +20,7 @@ FactoryGirl.define do
 
     factory :user_admin_unapproved do
       privilege "admin"
-      status "waiting"
+      status "deactivated"
     end
   end
 end

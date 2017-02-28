@@ -12,6 +12,9 @@ gem 'rails-controller-testing'
 gem 'swagger-docs'
 gem 'ruby-swagger'
 
+# Datepicker
+gem 'bootstrap-datepicker-rails'
+
 # Capybara RSpec Selenium Testing
 gem 'capybara'
 # gem 'rspec-rails'
