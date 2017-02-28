@@ -79,7 +79,11 @@ class Item < ApplicationRecord
     else
       where(:model_number => search_input.strip)
     end
-  end
+	end
+
+	def self.filter_active
+		where(status: 'active')
+	end
 
   def update_by_subrequest(subrequest, request_type)
     case request_type
