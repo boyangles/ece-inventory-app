@@ -3,24 +3,27 @@
   <span class="user">
 		<strong>Requested by: </strong><%= link_to request.user.username, request.user %>
 	</span>
-  
+	<span class="reason">
+		</br><strong>Reason: </strong><%= request.reason %>
+	</span>
+
   <div class="content">
    <div class="pull-right">
 			<% if request.outstanding? %>
-				<p class="label label-warning"><%= request.status %></p>
+				<p class="label label-warning"><%= request.status %>
 			<% elsif request.approved? %>			
-				<p class="label label-success"><%= request.status %></p>
+				<p class="label label-success"><%= request.status %>
 			<% elsif request.denied? %>
-				<p class="label label-danger"><%= request.status %></p>
+				<p class="label label-danger"><%= request.status %>
 			<% elsif request.cancelled? %>
-				<p class="label label-default"><%= request.status %></p>
+				<p class="label label-default"><%= request.status %>
 			<% end %>
 		</div>
   </div>
 
-  <span><%= link_to 'Show Request Details', request%></span>
-  <br>
+	<br>
   <span class="timestamp">
-    Posted <%= time_ago_in_words(request.created_at) %> ago.
+  	<span><%= link_to 'Show Request Details', request%></span>
+    </br>Posted <%= time_ago_in_words(request.created_at) %> ago.</p>
   </span>
 </li>

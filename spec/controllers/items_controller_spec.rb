@@ -90,8 +90,8 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     it "can update quantity as admin" do
       login(:user_admin)
       navigate_to_new_item
-      find_link('Edit Item Quantity').click
-      expect(page).to have_content('Quantity')
+      find_link('Log Acquisition or Destruction/Correct Quantity').click
+      expect(page).to have_content('New Quantity')
       fill_in('Quantity', with: 333)
       find_button('Update Item').click
       updated_item = Item.find_by(unique_name: @item.unique_name)

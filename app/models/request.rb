@@ -117,6 +117,7 @@ class Request < ApplicationRecord
 #		elsif old_status == 'outstanding' && new_status != old_status
 #			create_log(new_status)
 		end
+
 	end
 	
 	def create_log(action)
