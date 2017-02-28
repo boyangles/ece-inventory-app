@@ -4,9 +4,9 @@
   <h1>Items</h1>
 </div>
 
-<% if is_manager_or_admin? %>
+<p><% if is_manager_or_admin? %>
     <%= link_to "Create New Item", new_item_url, :class => "btn btn-primary btn-lg btn-block" %>
-<% end %>
+<% end %></p>
 
 
 <ul class="nav nav-tabs">
@@ -101,4 +101,3 @@
   </div>
   <% end %>
 </div>
-

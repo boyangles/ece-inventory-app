@@ -1,16 +1,117 @@
 <li id="log-<%= log.id %>">
-  <%= link_to gravatar_for(log.user, size: 50), log.user %>
-  <span class="user"><%= link_to log.user.username, log.user %></span>
 
-  <div class="content">
-    <b>Quantity: </b><%= log.quantity %>
-    <b>Type: </b><%= log.request_type %>
-    <b>Item: </b><%= log.item.unique_name %>
-  </div>
+	<span class="user">
+		<b>Initiating User: </b>
+		<% if !log.user_id.nil? %>
+			<% acting_user = User.find(log.user_id) %>
+			<%= link_to acting_user.username, user_path(acting_user) %>
+		<% else %>
+			Spicy Software Inc.
+  	<% end %>
+	</span>
+
+<span class="content">
+		<% if log.user? %>
+			<% userlog = UserLog.find_by(:log_id => log.id) %>
+			<% user = User.find(userlog.user_id) %>
+			<% object = user.username %>
+			<% object_path = user_path(user) %>
+
+			<% if userlog.created? %>
+				<% result = " with privilege " + userlog.new_privilege %>
+		 	<% elsif userlog.privilege_updated? %>
+				<% result = "from " + userlog.old_privilege  + " to " + userlog.new_privilege %>
+			<% end %>
+
+			<b>Affected User: </b>
+			<%= link_to object, object_path %>
+
+			<span><b>Action: </b>
+			<%= userlog.action %>
+			<%= result %></span>
+
+
+		<% elsif log.request? %>
+			<% reqlog = RequestLog.find_by(:log_id => log.id) %>
+			<% request = Request.find(reqlog.request_id) %>
+			<% user = User.find(request.user_id) %>			
+
+			<b>Action : </b>
+			<%= reqlog.action %>
+		
+			<%= link_to "Request", request_path(request) %>
+			for <%= link_to user.username, user_path(user) %>
+
+			for
+			<% if request.request_items.empty? %>
+				NOTHING wow okay
+			<% end %>
+			<ul>
+				<% request.request_items.each do |req_item| %>
+					<% item = Item.find(req_item.item_id) %>
+					<li><%= link_to item.unique_name, item_path(item) %>
+					: 
+					<%= req_item.quantity %></li>	
+				<% end %>
+			</ul>
+
+		<% elsif log.item? %>
+			<% "this view is sucky but I am not dealing with it rn I don't even know how I wrote it the first time. bye." %>
+
+			<% itemlog = ItemLog.find_by(:log_id => log.id) %>
+			<% item = Item.find(itemlog.item_id) %>
+			
+			<% if itemlog.created? %>
+				created item <%= link_to item.unique_name, item_path(item) %> 
+				with quantity <%= item.quantity %>
+
+			<% elsif itemlog.deleted? %>
+				deleted the <%= link_to item.unique_name, item_path(item) %>
+				which had quantity <%= item.quantity %>
+
+			<% elsif itemlog.acquired_destroyed_quantity? %>
+				<% if (itemlog.quantity_change > 0) %>
+					logged the acquisition of <%= itemlog.quantity_change %>
+				<% elsif (itemlog.quantity_change < 0) %>
+					logged the destruction of <%= 0 - itemlog.quantity_change %>
+				<% end %>
+				<%= link_to item.unique_name, item_path(item) %>
+				to a new total of <%= itemlog.curr_quantity %>
+	
+			<% elsif itemlog.admin_corr_quantity? %>
+					corrected the quantity of <%= link_to item.unique_name, item_path(item) %>
+					from <%= itemlog.curr_quantity - itemlog.quantity_change %>
+					to <%= itemlog.curr_quantity %>
+
+			<% elsif itemlog.disbursed? %>
+				disbursed <%= 0 - itemlog.quantity_change %> <%= link_to item.unique_name, item_path(item) %>
+
+			<% elsif itemlog.desc_updated? %>
+					updated <%= link_to item.unique_name, item_path(item) %> with the following changes:
+					<ul>
+						<% if itemlog.old_name != nil && itemlog.old_name != "" && itemlog.old_name != itemlog.new_name %>
+							<li><%= "updated item's unique name from " + itemlog.old_name + " to " + itemlog.new_name %></li>	
+						<% end %>
+						
+						<% if itemlog.old_desc != nil && itemlog.old_desc != "" && itemlog.old_desc != itemlog.new_desc %>
+							<li><%= "updated item's description from " + itemlog.old_desc + " to " + itemlog.new_desc %></li>	
+						<% end %>	
+							
+						<% if itemlog.old_model_num != nil && itemlog.old_model_num != "" && itemlog.old_model_num != itemlog.new_model_num %>
+							<li><%= "updated item's model number from " + itemlog.old_model_num + " to " + itemlog.new_model_num %></li>	
+						<% end %>	
+					</ul>
+
+
+			<% end %>
+
+		<% end %>
+
+	</span>
 
   <br>
   <span class="timestamp">
-    Logged <%= time_ago_in_words(log.created_at) %> ago.
+    Logged on <%= log.created_at.strftime("%A, %B %e, %Y at %I:%M%p") %> 
   </span>
   
 </li>

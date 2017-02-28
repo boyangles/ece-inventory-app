@@ -14,7 +14,7 @@
 
   <div class="col-md-8">
     <% if @user.requests.any? %>
-      <h3>Requests (<%= @user.requests.count %>)</h3>
+      <h3>Requests (<%= @requests.count %>)</h3>
       <ol class="requests">
         <%= render @requests %>
       </ol>
@@ -33,6 +33,14 @@
   <strong>Privilege:</strong>
   <%= @user.privilege %>
 </p>
+
+<% if @user.status_deactivated? %>
+	<p><strong>Status: </strong>
+	<%= @user.status %></p>
+<% elsif is_admin? %>
+	<%= render 'deactivateuserform', user: @user %>
+<% end %>
+
 
 <%= link_to 'Edit', edit_user_path(@user) if (is_admin? || current_user?(@user)) %> |
 <%= link_to 'Back', url_for(:back) %> |

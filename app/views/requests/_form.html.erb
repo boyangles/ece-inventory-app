@@ -30,21 +30,27 @@
 
   <p>
     <%= f.label :reason %><br>
-    <%= f.text_area :reason, :required => true %>
+		<% if request.reason == "TBD" %>
+			<%= f.text_area :reason, :value => "", :required => true, :placeholder => "This field is required" %>
+		<% else %>
+    	<%= f.text_area :reason, :required => true %>
+		<% end %>
   </p>
 
-  <%= f.hidden_field :user_id, :value => (request.user_id) ? request.user_id : current_user.id %>
-  <%= f.hidden_field :status, :value => request.status %>
+	<%= f.hidden_field :request_type, :value => "disbursement" %>
+ 	<%= f.hidden_field :status, :value => request.status %>
+	<%= f.hidden_field :user_id, :value => (request.user_id) ? request.user_id : current_user.id %>
+
 
 	<p>
-	<% if @request.cart? %>
-		<%= link_to "Place Order", request_path(params[:id], :status => "outstanding") %>
+	<% if !request.request_items.empty? && !is_manager_or_admin? %>
+		<%= render 'placeorderform', request: @request %>
 	<% end %>
 	</p>
 
   <div>
     <% if !@request.approved? && !@request.denied? %>
-			<%= f.submit %>
+			<%= f.submit class: "btn btn-primary"%>
 		<% else %>
 			<p>An administrator has already responded to this request. Please create a new request for further needs ohohohoho </p>
   	<% end %>

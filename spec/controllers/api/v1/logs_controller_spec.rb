@@ -11,7 +11,6 @@ describe Api::V1::LogsController do
     it "returns info on a hash" do
       log_response = json_response
       expect(log_response[:user_id]).to eql @log.user_id
-      expect(log_response[:item_id]).to eql @log.item_id
     end
 
     it { should respond_with 200 }
@@ -19,90 +18,96 @@ describe Api::V1::LogsController do
 
   describe "POST #create" do
     # Successful creation
-    context "when successfully created" do
-      before(:each) do
-        @user = create_and_authenticate_user(:user_admin)
-        log_attribute_creation
+    skip ("No longer have CREATE functionality for logs") do
+      context "when successfully created" do
+        before(:each) do
+          @user = create_and_authenticate_user(:user_admin)
+          log_attribute_creation
 
-        @log_attributes[:user_id] = @sample_user[:id]
-        @log_attributes[:item_id] = @sample_item[:id]
-        post :create, @log_attributes
+          @log_attributes[:user_id] = @sample_user[:id]
+          @log_attributes[:item_id] = @sample_item[:id]
+          post :create, @log_attributes
+        end
+
+        it "renders json representation on creation" do
+          log_response = json_response
+          expect(log_response[:user_id]).to eql @log_attributes[:user_id]
+          expect(log_response[:item_id]).to eql @log_attributes[:item_id]
+        end
+
+        it { should respond_with 201 }
       end
 
-      it "renders json representation on creation" do
-        log_response = json_response
-        expect(log_response[:user_id]).to eql @log_attributes[:user_id]
-        expect(log_response[:item_id]).to eql @log_attributes[:item_id]
+      # Unsuccessful creation
+      context "when not successfully created" do
+        before(:each) do
+          @user = create_and_authenticate_user(:user_admin)
+          log_attribute_creation
+
+          @log_attributes[:user_id] = @sample_user[:id] + 1
+          @log_attributes[:item_id] = @sample_item[:id] + 1
+
+          post :create, @log_attributes
+        end
+
+        it "renders JSON error" do
+          log_response = json_response
+          expect(log_response).to have_key(:errors)
+        end
+
+        it { should respond_with 422 }
       end
-
-      it { should respond_with 201 }
-    end
-
-    # Unsuccessful creation
-    context "when not successfully created" do
-      before(:each) do
-        @user = create_and_authenticate_user(:user_admin)
-        log_attribute_creation
-
-        @log_attributes[:user_id] = @sample_user[:id] + 1
-        @log_attributes[:item_id] = @sample_item[:id] + 1
-
-        post :create, @log_attributes
-      end
-
-      it "renders JSON error" do
-        log_response = json_response
-        expect(log_response).to have_key(:errors)
-      end
-
-      it { should respond_with 422 }
     end
   end
 
   describe "PUT/PATCH #update" do
-    # Successful update
-    context "when is successfully updated" do
-      before(:each) do
-        @user = create_and_authenticate_user(:user_admin)
-        @log = FactoryGirl.create :log
-        patch :update, { id: @log.id,
-                         quantity: 52 }
+    skip ("No longer have update functionality for logs") do
+      # Successful update
+      context "when is successfully updated" do
+        before(:each) do
+          @user = create_and_authenticate_user(:user_admin)
+          @log = FactoryGirl.create :log
+          patch :update, { id: @log.id,
+                           quantity: 52 }
+        end
+
+        it "renders json representation on update" do
+          log_response = json_response
+          expect(log_response[:quantity]).to eql 52
+        end
+
+        it { should respond_with 200 }
       end
 
-      it "renders json representation on update" do
-        log_response = json_response
-        expect(log_response[:quantity]).to eql 52
+      #Unsuccessful update
+      context "unsuccessful update" do
+        before(:each) do
+          @user = create_and_authenticate_user(:user_admin)
+          @log = FactoryGirl.create :log
+          patch :update, { id: @log.id,
+                           item_id: -1 }
+        end
+
+        it "renders errors from JSON" do
+          log_response = json_response
+          expect(log_response).to have_key(:errors)
+        end
+
+        it { should respond_with 422 }
       end
-
-      it { should respond_with 200 }
-    end
-
-    #Unsuccessful update
-    context "unsuccessful update" do
-      before(:each) do
-        @user = create_and_authenticate_user(:user_admin)
-        @log = FactoryGirl.create :log
-        patch :update, { id: @log.id,
-                        item_id: -1 }
-      end
-
-      it "renders errors from JSON" do
-        log_response = json_response
-        expect(log_response).to have_key(:errors)
-      end
-
-      it { should respond_with 422 }
     end
   end
 
   describe "DELETE #destroy" do
-    before(:each) do
-      @user = create_and_authenticate_user(:user_admin)
-      @log = FactoryGirl.create :log
-      delete :destroy, { id: @log.id }
-    end
+    skip ("No longer have delete functionality for logs") do
+      before(:each) do
+        @user = create_and_authenticate_user(:user_admin)
+        @log = FactoryGirl.create :log
+        delete :destroy, { id: @log.id }
+      end
 
-    it { should respond_with 204 }
+      it { should respond_with 204 }
+    end
   end
 
   private

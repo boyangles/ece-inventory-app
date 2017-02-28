@@ -4,9 +4,9 @@
   <h1>Users</h1>
 </div>
 
-<% if is_admin? %>
-    <%= link_to "Create New Account", new_user_url, :class => "btn btn-primary btn-lg btn-block" %>
-<% end %>
+<div><% if is_admin? %>
+    <%= link_to "Create New Account", new_user_url, :class => "btn btn-primary" %>
+<% end %></div>
 
 <%= will_paginate %>
 

@@ -1,0 +1,8 @@
+<%= form_for(request) do |f| %>
+  
+  <%= f.hidden_field :status, :value => "outstanding" %>
+
+	<div class="actions">
+  	<%= f.submit "Reactivate Order", class: 'btn btn-primary'%>
+	</div>
+<% end %>

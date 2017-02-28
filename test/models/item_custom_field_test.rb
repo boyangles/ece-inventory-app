@@ -17,11 +17,13 @@ class ItemCustomFieldTest < ActiveSupport::TestCase
     @item1 = Item.create!(unique_name: 'icf_item_setup_1',
                           quantity: 1000,
                           model_number: 'icf_model_1',
-                          description: 'icf_description_1')
+                          description: 'icf_description_1',
+                          last_action: 0)
     @item2 = Item.create!(unique_name: 'icf_item_setup_2',
                           quantity: 1000,
                           model_number: 'icf_model_2',
-                          description: 'icf_description_2')
+                          description: 'icf_description_2',
+                          last_action: 0)
   end
 
   test "ICF-1: Creating new item triggers creation of new ItemCustomField rows" do
@@ -31,7 +33,8 @@ class ItemCustomFieldTest < ActiveSupport::TestCase
       Item.create!(unique_name: 'item_icf_1',
                    quantity: 1000,
                    model_number: 'icf_model_1',
-                   description: 'icf_description_1')
+                   description: 'icf_description_1',
+                   last_action: 0)
     end
   end
 
@@ -46,10 +49,10 @@ class ItemCustomFieldTest < ActiveSupport::TestCase
   end
 
   test "ICF-3: Deleting item triggers deletion of ItemCustomField rows" do
+    skip ("No longer deleting relations because item is not deleting")
     cf_count = CustomField.count
-
     assert_difference ['ItemCustomField.count'], -cf_count do
-      Item.find_by!(unique_name: @item1.unique_name).destroy!
+      Item.find_by(unique_name: @item1.unique_name).destroy!
     end
   end
 
