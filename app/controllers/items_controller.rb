@@ -116,7 +116,7 @@ class ItemsController < ApplicationController
       redirect_to @item
     else
       flash.now[:danger] = "Unable to edit!"
-      render 'edit'
+      render 'edit_quantity'
     end
   end
 

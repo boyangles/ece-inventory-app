@@ -51,9 +51,15 @@
   <%= link_to 'Edit Item Details', 
     edit_item_path(@item.id), 
     :class => "btn btn-primary" %>
-	<%= link_to 'Edit Item Quantity', 
+	<% if !is_admin? %>
+		<%= link_to 'Log Acquisition or Destruction', 
 		edit_quantity_item_path(@item.id),
 		:class => "btn btn-primary" %>
+	<% else %>
+		<%= link_to 'Log Acquisition or Destruction/Correct Quantity',
+		edit_quantity_item_path(@item.id),
+		:class => "btn btn-primary" %>
+	<% end %>
 <% if is_admin? and @item.active? %>
  <%= render 'deactivateitemform', item: @item %>
 <% end %> 
@@ -83,6 +89,7 @@
                                data-pk="<%= icf.id %>"
                                data-model="item_custom_field"
                                data-name="<%= CustomField.find_icf_field_column(icf.custom_field_id).to_s %>"
+
                                data-url="<%= item_custom_field_url(icf) %>"
                                data-title="Enter modification">
                               <%= field_content %>
