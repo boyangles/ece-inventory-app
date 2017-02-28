@@ -1,10 +1,10 @@
 <%= form_for(user) do |f| %>
   
   <%= f.hidden_field :status, :value => "deactivated" %>
-	
-	<div class="actions">
-  	<div class="text-right">
-			<%= f.submit "Delete User", data: {confirm: 'Are you sure?'}, class: 'btn btn-xs' %>
+
+	<div class="">
+  	<div class="col-lg-2 col-lg-offset-10">
+			<%= f.submit "Delete User", data: {confirm: 'Are you sure?'}, class: 'btn btn-primary btn-xs' %>
 		</div>
 	</div>
 <% end %>

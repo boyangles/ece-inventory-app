@@ -4,9 +4,9 @@
   <h1>Items</h1>
 </div>
 
-<% if is_manager_or_admin? %>
+<p><% if is_manager_or_admin? %>
     <%= link_to "Create New Item", new_item_url, :class => "btn btn-primary btn-lg btn-block" %>
-<% end %>
+<% end %></p>
 
 <div class="search">
 	<%= form_for items_path, :method => 'get' do |f| %>
@@ -58,9 +58,11 @@
 
 <% if is_admin? %>
 
+<div class="pull-right">
     <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#item_index_custom_field_list">
       Custom Fields...
     </button>
+</div>
 
 
     <div id="item_index_custom_field_list" class="collapse">
