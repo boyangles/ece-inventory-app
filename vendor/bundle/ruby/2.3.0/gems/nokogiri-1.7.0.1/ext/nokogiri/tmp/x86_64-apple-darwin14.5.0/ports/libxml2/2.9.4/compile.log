@@ -1,0 +1,895 @@
+/Applications/Xcode.app/Contents/Developer/usr/bin/make  all-recursive
+Making all in include
+Making all in libxml
+make[3]: Nothing to be done for `all'.
+make[3]: Nothing to be done for `all-am'.
+Making all in .
+  CC       SAX.lo
+  CC       entities.lo
+  CC       encoding.lo
+encoding.c:491:26: warning: cast from 'const unsigned char *' to 'unsigned short *' increases required alignment from 1 to 2 [-Wcast-align]
+    unsigned short* in = (unsigned short*) inb;
+                         ^~~~~~~~~~~~~~~~~~~~~
+encoding.c:573:27: warning: cast from 'unsigned char *' to 'unsigned short *' increases required alignment from 1 to 2 [-Wcast-align]
+    unsigned short* out = (unsigned short*) outb;
+                          ^~~~~~~~~~~~~~~~~~~~~~
+encoding.c:729:26: warning: cast from 'const unsigned char *' to 'unsigned short *' increases required alignment from 1 to 2 [-Wcast-align]
+    unsigned short* in = (unsigned short*) inb;
+                         ^~~~~~~~~~~~~~~~~~~~~
+encoding.c:815:27: warning: cast from 'unsigned char *' to 'unsigned short *' increases required alignment from 1 to 2 [-Wcast-align]
+    unsigned short* out = (unsigned short*) outb;
+                          ^~~~~~~~~~~~~~~~~~~~~~
+4 warnings generated.
+  CC       error.lo
+  CC       parserInternals.lo
+  CC       parser.lo
+  CC       tree.lo
+  CC       hash.lo
+  CC       list.lo
+  CC       xmlIO.lo
+  CC       xmlmemory.lo
+xmlmemory.c:336:9: warning: cast from 'char *' to 'MEMHDR *' (aka 'struct memnod *') increases required alignment from 1 to 8 [-Wcast-align]
+    p = CLIENT_2_HDR(ptr);
+        ^~~~~~~~~~~~~~~~~
+xmlmemory.c:114:26: note: expanded from macro 'CLIENT_2_HDR'
+#define CLIENT_2_HDR(a) ((MEMHDR *) (((char *) (a)) - RESERVE_SIZE))
+                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlmemory.c:444:9: warning: cast from 'char *' to 'MEMHDR *' (aka 'struct memnod *') increases required alignment from 1 to 8 [-Wcast-align]
+    p = CLIENT_2_HDR(ptr);
+        ^~~~~~~~~~~~~~~~~
+xmlmemory.c:114:26: note: expanded from macro 'CLIENT_2_HDR'
+#define CLIENT_2_HDR(a) ((MEMHDR *) (((char *) (a)) - RESERVE_SIZE))
+                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2 warnings generated.
+  CC       uri.lo
+  CC       valid.lo
+  CC       xlink.lo
+  CC       HTMLparser.lo
+HTMLparser.c:4447:41: warning: missing field 'begin_pos' initializer [-Wmissing-field-initializers]
+    htmlParserNodeInfo node_info = { 0, };
+                                        ^
+1 warning generated.
+  CC       HTMLtree.lo
+  CC       debugXML.lo
+  CC       xpath.lo
+In file included from xpath.c:462:
+./timsort.h:405:65: warning: comparison of integers of different signs: 'long long' and 'const size_t' (aka 'const unsigned long') [-Wsign-compare]
+    if ((stack_curr == 2) && (stack[0].length + stack[1].length == size)) {
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^  ~~~~
+xpath.c:4875:73: warning: passing 'xmlXPathFunction' (aka 'void (*)(xmlXPathParserContextPtr, int)') to parameter of type 'void *' converts between void pointer and function pointer [-Wpedantic]
+    return(xmlHashAddEntry2(ctxt->funcHash, name, ns_uri, XML_CAST_FPTR(f)));
+                                                                        ^
+./include/libxml/hash.h:56:29: note: expanded from macro 'XML_CAST_FPTR'
+#define XML_CAST_FPTR(fptr) fptr
+                            ^
+./include/libxml/hash.h:131:34: note: passing argument to parameter 'userdata' here
+                                         void *userdata);
+                                               ^
+xpath.c:4956:24: warning: assigning to 'xmlXPathFunction' (aka 'void (*)(xmlXPathParserContextPtr, int)') from 'void *' converts between void pointer and function pointer [-Wpedantic]
+    XML_CAST_FPTR(ret) = xmlHashLookup2(ctxt->funcHash, name, ns_uri);
+                       ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xpath.c:13563:41: warning: assigning to 'xmlXPathFunction' (aka 'void (*)(xmlXPathParserContextPtr, int)') from 'void *' converts between void pointer and function pointer [-Wpedantic]
+                    XML_CAST_FPTR(func) = op->cache;
+                                        ^ ~~~~~~~~~
+xpath.c:13590:31: warning: assigning to 'void *' from 'xmlXPathFunction' (aka 'void (*)(xmlXPathParserContextPtr, int)') converts between void pointer and function pointer [-Wpedantic]
+                    op->cache = XML_CAST_FPTR(func);
+                              ^               ~~~~
+In file included from xpath.c:476:
+./trionan.c:194:1: warning: unused function 'trio_is_special_quantity' [-Wunused-function]
+trio_is_special_quantity
+^
+./trionan.c:218:1: warning: unused function 'trio_is_negative' [-Wunused-function]
+trio_is_negative
+^
+7 warnings generated.
+  CC       xpointer.lo
+  CC       xinclude.lo
+  CC       nanohttp.lo
+nanohttp.c:1537:38: warning: while loop has empty body [-Wempty-body]
+        while ( xmlNanoHTTPRecv(ctxt) > 0 ) ;
+                                            ^
+nanohttp.c:1537:38: note: put the semicolon on a separate line to silence this warning
+1 warning generated.
+  CC       nanoftp.lo
+  CC       catalog.lo
+  CC       globals.lo
+  CC       threads.lo
+threads.c:444:9: warning: comparison of function 'pthread_mutex_lock' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+    if (pthread_mutex_lock != NULL)
+        ^~~~~~~~~~~~~~~~~~    ~~~~
+threads.c:444:9: note: prefix with the address-of operator to silence this warning
+    if (pthread_mutex_lock != NULL)
+        ^
+        &
+threads.c:513:9: warning: comparison of function 'pthread_mutex_unlock' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+    if (pthread_mutex_unlock != NULL)
+        ^~~~~~~~~~~~~~~~~~~~    ~~~~
+threads.c:513:9: note: prefix with the address-of operator to silence this warning
+    if (pthread_mutex_unlock != NULL)
+        ^
+        &
+threads.c:867:14: warning: comparison of function 'pthread_once' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+        if ((pthread_once != NULL) &&
+             ^~~~~~~~~~~~    ~~~~
+threads.c:867:14: note: prefix with the address-of operator to silence this warning
+        if ((pthread_once != NULL) &&
+             ^
+             &
+threads.c:868:14: warning: comparison of function 'pthread_getspecific' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+            (pthread_getspecific != NULL) &&
+             ^~~~~~~~~~~~~~~~~~~    ~~~~
+threads.c:868:14: note: prefix with the address-of operator to silence this warning
+            (pthread_getspecific != NULL) &&
+             ^
+             &
+threads.c:869:14: warning: comparison of function 'pthread_setspecific' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+            (pthread_setspecific != NULL) &&
+             ^~~~~~~~~~~~~~~~~~~    ~~~~
+threads.c:869:14: note: prefix with the address-of operator to silence this warning
+            (pthread_setspecific != NULL) &&
+             ^
+             &
+threads.c:870:14: warning: comparison of function 'pthread_key_create' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+            (pthread_key_create != NULL) &&
+             ^~~~~~~~~~~~~~~~~~    ~~~~
+threads.c:870:14: note: prefix with the address-of operator to silence this warning
+            (pthread_key_create != NULL) &&
+             ^
+             &
+threads.c:871:14: warning: comparison of function 'pthread_key_delete' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+            (pthread_key_delete != NULL) &&
+             ^~~~~~~~~~~~~~~~~~    ~~~~
+threads.c:871:14: note: prefix with the address-of operator to silence this warning
+            (pthread_key_delete != NULL) &&
+             ^
+             &
+threads.c:872:14: warning: comparison of function 'pthread_mutex_init' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+            (pthread_mutex_init != NULL) &&
+             ^~~~~~~~~~~~~~~~~~    ~~~~
+threads.c:872:14: note: prefix with the address-of operator to silence this warning
+            (pthread_mutex_init != NULL) &&
+             ^
+             &
+threads.c:873:14: warning: comparison of function 'pthread_mutex_destroy' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+            (pthread_mutex_destroy != NULL) &&
+             ^~~~~~~~~~~~~~~~~~~~~    ~~~~
+threads.c:873:14: note: prefix with the address-of operator to silence this warning
+            (pthread_mutex_destroy != NULL) &&
+             ^
+             &
+threads.c:874:14: warning: comparison of function 'pthread_mutex_lock' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+            (pthread_mutex_lock != NULL) &&
+             ^~~~~~~~~~~~~~~~~~    ~~~~
+threads.c:874:14: note: prefix with the address-of operator to silence this warning
+            (pthread_mutex_lock != NULL) &&
+             ^
+             &
+threads.c:875:14: warning: comparison of function 'pthread_mutex_unlock' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+            (pthread_mutex_unlock != NULL) &&
+             ^~~~~~~~~~~~~~~~~~~~    ~~~~
+threads.c:875:14: note: prefix with the address-of operator to silence this warning
+            (pthread_mutex_unlock != NULL) &&
+             ^
+             &
+threads.c:876:14: warning: comparison of function 'pthread_cond_init' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+            (pthread_cond_init != NULL) &&
+             ^~~~~~~~~~~~~~~~~    ~~~~
+threads.c:876:14: note: prefix with the address-of operator to silence this warning
+            (pthread_cond_init != NULL) &&
+             ^
+             &
+threads.c:877:14: warning: comparison of function 'pthread_cond_destroy' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+            (pthread_cond_destroy != NULL) &&
+             ^~~~~~~~~~~~~~~~~~~~    ~~~~
+threads.c:877:14: note: prefix with the address-of operator to silence this warning
+            (pthread_cond_destroy != NULL) &&
+             ^
+             &
+threads.c:878:14: warning: comparison of function 'pthread_cond_wait' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+            (pthread_cond_wait != NULL) &&
+             ^~~~~~~~~~~~~~~~~    ~~~~
+threads.c:878:14: note: prefix with the address-of operator to silence this warning
+            (pthread_cond_wait != NULL) &&
+             ^
+             &
+threads.c:879:14: warning: comparison of function 'pthread_equal' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+            (pthread_equal != NULL) &&
+             ^~~~~~~~~~~~~    ~~~~
+threads.c:879:14: note: prefix with the address-of operator to silence this warning
+            (pthread_equal != NULL) &&
+             ^
+             &
+threads.c:880:14: warning: comparison of function 'pthread_self' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+            (pthread_self != NULL) &&
+             ^~~~~~~~~~~~    ~~~~
+threads.c:880:14: note: prefix with the address-of operator to silence this warning
+            (pthread_self != NULL) &&
+             ^
+             &
+threads.c:880:14: note: suffix with parentheses to turn this into a function call
+            (pthread_self != NULL) &&
+             ^
+                         ()
+threads.c:881:14: warning: comparison of function 'pthread_cond_signal' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+            (pthread_cond_signal != NULL)) {
+             ^~~~~~~~~~~~~~~~~~~    ~~~~
+threads.c:881:14: note: prefix with the address-of operator to silence this warning
+            (pthread_cond_signal != NULL)) {
+             ^
+             &
+threads.c:917:35: warning: comparison of function 'pthread_key_delete' not equal to a null pointer is always true [-Wtautological-pointer-compare]
+    if ((libxml_is_threaded)  && (pthread_key_delete != NULL))
+                                  ^~~~~~~~~~~~~~~~~~    ~~~~
+threads.c:917:35: note: prefix with the address-of operator to silence this warning
+    if ((libxml_is_threaded)  && (pthread_key_delete != NULL))
+                                  ^
+                                  &
+18 warnings generated.
+  CC       c14n.lo
+  CC       xmlstring.lo
+  CC       buf.lo
+  CC       xmlregexp.lo
+  CC       xmlschemas.lo
+xmlschemas.c:1177:25: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+            if (WXS_IS_COMPLEX(WXS_TYPE_CAST item))
+                ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+xmlschemas.c:138:23: note: expanded from macro 'WXS_TYPE_CAST'
+#define WXS_TYPE_CAST (xmlSchemaTypePtr)
+                      ^
+xmlschemas.c:224:8: note: expanded from macro 'WXS_IS_COMPLEX'
+    (((i)->type == XML_SCHEMA_TYPE_COMPLEX) || \
+       ^
+xmlschemas.c:1177:25: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+            if (WXS_IS_COMPLEX(WXS_TYPE_CAST item))
+                ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+xmlschemas.c:138:23: note: expanded from macro 'WXS_TYPE_CAST'
+#define WXS_TYPE_CAST (xmlSchemaTypePtr)
+                      ^
+xmlschemas.c:225:8: note: expanded from macro 'WXS_IS_COMPLEX'
+     ((i)->builtInType == XML_SCHEMAS_ANYTYPE))
+       ^
+xmlschemas.c:1201:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaElementPtr' (aka 'struct _xmlSchemaElement *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaElementPtr) item)->node);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1203:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributePtr' (aka 'struct _xmlSchemaAttribute *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaAttributePtr) item)->node);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1206:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaTypePtr) item)->node);
+                     ^~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1209:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaWildcardPtr' (aka 'struct _xmlSchemaWildcard *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaWildcardPtr) item)->node);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1211:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaParticlePtr' (aka 'struct _xmlSchemaParticle *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaParticlePtr) item)->node);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1215:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaModelGroupPtr' (aka 'struct _xmlSchemaModelGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaModelGroupPtr) item)->node);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1217:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaModelGroupDefPtr' (aka 'struct _xmlSchemaModelGroupDef *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaModelGroupDefPtr) item)->node);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1219:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeGroupPtr' (aka 'struct _xmlSchemaAttributeGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaAttributeGroupPtr) item)->node);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1223:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaIDCPtr' (aka 'struct _xmlSchemaIDC *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaIDCPtr) item)->node);
+                     ^~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1225:14: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaQNameRefPtr' (aka 'struct _xmlSchemaQNameRef *') increases required alignment from 4 to 8 [-Wcast-align]
+            return(((xmlSchemaQNameRefPtr) item)->node);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1231:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeUsePtr' (aka 'struct _xmlSchemaAttributeUse *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaAttributeUsePtr) item)->node);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1326:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaElementPtr' (aka 'struct _xmlSchemaElement *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaElementPtr) item)->name);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1328:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributePtr' (aka 'struct _xmlSchemaAttribute *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaAttributePtr) item)->name);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1330:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeGroupPtr' (aka 'struct _xmlSchemaAttributeGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaAttributeGroupPtr) item)->name);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1334:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaTypePtr) item)->name);
+                     ^~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1336:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaModelGroupDefPtr' (aka 'struct _xmlSchemaModelGroupDef *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaModelGroupDefPtr) item)->name);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1340:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaIDCPtr' (aka 'struct _xmlSchemaIDC *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaIDCPtr) item)->name);
+                     ^~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1342:10: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeUsePtr' (aka 'struct _xmlSchemaAttributeUse *') increases required alignment from 4 to 8 [-Wcast-align]
+            if (WXS_ATTRUSE_DECL(item) != NULL) {
+                ^~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:169:45: note: expanded from macro 'WXS_ATTRUSE_DECL'
+#define WXS_ATTRUSE_DECL(au) WXS_ATTR_CAST (WXS_ATTR_USE_CAST (au))->attrDecl
+                                            ^~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:142:27: note: expanded from macro 'WXS_ATTR_USE_CAST'
+#define WXS_ATTR_USE_CAST (xmlSchemaAttributeUsePtr)
+                          ^
+xmlschemas.c:1344:22: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeUsePtr' (aka 'struct _xmlSchemaAttributeUse *') increases required alignment from 4 to 8 [-Wcast-align]
+                    WXS_BASIC_CAST WXS_ATTRUSE_DECL(item)));
+                                   ^~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:169:45: note: expanded from macro 'WXS_ATTRUSE_DECL'
+#define WXS_ATTRUSE_DECL(au) WXS_ATTR_CAST (WXS_ATTR_USE_CAST (au))->attrDecl
+                                            ^~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:142:27: note: expanded from macro 'WXS_ATTR_USE_CAST'
+#define WXS_ATTR_USE_CAST (xmlSchemaAttributeUsePtr)
+                          ^
+xmlschemas.c:1348:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaQNameRefPtr' (aka 'struct _xmlSchemaQNameRef *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaQNameRefPtr) item)->name);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1350:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaNotationPtr' (aka 'struct _xmlSchemaNotation *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaNotationPtr) item)->name);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1381:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaElementPtr' (aka 'struct _xmlSchemaElement *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaElementPtr) item)->targetNamespace);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1383:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributePtr' (aka 'struct _xmlSchemaAttribute *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaAttributePtr) item)->targetNamespace);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1385:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeGroupPtr' (aka 'struct _xmlSchemaAttributeGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaAttributeGroupPtr) item)->targetNamespace);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1390:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaTypePtr) item)->targetNamespace);
+                     ^~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1392:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaModelGroupDefPtr' (aka 'struct _xmlSchemaModelGroupDef *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaModelGroupDefPtr) item)->targetNamespace);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1396:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaIDCPtr' (aka 'struct _xmlSchemaIDC *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaIDCPtr) item)->targetNamespace);
+                     ^~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1398:10: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeUsePtr' (aka 'struct _xmlSchemaAttributeUse *') increases required alignment from 4 to 8 [-Wcast-align]
+            if (WXS_ATTRUSE_DECL(item) != NULL) {
+                ^~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:169:45: note: expanded from macro 'WXS_ATTRUSE_DECL'
+#define WXS_ATTRUSE_DECL(au) WXS_ATTR_CAST (WXS_ATTR_USE_CAST (au))->attrDecl
+                                            ^~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:142:27: note: expanded from macro 'WXS_ATTR_USE_CAST'
+#define WXS_ATTR_USE_CAST (xmlSchemaAttributeUsePtr)
+                          ^
+xmlschemas.c:1400:22: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeUsePtr' (aka 'struct _xmlSchemaAttributeUse *') increases required alignment from 4 to 8 [-Wcast-align]
+                    WXS_BASIC_CAST WXS_ATTRUSE_DECL(item)));
+                                   ^~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:169:45: note: expanded from macro 'WXS_ATTRUSE_DECL'
+#define WXS_ATTRUSE_DECL(au) WXS_ATTR_CAST (WXS_ATTR_USE_CAST (au))->attrDecl
+                                            ^~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:142:27: note: expanded from macro 'WXS_ATTR_USE_CAST'
+#define WXS_ATTR_USE_CAST (xmlSchemaAttributeUsePtr)
+                          ^
+xmlschemas.c:1405:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaQNameRefPtr' (aka 'struct _xmlSchemaQNameRef *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaQNameRefPtr) item)->targetNamespace);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1407:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaNotationPtr' (aka 'struct _xmlSchemaNotation *') increases required alignment from 4 to 8 [-Wcast-align]
+            return (((xmlSchemaNotationPtr) item)->targetNamespace);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1588:30: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+            xmlSchemaTypePtr type = WXS_TYPE_CAST item;
+                                    ^~~~~~~~~~~~~~~~~~
+xmlschemas.c:138:23: note: expanded from macro 'WXS_TYPE_CAST'
+#define WXS_TYPE_CAST (xmlSchemaTypePtr)
+                      ^
+xmlschemas.c:1603:30: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+            xmlSchemaTypePtr type = WXS_TYPE_CAST item;
+                                    ^~~~~~~~~~~~~~~~~~
+xmlschemas.c:138:23: note: expanded from macro 'WXS_TYPE_CAST'
+#define WXS_TYPE_CAST (xmlSchemaTypePtr)
+                      ^
+xmlschemas.c:1626:30: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+            xmlSchemaTypePtr type = WXS_TYPE_CAST item;
+                                    ^~~~~~~~~~~~~~~~~~
+xmlschemas.c:138:23: note: expanded from macro 'WXS_TYPE_CAST'
+#define WXS_TYPE_CAST (xmlSchemaTypePtr)
+                      ^
+xmlschemas.c:1643:10: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeUsePtr' (aka 'struct _xmlSchemaAttributeUse *') increases required alignment from 4 to 8 [-Wcast-align]
+                ause = WXS_ATTR_USE_CAST item;
+                       ^~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:142:27: note: expanded from macro 'WXS_ATTR_USE_CAST'
+#define WXS_ATTR_USE_CAST (xmlSchemaAttributeUsePtr)
+                          ^
+xmlschemas.c:1659:10: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributePtr' (aka 'struct _xmlSchemaAttribute *') increases required alignment from 4 to 8 [-Wcast-align]
+                attr = (xmlSchemaAttributePtr) item;
+                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1674:10: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaElementPtr' (aka 'struct _xmlSchemaElement *') increases required alignment from 4 to 8 [-Wcast-align]
+                elem = (xmlSchemaElementPtr) item;
+                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1691:30: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaIDCPtr' (aka 'struct _xmlSchemaIDC *') increases required alignment from 4 to 8 [-Wcast-align]
+            *buf = xmlStrcat(*buf, ((xmlSchemaIDCPtr) item)->name);
+                                    ^~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:1697:8: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaWildcardPtr' (aka 'struct _xmlSchemaWildcard *') increases required alignment from 4 to 8 [-Wcast-align]
+                    ((xmlSchemaWildcardPtr) item)->processContents));
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:2043:36: warning: cast from 'xmlSchemaAbstractCtxtPtr' (aka 'struct _xmlSchemaAbstractCtxt *') to 'xmlSchemaValidCtxtPtr' (aka 'struct _xmlSchemaValidCtxt *') increases required alignment from 4 to 8 [-Wcast-align]
+            xmlSchemaValidCtxtPtr vctxt = (xmlSchemaValidCtxtPtr) ctxt;
+                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:2112:37: warning: cast from 'xmlSchemaAbstractCtxtPtr' (aka 'struct _xmlSchemaAbstractCtxt *') to 'xmlSchemaParserCtxtPtr' (aka 'struct _xmlSchemaParserCtxt *') increases required alignment from 4 to 8 [-Wcast-align]
+            xmlSchemaParserCtxtPtr pctxt = (xmlSchemaParserCtxtPtr) ctxt;
+                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:2221:32: warning: cast from 'xmlSchemaAbstractCtxtPtr' (aka 'struct _xmlSchemaAbstractCtxt *') to 'xmlSchemaValidCtxtPtr' (aka 'struct _xmlSchemaValidCtxt *') increases required alignment from 4 to 8 [-Wcast-align]
+        xmlSchemaValidCtxtPtr vctxt = (xmlSchemaValidCtxtPtr) actxt;
+                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:2417:4: warning: cast from 'xmlSchemaAbstractCtxtPtr' (aka 'struct _xmlSchemaAbstractCtxt *') to 'xmlSchemaValidCtxtPtr' (aka 'struct _xmlSchemaValidCtxt *') increases required alignment from 4 to 8 [-Wcast-align]
+        (((xmlSchemaValidCtxtPtr) actxt)->inode != NULL))
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:2418:12: warning: cast from 'xmlSchemaAbstractCtxtPtr' (aka 'struct _xmlSchemaAbstractCtxt *') to 'xmlSchemaValidCtxtPtr' (aka 'struct _xmlSchemaValidCtxt *') increases required alignment from 4 to 8 [-Wcast-align]
+        return ( ((xmlSchemaValidCtxtPtr) actxt)->inode->nodeType);
+                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:5070:12: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+                    if ((WXS_COMP_NAME(ret, xmlSchemaTypePtr) == name) &&
+                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:5041:30: note: expanded from macro 'WXS_COMP_NAME'
+#define WXS_COMP_NAME(c, t) ((t) (c))->name
+                             ^~~~~~~
+xmlschemas.c:5071:5: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+                        (WXS_COMP_TNS(ret, xmlSchemaTypePtr) ==
+                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:5042:29: note: expanded from macro 'WXS_COMP_TNS'
+#define WXS_COMP_TNS(c, t) ((t) (c))->targetNamespace
+                            ^~~~~~~
+xmlschemas.c:5078:12: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaModelGroupDefPtr' (aka 'struct _xmlSchemaModelGroupDef *') increases required alignment from 4 to 8 [-Wcast-align]
+                    if ((WXS_COMP_NAME(ret,
+                         ^~~~~~~~~~~~~~~~~~
+xmlschemas.c:5041:30: note: expanded from macro 'WXS_COMP_NAME'
+#define WXS_COMP_NAME(c, t) ((t) (c))->name
+                             ^~~~~~~
+xmlschemas.c:5080:5: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaModelGroupDefPtr' (aka 'struct _xmlSchemaModelGroupDef *') increases required alignment from 4 to 8 [-Wcast-align]
+                        (WXS_COMP_TNS(ret,
+                         ^~~~~~~~~~~~~~~~~
+xmlschemas.c:5042:29: note: expanded from macro 'WXS_COMP_TNS'
+#define WXS_COMP_TNS(c, t) ((t) (c))->targetNamespace
+                            ^~~~~~~
+xmlschemas.c:5087:12: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeGroupPtr' (aka 'struct _xmlSchemaAttributeGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+                    if ((WXS_COMP_NAME(ret,
+                         ^~~~~~~~~~~~~~~~~~
+xmlschemas.c:5041:30: note: expanded from macro 'WXS_COMP_NAME'
+#define WXS_COMP_NAME(c, t) ((t) (c))->name
+                             ^~~~~~~
+xmlschemas.c:5089:5: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeGroupPtr' (aka 'struct _xmlSchemaAttributeGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+                        (WXS_COMP_TNS(ret,
+                         ^~~~~~~~~~~~~~~~~
+xmlschemas.c:5042:29: note: expanded from macro 'WXS_COMP_TNS'
+#define WXS_COMP_TNS(c, t) ((t) (c))->targetNamespace
+                            ^~~~~~~
+xmlschemas.c:7482:7: warning: cast from 'const xmlChar *' (aka 'const unsigned char *') to 'xmlSchemaAttributePtr' (aka 'struct _xmlSchemaAttribute *') increases required alignment from 1 to 8 [-Wcast-align]
+                if (WXS_ATTRUSE_DECL(use)->typeName != NULL) {
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:169:30: note: expanded from macro 'WXS_ATTRUSE_DECL'
+#define WXS_ATTRUSE_DECL(au) WXS_ATTR_CAST (WXS_ATTR_USE_CAST (au))->attrDecl
+                             ^
+xmlschemas.c:141:23: note: expanded from macro 'WXS_ATTR_CAST'
+#define WXS_ATTR_CAST (xmlSchemaAttributePtr)
+                      ^
+xmlschemas.c:11316:13: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaParticlePtr' (aka 'struct _xmlSchemaParticle *') increases required alignment from 4 to 8 [-Wcast-align]
+            part = (xmlSchemaParticlePtr) xmlSchemaParseElement(ctxt,
+                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:11369:10: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTreeItemPtr' (aka 'struct _xmlSchemaTreeItem *') increases required alignment from 4 to 8 [-Wcast-align]
+                part = (xmlSchemaTreeItemPtr)
+                       ^~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:14385:9: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+        if ((! WXS_IS_ANYTYPE(baseItem)) &&
+               ^~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:221:10: note: expanded from macro 'WXS_IS_ANYTYPE'
+      ( (WXS_TYPE_CAST (i))->builtInType == XML_SCHEMAS_ANYTYPE))
+         ^~~~~~~~~~~~~~~~~
+xmlschemas.c:138:23: note: expanded from macro 'WXS_TYPE_CAST'
+#define WXS_TYPE_CAST (xmlSchemaTypePtr)
+                      ^
+xmlschemas.c:15110:6: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaModelGroupDefPtr' (aka 'struct _xmlSchemaModelGroupDef *') increases required alignment from 4 to 8 [-Wcast-align]
+            WXS_MODEL_GROUPDEF_CAST xmlSchemaGetNamedComponent(ctxt->schema,
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:144:33: note: expanded from macro 'WXS_MODEL_GROUPDEF_CAST'
+#define WXS_MODEL_GROUPDEF_CAST (xmlSchemaModelGroupDefPtr)
+                                ^
+xmlschemas.c:18624:35: warning: cast from 'xmlSchemaAbstractCtxtPtr' (aka 'struct _xmlSchemaAbstractCtxt *') to 'xmlSchemaParserCtxtPtr' (aka 'struct _xmlSchemaParserCtxt *') increases required alignment from 4 to 8 [-Wcast-align]
+        return(xmlSchemaFixupComplexType(PCTXT_CAST actxt, type));
+                                         ^~~~~~~~~~~~~~~~
+xmlschemas.c:133:20: note: expanded from macro 'PCTXT_CAST'
+#define PCTXT_CAST (xmlSchemaParserCtxtPtr)
+                   ^
+xmlschemas.c:18626:42: warning: cast from 'xmlSchemaAbstractCtxtPtr' (aka 'struct _xmlSchemaAbstractCtxt *') to 'xmlSchemaParserCtxtPtr' (aka 'struct _xmlSchemaParserCtxt *') increases required alignment from 4 to 8 [-Wcast-align]
+        return(xmlSchemaFixupSimpleTypeStageTwo(PCTXT_CAST actxt, type));
+                                                ^~~~~~~~~~~~~~~~
+xmlschemas.c:133:20: note: expanded from macro 'PCTXT_CAST'
+#define PCTXT_CAST (xmlSchemaParserCtxtPtr)
+                   ^
+xmlschemas.c:19069:11: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeGroupPtr' (aka 'struct _xmlSchemaAttributeGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+            gr = WXS_ATTR_GROUP_CAST ref->item;
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:140:29: note: expanded from macro 'WXS_ATTR_GROUP_CAST'
+#define WXS_ATTR_GROUP_CAST (xmlSchemaAttributeGroupPtr)
+                            ^
+xmlschemas.c:19216:11: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeGroupPtr' (aka 'struct _xmlSchemaAttributeGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+            gr = WXS_ATTR_GROUP_CAST (WXS_QNAME_CAST use)->item;
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:140:29: note: expanded from macro 'WXS_ATTR_GROUP_CAST'
+#define WXS_ATTR_GROUP_CAST (xmlSchemaAttributeGroupPtr)
+                            ^
+xmlschemas.c:20066:10: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaModelGroupPtr' (aka 'struct _xmlSchemaModelGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+            if (WXS_MODELGROUPDEF_MODEL(refItem) == NULL)
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:194:39: note: expanded from macro 'WXS_MODELGROUPDEF_MODEL'
+#define WXS_MODELGROUPDEF_MODEL(mgd) (WXS_MODEL_GROUP_CAST (mgd))->children
+                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:145:30: note: expanded from macro 'WXS_MODEL_GROUP_CAST'
+#define WXS_MODEL_GROUP_CAST (xmlSchemaModelGroupPtr)
+                             ^
+xmlschemas.c:20076:11: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaModelGroupPtr' (aka 'struct _xmlSchemaModelGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+            if ((WXS_MODELGROUPDEF_MODEL(refItem))->type ==
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:194:39: note: expanded from macro 'WXS_MODELGROUPDEF_MODEL'
+#define WXS_MODELGROUPDEF_MODEL(mgd) (WXS_MODEL_GROUP_CAST (mgd))->children
+                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:145:30: note: expanded from macro 'WXS_MODEL_GROUP_CAST'
+#define WXS_MODEL_GROUP_CAST (xmlSchemaModelGroupPtr)
+                             ^
+xmlschemas.c:20099:27: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTreeItemPtr' (aka 'struct _xmlSchemaTreeItem *') increases required alignment from 4 to 8 [-Wcast-align]
+            particle->children = (xmlSchemaTreeItemPtr) refItem;
+                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:20105:27: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTreeItemPtr' (aka 'struct _xmlSchemaTreeItem *') increases required alignment from 4 to 8 [-Wcast-align]
+            particle->children = (xmlSchemaTreeItemPtr) refItem;
+                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:20411:4: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaIDCPtr' (aka 'struct _xmlSchemaIDC *') increases required alignment from 4 to 8 [-Wcast-align]
+                ((xmlSchemaIDCPtr) idc->ref->item)->nbFields) {
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:20415:11: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaIDCPtr' (aka 'struct _xmlSchemaIDC *') increases required alignment from 4 to 8 [-Wcast-align]
+                refer = (xmlSchemaIDCPtr) idc->ref->item;
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:20541:8: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+                if ((WXS_TYPE_CAST prev)->flags &
+                     ^~~~~~~~~~~~~~~~~~
+xmlschemas.c:138:23: note: expanded from macro 'WXS_TYPE_CAST'
+#define WXS_TYPE_CAST (xmlSchemaTypePtr)
+                      ^
+xmlschemas.c:20548:4: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+                (WXS_TYPE_CAST prev)->flags |= XML_SCHEMAS_TYPE_REDEFINED;
+                 ^~~~~~~~~~~~~~~~~~
+xmlschemas.c:138:23: note: expanded from macro 'WXS_TYPE_CAST'
+#define WXS_TYPE_CAST (xmlSchemaTypePtr)
+                      ^
+xmlschemas.c:20554:4: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+                ((xmlSchemaTypePtr) item)->baseType =
+                 ^~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:20555:7: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+                    (xmlSchemaTypePtr) prev;
+                    ^~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:20558:8: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaModelGroupDefPtr' (aka 'struct _xmlSchemaModelGroupDef *') increases required alignment from 4 to 8 [-Wcast-align]
+                if ((WXS_MODEL_GROUPDEF_CAST prev)->flags &
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:144:33: note: expanded from macro 'WXS_MODEL_GROUPDEF_CAST'
+#define WXS_MODEL_GROUPDEF_CAST (xmlSchemaModelGroupDefPtr)
+                                ^
+xmlschemas.c:20565:4: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaModelGroupDefPtr' (aka 'struct _xmlSchemaModelGroupDef *') increases required alignment from 4 to 8 [-Wcast-align]
+                (WXS_MODEL_GROUPDEF_CAST prev)->flags |=
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:144:33: note: expanded from macro 'WXS_MODEL_GROUPDEF_CAST'
+#define WXS_MODEL_GROUPDEF_CAST (xmlSchemaModelGroupDefPtr)
+                                ^
+xmlschemas.c:20572:8: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaParticlePtr' (aka 'struct _xmlSchemaParticle *') increases required alignment from 4 to 8 [-Wcast-align]
+                    (WXS_PTC_CAST redef->reference)->children =
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:137:22: note: expanded from macro 'WXS_PTC_CAST'
+#define WXS_PTC_CAST (xmlSchemaParticlePtr)
+                     ^
+xmlschemas.c:20573:4: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTreeItemPtr' (aka 'struct _xmlSchemaTreeItem *') increases required alignment from 4 to 8 [-Wcast-align]
+                        WXS_TREE_CAST prev;
+                        ^~~~~~~~~~~~~~~~~~
+xmlschemas.c:136:23: note: expanded from macro 'WXS_TREE_CAST'
+#define WXS_TREE_CAST (xmlSchemaTreeItemPtr)
+                      ^
+xmlschemas.c:20578:8: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeGroupPtr' (aka 'struct _xmlSchemaAttributeGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+                if ((WXS_ATTR_GROUP_CAST prev)->flags &
+                     ^~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:140:29: note: expanded from macro 'WXS_ATTR_GROUP_CAST'
+#define WXS_ATTR_GROUP_CAST (xmlSchemaAttributeGroupPtr)
+                            ^
+xmlschemas.c:20584:4: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeGroupPtr' (aka 'struct _xmlSchemaAttributeGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+                (WXS_ATTR_GROUP_CAST prev)->flags |=
+                 ^~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:140:29: note: expanded from macro 'WXS_ATTR_GROUP_CAST'
+#define WXS_ATTR_GROUP_CAST (xmlSchemaAttributeGroupPtr)
+                            ^
+xmlschemas.c:20593:8: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaQNameRefPtr' (aka 'struct _xmlSchemaQNameRef *') increases required alignment from 4 to 8 [-Wcast-align]
+                    (WXS_QNAME_CAST redef->reference)->item = prev;
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:147:24: note: expanded from macro 'WXS_QNAME_CAST'
+#define WXS_QNAME_CAST (xmlSchemaQNameRefPtr)
+                       ^
+xmlschemas.c:20663:4: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+                (WXS_TYPE_CAST redef->target)->name = NULL;
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:138:23: note: expanded from macro 'WXS_TYPE_CAST'
+#define WXS_TYPE_CAST (xmlSchemaTypePtr)
+                      ^
+xmlschemas.c:20699:8: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeGroupPtr' (aka 'struct _xmlSchemaAttributeGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+                    (WXS_ATTR_GROUP_CAST item)->attrUses,
+                     ^~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:140:29: note: expanded from macro 'WXS_ATTR_GROUP_CAST'
+#define WXS_ATTR_GROUP_CAST (xmlSchemaAttributeGroupPtr)
+                            ^
+xmlschemas.c:20700:8: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeGroupPtr' (aka 'struct _xmlSchemaAttributeGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+                    (WXS_ATTR_GROUP_CAST redef->target)->attrUses,
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:140:29: note: expanded from macro 'WXS_ATTR_GROUP_CAST'
+#define WXS_ATTR_GROUP_CAST (xmlSchemaAttributeGroupPtr)
+                            ^
+xmlschemas.c:20701:8: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeGroupPtr' (aka 'struct _xmlSchemaAttributeGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+                    (WXS_ATTR_GROUP_CAST item)->attributeWildcard,
+                     ^~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:140:29: note: expanded from macro 'WXS_ATTR_GROUP_CAST'
+#define WXS_ATTR_GROUP_CAST (xmlSchemaAttributeGroupPtr)
+                            ^
+xmlschemas.c:20702:8: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeGroupPtr' (aka 'struct _xmlSchemaAttributeGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+                    (WXS_ATTR_GROUP_CAST redef->target)->attributeWildcard);
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:140:29: note: expanded from macro 'WXS_ATTR_GROUP_CAST'
+#define WXS_ATTR_GROUP_CAST (xmlSchemaAttributeGroupPtr)
+                            ^
+xmlschemas.c:20755:7: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+                if (WXS_REDEFINED_TYPE(item))
+                    ^~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:20456:3: note: expanded from macro 'WXS_REDEFINED_TYPE'
+(((xmlSchemaTypePtr) item)->flags & XML_SCHEMAS_TYPE_REDEFINED)
+  ^~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:20757:11: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaTypePtr' (aka 'struct _xmlSchemaType *') increases required alignment from 4 to 8 [-Wcast-align]
+                name = (WXS_TYPE_CAST item)->name;
+                        ^~~~~~~~~~~~~~~~~~
+xmlschemas.c:138:23: note: expanded from macro 'WXS_TYPE_CAST'
+#define WXS_TYPE_CAST (xmlSchemaTypePtr)
+                      ^
+xmlschemas.c:20761:11: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaElementPtr' (aka 'struct _xmlSchemaElement *') increases required alignment from 4 to 8 [-Wcast-align]
+                name = (WXS_ELEM_CAST item)->name;
+                        ^~~~~~~~~~~~~~~~~~
+xmlschemas.c:139:23: note: expanded from macro 'WXS_ELEM_CAST'
+#define WXS_ELEM_CAST (xmlSchemaElementPtr)
+                      ^
+xmlschemas.c:20765:11: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributePtr' (aka 'struct _xmlSchemaAttribute *') increases required alignment from 4 to 8 [-Wcast-align]
+                name = (WXS_ATTR_CAST item)->name;
+                        ^~~~~~~~~~~~~~~~~~
+xmlschemas.c:141:23: note: expanded from macro 'WXS_ATTR_CAST'
+#define WXS_ATTR_CAST (xmlSchemaAttributePtr)
+                      ^
+xmlschemas.c:20769:7: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaModelGroupDefPtr' (aka 'struct _xmlSchemaModelGroupDef *') increases required alignment from 4 to 8 [-Wcast-align]
+                if (WXS_REDEFINED_MODEL_GROUP_DEF(item))
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:20459:3: note: expanded from macro 'WXS_REDEFINED_MODEL_GROUP_DEF'
+(((xmlSchemaModelGroupDefPtr) item)->flags & XML_SCHEMA_MODEL_GROUP_DEF_REDEFINED)
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:20771:11: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaModelGroupDefPtr' (aka 'struct _xmlSchemaModelGroupDef *') increases required alignment from 4 to 8 [-Wcast-align]
+                name = (WXS_MODEL_GROUPDEF_CAST item)->name;
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:144:33: note: expanded from macro 'WXS_MODEL_GROUPDEF_CAST'
+#define WXS_MODEL_GROUPDEF_CAST (xmlSchemaModelGroupDefPtr)
+                                ^
+xmlschemas.c:20775:7: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeGroupPtr' (aka 'struct _xmlSchemaAttributeGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+                if (WXS_REDEFINED_ATTR_GROUP(item))
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:20462:3: note: expanded from macro 'WXS_REDEFINED_ATTR_GROUP'
+(((xmlSchemaAttributeGroupPtr) item)->flags & XML_SCHEMAS_ATTRGROUP_REDEFINED)
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:20777:11: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaAttributeGroupPtr' (aka 'struct _xmlSchemaAttributeGroup *') increases required alignment from 4 to 8 [-Wcast-align]
+                name = (WXS_ATTR_GROUP_CAST item)->name;
+                        ^~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:140:29: note: expanded from macro 'WXS_ATTR_GROUP_CAST'
+#define WXS_ATTR_GROUP_CAST (xmlSchemaAttributeGroupPtr)
+                            ^
+xmlschemas.c:20783:11: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaIDCPtr' (aka 'struct _xmlSchemaIDC *') increases required alignment from 4 to 8 [-Wcast-align]
+                name = (WXS_IDC_CAST item)->name;
+                        ^~~~~~~~~~~~~~~~~
+xmlschemas.c:146:22: note: expanded from macro 'WXS_IDC_CAST'
+#define WXS_IDC_CAST (xmlSchemaIDCPtr)
+                     ^
+xmlschemas.c:20787:11: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaNotationPtr' (aka 'struct _xmlSchemaNotation *') increases required alignment from 4 to 8 [-Wcast-align]
+                name = ((xmlSchemaNotationPtr) item)->name;
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:23219:15: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaIDCPtr' (aka 'struct _xmlSchemaIDC *') increases required alignment from 4 to 8 [-Wcast-align]
+            refIdc = (xmlSchemaIDCPtr) idc->ref->item;
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:23821:7: warning: cast from 'xmlSchemaBasicItemPtr' (aka 'struct _xmlSchemaBasicItem *') to 'xmlSchemaIDCPtr' (aka 'struct _xmlSchemaIDC *') increases required alignment from 4 to 8 [-Wcast-align]
+                if ((xmlSchemaIDCPtr) matcher->aidc->def->ref->item ==
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:24567:4: warning: cast from 'xmlSchemaAbstractCtxtPtr' (aka 'struct _xmlSchemaAbstractCtxt *') to 'xmlSchemaValidCtxtPtr' (aka 'struct _xmlSchemaValidCtxt *') increases required alignment from 4 to 8 [-Wcast-align]
+                        (xmlSchemaValidCtxtPtr) actxt,
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:24568:5: warning: cast from 'xmlSchemaAbstractCtxtPtr' (aka 'struct _xmlSchemaAbstractCtxt *') to 'xmlSchemaValidCtxtPtr' (aka 'struct _xmlSchemaValidCtxt *') increases required alignment from 4 to 8 [-Wcast-align]
+                        ((xmlSchemaValidCtxtPtr) actxt)->schema,
+                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:24572:36: warning: cast from 'xmlSchemaAbstractCtxtPtr' (aka 'struct _xmlSchemaAbstractCtxt *') to 'xmlSchemaValidCtxtPtr' (aka 'struct _xmlSchemaValidCtxt *') increases required alignment from 4 to 8 [-Wcast-align]
+                    ret = xmlSchemaValidateQName((xmlSchemaValidCtxtPtr) actxt,
+                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xmlschemas.c:24589:5: warning: cast from 'xmlSchemaAbstractCtxtPtr' (aka 'struct _xmlSchemaAbstractCtxt *') to 'xmlSchemaParserCtxtPtr' (aka 'struct _xmlSchemaParserCtxt *') increases required alignment from 4 to 8 [-Wcast-align]
+                        ((xmlSchemaParserCtxtPtr) actxt)->schema, node,
+                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+99 warnings generated.
+  CC       xmlschemastypes.lo
+  CC       xmlunicode.lo
+  CC       xmlreader.lo
+  CC       relaxng.lo
+  CC       dict.lo
+  CC       SAX2.lo
+  CC       xmlwriter.lo
+  CC       legacy.lo
+  CC       chvalid.lo
+  CC       pattern.lo
+  CC       xmlsave.lo
+  CC       xmlmodule.lo
+  CC       schematron.lo
+  CC       xzlib.lo
+  CCLD     libxml2.la
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib: file: .libs/libxml2.a(xzlib.o) has no symbols
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib: file: .libs/libxml2.a(xzlib.o) has no symbols
+  CC       testdso.lo
+  CCLD     testdso.la
+  CC       xmllint.o
+  CCLD     xmllint
+  CC       xmlcatalog.o
+  CCLD     xmlcatalog
+  CC       testSchemas.o
+  CCLD     testSchemas
+  CC       testRelax.o
+  CCLD     testRelax
+  CC       testSAX.o
+  CCLD     testSAX
+  CC       testHTML.o
+  CCLD     testHTML
+  CC       testXPath.o
+  CCLD     testXPath
+  CC       testURI.o
+  CCLD     testURI
+  CC       testThreads.o
+  CCLD     testThreads
+  CC       testC14N.o
+  CCLD     testC14N
+  CC       testAutomata.o
+  CCLD     testAutomata
+  CC       testRegexp.o
+  CCLD     testRegexp
+  CC       testReader.o
+  CCLD     testReader
+  CC       testapi.o
+testapi.c:18040:25: warning: unused function 'gen_xmlSchematronPtr' [-Wunused-function]
+static xmlSchematronPtr gen_xmlSchematronPtr(int no ATTRIBUTE_UNUSED, int nr ATTRIBUTE_UNUSED) {
+                        ^
+testapi.c:18043:13: warning: unused function 'des_xmlSchematronPtr' [-Wunused-function]
+static void des_xmlSchematronPtr(int no ATTRIBUTE_UNUSED, xmlSchematronPtr val ATTRIBUTE_UNUSED, int nr ATTRIBUTE_UNUSED) {
+            ^
+testapi.c:18060:35: warning: unused function 'gen_xmlSchematronParserCtxtPtr' [-Wunused-function]
+static xmlSchematronParserCtxtPtr gen_xmlSchematronParserCtxtPtr(int no ATTRIBUTE_UNUSED, int nr ATTRIBUTE_UNUSED) {
+                                  ^
+testapi.c:18063:13: warning: unused function 'des_xmlSchematronParserCtxtPtr' [-Wunused-function]
+static void des_xmlSchematronParserCtxtPtr(int no ATTRIBUTE_UNUSED, xmlSchematronParserCtxtPtr val ATTRIBUTE_UNUSED, int nr ATTRIBUTE_UNUSED) {
+            ^
+testapi.c:18558:18: warning: unused function 'gen_const_xmlBufPtr' [-Wunused-function]
+static xmlBufPtr gen_const_xmlBufPtr(int no ATTRIBUTE_UNUSED, int nr ATTRIBUTE_UNUSED) {
+                 ^
+testapi.c:18561:13: warning: unused function 'des_const_xmlBufPtr' [-Wunused-function]
+static void des_const_xmlBufPtr(int no ATTRIBUTE_UNUSED, const xmlBufPtr val ATTRIBUTE_UNUSED, int nr ATTRIBUTE_UNUSED) {
+            ^
+testapi.c:34503:27: warning: unused function 'gen_xmlSAXHandlerPtr_ptr' [-Wunused-function]
+static xmlSAXHandlerPtr * gen_xmlSAXHandlerPtr_ptr(int no ATTRIBUTE_UNUSED, int nr ATTRIBUTE_UNUSED) {
+                          ^
+testapi.c:34506:13: warning: unused function 'des_xmlSAXHandlerPtr_ptr' [-Wunused-function]
+static void des_xmlSAXHandlerPtr_ptr(int no ATTRIBUTE_UNUSED, xmlSAXHandlerPtr * val ATTRIBUTE_UNUSED, int nr ATTRIBUTE_UNUSED) {
+            ^
+8 warnings generated.
+  CCLD     testapi
+  CC       testModule.o
+  CCLD     testModule
+  CC       runtest.o
+runtest.c:691:20: warning: format specifies type 'long' but the argument has type 'off_t' (aka 'long long') [-Wformat]
+                filename, info.st_size, size);
+                          ^~~~~~~~~~~~
+runtest.c:2145:65: warning: unused parameter 'options' [-Wunused-parameter]
+                  xmlTextReaderPtr reader, const char *rng, int options) {
+                                                                ^
+2 warnings generated.
+  CCLD     runtest
+  CC       runsuite.o
+  CCLD     runsuite
+  CC       testchar.o
+  CCLD     testchar
+  CC       testdict.o
+  CCLD     testdict
+  CC       runxmlconf.o
+  CCLD     runxmlconf
+  CC       testrecurse.o
+  CCLD     testrecurse
+  CC       testlimits.o
+  CCLD     testlimits
+sed -e 's?\@XML_LIBDIR\@?-L/Users/jf/Desktop/Spring 2017/ECE458/ece-inventory-app/vendor/bundle/ruby/2.3.0/gems/nokogiri-1.7.0.1/ports/x86_64-apple-darwin14.5.0/libxml2/2.9.4/lib?g' \
+	    -e 's?\@XML_INCLUDEDIR\@?-I/Users/jf/Desktop/Spring 2017/ECE458/ece-inventory-app/vendor/bundle/ruby/2.3.0/gems/nokogiri-1.7.0.1/ports/x86_64-apple-darwin14.5.0/libxml2/2.9.4/include/libxml2?g' \
+	    -e 's?\@VERSION\@?2.9.4?g' \
+	    -e 's?\@XML_LIBS\@?-lxml2 -lz  -lpthread  -liconv  -lm ?g' \
+	       < ./xml2Conf.sh.in > xml2Conf.tmp \
+	&& mv xml2Conf.tmp xml2Conf.sh
+Making all in doc
+Making all in .
+make[3]: Nothing to be done for `all-am'.
+Making all in devhelp
+make[3]: Nothing to be done for `all'.
+Making all in examples
+  CC       io1.o
+  CCLD     io1
+  CC       io2.o
+  CCLD     io2
+  CC       parse1.o
+  CCLD     parse1
+  CC       parse2.o
+  CCLD     parse2
+  CC       parse3.o
+  CCLD     parse3
+  CC       parse4.o
+  CCLD     parse4
+  CC       reader1.o
+  CCLD     reader1
+  CC       reader2.o
+  CCLD     reader2
+  CC       reader3.o
+  CCLD     reader3
+  CC       reader4.o
+  CCLD     reader4
+  CC       testWriter.o
+testWriter.c:105:64: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+    tmp = ConvertInput("This is a comment with special chars: <<E4><F6><FC>>",
+                                                               ^~~~~~~~~~~~
+testWriter.c:142:26: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+    tmp = ConvertInput("<<E4><F6><FC>>", MY_ENCODING);
+                         ^~~~~~~~~~~~
+testWriter.c:180:26: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+    tmp = ConvertInput("M<FC>ller", MY_ENCODING);
+                         ^~~~
+testWriter.c:190:26: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+    tmp = ConvertInput("J<F6>rg", MY_ENCODING);
+                         ^~~~
+testWriter.c:384:64: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+    tmp = ConvertInput("This is a comment with special chars: <<E4><F6><FC>>",
+                                                               ^~~~~~~~~~~~
+testWriter.c:421:26: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+    tmp = ConvertInput("<<E4><F6><FC>>", MY_ENCODING);
+                         ^~~~~~~~~~~~
+testWriter.c:459:26: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+    tmp = ConvertInput("M<FC>ller", MY_ENCODING);
+                         ^~~~
+testWriter.c:469:26: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+    tmp = ConvertInput("J<F6>rg", MY_ENCODING);
+                         ^~~~
+testWriter.c:659:64: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+    tmp = ConvertInput("This is a comment with special chars: <<E4><F6><FC>>",
+                                                               ^~~~~~~~~~~~
+testWriter.c:692:26: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+    tmp = ConvertInput("<<E4><F6><FC>>", MY_ENCODING);
+                         ^~~~~~~~~~~~
+testWriter.c:729:26: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+    tmp = ConvertInput("M<FC>ller", MY_ENCODING);
+                         ^~~~
+testWriter.c:738:26: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+    tmp = ConvertInput("J<F6>rg", MY_ENCODING);
+                         ^~~~
+testWriter.c:923:64: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+    tmp = ConvertInput("This is a comment with special chars: <<E4><F6><FC>>",
+                                                               ^~~~~~~~~~~~
+testWriter.c:958:26: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+    tmp = ConvertInput("<<E4><F6><FC>>", MY_ENCODING);
+                         ^~~~~~~~~~~~
+testWriter.c:995:26: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+    tmp = ConvertInput("M<FC>ller", MY_ENCODING);
+                         ^~~~
+testWriter.c:1004:26: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+    tmp = ConvertInput("J<F6>rg", MY_ENCODING);
+                         ^~~~
+16 warnings generated.
+  CCLD     testWriter
+  CC       tree1.o
+  CCLD     tree1
+  CC       tree2.o
+  CCLD     tree2
+  CC       xpath1.o
+  CCLD     xpath1
+  CC       xpath2.o
+  CCLD     xpath2
+Making all in example
+  CC       gjobread.o
+  CCLD     gjobread
+Making all in xstc
+make[2]: Nothing to be done for `all'.
