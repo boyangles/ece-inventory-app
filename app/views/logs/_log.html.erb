@@ -36,13 +36,19 @@
 			<% request = Request.find(reqlog.request_id) %>
 			<% user = User.find(request.user_id) %>			
 
+			<% if reqlog.approved? %>
+				<% hacky = "and disbursed: " %>
+			<% else %>
+				<% hacky = "for" %>
+			<% end %>
+
 			<b>Action : </b>
 			<%= reqlog.action %>
 		
 			<%= link_to "Request", request_path(request) %>
 			for <%= link_to user.username, user_path(user) %>
 
-			for
+			<%= hacky %>
 			<% if request.request_items.empty? %>
 				NOTHING wow okay
 			<% end %>
