@@ -30,9 +30,9 @@ Our inventory system now runs on Duke Colab VM!
 
 #### Swagger API Debugger
  - You may need to install the submodule Swagger UI. 
-   -  Run the command <git submodule add https://github.com/swagger-api/swagger-ui.git swagger>
-   -  If the git submodule is already present, run <git submodule update --init --recursive>
+   -  Run the command ```git submodule add https://github.com/swagger-api/swagger-ui.git swagger```
+   -  If the git submodule is already present, run ```git submodule update --init --recursive```
    -  Swagger UI should now be enabled.
- - To test the API, run <rails swagger:docs>. This will generate the .json files that Swagger builds to generate its UI. 
- - Anytime changes are done to swagger API elements, run <rails swagger:docs> to update
+ - To test the API, run ```rails swagger:docs```. This will generate the .json files that Swagger builds to generate its UI. 
+ - Anytime changes are done to swagger API elements, run ```rails swagger:docs``` to update
  
