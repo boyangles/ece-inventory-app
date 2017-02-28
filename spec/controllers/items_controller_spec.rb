@@ -66,7 +66,6 @@ RSpec.describe "Item Controller Tests", :type => :feature do
       verify_item_parameters
       updated_name = Faker::Name.name
       fill_in('Name', with: updated_name)
-      fill_in('Quantity', with: 123)
       fill_in('Description', with: 'updated description')
       fill_in('Model Number', with: '12n20')
       find_button('Submit').click
@@ -84,6 +83,18 @@ RSpec.describe "Item Controller Tests", :type => :feature do
       fill_in('Name', with: updated_name)
       find_button('Submit').click
       updated_item = Item.find_by(unique_name: updated_name)
+      expect(page).to have_current_path item_path(updated_item.id)
+      verify_item_fields(updated_item)
+    end
+
+    it "can update quantity as admin" do
+      login(:user_admin)
+      navigate_to_new_item
+      find_link('Edit Item Quantity').click
+      expect(page).to have_content('Quantity')
+      fill_in('Quantity', with: 333)
+      find_button('Update Item').click
+      updated_item = Item.find_by(unique_name: @item.unique_name)
       expect(page).to have_current_path item_path(updated_item.id)
       verify_item_fields(updated_item)
     end
@@ -124,7 +135,7 @@ RSpec.describe "Item Controller Tests", :type => :feature do
         User.destroy(@user)
       end
       if(@item != nil)
-        Item.destroy(@item.id)
+        @item.deactivate
       end
     end
   end
@@ -151,7 +162,6 @@ RSpec.describe "Item Controller Tests", :type => :feature do
 
   def verify_item_parameters
     expect(page).to have_content 'Name'
-    expect(page).to have_content 'Quantity'
     expect(page).to have_content 'Description'
     expect(page).to have_content 'Model Number'
     expect(page).to have_content 'Tags'

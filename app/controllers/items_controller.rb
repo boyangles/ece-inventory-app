@@ -62,7 +62,8 @@ class ItemsController < ApplicationController
 
   # DELETE /items/1
   def destroy
-    Item.find(params[:id]).destroy!
+    item = Item.find(params[:id]).status = 'deactive'
+    item.save!
     flash[:success] = "Item deleted!"
     redirect_to items_url
   end

@@ -90,6 +90,11 @@ class User < ApplicationRecord
     end
   end
 
+  def deactivate
+    self.status = 'deactivated'
+    self.save!
+  end
+
   def generate_authentication_token!
     begin
       self.auth_token = Devise.friendly_token
