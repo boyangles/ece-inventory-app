@@ -105,17 +105,17 @@ RSpec.describe "User Controller Tests", :type => :feature do
     describe "DELETE destroy", :skip_after do
       it "can delete users as admin" do
         login(:user_admin)
-        @user = FactoryGirl.create(:user_manager)
+        @user = FactoryGirl.create(:user_admin)
         visit users_path
-        first(:link, 'delete').click
-        expect(page).to have_content 'User account deleted'
+        first(:link_or_button, 'Delete User').click
+        expect(page).to have_content 'Credentials updated successfully'
       end
 
       it "cannot delete users as manager" do
         login(:user_manager)
         user = FactoryGirl.create(:user_manager)
         visit users_path
-        expect(page).not_to have_selector(:link, 'delete')
+        expect(page).not_to have_selector(:link_or_button, 'Delete User')
       end
     end
 

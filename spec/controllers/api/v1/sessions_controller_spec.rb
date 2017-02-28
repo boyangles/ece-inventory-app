@@ -35,7 +35,7 @@ describe Api::V1::SessionsController do
     # TODO: Skipping because user status is hardcoded in sessions controller
     context 'when user is not approved' do
       before(:each) do
-        @admin[:status] = 'waiting'
+        @admin[:status] = 'deactivated'
         @admin.save
 
         post_credentials(@admin.email, @admin.password)

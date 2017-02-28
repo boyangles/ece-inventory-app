@@ -51,7 +51,7 @@ describe Api::V1::UsersController do
         get :index, @user_attributes
 
         user_response = expect_422_unprocessable_entity
-        expect(user_response[:errors]).to include "Inputted status is not approved/waiting!"
+        expect(user_response[:errors]).to include "Inputted status is not approved/deactivated!"
       end
 
       it "Privilege is incorrect" do
@@ -176,7 +176,7 @@ describe Api::V1::UsersController do
         post :create, { user: @user_attributes }
 
         user_response = expect_422_unprocessable_entity
-        expect(user_response[:errors]).to include "Inputted status is not approved/waiting!"
+        expect(user_response[:errors]).to include "Inputted status is not approved/deactivated!"
       end
 
       it "Privilege is incorrect" do
@@ -392,7 +392,7 @@ describe Api::V1::UsersController do
       it "incorrect status" do
         update_action(:update_status, :user, @user_other, { status: 'incorrect_status' })
         user_response_status = expect_422_unprocessable_entity
-        expect(user_response_status[:errors]).to include "Inputted status is not approved/waiting!"
+        expect(user_response_status[:errors]).to include "Inputted status is not approved/deactivated!"
       end
 
       it "incorrect privilege" do

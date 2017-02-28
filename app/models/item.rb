@@ -79,7 +79,11 @@ class Item < ApplicationRecord
     else
       where(:model_number => search_input.strip)
     end
-  end
+	end
+
+	def self.filter_active
+		where(status: 'active')
+	end
 
   def update_by_subrequest(subrequest, request_type)
     case request_type
@@ -96,7 +100,7 @@ class Item < ApplicationRecord
   end
 
 	def create_log_on_quantity_change()
-		if self.quantity_was.nil?	
+		if self.quantity_was.nil?
 			return
 		end
 
@@ -107,6 +111,7 @@ class Item < ApplicationRecord
 	end
 
 	def create_log_on_destruction()
+
 		if self.status == 'deactive' && self.status_was == 'active'
 			create_log("deleted", self.quantity)
 		end
@@ -118,7 +123,6 @@ class Item < ApplicationRecord
 		else
 			curr = self.curr_user.id
 		end
-
 		old_name = ""
 		old_desc = ""
 		old_model = ""
@@ -133,7 +137,7 @@ class Item < ApplicationRecord
 			old_model = self.model_number_was
 		end
 		
-		log = Log.new(:user_id => curr, :log_type => "item")
+		log = Log.new(:user_id => curr, :log_type => 'item')
 		log.save!
 		itemlog = ItemLog.new(:log_id => log.id, :item_id => self.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => self.unique_name, :old_desc => old_desc, :new_desc => self.description, :old_model_num => old_model, :new_model_num => self.model_number, :curr_quantity => self.quantity)
 		itemlog.save!
@@ -144,6 +148,11 @@ class Item < ApplicationRecord
 		if (self.unique_name_was != self.unique_name || self.description_was != self.description || self.model_number_was != self.model_number)
 			create_log("desc_updated", self.quantity)
 		end
+	end
+
+	def deactivate
+		self.status = 'deactive'
+		self.save!
 	end
 
   private

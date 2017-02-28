@@ -16,7 +16,7 @@ class ItemsController < ApplicationController
     items_req = Item.tagged_with_all(@required_tag_filters).select("id")
     items_exc = Item.tagged_with_none(@excluded_tag_filters).select("id")
     items_req_and_exc = Item.where(:id => items_req & items_exc)
-		items_active = items_req_and_exc.where("status": 0)
+    items_active = items_req_and_exc.filter_active
 
     @items = items_active.
         filter_by_search(params[:search]).
@@ -28,7 +28,11 @@ class ItemsController < ApplicationController
   # GET /items/1
   # GET /items/1.json
   def show
-    @item = Item.find(params[:id])
+    if is_manager_or_admin?
+      @item = Item.find(params[:id])
+    else
+      @item = Item.filter_active.find(params[:id])
+    end
 
     outstanding_filter_params = {
         :status => "outstanding"
@@ -52,13 +56,14 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
   end
 
-	def edit_quantity
-		@item = Item.find(params[:id])
-	end
+  def edit_quantity
+    @item = Item.find(params[:id])
+  end
 
   # DELETE /items/1
   def destroy
-    Item.find(params[:id]).destroy!
+    item = Item.find(params[:id]).status = 'deactive'
+    item.save!
     flash[:success] = "Item deleted!"
     redirect_to items_url
   end
@@ -67,8 +72,8 @@ class ItemsController < ApplicationController
   # POST /items.json
   def create
     @item = Item.new(item_params)
-		@item.last_action = "created"
-		@item.curr_user = current_user
+    @item.last_action = "created"
+    @item.curr_user = current_user
 
     add_tags_to_item(@item, params[:tag][:tag_id]) if params[:tag]
     remove_tags_from_item(@item, params[:tag_to_remove][:tag_id_remove]) if params[:tag_to_remove]
@@ -83,7 +88,7 @@ class ItemsController < ApplicationController
 
   def update
     @item = Item.find(params[:id])
-		@item.curr_user = current_user
+    @item.curr_user = current_user
 
     # this isn't how it's going to work
     # alert_if_quantity_changes(params[:quantity])
@@ -93,7 +98,7 @@ class ItemsController < ApplicationController
 
     if @item.update_attributes(item_params)
       flash[:success] = "Item updated successfully"
-			puts(@item.last_action)
+      puts(@item.last_action)
       redirect_to @item
     else
       flash.now[:danger] = "Unable to edit!"
@@ -101,10 +106,10 @@ class ItemsController < ApplicationController
     end
   end
 
-	def update_quantity
-		@item = Item.find(params[:id])
+  def update_quantity
+    @item = Item.find(params[:id])
 
-		# add action to last_action
+    # add action to last_action
 
     if @item.update_attributes(item_params)
       flash[:success] = "Item updated successfully"
@@ -113,7 +118,7 @@ class ItemsController < ApplicationController
       flash.now[:danger] = "Unable to edit!"
       render 'edit'
     end
-	end
+  end
 
   private
 
@@ -121,12 +126,6 @@ class ItemsController < ApplicationController
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
     params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :search, :model_search, :status, :last_action)
-  end
-
-  def alert_if_quantity_changes(quantity)
-    if(@item.quantity != quantity)
-      # idk
-    end
   end
 
 end
