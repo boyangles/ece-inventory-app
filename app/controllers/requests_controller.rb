@@ -3,7 +3,7 @@ class RequestsController < ApplicationController
   before_action :check_logged_in_user
   before_action :check_requests_corresponds_to_current_user, only: [:edit, :update, :destroy, :show]
 
-	  # GET /requests
+  # GET /requests
   def index
     filter_params = params.slice(:status)
 
@@ -25,12 +25,15 @@ class RequestsController < ApplicationController
   def edit
     @request = Request.find(params[:id])
     @user = @request.user
+    if @request.status == 'approved' || @request.status == 'denied'
+      redirect_to @request and return
+    end
   end
 
   # PATCH/PUT /requests/1
   def update
-		
-		@request.curr_user = current_user
+
+    @request.curr_user = current_user
     if params[:user]
       @request.user_id = params[:user][:id]
     end
@@ -38,7 +41,7 @@ class RequestsController < ApplicationController
     if @request.has_status_change_to_approved?(request_params)
       request_valid, error_msg = @request.are_request_details_valid?
 
-	    if request_valid
+      if request_valid
         update_to_index(@request, request_params)
 
         @request.request_items.each do |sub_request|
@@ -50,24 +53,24 @@ class RequestsController < ApplicationController
       else
         reject_to_edit(@request, error_msg)
       end
-		elsif @request.has_status_change_to_outstanding?(request_params)
-			items_valid, error_msg = @request.are_items_valid?
+    elsif @request.has_status_change_to_outstanding?(request_params)
+      items_valid, error_msg = @request.are_items_valid?
 
-			if items_valid
-				update_to_index(@request, request_params)
-			else
-				reject_to_edit(@request, error_msg)
-			end
+      if items_valid
+        update_to_index(@request, request_params)
+      else
+        reject_to_edit(@request, error_msg)
+      end
     else
       update_to_index(@request, request_params)
     end
   end
 
-#	def place
-#		@request.update!(request_params)
-#	end  
+  #	def place
+  #		@request.update!(request_params)
+  #	end
 
-	def clear
+  def clear
     @request.items.destroy_all
     redirect_to request_path(@request)
   end
@@ -92,13 +95,13 @@ class RequestsController < ApplicationController
 
   def update_to_index(req, params)
 
-		if req.update_attributes(params)
-			flash[:success] = "Operation successful!"
-    	redirect_to request_path(req)	
-		else
- 			flash[:error] = "You loser"
-			redirect_back(fallback_location: request_path(req)) 
-		end
+    if req.update_attributes(params)
+      flash[:success] = "Operation successful!"
+      redirect_to request_path(req)
+    else
+      flash[:error] = "You loser"
+      redirect_back(fallback_location: request_path(req))
+    end
   end
 
   def reject_to_edit(request, msg)

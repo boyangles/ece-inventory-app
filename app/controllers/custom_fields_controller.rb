@@ -2,8 +2,11 @@ class CustomFieldsController < ApplicationController
   before_action :set_custom_field, only: [:destroy]
 
   def create
-    CustomField.create!(custom_field_params)
-    flash[:success] = "Custom Field created!"
+    if CustomField.create(custom_field_params)
+      flash[:success] = "Custom Field created!"
+    else
+      flash[:danger] = "Check your inputs!"
+    end
     redirect_to items_path
   end
 

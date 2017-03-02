@@ -105,7 +105,7 @@ class Item < ApplicationRecord
 		end
 
 		quantity_increase = self.quantity - self.quantity_was
-		if quantity_increase != 0
+		if quantity_increase != 0 && self.last_action != "disbursed"
 			create_log(self.last_action, quantity_increase)
 		end
 	end

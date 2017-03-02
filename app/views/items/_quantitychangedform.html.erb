@@ -2,7 +2,7 @@
 
 	<% if Item.exists?(item.id) %>
 		<div class="form-group">
-			<%= f.label :quantity, "Quantity", class: "col-md-4 control-label" %>
+			<%= f.label :quantity, "New Quantity", class: "col-md-4 control-label" %>
       <div class="col-md-8">
       <%= f.number_field :quantity, class: "form-control",:placeholder=>"0" %>
       </div>
@@ -31,5 +31,5 @@
 
   <% end %>
 
-  <%= f.submit :confirm => "Are you sure?" + msg, class: 'btn btn-primary' %>
+  <%= f.submit data: {confirm: "Are you sure?" + msg}, class: 'btn btn-primary' %>
 <% end %>

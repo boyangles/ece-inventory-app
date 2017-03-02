@@ -1,59 +1,59 @@
 <%= form_for(request) do |f| %>
-  <% @form_obj = request %>
-  <% if @form_obj %>
-    <%= render 'shared/error_messages', object: @form_obj %>
-  <% end %>
+    <% @form_obj = request %>
+    <% if @form_obj %>
+        <%= render 'shared/error_messages', object: @form_obj %>
+    <% end %>
 
-	<p>
-		<b>Items Requested</b>
+    <p>
+      <b>Items Requested</b>
 
-		<% if request.request_items.empty? %>
-			<p> Your cart is empty! Add items in order to checkout. </p>
-		<% end %>
+      <% if request.request_items.empty? %>
+        <p> Your cart is empty! Add items in order to checkout. </p>
+    <% end %>
 
-		<%= f.fields_for :request_items do |ff| %>
-			<p class = "req_item">		
-				<% if ff.object.item_id.nil? %>
-					<b>Item ID</b>
-					<%= ff.number_field :item_id %>
-					<%= ff.hidden_field :request_id, :value => (request.id) %>
-				<% else %>
-					<%= Item.find(ff.object.item_id).unique_name %>
-				<% end %>
-				<%= ff.number_field :quantity, :required => true %>
-				<%= ff.hidden_field :request_id, :value => (request.id) %>
-				<%= ff.hidden_field :item_id, :value => (ff.object.item_id) %>
-			</p>
- 		<% end %>
+    <%= f.fields_for :request_items do |ff| %>
+        <p class = "req_item">
+          <% if ff.object.item_id.nil? %>
+              <b>Item ID</b>
+              <%= ff.number_field :item_id %>
+              <%= ff.hidden_field :request_id, :value => (request.id) %>
+          <% else %>
+              <%= Item.find(ff.object.item_id).unique_name %>
+          <% end %>
+          <%= ff.number_field :quantity, :required => true %>
+          <%= ff.hidden_field :request_id, :value => (request.id) %>
+          <%= ff.hidden_field :item_id, :value => (ff.object.item_id) %>
+        </p>
+    <% end %>
 
-	</p>
+    </p>
 
-  <p>
-    <%= f.label :reason %><br>
-		<% if request.reason == "TBD" %>
-			<%= f.text_area :reason, :value => "", :required => true, :placeholder => "This field is required" %>
-		<% else %>
-    	<%= f.text_area :reason, :required => true %>
-		<% end %>
-  </p>
+    <p>
+      <%= f.label :reason %><br>
+      <% if request.reason == "TBD" %>
+          <%= f.text_area :reason, :value => "", :required => true, :placeholder => "This field is required" %>
+      <% else %>
+          <%= f.text_area :reason, :required => true %>
+      <% end %>
+    </p>
 
-	<%= f.hidden_field :request_type, :value => "disbursement" %>
- 	<%= f.hidden_field :status, :value => request.status %>
-	<%= f.hidden_field :user_id, :value => (request.user_id) ? request.user_id : current_user.id %>
+    <%= f.hidden_field :request_type, :value => "disbursement" %>
+    <%= f.hidden_field :status, :value => request.status %>
+    <%= f.hidden_field :user_id, :value => (request.user_id) ? request.user_id : current_user.id %>
 
 
-	<p>
-	<% if !request.request_items.empty? && !is_manager_or_admin? %>
-		<%= render 'placeorderform', request: @request %>
-	<% end %>
-	</p>
+    <p>
+      <% if !request.request_items.empty? && !is_manager_or_admin? %>
+          <%= render 'placeorderform', request: @request %>
+      <% end %>
+    </p>
 
-  <div>
-    <% if !@request.approved? && !@request.denied? %>
-			<%= f.submit class: "btn btn-primary"%>
-		<% else %>
-			<p>An administrator has already responded to this request. Please create a new request for further needs ohohohoho </p>
-  	<% end %>
-	</div>
+    <div>
+      <% if !@request.approved? && !@request.denied? && !(!request.request_items.empty? && !is_manager_or_admin?) %>
+          <%= f.submit "Update Request", class: "btn btn-primary"%>
+      <!--<% else %>-->
+          <!--<p>An administrator has already responded to this request. Please create a new request for further needs ohohohoho </p>-->
+      <% end %>
+    </div>
 
 <% end %>

@@ -3,13 +3,6 @@
 
     <%= render 'noquantityform', item: @item %>
 
-    <p> <strong>Associated Tags</strong></p>
-    <% if @item.tags.count > 0 %>
-        <%= collection_select(:tag_to_remove, :tag_id_remove, @item.tags.all, :id, :name, {:prompt => "-- select tags to remove from item --"}, {:multiple=> true}) %>
-    <% else %>
-        <p>No tags associated with <%= @item.unique_name %></p>
-    <% end %>
-
     <%= link_to 'Show', @item %> |
     <%= link_to 'Back', :back %>
 <% else %>
