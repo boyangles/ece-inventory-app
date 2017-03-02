@@ -90,9 +90,6 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
     @item.curr_user = current_user
 
-    # this isn't how it's going to work
-    # alert_if_quantity_changes(params[:quantity])
-
     add_tags_to_item(@item, params[:tag][:tag_id]) if params[:tag]
     remove_tags_from_item(@item, params[:tag_to_remove][:tag_id_remove]) if params[:tag_to_remove]
 

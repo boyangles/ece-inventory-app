@@ -160,7 +160,7 @@ class Api::V1::ItemsController < BaseController
   end
 
   def create
-    item = Item.new(item_params)
+    item = Item.new(item_params.merge({last_action: 'created'}))
 
     if item.save
       render :json => item, status: 200
