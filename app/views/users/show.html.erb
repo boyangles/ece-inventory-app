@@ -1,38 +1,53 @@
-
 <p id="notice"><%= notice %></p>
 
-<% provide(:title, @user.username) %>
-<div class="row">
-  <aside class="col-md-4">
-    <section class="user_info">
-      <h1>
-        <%= gravatar_for @user %>
-        <%= @user.username %>
-      </h1>
-    </section>
-  </aside>
 
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#home" data-toggle="tab">User Info</a></li>
+  <li><a href="#requests" data-toggle="tab">Requests (<%= @requests.count %>)</a></li>
+</ul>
   <div class="col-md-8">
-    <% if @user.requests.any? %>
-      <h3>Requests (<%= @requests.count %>)</h3>
       <ol class="requests">
         <%= render @requests %>
       </ol>
+	</div>
 
-      <%= will_paginate @requests %>
-    <% end %>
+<div id="myTabContent" class="tab-content">
+  <div class="tab-pane fade active in" id="home">
+
+    <p>
+      <strong>Username:</strong>
+      <%= @user.username %>
+    </p>
+
+    <p>
+      <strong>Privilege:</strong>
+      <%= @user.privilege %>
+    </p>
   </div>
+  <div class="tab-pane fade" id="requests">
+    <% provide(:title, @user.username) %>
+    <div class="row">
+      <aside class="col-md-4">
+        <section class="user_info">
+          <h1>
+            <%= gravatar_for @user %>
+            <%= @user.username %>
+          </h1>
+        </section>
+      </aside>
+
+      <div class="col-md-8">
+        <% if @user.requests.any? %>
+            <h3>Requests (<%= @user.requests.count %>)</h3>
+            <ol class="requests">
+              <%= render @requests %>
+            </ol>
+
+            <%= will_paginate @requests %>
+        <% end %>
+      </div>
+    </div>  </div>
 </div>
-
-<p>
-  <strong>Username:</strong>
-  <%= @user.username %>
-</p>
-
-<p>
-  <strong>Privilege:</strong>
-  <%= @user.privilege %>
-</p>
 
 <% if @user.status_deactivated? %>
 	<p><strong>Status: </strong>
