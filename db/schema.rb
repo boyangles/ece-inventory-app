@@ -65,7 +65,7 @@ ActiveRecord::Schema.define(version: 20170226181722) do
     t.string  "description"
     t.string  "model_number"
     t.integer "status",       default: 0
-    t.integer "last_action"
+    t.integer "last_action",  default: 3
   end
 
   create_table "logs", force: :cascade do |t|

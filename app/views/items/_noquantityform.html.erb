@@ -46,7 +46,7 @@
         <label for="select" class="col-lg-2 control-label">Associated Tags</label>
         <div class="col-lg-10">
           <div class="form-group">
-            <%=collection_select(:tag, :tag_id, item.tags.all, :id, :name, {:prompt => "-- select tags to remove from item --"}, {:multiple=> true, :class=>"form-control", :id=>"select"},) %>
+            <%=collection_select(:tag_to_remove, :tag_id_remove, item.tags.all, :id, :name, {:prompt => "-- select tags to remove from item --"}, {:multiple=> true, :class=>"form-control", :id=>"select"},) %>
           </div>
         </div>
       </div>
