@@ -1,0 +1,12 @@
+<%= form_for (request_item) do |f| %>
+	<%= f.hidden_field :item_id, :value => request_item.item_id %>
+	<%= f.hidden_field :request_id, :value => request_item.request_id %>
+
+	<td>
+		<%= f.number_field :quantity, :required => true %>
+	</td>
+	
+	<td>
+		<%= button_tag "", type: 'submit', class: "btn btn-default glyphicon glyphicon-shopping-cart" %>
+	</td>
+<% end %>

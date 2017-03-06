@@ -1,3 +1,13 @@
-<li>
-  <%= link_to item.unique_name, item %>
-</li>
+<tr>
+  <td><%= link_to item.unique_name, item %></td>
+  <td><%= item.quantity %></td>
+  <td><%= item.model_number %></td>
+  <!--<td><%= item.description %></td>-->
+  <%= render 'indexform', request_item: RequestItem.new(item_id: item.id, 
+							request_id: grab_cart(current_user).id) %>
+  <% if is_manager_or_admin? %>
+    <td><%= link_to "Edit", edit_item_path(item.id), class: "btn btn-primary" %></td>
+  <% end %>
+</tr>
+
+
