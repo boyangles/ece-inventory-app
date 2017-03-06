@@ -2,9 +2,10 @@
 
 <div class="center_jumbotron">
   <h2 class="page-header">Items
-  <% if is_manager_or_admin? %>
-    <%= link_to "Create New Item", new_item_url, :class => "btn btn-primary pull-right" %></h2>
-  <% end %>
+    <% if is_manager_or_admin? %>
+      <%= link_to "Create New Item", new_item_url, :class => "btn btn-primary pull-right" %>
+    <% end %>
+  </h2>
 </div>
 
 <%= render 'searchform' %>
