@@ -79,9 +79,10 @@ CustomField.create!(field_name: 'restock_info', private_indicator: true, field_t
 
  req = Request.create!(
      user_id: user.id,
+     request_initiator: user.id,
      reason: reason,
      status: "outstanding",
-     request_type: "disbursement",
+     :request_initiator => user.id
  )
 
  ## Create RequestItems for each
@@ -89,7 +90,10 @@ CustomField.create!(field_name: 'restock_info', private_indicator: true, field_t
    item = Item.offset(rand(Item.count)).first
    RequestItem.create!(request_id: req.id,
                        item_id: item.id,
-                       quantity: rand(1...50))
+                       quantity_loan: rand(1...50),
+                       quantity_disburse: rand(1...50),
+                       quantity_return: rand(1...50),
+                       request_type: 'disbursement')
  end
 end
 

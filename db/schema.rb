@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170226181722) do
+ActiveRecord::Schema.define(version: 20170304064444) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,9 +79,13 @@ ActiveRecord::Schema.define(version: 20170226181722) do
   create_table "request_items", force: :cascade do |t|
     t.integer  "request_id"
     t.integer  "item_id"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-    t.integer  "quantity",   default: 0
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.integer  "quantity_loan",     default: 0
+    t.integer  "quantity_disburse", default: 0
+    t.integer  "quantity_return",   default: 0
+    t.integer  "request_type",      default: 0
+    t.datetime "due_date"
     t.index ["item_id"], name: "index_request_items_on_item_id", using: :btree
     t.index ["request_id"], name: "index_request_items_on_request_id", using: :btree
   end
@@ -96,12 +100,13 @@ ActiveRecord::Schema.define(version: 20170226181722) do
 
   create_table "requests", force: :cascade do |t|
     t.string   "reason"
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.integer  "status",       default: 0
-    t.integer  "request_type", default: 0
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.integer  "status",            default: 0
     t.string   "response"
     t.integer  "user_id"
+    t.integer  "request_initiator",             null: false
+    t.index ["request_initiator"], name: "index_requests_on_request_initiator", using: :btree
     t.index ["user_id"], name: "index_requests_on_user_id", using: :btree
   end
 
@@ -148,5 +153,6 @@ ActiveRecord::Schema.define(version: 20170226181722) do
   add_foreign_key "item_logs", "logs"
   add_foreign_key "request_logs", "logs"
   add_foreign_key "requests", "users"
+  add_foreign_key "requests", "users", column: "request_initiator"
   add_foreign_key "user_logs", "logs"
 end

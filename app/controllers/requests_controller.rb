@@ -43,13 +43,6 @@ class RequestsController < ApplicationController
 
       if request_valid
         update_to_index(@request, request_params)
-
-        @request.request_items.each do |sub_request|
-          @item = Item.find(sub_request.item_id)
-          @item.update_by_subrequest(sub_request, @request.request_type)
-          @item.save!
-        end
-
       else
         reject_to_edit(@request, error_msg)
       end
@@ -114,15 +107,13 @@ class RequestsController < ApplicationController
     params.fetch(:request, {}).permit(:user_id,
                                       :reason,
                                       :status,
-                                      :request_type,
                                       :response,
                                       request_items_attributes: [:id, :quantity, :request_id, :item_id])
   end
 
   def log_params
     params.fetch(:request, {}).permit(:item_id,
-                                      :user_id,
-                                      :request_type)
+                                      :user_id)
   end
 
 end
