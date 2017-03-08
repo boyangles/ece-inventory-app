@@ -9,59 +9,80 @@
 <% end %>
 
 <div class="center_jumbotron">
-  <h2 class="page-header"><%= @user.username %>
+  <h2 class="page-header"><strong><%= @user.username%></strong><%= " " + @user.privilege %>
     <% if is_manager_or_admin? && !current_user?(@user) %>
       <%= link_to "Edit User", edit_user_url(@user.id), :class => "btn btn-primary pull-right" %>
     <% end %>
   </h2>
 </div>
 
-<ul class="nav nav-tabs">
-  <li class="active"><a href="#home" data-toggle="tab">User Info</a></li>
-  <li><a href="#requests" data-toggle="tab">Requests (<%= @requests.count %>)</a></li>
-  <li><a href="#loans" data-toggle="tab">Loans</a></li>
-</ul>
+<!--<ul class="nav nav-tabs">-->
+  <!--<li class="active"><a href="#home" data-toggle="tab">User Info</a></li>-->
+<!--</ul>-->
 
-<div id="myTabContent" class="tab-content">
-  <div class="tab-pane fade active in" id="home">
+<!--<div id="myTabContent" class="tab-content">-->
+  <!--<div class="tab-pane fade active in" id="home">-->
     <br>
-    <p>
-      <strong>Privilege:</strong>
-      <%= @user.privilege %>
-    </p>
+
+    <div class="panel panel-primary">
+      <div class="panel-heading users-items-display-link">
+        <h3 class="panel-title">Loans TBD
+        <%= link_to "[toggle glyph]", '#', class: "pull-right" %></h3>
+      </div>
+      <div class="panel-body users-items-display">
+	blah blah blah find all request-items in approved requests for user where blah blah.
+      </div>
+    </div>
 
     <div class="panel panel-info">
-      <div class="panel-heading">
-        <h3 class="panel-title">Loans TBD</h3>
+      <div class="panel-heading users-items-display-link">
+        <h3 class="panel-title">Disbursements TBD
+        <%= link_to "[toggle glyph]", '#', class: "pull-right" %></h3>
       </div>
-      <div class="panel-body">
+      <div class="panel-body users-items-display">
+	similar blabbity blab
       </div>
     </div>
 
     <div class="panel panel-success">
-      <div class="panel-heading">
+      <div class="panel-heading users-request-display-link">
         <h3 class="panel-title">Approved Requests
-        <%= link_to "Show All", '#', class: "request-display-link pull-right" %></h3>
+	  <% approved_req = Request.where(user_id: @user.id, status: "approved") %>
+	  <% if !approved_req.empty? %>
+            <%= link_to "[Click to Toggle]", '#', class: "pull-right" %>
+	  <% end %>
+	</h3>
       </div>
-      <div class="panel-body">
-	<%= render Request.where(user_id: @user.id, status: "approved") %>
+      <div class="panel-body users-request-display">
+	<%= render approved_req %>
       </div>
     </div>
 
     <div class="panel panel-warning">
-      <div class="panel-heading">
-        <h3 class="panel-title">Outstanding Requests</h3>
+      <div class="panel-heading users-request-display-link">
+        <h3 class="panel-title">Outstanding Requests 
+	  <% outstanding_req = Request.where(user_id: @user.id, status: "outstanding") %>
+	  <% if !outstanding_req.empty? %>
+            <%= link_to "[Click to Toggle]", '#', class: "pull-right" %>
+	  <% end %>
+	</h3>
       </div>
-      <div class="panel-body">
-	<%= render Request.where(user_id: @user.id, status: "outstanding") %>
+      <div class="panel-body users-request-display">
+	<%= render outstanding_req %>
       </div>
     </div>
 
     <div class="panel panel-danger">
-      <div class="panel-heading">
-        <h3 class="panel-title">Denied Requests</h3>
+      <div class="panel-heading users-request-display-link">
+        <h3 class="panel-title">Denied Requests
+	  <% denied_req = Request.where(user_id: @user.id, status: "denied") %>
+	  <% if !denied_req.empty? %>
+            <%= link_to "[Click to Toggle]", '#', class: "pull-right" %>
+	  <% end %>
+	</h3>
       </div>
-      <div class="panel-body">
+      <div class="panel-body users-request-display">
+	<%= render denied_req %>
       </div>
     </div>
 
@@ -74,20 +95,7 @@
     <%= link_to 'Back', url_for(:back) %> |
     <%= link_to 'Authentication Token', auth_token_path %>
 
-  </div>
+  <!--</div>-->
 
-  <div class="tab-pane fade" id="requests">
-    <% provide(:title, @user.username) %>
-    <br>
-    <% if @user.requests.any? %>
-      <!-- <%= render @requests %>-->
-      <!--<%= will_paginate @requests %>-->
-    <% end %>
-  </div> 
-
-
-  <div class="tab-pane fade" id="loans">
-
-  </div>
-</div>
+<!--</div>-->
 
