@@ -21,16 +21,15 @@
 
 <ul class="nav nav-tabs">
   <li class="active"><a href="#home" data-toggle="tab">Item Details</a></li>
-  <li><a href="#requests" data-toggle="tab">Requests</a></li>
-  <li><a href="#loans" data-toggle="tab">Loans</a></li>
+  <li><a href="#requests" data-toggle="tab"><%= (is_manager_or_admin?) ? "All Outstanding Requests" : "My Outstanding Requests" %></a></li>
+  <li><a href="#loans" data-toggle="tab">Loans TBD</a></li>
 </ul>
 
 <div id="myTabContent" class="tab-content">
   <div class="tab-pane fade active in" id="home">
     <br>
-    <div class="panel panel-primary col-lg-7">
-      <div class="panel-heading">
-      </div>
+    <div class="panel panel-primary">
+      <div class="panel-heading">Main Details</div>
       <div class="panel-body">
       <!-- All Item Information: Quantity in Stock, Model Num, Description -->
         <p>
@@ -54,18 +53,45 @@
       </div>
     </div>
 
-    <div class="col-lg-1"></div>
+    <div class="col-lg-0.5"></div>
 
-    <div class="panel panel-info col-lg-4">
-      <div class="panel-heading"></div>
+    <div class="panel panel-info">
+      <div class="panel-heading">Additional Information</div>
       <div class="panel-body">
         <!-- Custom Fields -->
+	<% @item_custom_fields.each do |icf| %>
+	  <% field_content = ItemCustomField.field_content(@item.id, icf.custom_field_id) %>
+	  <% if is_manager_or_admin? || !icf.custom_field.private_indicator %>
+	    <p>
+	      <strong><%= icf.custom_field.field_name %></strong> 
+	      <%= field_content %>
+	    </p>
+	  <% end %>
+	<% end %>
       </div>
     </div>
+  </div>
+
+
+  <div class="tab-pane fade" id="requests">
+    <br>
+    <% if @item.deactive? %>
+      <blockquote>
+	-- These requests cannot be approved as is -- 
+      </blockquote>
+    <% end %>
+
+    <%= render @requests %>
+    <%= will_paginate @requests %>
 
   </div>
-</div>
 
+  <div class="tab-pane fade" id="loans">
+    <br>
+
+  </div>
+
+</div>
 
 
 <% end %>

@@ -1087,7 +1087,7 @@ html {
 }
 body {
   font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 15px;
+  font-size: 20px;
   line-height: 1.4;
   color: #222222;
   background-color: #ffffff;
@@ -4771,9 +4771,9 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 .pagination > .disabled > a,
 .pagination > .disabled > a:hover,
 .pagination > .disabled > a:focus {
-  color: #43ac6a;
+  color: #008cba;
   background-color: #ffffff;
-  border-color: #43ac6a;
+  border-color: #008cba;
   cursor: not-allowed;
 }
 .pagination-lg > li > a,
