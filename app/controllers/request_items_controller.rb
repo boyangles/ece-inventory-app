@@ -22,7 +22,7 @@ class RequestItemsController < ApplicationController
   def create
 
    	@request_item = RequestItem.new(request_item_params) #make private def later
-    	if @request_item.save
+    	if @request_item.save!
 				@request = grab_cart(current_user)
     		redirect_to request_path(@request.id)
 			else
@@ -44,7 +44,7 @@ class RequestItemsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def request_item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
-    params.fetch(:request_item, {}).permit(:quantity, :item_id, :request_id)
+    params.fetch(:request_item, {}).permit(:quantity_loan, :quantity_disburse, :quantity_return, :item_id, :request_id)
   end
 
 end

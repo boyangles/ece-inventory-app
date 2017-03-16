@@ -3,9 +3,15 @@
   <td><%= item.quantity %></td>
   <td><%= item.model_number %></td>
   <!--<td><%= item.description %></td>-->
-  <%= render 'indexform', request_item: RequestItem.new(item_id: item.id, 
+	<% ri = RequestItem.where(item_id: item.id).where(request_id: grab_cart(current_user).id).take %>
+	<% if ri.nil? %>
+  	<%= render 'indexform', request_item: RequestItem.new(item_id: item.id, 
 							request_id: grab_cart(current_user).id) %>
-  <% if is_manager_or_admin? %>
+  <% else %>
+		<%= render 'indexform', request_item: ri %>
+	<% end %>
+
+	<% if is_manager_or_admin? %>
     <td><%= link_to "Edit", edit_item_path(item.id), class: "btn btn-primary" %></td>
   <% end %>
   <% if is_admin? %>

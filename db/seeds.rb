@@ -82,7 +82,6 @@ CustomField.create!(field_name: 'restock_info', private_indicator: true, field_t
      request_initiator: user.id,
      reason: reason,
      status: "outstanding",
-     :request_initiator => user.id
  )
 
  ## Create RequestItems for each
