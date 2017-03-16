@@ -85,20 +85,6 @@ class Item < ApplicationRecord
 		where(status: 'active')
 	end
 
-  def update_by_subrequest(subrequest, request_type)
-    case request_type
-    when "disbursement"
-      self[:quantity] = self[:quantity] - subrequest[:quantity]
-			self[:last_action] = 'disbursed'
-    when "acquisition"
-      self[:quantity] = self[:quantity] + subrequest[:quantity]
-    when "destruction"
-      self[:quantity] = self[:quantity] - subrequest[:quantity]
-    else
-      self[:quantity]
-    end
-  end
-
 	def create_log_on_quantity_change()
 		if self.quantity_was.nil?
 			return
