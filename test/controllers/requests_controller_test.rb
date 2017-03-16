@@ -30,8 +30,8 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     Request.create!(
         reason: 'For test',
         status: 'outstanding',
-        request_type: 'disbursement',
-        user_id: @admin.id)
+        user_id: @admin.id,
+        request_initiator: @admin.id)
 
     @req = Request.find_by(:user_id => @admin.id)
 
@@ -43,8 +43,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
         id: @req.id,
         request: {
             reason: 'For fun!',
-            status: 'outstanding',
-            request_type: 'disbursement'
+            status: 'outstanding'
         }
     }
     assert flash.empty?

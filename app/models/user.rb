@@ -102,7 +102,7 @@ class User < ApplicationRecord
   end
 
   def create_new_cart(id)
-    @cart = Request.new(:status => :cart, :user_id => id, :reason => 'TBD')
+    @cart = Request.new(:status => :cart, :user_id => id, :reason => 'TBD', :request_initiator => id)
     @cart.save!
   end
 
@@ -142,6 +142,45 @@ class User < ApplicationRecord
 
   end
 
+  ##
+  # TODO
+  # USER-1: make_request
+  # Allows individuals to request items from the inventory
+  # Input: subrequests, reason, requested_for
+  # Return:
+  #   On success: newly created request
+  #   On failure: null
+  def make_request(subrequests: [], reason: '', requested_for: self)
+
+  end
+
+  ##
+  # TODO
+  # USER-2: approve_outstanding_request
+  # Allows managers/admins to approve outstanding request
+  # Input: @request
+  # Output:
+  #   On success: updated approved request object
+  #   On failure: null
+  def approve_outstanding_request(request)
+
+  end
+
+  ##
+  # TODO
+  # USER-3: deny_outstanding_request
+  # Allows managers/admins to deny outstanding request
+  # Input: @request
+  # Output:
+  #   On success: updated denied request object
+  #   On failure: null
+  def deny_outstanding_request(request)
+
+  end
+
+  ##
+  # TODO
+  # USER-4: borrowed_items
 
   ## Class Methods
   def self.filter_by_search(search_input)
