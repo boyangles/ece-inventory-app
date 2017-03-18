@@ -1,0 +1,15 @@
+<%= form_for(@subscriber, url: url) do |f| %>
+    <% @form_obj = @subscriber %>
+    <% if @form_obj %>
+        <%= render 'shared/error_messages', object: @form_obj %>
+    <% end %>
+
+
+    <div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+        <button type="submit" class="btn btn-primary btn-block">Add yourself to Subscriber list</button>
+      </div>
+    </div>
+
+
+<% end %>
