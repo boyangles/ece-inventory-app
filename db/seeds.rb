@@ -46,6 +46,8 @@ User.create!(username: "student", email: "nonadminusername@example.com", status:
              privilege: "student", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
 User.create!(username: "manager", email: "manager123@example.com", status: "approved",
              privilege: "manager", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
+User.create!(username: "joshxu95", email: "joshxu95@gmail.com", status: "approved",
+             privilege: "manager", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
 
 yo = User.create(username:"abcd", email: "f@example.com" , status: "approved",
                  privilege: "student", password: "yoyoyo", password_confirmation: "yoyoyo", auth_token: Devise.friendly_token)

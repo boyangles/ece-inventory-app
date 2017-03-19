@@ -13,4 +13,13 @@ class UserMailer < ApplicationMailer
     @url  = 'http://example.com/login'
     mail(to: @user.email, subject: 'Thank you for making this request')
   end
+
+  def welcome_email_all
+    @user = User.all
+    @user.each do |recipient|
+      puts recipient
+      UserMailer.welcome_email(recipient).deliver_now
+      # request_replacement(recipient, shift).deliver
+    end
+  end
 end

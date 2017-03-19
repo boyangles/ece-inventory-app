@@ -1,3 +1,2 @@
 class Subscriber < ApplicationRecord
-
 end

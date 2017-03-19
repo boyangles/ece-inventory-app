@@ -5,6 +5,6 @@ class CreateSubscribers < ActiveRecord::Migration[5.0]
       t.timestamps
     end
 
-    add_foreign_key :subscribers, :user_id
+    add_foreign_key :subscribers, :users
   end
 end

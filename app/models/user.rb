@@ -11,6 +11,7 @@ class User < ApplicationRecord
   # Relation with Logs - not necessarily one-to-many
   # has_many :logs
 
+
   # Relation with User_Logs
   has_many :user_logs
 
