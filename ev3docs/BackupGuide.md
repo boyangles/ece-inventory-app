@@ -13,16 +13,16 @@ Please follow the steps below to setup your separate server.
 #!/bin/bash                                                                                                                                         
 export PGPASS=/root/.pgpass
 
-pg_dump -w -h colab-sbx-114.oit.duke.edu -U bitnami ece_inventory_production > postgresql-dump.sql
+pg_dump -w -h hostname -U user database > postgresql-dump.sql
 
 if [ "$?" -ne 0 ]
 then
-    mail -s "Backup Failed" email@example.edu <<< "Database ece_inventory_production back failed. See /var/log/rsnapshot.log for more details"
+    mail -s "Backup Failed" email@example.edu <<< "Database db backup failed. See /var/log/rsnapshot.log for more details"
     exit 1
 else
     /bin/chmod 644 postgresql-dump.sql
     gzip postgresql-dump.sql
-    mail -s "Backup Successful" email@example.edu <<< "Database ece_inventory_production backup was successful."
+    mail -s "Backup Successful" email@example.edu <<< "Database db backup was successful."
 fi
 ```
 7. Edit your /etc/rsnapshot.conf file to suit your needs. Enable ssh, edit backup times, and enable a backup script:
@@ -30,3 +30,16 @@ fi
 8. Edit your /etc/cron.d/rsnapshot cron job to reflect your backup times in rsnapshot.conf.
 
 Follow this guide if errors occur. https://www.howtoforge.com/set-up-rsnapshot-archiving-of-snapshots-and-backup-of-mysql-databases-on-debian
+
+### To set up email:
+Ensure exim4 is downloaded. Default configuration is currently being used. If errors occur, check configuration with
+`dpkg-reconfigure exim4-config`. Ensure server configuration allows mail to be sent. 
+
+
+### To Restore Database:
+1. Copy your desired postgres-dump.sql file to your production server with scp `scp /path/to/dump/postgres-dump.sql user@hostname:~`
+2. Restart postgresql and stop nginx on production to ensure all connections are severed
+3. Drop your production database with `rails db:drop DISABLE_DATABASE_ENVIRONMENT_CHECK=1`.
+4. Create database `rails db:create`
+5. Restore backup `psql dbname < postgresql-dump.sql`
+6. Restart nginx server. 
