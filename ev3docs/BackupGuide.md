@@ -37,7 +37,7 @@ Ensure exim4 is downloaded. Default configuration is currently being used. If er
 
 
 ### To Restore Database:
-1. Copy your desired postgres-dump.sql file to your production server with scp `scp /path/to/dump/postgres-dump.sql user@hostname:~`
+1. Copy your desired postgres-dump.sql (run `gunzip postgres-dump.sql.gz` to unzip file) file to your production server with scp `scp /path/to/dump/postgres-dump.sql user@hostname:~`
 2. Restart postgresql and stop nginx on production to ensure all connections are severed
 3. Drop your production database with `rails db:drop DISABLE_DATABASE_ENVIRONMENT_CHECK=1`.
 4. Create database `rails db:create`
@@ -48,3 +48,8 @@ If desired, run the restoration with flag `-1`, which will ensure that the backu
 Helpful hints:
 - rsnapshot will store your backups by default in /var/cache/rsnapshot
 - rnapshot.conf is located in /etc/rsnapshot.conf
+- Check logs for successful dump - /var/log/rsnapshot.log
+- Check syslog to verify cron jobs are running - /var/log/syslog
+- For email port issues: http://www.thegeekstuff.com/2014/02/enable-remote-postgresql-connection/?utm_source=tuicool
+- Setting up rsnapshot https://www.howtoforge.com/set-up-rsnapshot-archiving-of-snapshots-and-backup-of-mysql-databases-on-debian, http://rsnapshot.org/rsnapshot/docs/docbook/rest.html
+- 
