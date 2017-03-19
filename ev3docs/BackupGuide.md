@@ -43,3 +43,8 @@ Ensure exim4 is downloaded. Default configuration is currently being used. If er
 4. Create database `rails db:create`
 5. Restore backup `psql dbname < postgresql-dump.sql`
 6. Restart nginx server. 
+If desired, run the restoration with flag `-1`, which will ensure that the backup is valid. If the backup has any errors, the process will terminate and rollback the original database.
+
+Helpful hints:
+- rsnapshot will store your backups by default in /var/cache/rsnapshot
+- rnapshot.conf is located in /etc/rsnapshot.conf
