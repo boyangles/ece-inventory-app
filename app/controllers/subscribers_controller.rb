@@ -8,6 +8,12 @@ class SubscribersController < ApplicationController
     @subscriber = Subscriber.new
   end
 
+
+  ## Making this work for now! May not have edit method later!
+  def edit
+
+  end
+
   def destroy
     Subscriber.find(params[:id]).destroy
     flash[:success] = "Suscriber deleted!"

@@ -101,5 +101,7 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Gem for cronjob
-
 gem 'whenever', require: false
+
+# Gem for changing email settings
+gem "rails-settings-cached"
