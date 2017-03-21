@@ -4,12 +4,7 @@
         <%= render 'shared/error_messages', object: @form_obj %>
     <% end %>
 
-
-    <div class="form-group">
-      <div class="col-lg-10 col-lg-offset-2">
-        <button type="submit" class="btn btn-primary btn-block">Add yourself to Subscriber list</button>
-      </div>
-    </div>
+    <%= button_to "Add yourself to Subscriber list", :action => "new" %>
 
 
 <% end %>

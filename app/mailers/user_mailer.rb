@@ -1,17 +1,31 @@
 class UserMailer < ApplicationMailer
-  default from: 'notifications@example.com'
+  default from: 'jx35@duke.edu'
 
   def welcome_email(user)
     @user = user
-    @url  = 'http://example.com/login'
+    @url  = 'https://spicysoftware.colab.duke.edu'
     mail(to: @user.email, subject: 'Welcome to My Awesome Site')
   end
 
-  def request_email(user, request)
+  def request_initiated_email(user, request)
     @user = user
     @request = request
-    @url  = 'http://example.com/login'
-    mail(to: @user.email, subject: 'Thank you for making this request')
+    @url  = 'https://spicysoftware.colab.duke.edu'
+    @heading = Setting.email_heading
+    @body = Setting.email_body
+    mail(to: @user.email, subject: @heading)
+  end
+
+  def request_initiated_email_all_subscribers(user, request)
+    @subscribers = Subscriber.all
+    @url  = 'https://spicysoftware.colab.duke.edu'
+    UserMailer.request_initiated_email(user, request).deliver_now
+    @subscribers.each do |recipient|
+      puts recipient
+      @tempUser = recipient.user
+      UserMailer.request_initiated_email(@tempUser, request).deliver_now
+      # request_replacement(recipient, shift).deliver
+    end
   end
 
   def welcome_email_all
@@ -22,4 +36,14 @@ class UserMailer < ApplicationMailer
       # request_replacement(recipient, shift).deliver
     end
   end
+
+  def request_email(user, request)
+    @user = user
+    @request = request
+    @url  = 'https://spicysoftware.colab.duke.edu'
+    @heading = Setting.email_heading
+    @body = Setting.email_body
+    mail(to: @user.email, subject: @heading)
+  end
+
 end

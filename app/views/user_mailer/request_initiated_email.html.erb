@@ -2,11 +2,14 @@
 <html>
 <head>
   <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  <%= @heading %>.
 </head>
-<body>
-<p>
-    You made a request!!
 
+<body>
+<%= @body %>.
+<p>
+    You made a request!! Here are the following items you requested!
+</p>
 <p>
   <strong>Requested On:</strong>
   <%= @request.created_at.to_date %>

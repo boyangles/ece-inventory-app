@@ -105,3 +105,9 @@ gem 'whenever', require: false
 
 # Gem for changing email settings
 gem "rails-settings-cached"
+
+# Gem for UI for changing email settings
+gem 'rails-settings-ui'
+
+#Trying this sidekiq gem out for many emails
+gem 'sidekiq'
