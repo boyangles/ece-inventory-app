@@ -31,6 +31,17 @@ class RequestItemsController < ApplicationController
 			end
   end
 
+	def update
+		@request_item = RequestItem.find(params[:id])
+		if @request_item.update_attributes(request_item_params)
+      flash[:success] = "Item quantities updated successfully"
+      redirect_to request_path(grab_cart(current_user).id)
+    else
+      flash[:error] = "Failed updating quantity"
+      redirect_to items_path
+    end
+	end
+
 	def destroy
 		reqit = RequestItem.find(params[:id])
 		req = Request.find(reqit.request_id)

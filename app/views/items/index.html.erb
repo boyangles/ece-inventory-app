@@ -13,7 +13,7 @@
 <ul class="nav nav-tabs">
   <li class="active"><a href="#items" data-toggle="tab">Home</a></li>
   <% if is_admin? %>
-  <li><a href="#custom-fields" data-toggle="tab">Define Custom Fields</a></li>
+  	<li><a href="#custom-fields" data-toggle="tab">Define Custom Fields</a></li>
   <% end %>
 </ul>
 
@@ -24,20 +24,20 @@
 
     <table class="table table-striped table-hover ">
       <thead>
-	<tr>
-	  <th>Item Name</th>
-	  <th>In Stock</th>
-	  <th>Model Number</th>
-	  <th>Request for Loan</th>
-	  <th>Request for Disbursement</th>
-	  <% if is_manager_or_admin? %>
-	    <th></th>
-	  <% end %>
-	</tr>
+				<tr>
+	  			<th>Item Name</th>
+	  			<th>In Stock</th>
+	  			<th>Model Number</th>
+	  			<th>Request for Loan</th>
+	  			<th>Request for Disbursement</th>
+	  			<% if is_manager_or_admin? %>
+	    			<th></th>
+	  			<% end %>
+				</tr>
       </thead>
 
       <tbody>
-	<%= render @items %>
+				<%= render @items %>
       </tbody>
     </table>
 
@@ -61,7 +61,8 @@
                   </td>
                 </tr>
             <% end %>
-
+						
+						<tr>
             <td><%= cff.text_field :field_name, class: "form-control" %></td>
             <td>Private? <%= cff.check_box :private_indicator, class: "form-control" %></td>
             <td><%= cff.select :field_type, [['Short Text', 'short_text_type'],
@@ -73,7 +74,7 @@
               <%= button_tag(type: 'submit', class: "btn btn-primary") do %>
                 <span class="glyphicon glyphicon-plus-sign"></span>
               <% end %>
-            </td>
+            </td></tr>
             <% end %>
           </tbody>
         </table>

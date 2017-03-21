@@ -21,8 +21,8 @@
 	<thead>
 	  <tr>
 	    <th>Item Name</th>
-	    <th>Quantity Requested for Loan</th>
-	    <th>Quantity Requested for Disbursement</th>
+	    <th class="text-center">Requested for Loan</th>
+	    <th class="text-center">Requested for Disbursement</th>
 	    <th></th>
 	  </tr>
 	</thead>
@@ -32,9 +32,14 @@
 	    <tr>
 	      <% item = Item.find(req_item.item_id) %>
 	      <td><%= link_to item.unique_name, item_path(item.id) %></td>
-	      <td><%= req_item.quantity_loan %></td>
-	      <td><%= req_item.quantity_disburse %></td>
-	
+				<% if @request.cart? || @request.outstanding? %>
+					<td class="text-right"><%= req_item.quantity_loan %></td>
+		      <td class="text-right"><%= req_item.quantity_disburse %></td>
+				<% else %>
+		      <td class="text-right"><%= req_item.quantity_loan %></td>
+		      <td class="text-right"><%= req_item.quantity_disburse %></td>
+				<% end %>	
+
 	      <% if @request.cart? || @request.outstanding? %>	      
 		<td><%= link_to "Remove Item", req_item, method: :delete, data: {confirm: "Are you sure you want to remove " + item.unique_name + " from your cart?"}, class: "btn btn-primary pull-right" %></td>
 	      <% end %>

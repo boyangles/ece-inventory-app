@@ -63,13 +63,46 @@
 	  <% field_content = ItemCustomField.field_content(@item.id, icf.custom_field_id) %>
 	  <% if is_manager_or_admin? || !icf.custom_field.private_indicator %>
 	    <p>
-	      <strong><%= icf.custom_field.field_name %></strong> 
-	      <%= field_content %>
+	      <strong><%= icf.custom_field.field_name %></strong> 	      
+	      <% if !is_manager_or_admin? %>
+		<%= field_content %>
+	      <% else %>
+		<a href="#" data-xeditable="true"
+		   data-pk="<%= icf.id %>"
+		   data-model="item_custom_field"
+		   data-name="<%= CustomField.find_icf_field_column(icf.custom_field_id).to_s %>"
+		   data-url="<%= item_custom_field_url(icf) %>"
+		   data-title="enter modification">
+		  <%= field_content %>
+		</a>
+	      <% end %>
 	    </p>
+	  <% else %>
 	  <% end %>
 	<% end %>
       </div>
     </div>
+
+		<div class="pull-right">
+			<table>
+				<thead>
+					<tr>
+						<th class="text-center">Loan</th>
+						<th class="text-center">Disbursement</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<% ri = RequestItem.where(item_id: @item.id).where(request_id: grab_cart(current_user).id).take %>
+					<% if ri.nil? %>
+  					<%= render 'indexform', request_item: RequestItem.new(item_id: @item.id, 
+							request_id: grab_cart(current_user).id) %>
+  				<% else %>
+						<%= render 'indexform', request_item: ri %>
+					<% end %>
+				</tbody>
+			</table>
+		</div><br><br>
   </div>
 
 
