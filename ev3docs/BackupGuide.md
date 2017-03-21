@@ -6,7 +6,7 @@ Please follow the steps below to setup your separate server.
 1. Obtain a separate server with unique admin credentials, different from your production server credentials. We have used a Duke Colab Server, on a Debian 8 Jessie environment.
 2. Switch to your root user with sudo -i. Generate SSH keys and add them to your production server.
 3. Download rsnapshot with `apt-get install rsnapshot`
-4. Create /root/.pgpass with your host:port:databasename:password (ex. localhost:*:ece_inventory_production:yourpassword)
+4. Create /root/.pgpass with your host:port:databasename:username:password (ex. localhost:*:yourdatabase_name:yourusername:yourpassword)
 5. Create a backup shell script in /usr/local/bin/backup.sh
 6. Add these lines (Change your host, user, database name, and email as needed)
 ```
