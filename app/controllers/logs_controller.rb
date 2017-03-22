@@ -1,6 +1,5 @@
 class LogsController < ApplicationController
 
-  # TODO: no conscious log creation errr outside acquisition/destruction.
   before_action :check_logged_in_user
 
   def index

@@ -61,6 +61,7 @@ items.each do |item|
   Item.create!(
     unique_name: item,
     quantity: quantity,
+    quantity_on_loan: 0,
     model_number: model_number,
     description: description,
     last_action: "created")

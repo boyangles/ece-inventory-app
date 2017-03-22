@@ -34,7 +34,7 @@
       <!-- All Item Information: Quantity in Stock, Model Num, Description -->
         <p>
           <strong>In Stock</strong>
-      	    <%= @item.quantity %>
+      	    <%= @item.quantity %> out of <%= @item.quantity_on_loan + @item.quantity %>
     	</p>
     	<p>
       	  <strong>Model Number</strong>

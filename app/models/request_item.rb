@@ -60,7 +60,7 @@ class RequestItem < ApplicationRecord
   def fulfill_subrequest
     @item = self.item
     @item.update(:quantity => item[:quantity] - self[:quantity_disburse] - self[:quantity_loan])
-
+		@item.update(:quantity_on_loan => item[:quantity_on_loan] + self[:quantity_loan])
     #case self[:request_type]
     #  when 'disbursement'
     #    @item.update(:quantity => item[:quantity] - self[:quantity_disburse])
@@ -78,6 +78,7 @@ class RequestItem < ApplicationRecord
   def rollback_fulfill_subrequest
     @item = self.item
     @item.update(:quantity => item[:quantity] + self[:quantity_disburse] + self[:quantity_loan])
+		@item.update(:quantity_on_loan => item[:quantity_on_loan] - self[:quantity_loan])
 
     #case self[:request_type]
     #  when 'disbursement'

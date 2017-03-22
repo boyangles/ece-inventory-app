@@ -108,7 +108,7 @@ class RequestsController < ApplicationController
                                       :reason,
                                       :status,
                                       :response,
-                                      request_items_attributes: [:id, :quantity, :request_id, :item_id])
+                                      request_items_attributes: [:id, :quantity_loan, :quantity_disburse, :request_type, :request_id, :item_id])
   end
 
   def log_params

@@ -30,7 +30,15 @@
         <%= link_to "[toggle glyph]", '#', class: "pull-right" %></h3>
       </div>
       <div class="panel-body users-items-display">
-	blah blah blah find all request-items in approved requests for user where blah blah.
+				<% request_items = RequestItem.where("quantity_loan > ?", 0).where(request_id: Request.select(:id).where(user_id: @user.id, status: "approved")) %>
+				<% request_items.each do |req_item| %>
+					<% if !is_manager_or_admin? %>
+						<strong><%= Item.find(req_item.item_id).unique_name %></strong>
+						<%= req_item.quantity_loan %>
+					<% else %>
+
+					<% end %>
+				<% end %>
       </div>
     </div>
 
@@ -40,7 +48,15 @@
         <%= link_to "[toggle glyph]", '#', class: "pull-right" %></h3>
       </div>
       <div class="panel-body users-items-display">
-	similar blabbity blab
+					<% request_items = RequestItem.where("quantity_disburse > ?", 0).where(request_id: Request.select(:id).where(user_id: @user.id, status: "approved")) %>
+				<% request_items.each do |req_item| %>
+					<% if !is_manager_or_admin? %>
+						<strong><%= Item.find(req_item.item_id).unique_name %></strong>
+						<%= req_item.quantity_disburse %>
+					<% else %>
+
+					<% end %>
+				<% end %>
       </div>
     </div>
 
