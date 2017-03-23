@@ -13,7 +13,7 @@ Please follow the steps below to setup your separate server.
 #!/bin/bash                                                                                                                                         
 export PGPASS=/root/.pgpass
 
-pg_dump -w -h hostname -U user database > postgresql-dump.sql
+ssh user@productionserver pg_dump database_name > postgresql-dump.sql
 
 if [ "$?" -ne 0 ]
 then
@@ -52,4 +52,3 @@ Helpful hints:
 - Check syslog to verify cron jobs are running - /var/log/syslog
 - For email port issues: http://www.thegeekstuff.com/2014/02/enable-remote-postgresql-connection/?utm_source=tuicool
 - Setting up rsnapshot https://www.howtoforge.com/set-up-rsnapshot-archiving-of-snapshots-and-backup-of-mysql-databases-on-debian, http://rsnapshot.org/rsnapshot/docs/docbook/rest.html
-- If `fe_sendauth: no password supplied` errors occur, ensure on production server, in /path/to/postgres/postgresql.conf, listen_addresses='*', and ssl=true. In pg_hba.conf, ensure host all all all trust is configured. Consult pg_hba guide to ensure correct connections are allowed.
