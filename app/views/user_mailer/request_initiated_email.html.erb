@@ -31,7 +31,8 @@
 <% @request.request_items.each do |req_item| %>
     <% item = Item.find(req_item.item_id) %>
     <p><%=item.unique_name %>:
-      <%= req_item.quantity %>
+      <%= req_item.quantity_disburse %>
+      <%= req_item.quantity_loan %>
     </p>
 <% end %>
 </p>
