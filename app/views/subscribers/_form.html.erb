@@ -1,0 +1,10 @@
+<%= form_for(@subscriber, url: url) do |f| %>
+    <% @form_obj = @subscriber %>
+    <% if @form_obj %>
+        <%= render 'shared/error_messages', object: @form_obj %>
+    <% end %>
+
+    <%= button_to "Add yourself to Subscriber list", :action => "new" %>
+
+
+<% end %>

@@ -18,13 +18,16 @@ Rails.application.routes.draw do
     put 'requests/:id/clear' => 'requests#clear', :as => 'clear_request'    # Clears items from requests
     patch 'requests/:id/clear', to: 'requests#clear'
 	#	get 'requests/:id/placeorder' => 'requests#place', :as => 'place_order'
+
+  get  'items/import' => 'items#import_upload', :as => 'import_upload'
+  post 'items/import' => 'items#bulk_import', :as => 'bulk_import'
   resources :items do
 		member do
 			get :edit_quantity
 			put :update_quantity
 			patch :update_quantity	# in order to create separate form to specify quantity change - javascript?
 		end
-	end
+  end
   resources :tags
   
   resources :item_custom_fields, :only => [:index, :show, :create, :update, :destroy]
@@ -32,6 +35,8 @@ Rails.application.routes.draw do
   resources :sessions
   resources :logs
   resources :request_items, :except => [:index, :show]
+  resources :subscribers
+  resources :settings
 
   #Login and Sessions routes
   get   '/login',   to: 'sessions#new'      #Describes the login screen
@@ -89,6 +94,8 @@ Rails.application.routes.draw do
 
           put :update_field_entry
           patch :update_field_entry
+
+          post :bulk_import
         end
       end
 

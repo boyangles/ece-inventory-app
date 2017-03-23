@@ -34,6 +34,7 @@
             <li><%= link_to request_label, requests_path %></li>
 	    <% if is_manager_or_admin? %>                
               <li><%= link_to "Logs", logs_path %></li>
+              <li><%= link_to "Bulk Import", import_upload_path %></li>
 	    <% end %>
             <li class="divider"></li>
             <li><%= link_to "Log out", logout_path, method: "delete" %></li>
@@ -42,7 +43,6 @@
 
 	<% end %>        
 	
-
       </ul>
     </div>
   </div>
