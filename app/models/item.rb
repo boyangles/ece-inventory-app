@@ -52,6 +52,72 @@ class Item < ApplicationRecord
 		create_log_on_destruction()
 	}
 
+	##
+  # ITEM-6: import_item
+  # Importing a item and associated properties
+  #
+  # Input: item in JSON format
+  # Output: Outputted Item
+  def self.import_item(item_hash)
+    raise Exception.new('Input Tags must be in array form') unless
+        item_hash['tags'] && item_hash['tags'].kind_of?(Array)
+    raise Exception.new('Input Custom Fields must be in array form') unless
+        item_hash['custom_fields'] && item_hash['custom_fields'].kind_of?(Array)
+
+    # Item creation paired with tag creation and custom_field creation as a single transaction
+    # Executes belows as a single transaction
+    ActiveRecord::Base.transaction do
+      item = Item.new(unique_name: item_hash['unique_name'],
+                      quantity: item_hash['quantity'],
+                      model_number: item_hash['model_number'],
+                      description: item_hash['description'],
+                      last_action: 0)
+      raise Exception.new("Item creation error. The errors hash is: #{item.errors.full_messages}. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless item.save
+
+      item_hash['tags'].each do |tag|
+        if !Tag.exists?(name: tag)
+          new_tag = Tag.new(name: tag)
+          raise Exception.new("Tag creation error. The invalid tag is: #{tag}. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless new_tag.save
+        end
+
+        input_tag = Tag.find_by(name: tag)
+        raise Exception.new("Tag find error. Cannot find tag by name: #{tag}. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless input_tag
+        item.tags << input_tag
+      end
+
+      item_hash['custom_fields'].each do |custom_field|
+        cf = CustomField.find_by(field_name: custom_field['name'])
+        raise Exception.new("Custom Field named: #{custom_field['name']} -- cannot be found. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless cf
+
+        icf = ItemCustomField.find_by(item_id: item.id, custom_field_id: cf.id)
+        raise Exception.new("Custom Field named: #{cf[:field_name]} -- associated with Item named: #{item[:unique_name]} -- cannot be found. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless icf
+
+        raise Exception.new("Custom Field named: #{cf[:field_name]} -- associated with Item named: #{item[:unique_name]} -- has trouble updating to the value: #{custom_field['value']}. Check the type! Item_Custom_Field error hash is: #{icf.errors.full_messages}. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless
+            icf.update_attributes(CustomField.find_icf_field_column(cf.id) => custom_field['value'])
+      end
+
+      item
+    end
+  end
+
+  ##
+  # ITEM-7: bulk_import
+  # Importing bulk items
+  #
+  # Input: items in JSON format
+  # Output: Outputted Items
+  def self.bulk_import(items_as_json)
+    raise Exception.new('Invalid JSON format') unless
+        valid_json?(items_as_json)
+
+    items_hash = JSON.parse(items_as_json)
+
+    ActiveRecord::Base.transaction do
+      items_hash.each do |item_hash|
+        import_item(item_hash)
+      end
+    end
+  end
 
   def self.tagged_with_all(tag_filters)
     if tag_filters.length == 0
@@ -142,7 +208,6 @@ class Item < ApplicationRecord
 	end
 
   private
-
   def create_custom_fields_for_items(item_id)
     CustomField.all.each do |cf|
       ItemCustomField.create!(item_id: item_id, custom_field_id: cf.id,
@@ -150,6 +215,16 @@ class Item < ApplicationRecord
                               long_text_content: nil,
                               integer_content: nil,
                               float_content: nil)
+    end
+  end
+
+  private
+  def self.valid_json?(json)
+    begin
+      JSON.parse(json)
+      return true
+    rescue JSON::ParserError => e
+      return false
     end
   end
 end

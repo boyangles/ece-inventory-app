@@ -86,6 +86,23 @@ class ItemsController < ApplicationController
     end
   end
 
+  def import_upload
+
+  end
+
+  def bulk_import
+    begin
+      Item.bulk_import(params[:items_as_json].read)
+      redirect_to items_path
+    rescue NoMethodError => nme
+      @imported_error_msg = "Must input a file"
+      render 'import_upload'
+    rescue Exception => e
+      @imported_error_msg = e.message
+      render 'import_upload'
+    end
+  end
+
   def update
     @item = Item.find(params[:id])
     @item.curr_user = current_user

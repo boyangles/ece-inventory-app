@@ -1,7 +1,7 @@
 class Api::V1::ItemsController < BaseController
   before_action :authenticate_with_token!
   before_action :auth_by_approved_status!
-  before_action :auth_by_manager_privilege!, only: [:create, :create_tag_associations, :destroy_tag_associations, :update_general]
+  before_action :auth_by_manager_privilege!, only: [:create, :create_tag_associations, :destroy_tag_associations, :update_general, :bulk_import]
   before_action :auth_by_admin_privilege!, only: [:destroy, :fix_quantity, :clear_field_entries, :update_field_entry]
   before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry]
   before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry]
@@ -9,7 +9,7 @@ class Api::V1::ItemsController < BaseController
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry].each do |api_action|
+  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -120,6 +120,14 @@ class Api::V1::ItemsController < BaseController
     response :ok
     response :unauthorized
     response :not_found
+    response :unprocessable_entity
+  end
+
+  swagger_api :bulk_import do
+    summary "Bulk Import Items"
+    param :query, :items_as_json, :string, :required, "Items as JSON"
+    response :unauthorized
+    response :created
     response :unprocessable_entity
   end
 
@@ -259,6 +267,17 @@ class Api::V1::ItemsController < BaseController
     end
   end
 
+  def bulk_import
+    bulk_import_params = params.slice(:items_as_json)
+
+    begin
+      Item.bulk_import(bulk_import_params[:items_as_json])
+      head 200
+    rescue Exception => e
+      render_client_error(e.message, 422)
+    end
+  end
+
   private
   def set_item
     @item = Item.find(params[:id])
@@ -300,8 +319,7 @@ class Api::V1::ItemsController < BaseController
               |req| {
                 :request_id => req.id,
                 :user_id => req.user_id,
-                :status => req.status,
-                :request_type => req.request_type
+                :status => req.status
             }
           },
           :custom_fields => item.custom_fields.map {
