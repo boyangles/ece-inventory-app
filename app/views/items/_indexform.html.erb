@@ -1,15 +1,28 @@
-<%= form_for (request_item) do |f| %>
-	<%= f.hidden_field :item_id, :value => request_item.item_id %>
-	<%= f.hidden_field :request_id, :value => request_item.request_id %>
 
-	<td>
-		<%= f.number_field :quantity_loan, class: "col-lg-12" %><br>
-	</td>
-	<td>
-		<%= f.number_field :quantity_disburse, class: "col-lg-12" %><br>
-	</td>
+<%= form_for (request_item) do |f| %>
+	<table>
+		<thead>
+			<tr>
+				<th class="text-center">Loan</th>
+				<th class="text-center">Disbursement</th>
+			</tr>
+		</thead>
 	
-	<td>
-		<%= f.submit "Add to Cart", class: "btn btn-default" %>
-	</td>
+		<tbody>
+			<%= f.hidden_field :item_id, :value => request_item.item_id %>
+			<%= f.hidden_field :request_id, :value => request_item.request_id %>
+			<tr>
+			<td>
+				<%= f.number_field :quantity_loan, class: "col-lg-12" %><br>
+			</td>
+			<td>
+				<%= f.number_field :quantity_disburse, class: "col-lg-12" %><br>
+			</td>
+	
+			<td>
+				<%= f.submit "Add to Cart", class: "btn btn-default" %>
+			</td>
+			</tr>
+		</tbody>
+	</table>
 <% end %>

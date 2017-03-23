@@ -32,8 +32,9 @@
       <div class="panel-body users-items-display">
 				<% request_items = RequestItem.where("quantity_loan > ?", 0).where(request_id: Request.select(:id).where(user_id: @user.id, status: "approved")) %>
 				<% request_items.each do |req_item| %>
+					<% item = Item.find(req_item.item_id) %>
 					<% if !is_manager_or_admin? %>
-						<strong><%= Item.find(req_item.item_id).unique_name %></strong>
+						<strong><%= link_to item.unique_name, item_path(item.id) %></strong>
 						<%= req_item.quantity_loan %>
 					<% else %>
 
@@ -50,8 +51,9 @@
       <div class="panel-body users-items-display">
 					<% request_items = RequestItem.where("quantity_disburse > ?", 0).where(request_id: Request.select(:id).where(user_id: @user.id, status: "approved")) %>
 				<% request_items.each do |req_item| %>
+					<% item = Item.find(req_item.item_id) %>
 					<% if !is_manager_or_admin? %>
-						<strong><%= Item.find(req_item.item_id).unique_name %></strong>
+						<strong><%= link_to item.unique_name, item_path(item.id) %></strong>
 						<%= req_item.quantity_disburse %>
 					<% else %>
 

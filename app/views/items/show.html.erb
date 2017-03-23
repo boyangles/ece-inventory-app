@@ -84,15 +84,6 @@
     </div>
 
 		<div class="pull-right">
-			<table>
-				<thead>
-					<tr>
-						<th class="text-center">Loan</th>
-						<th class="text-center">Disbursement</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
 					<% ri = RequestItem.where(item_id: @item.id).where(request_id: grab_cart(current_user).id).take %>
 					<% if ri.nil? %>
   					<%= render 'indexform', request_item: RequestItem.new(item_id: @item.id, 
@@ -100,8 +91,6 @@
   				<% else %>
 						<%= render 'indexform', request_item: ri %>
 					<% end %>
-				</tbody>
-			</table>
 		</div><br><br>
   </div>
 

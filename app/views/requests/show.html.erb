@@ -33,8 +33,24 @@
 	      <% item = Item.find(req_item.item_id) %>
 	      <td><%= link_to item.unique_name, item_path(item.id) %></td>
 				<% if @request.cart? || @request.outstanding? %>
-					<td class="text-right"><%= req_item.quantity_loan %></td>
-		      <td class="text-right"><%= req_item.quantity_disburse %></td>
+					<td class="text-right"><a href="#" data-xeditable="true"
+						data-pk="<%= req_item.id %>"
+						data-model="request_item"
+						data-url="<%= request_item_url(req_item.id) %>"
+						data-name="quantity_loan"
+						data-type="number"
+						data-title="enter new quantity">
+						<%= req_item.quantity_loan %></a>
+					</td>
+					<td class="text-right"><a href="#" data-xeditable="true"
+						data-pk="<%= req_item.id %>"
+						data-model="request_item"
+						data-url="<%= request_item_url(req_item.id)%>"
+						data-name="quantity_disburse"
+						data-type="number"
+						data-title="enter new quantity">
+						<%= req_item.quantity_disburse %></a>
+					</td>
 				<% else %>
 		      <td class="text-right"><%= req_item.quantity_loan %></td>
 		      <td class="text-right"><%= req_item.quantity_disburse %></td>

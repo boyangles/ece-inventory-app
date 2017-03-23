@@ -8,6 +8,10 @@ Rails.application.routes.draw do
   # User auth token
   get "users/:id/auth_token", to: 'users#auth_token', :as => 'auth_token'
 
+	# Loans
+	get 'loans/index'
+	root 'loans#index'
+
   # All resources
   resources :users
   resources :requests
