@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  <%= @heading %>.
+</head>
+
+<body>
+<%= @body %>.
+
+
+
+<p>
+    There should be something that appears before this .
+</p>
+<p>
+    You made a request!! Here are the following items you requested!
+</p>
+<p>
+  <strong>Requested On:</strong>
+  <%= @request.created_at.to_date %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @user.username %>
+</p>
+
+<p>
+  <strong>Items:</strong>
+<% @request.request_items.each do |req_item| %>
+    <% item = Item.find(req_item.item_id) %>
+    <p><%=item.unique_name %>:
+      <%= req_item.quantity %>
+    </p>
+<% end %>
+</p>
+
+</p>
+<p>
+  To login to the site, just follow this link: <%= @url %>.
+</p>
+<p>Thanks for joining and have a great day!</p>
+</body>
+</html>

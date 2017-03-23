@@ -31,6 +31,8 @@ Rails.application.routes.draw do
   resources :sessions
   resources :logs
   resources :request_items, :except => [:index, :show]
+  resources :subscribers
+  resources :settings
 
   #Login and Sessions routes
   get   '/login',   to: 'sessions#new'      #Describes the login screen

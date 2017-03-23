@@ -99,3 +99,15 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
+# Gem for cronjob
+gem 'whenever', require: false
+
+# Gem for changing email settings
+gem "rails-settings-cached"
+
+# Gem for UI for changing email settings
+gem 'rails-settings-ui'
+
+#Trying this sidekiq gem out for many emails
+gem 'sidekiq'

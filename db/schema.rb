@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170304064444) do
+ActiveRecord::Schema.define(version: 20170319171244) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -110,7 +110,23 @@ ActiveRecord::Schema.define(version: 20170304064444) do
     t.index ["user_id"], name: "index_requests_on_user_id", using: :btree
   end
 
+  create_table "settings", force: :cascade do |t|
+    t.string   "var",                   null: false
+    t.text     "value"
+    t.integer  "thing_id"
+    t.string   "thing_type", limit: 30
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["thing_type", "thing_id", "var"], name: "index_settings_on_thing_type_and_thing_id_and_var", unique: true, using: :btree
+  end
+
   create_table "stack_exchanges", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "subscribers", force: :cascade do |t|
+    t.integer  "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -154,5 +170,6 @@ ActiveRecord::Schema.define(version: 20170304064444) do
   add_foreign_key "request_logs", "logs"
   add_foreign_key "requests", "users"
   add_foreign_key "requests", "users", column: "request_initiator"
+  add_foreign_key "subscribers", "users"
   add_foreign_key "user_logs", "logs"
 end
