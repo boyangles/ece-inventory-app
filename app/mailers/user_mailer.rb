@@ -37,7 +37,7 @@ class UserMailer < ApplicationMailer
     end
   end
 
-  def request_email(user, request)
+  def request_approved_email(user, request)
     @user = user
     @request = request
     @url  = 'https://spicysoftware.colab.duke.edu'
@@ -45,5 +45,18 @@ class UserMailer < ApplicationMailer
     @body = Setting.email_body
     mail(to: @user.email, subject: @heading)
   end
+
+
+  #email types- loan initiate, loan approved, loan reminder-before, loan reminder-after, loan return
+  def loan_email(user, request)
+    @user = user
+    @request = request
+    @url  = 'https://spicysoftware.colab.duke.edu'
+    @heading = Setting.email_heading
+    @body = Setting.email_body
+    mail(to: @user.email, subject: @heading)
+  end
+
+
 
 end

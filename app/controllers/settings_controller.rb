@@ -1,4 +1,8 @@
 class SettingsController < ApplicationController
+
+  before_action :check_logged_in_user
+  before_action :check_manager_or_admin
+
   before_action :get_setting, only: [:edit, :update]
 
   def index

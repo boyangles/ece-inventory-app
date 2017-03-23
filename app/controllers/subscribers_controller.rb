@@ -1,5 +1,8 @@
 class SubscribersController < ApplicationController
 
+  before_action :check_logged_in_user
+  before_action :check_manager_or_admin
+
   def index
     @subscribers = Subscriber.paginate(page: params[:page], per_page: 10)
   end
