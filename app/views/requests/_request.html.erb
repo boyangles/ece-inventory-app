@@ -3,7 +3,7 @@
   <div id="request-<%= request.id %>">
 
     <div class="panel-body">
-      <strong>Requested by </strong><%= link_to request.user.username, request.user %>
+      <strong>Requested by </strong><%= link_to request.user.username, user_path(request.user_id) %>
       </br><strong>Reason </strong><%= request.reason %>
 
       <br><br>
