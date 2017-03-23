@@ -50,12 +50,37 @@ class RequestItemsController < ApplicationController
 		redirect_to request_path(req)
 	end
 
+	def return_quantity()
+		reqit = RequestItem.find(params[:id])
+		if (0 > reqit.quantity_loan)
+			flash[:error] = "That's too many!"
+			redirect_to request_path(reqit.request_id)
+		else
+			# subtract quantity from quantity_loan
+			# add quantity to quantity_return
+			# redirect to request_path(reqit.request_id)
+		end		
+	end
+
+	def convert_to_disbursement()
+		reqit = RequestItem.find(params[:id])
+		if (0 > reqit.quantity_loan)
+			flash[:error] = "That's too many!"
+			redirect_to request_path(reqit.request_id)
+		else
+			# subtract quantity from quantity_loan
+			# add quantity to quantity_return
+			# redirect to request_path(reqit.request_id)
+		end		
+	end
+
+
   private
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def request_item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
-    params.fetch(:request_item, {}).permit(:quantity_loan, :quantity_disburse, :quantity_return, :item_id, :request_id)
+    params.fetch(:request_item, {}).permit(:quantity_loan, :quantity_disburse, :quantity_return, :item_id, :request_id, :quantity_to_return, :quantity_to_disburse)
   end
 
 end

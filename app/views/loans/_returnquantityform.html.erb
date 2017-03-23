@@ -1,0 +1,12 @@
+<%= form_for (request_item) do |f| %>
+
+	<div class="modal-body text-center">
+		<h4>Quantity to Return</h4>
+		<%= number_field_tag params[:quantity_to_return] %>
+	</div>
+
+	<div class="modal-footer">
+		<%= f.submit "Submit", class: "btn btn-primary" %>
+	</div>
+	
+<% end %>

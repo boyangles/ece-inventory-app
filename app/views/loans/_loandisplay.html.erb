@@ -24,14 +24,8 @@
 						<div class="modal-content">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
-								<h4 class="modal-title">Return Quantity</h4>
 							</div>
-							<div class="modal-body">
-								Body alalala
-							</div>
-							<div class="modal-footer">
-								footer hohohoo
-							</div>
+							<%= render 'returnquantityform', request_item: loan %>
 						</div>
 					</div>
 				</div>
@@ -43,14 +37,8 @@
 						<div class="modal-content">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
-								<h4 class="modal-title">Convert Quantity to Disbursement</h4>
 							</div>
-							<div class="modal-body">
-								Body alalala
-							</div>
-							<div class="modal-footer">
-								footer hohohoo
-							</div>
+							<%= render 'disbursequantityform', request_item: loan %>
 						</div>
 					</div>
 				</div>
@@ -58,7 +46,7 @@
 
 				<br>
 				<br>
-				<%= link_to "Related Request", request_path(request.id), class: "text-center" %>
+				<%= link_to "Related Request", request_path(request.id), class: "pull-right" %>
 			</div>
 
 		</div>
