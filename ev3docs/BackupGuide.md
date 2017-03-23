@@ -34,6 +34,7 @@ Follow this guide if errors occur. https://www.howtoforge.com/set-up-rsnapshot-a
 ### To set up email:
 Ensure exim4 is downloaded. Default configuration is currently being used. If errors occur, check configuration with
 `dpkg-reconfigure exim4-config`. Ensure server configuration allows mail to be sent. 
+In order to change the email address the database backup emails are sent to, modify your backup.sh script lines beginning `mail`.
 
 
 ### To Restore Database:
