@@ -40,24 +40,6 @@
         </div>
       </div>
 
-
-      <!--TODO PUT THIS INTO FORM ?? -->
-      <div class="panel panel-success">
-        <div class="panel-heading users-request-display-link">
-          <h5 class="panel-title">Tags
-            <% tags = Tag.all %>
-            <% if !tags.empty? %>
-                <%= link_to "[Click to Toggle]", '#', class: "pull-right" %>
-            <% end %>
-          </h5>
-        </div>
-        <div class="panel-body users-request-display">
-          <% tags.each do |f| %>
-              <%= f.name %>,
-          <% end %>
-        </div>
-      </div>
-
       <div class="form-group"> 
         <%= f.label :tag, "Tags", class: "col-lg-2 control-label" %>
         <div class="col-lg-10">
