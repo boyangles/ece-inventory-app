@@ -196,7 +196,6 @@ class User < ApplicationRecord
   end
 
   ##
-  # TODO
   # USER-2: approve_outstanding_request
   # Allows managers/admins to approve outstanding request
   # Input: @request
@@ -204,11 +203,14 @@ class User < ApplicationRecord
   #   On success: updated approved request object
   #   On failure: null
   def approve_outstanding_request(request)
-
+    if !request.outstanding? || self.privilege_student?
+      false
+    else
+      request.update(:status => 'approved')
+    end
   end
 
   ##
-  # TODO
   # USER-3: deny_outstanding_request
   # Allows managers/admins to deny outstanding request
   # Input: @request
@@ -216,7 +218,11 @@ class User < ApplicationRecord
   #   On success: updated denied request object
   #   On failure: null
   def deny_outstanding_request(request)
-
+    if !request.outstanding? || self.privilege_student?
+      false
+    else
+      request.update(:status => 'denied')
+    end
   end
 
   ##
