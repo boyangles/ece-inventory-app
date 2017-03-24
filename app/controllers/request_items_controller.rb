@@ -42,6 +42,10 @@ class RequestItemsController < ApplicationController
     end
 	end
 
+	def show
+
+	end
+
 	def destroy
 		reqit = RequestItem.find(params[:id])
 		req = Request.find(reqit.request_id)
@@ -50,22 +54,32 @@ class RequestItemsController < ApplicationController
 		redirect_to request_path(req)
 	end
 
-	def return_quantity()
+	def return
 		reqit = RequestItem.find(params[:id])
-		if (0 > reqit.quantity_loan)
-			flash[:error] = "That's too many!"
-			redirect_to request_path(reqit.request_id)
+		puts("HI!!!!!")
+		puts(params[:quantity_to_return])
+		puts(reqit.quantity_loan)
+		puts(params[:quantity_loan])
+		if (params[:quantity_to_return].to_f > reqit.quantity_loan)
+			flash[:danger] = "That's more than are loaned out!"
 		else
-			# subtract quantity from quantity_loan
-			# add quantity to quantity_return
-			# redirect to request_path(reqit.request_id)
+			to_return = params[:quantity_to_return].to_f
+			reqit.update!(:quantity_loan => reqit[quantity_loan] - to_return)
+			reqit.update!(:quantity_return => reqit[quantity_return] + to_return)
+
+			item = Item.find(reqit.item_id)
+			item.update!(:quantity => item[:quantity] + to_return)
+			item.update!(:quantity_on_loan => item[:quantity_on_loan] - to_return)
+
+			flash[:success] = "Quantity successfully returned!"
 		end		
+		redirect_to request_path(reqit.request_id)
 	end
 
-	def convert_to_disbursement()
+	def disburse_loaned 
 		reqit = RequestItem.find(params[:id])
-		if (0 > reqit.quantity_loan)
-			flash[:error] = "That's too many!"
+		if (params[:quantity_to_disburse] > reqit.quantity_loan)
+			flash[:error] = "That's more than are loaned out!"
 			redirect_to request_path(reqit.request_id)
 		else
 			# subtract quantity from quantity_loan

@@ -1,11 +1,13 @@
-<%= form_for (request_item) do |f| %>
+<%= form_for (request_item), :url => return_request_item_path(request_item.id), :html => {:method => "put"} do |f| %>
+	<%= f.hidden_field :quantity_loan, :value => (request_item[:quantity_loan]) %>
 
 	<div class="modal-body text-center">
 		<h4>Quantity to Return</h4>
-		<%= number_field_tag params[:quantity_to_return] %>
+		<%= number_field_tag :quantity_to_return, params[:quantity_to_return] %>
 	</div>
 
 	<div class="modal-footer">
+		<!--<%= link_to "Submit", request_item, method: :return, class: "btn btn-primary" %>-->
 		<%= f.submit "Submit", class: "btn btn-primary" %>
 	</div>
 	
