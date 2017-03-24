@@ -24,6 +24,8 @@
 //= require bootstrap-datepicker/core
 //= require bootstrap-datepicker/locales/bootstrap-datepicker.es.js
 //= require bootstrap-datepicker/locales/bootstrap-datepicker.fr.js
+//= require chosen-jquery
+//= require items
 
 $(document).on('ready page:load', function () {
     /* Activating Best In Place */
