@@ -62,7 +62,7 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     it "can update an item as admin" do
       login(:user_admin)
       navigate_to_new_item
-      find_link('Edit Item Details').click
+      find_link('Edit Item').click
       verify_item_parameters
       updated_name = Faker::Name.name
       fill_in('Name', with: updated_name)
