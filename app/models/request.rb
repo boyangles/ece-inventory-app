@@ -88,6 +88,7 @@ class Request < ApplicationRecord
 
   def update_respective_items
     if self.status_was != 'approved' && self.status == 'approved'
+			puts("hiho")
       self.request_items.each do |req_item|
         req_item.fulfill_subrequest
       end
