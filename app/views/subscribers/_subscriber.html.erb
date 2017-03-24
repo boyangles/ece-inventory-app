@@ -4,11 +4,7 @@
 
   <tbody>
   <tr>
-    <h>
-
-    </h>
-    <%= link_to 'Edit', edit_subscriber_path(subscriber) %> |
-    <%= link_to 'Destroy', subscriber, method: :delete, data: {confirm: "Are you sure?"} %>
+    <th><%= subscriber.user.username %></th>
   </tr>
   </tbody>
 </table>

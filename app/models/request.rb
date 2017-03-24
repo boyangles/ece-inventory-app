@@ -53,7 +53,7 @@ class Request < ApplicationRecord
       if @item.deactive?
         return false, @item.unique_name  + " doesn't exist anymore! Cannot be disbursed."
       elsif sub_request.oversubscribed?
-        return false, "Item named #{@item.unique_name} is oversubscribed. Requested #{sub_request.quantity}, but only has #{@item.quantity}."
+        return false, "Item named #{@item.unique_name} is oversubscribed. Requested #{sub_request.quantity_disburse + sub_request.quantity_loan}, but only has #{@item.quantity}."
 	    end
     end
 
@@ -88,13 +88,20 @@ class Request < ApplicationRecord
 
   def update_respective_items
     if self.status_was != 'approved' && self.status == 'approved'
-			puts("hiho")
       self.request_items.each do |req_item|
-        req_item.fulfill_subrequest
+        begin
+          req_item.fulfill_subrequest
+        rescue Exception => e
+          raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity_was}")
+        end
       end
     elsif self.status_was == 'approved' && self.status != 'approved'
       self.request_items.each do |req_item|
-        req_item.rollback_fulfill_subrequest
+        begin
+          req_item.rollback_fulfill_subrequest
+        rescue Exception => e
+          raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity_was}")
+        end
       end
     end
   end

@@ -18,6 +18,14 @@ module ItemsHelper
 		end
 	end
 
-
+#   # function which adds tags to an item
+#   def add_tags_to_item(item, tags_to_add)
+#   	tags_to_add.each do |tag_id|
+#   	  if tag_id.present?
+#   		tag = Tag.find(tag_id)
+#   		item.tags << tag
+#   	  end
+#   	end
+#   end
 
 end
