@@ -38,44 +38,7 @@ class Request < ApplicationRecord
   validates :user_id, presence: true
   validates :request_initiator, presence: true
 
-  def has_status_change_to_approved?(request_params)
-    self.outstanding? && request_params[:status] == 'approved' || self.cart? && request_params[:status] == 'approved'
-  end
-
-	def has_status_change_to_outstanding?(request_params)
-		self.cart? && request_params[:status] == 'outstanding'
-	end
-
-	def are_request_details_valid?
-    self.request_items.each do |sub_request|
-      @item = Item.find(sub_request.item_id)
-
-      if @item.deactive?
-        return false, @item.unique_name  + " doesn't exist anymore! Cannot be disbursed."
-      elsif sub_request.oversubscribed?
-        return false, "Item named #{@item.unique_name} is oversubscribed. Requested #{sub_request.quantity}, but only has #{@item.quantity}."
-	    end
-    end
-
-    return true, ""
-  end
-
-	def are_items_valid?
-    self.request_items.each do |sub_request|
-      @item = Item.find(sub_request.item_id)
-
-      if @item.deactive?
-        return false, @item.unique_name  + " doesn't exist anymore! Please remove from cart."
-	    end
-    end
-
-    return true, ""
-  end
-
-
-
   private
-
   def cart_cannot_be_duplicated
     if self.cart? &&
         Request.where(:user_id => self.user_id).where(:status => :cart).exists? &&
