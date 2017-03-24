@@ -21,9 +21,9 @@ class Api::V1::RequestsController < BaseController
   swagger_controller :requests, 'Requests'
 
   swagger_api :create do
-    summary "Creates a Request (Disbursement, Acquisition, Destruction)"
-    notes "Specify your request type (must be one of: disbursement/acquisition/destruction). List items and corresponding quantities you want in the requests by entering in the following format: 'item1: 5, item2: 13, ...'"
-    param_list :form, 'request[request_type]', :string, :required, "Request Type (disbursement/acquisition/destruction)", [:disbursement, :acquisition, :destruction]
+    summary "Creates a Request (Disbursement, Loan)"
+    notes "Specify your request type (must be one of: disbursement/loan). List items and corresponding quantities you want in the requests by entering in the following format: 'item1: 5, item2: 13, ...'"
+    param_list :form, 'request[request_type]', :string, :required, "Request Type (disbursement/loan)", [:disbursement, :loan]
     param :form, 'request[reason]', :string, :optional, "Reason for request"
     param :form, 'request[email]', :string, :required, "Email address of requesting user"
     param :query, :request_items, :string, :optional, "Example --> item1: 15, item2: 34, item15: 14"
