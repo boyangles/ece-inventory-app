@@ -1,118 +1,118 @@
 <p id="notice"><%= notice %></p>
 
 <% if @user.status_deactivated? %>
-  <div class="panel panel-danger">
-    <div class="panel-heading">
-      <h3 class="panel-title">User has been deleted.</h3>
+    <div class="panel panel-danger">
+      <div class="panel-heading">
+        <h3 class="panel-title">User has been deleted.</h3>
+      </div>
     </div>
-  </div>
 <% end %>
 
 <div class="center_jumbotron">
   <h2 class="page-header"><strong><%= @user.username%></strong><%= " " + @user.privilege %>
     <% if is_manager_or_admin? && !current_user?(@user) %>
-      <%= link_to "Edit User", edit_user_url(@user.id), :class => "btn btn-primary pull-right" %>
+        <%= link_to "Edit User", edit_user_url(@user.id), :class => "btn btn-primary pull-right" %>
     <% end %>
   </h2>
 </div>
 
 <!--<ul class="nav nav-tabs">-->
-  <!--<li class="active"><a href="#home" data-toggle="tab">User Info</a></li>-->
+<!--<li class="active"><a href="#home" data-toggle="tab">User Info</a></li>-->
 <!--</ul>-->
 
 <!--<div id="myTabContent" class="tab-content">-->
-  <!--<div class="tab-pane fade active in" id="home">-->
-    <br>
+<!--<div class="tab-pane fade active in" id="home">-->
+<br>
 
-    <div class="panel panel-primary">
-      <div class="panel-heading users-items-display-link">
-        <h3 class="panel-title">Loans TBD
-        <%= link_to "[toggle glyph]", '#', class: "pull-right" %></h3>
-      </div>
-      <div class="panel-body users-items-display">
-				<% request_items = RequestItem.where("quantity_loan > ?", 0).where(request_id: Request.select(:id).where(user_id: @user.id, status: "approved")) %>
-				<% request_items.each do |req_item| %>
-					<% item = Item.find(req_item.item_id) %>
-					<% if !is_manager_or_admin? %>
-						<strong><%= link_to item.unique_name, item_path(item.id) %></strong>
-						<%= req_item.quantity_loan %>
-					<% else %>
+<div class="panel panel-primary">
+  <div class="panel-heading users-items-display-link">
+    <h3 class="panel-title">Loans TBD
+      <%= link_to "[toggle glyph]", '#', class: "pull-right" %></h3>
+  </div>
+  <div class="panel-body users-items-display">
+    <% request_items = RequestItem.where("quantity_loan > ?", 0).where(request_id: Request.select(:id).where(user_id: @user.id, status: "approved")) %>
+    <% request_items.each do |req_item| %>
+        <% item = Item.find(req_item.item_id) %>
+        <% if !is_manager_or_admin? %>
+            <strong><%= link_to item.unique_name, item_path(item.id) %></strong>
+            <%= req_item.quantity_loan %>
+        <% else %>
 
-					<% end %>
-				<% end %>
-      </div>
-    </div>
-
-    <div class="panel panel-info">
-      <div class="panel-heading users-items-display-link">
-        <h3 class="panel-title">Disbursements TBD
-        <%= link_to "[toggle glyph]", '#', class: "pull-right" %></h3>
-      </div>
-      <div class="panel-body users-items-display">
-					<% request_items = RequestItem.where("quantity_disburse > ?", 0).where(request_id: Request.select(:id).where(user_id: @user.id, status: "approved")) %>
-				<% request_items.each do |req_item| %>
-					<% item = Item.find(req_item.item_id) %>
-					<% if !is_manager_or_admin? %>
-						<strong><%= link_to item.unique_name, item_path(item.id) %></strong>
-						<%= req_item.quantity_disburse %>
-					<% else %>
-
-					<% end %>
-				<% end %>
-      </div>
-    </div>
-
-    <div class="panel panel-success">
-      <div class="panel-heading users-request-display-link">
-        <h3 class="panel-title">Approved Requests
-	  <% approved_req = Request.where(user_id: @user.id, status: "approved") %>
-	  <% if !approved_req.empty? %>
-            <%= link_to "[Click to Toggle]", '#', class: "pull-right" %>
-	  <% end %>
-	</h3>
-      </div>
-      <div class="panel-body users-request-display">
-	<%= render approved_req %>
-      </div>
-    </div>
-
-    <div class="panel panel-warning">
-      <div class="panel-heading users-request-display-link">
-        <h3 class="panel-title">Outstanding Requests 
-	  <% outstanding_req = Request.where(user_id: @user.id, status: "outstanding") %>
-	  <% if !outstanding_req.empty? %>
-            <%= link_to "[Click to Toggle]", '#', class: "pull-right" %>
-	  <% end %>
-	</h3>
-      </div>
-      <div class="panel-body users-request-display">
-	<%= render outstanding_req %>
-      </div>
-    </div>
-
-    <div class="panel panel-danger">
-      <div class="panel-heading users-request-display-link">
-        <h3 class="panel-title">Denied Requests
-	  <% denied_req = Request.where(user_id: @user.id, status: "denied") %>
-	  <% if !denied_req.empty? %>
-            <%= link_to "[Click to Toggle]", '#', class: "pull-right" %>
-	  <% end %>
-	</h3>
-      </div>
-      <div class="panel-body users-request-display">
-	<%= render denied_req %>
-      </div>
-    </div>
-
-
-    <% if !@user.status_deactivated? && is_admin? && @user != current_user%>
-      <%= render 'deactivateuserform', user: @user %>
+        <% end %>
     <% end %>
+  </div>
+</div>
 
-    <%= link_to 'Edit', edit_user_path(@user) if (is_admin? || current_user?(@user)) %> |
-    <%= link_to 'Authentication Token', auth_token_user_path %>
+<div class="panel panel-info">
+  <div class="panel-heading users-items-display-link">
+    <h3 class="panel-title">Disbursements TBD
+      <%= link_to "[toggle glyph]", '#', class: "pull-right" %></h3>
+  </div>
+  <div class="panel-body users-items-display">
+    <% request_items = RequestItem.where("quantity_disburse > ?", 0).where(request_id: Request.select(:id).where(user_id: @user.id, status: "approved")) %>
+    <% request_items.each do |req_item| %>
+        <% item = Item.find(req_item.item_id) %>
+        <% if !is_manager_or_admin? %>
+            <strong><%= link_to item.unique_name, item_path(item.id) %></strong>
+            <%= req_item.quantity_disburse %>
+        <% else %>
 
-  <!--</div>-->
+        <% end %>
+    <% end %>
+  </div>
+</div>
+
+<div class="panel panel-success">
+  <div class="panel-heading users-request-display-link">
+    <h3 class="panel-title">Approved Requests
+      <% approved_req = Request.where(user_id: @user.id, status: "approved") %>
+      <% if !approved_req.empty? %>
+          <%= link_to "[Click to Toggle]", '#', class: "pull-right" %>
+      <% end %>
+    </h3>
+  </div>
+  <div class="panel-body users-request-display">
+    <%= render approved_req %>
+  </div>
+</div>
+
+<div class="panel panel-warning">
+  <div class="panel-heading users-request-display-link">
+    <h3 class="panel-title">Outstanding Requests
+      <% outstanding_req = Request.where(user_id: @user.id, status: "outstanding") %>
+      <% if !outstanding_req.empty? %>
+          <%= link_to "[Click to Toggle]", '#', class: "pull-right" %>
+      <% end %>
+    </h3>
+  </div>
+  <div class="panel-body users-request-display">
+    <%= render outstanding_req %>
+  </div>
+</div>
+
+<div class="panel panel-danger">
+  <div class="panel-heading users-request-display-link">
+    <h3 class="panel-title">Denied Requests
+      <% denied_req = Request.where(user_id: @user.id, status: "denied") %>
+      <% if !denied_req.empty? %>
+          <%= link_to "[Click to Toggle]", '#', class: "pull-right" %>
+      <% end %>
+    </h3>
+  </div>
+  <div class="panel-body users-request-display">
+    <%= render denied_req %>
+  </div>
+</div>
+
+
+<% if !@user.status_deactivated? && is_admin? && @user != current_user%>
+    <%= render 'deactivateuserform', user: @user %>
+<% end %>
+
+<%= link_to 'Edit', edit_user_path(@user) if (is_admin? || current_user?(@user)) %> |
+<%= link_to 'Authentication Token', auth_token_user_path %>
+
+<!--</div>-->
 
 <!--</div>-->
 

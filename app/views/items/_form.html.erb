@@ -41,24 +41,37 @@
       </div>
 
 
-      <p> <strong>Tags</strong></p>
-      <div class="form-group"> 
-        <%= f.label :tag, "Select tags to add", class: "col-lg-2 control-label" %>
-        <select multiple data-role="tagsinput">
-          <% tags = Tag.all.collect(&:name)%>
-          <%= options_for_select(tags) %>
-        </select>
-      </div> 
-      <p>No more tags available</p>
-
-      <div class="form-group">
-        <label for="select" class="col-lg-2 control-label">Tags</label>
-        <div class="col-lg-10">
-          <div class="form-group">
-            <%=collection_select(:tag, :tag_id, Tag.all - item.tags.all, :id, :name, {:prompt => "-- select tags to add to item --"}, {:multiple=> true, :class=>"form-control", :id=>"select"},) %>
-          </div>
+      <!--TODO PUT THIS INTO FORM ?? -->
+      <div class="panel panel-success">
+        <div class="panel-heading users-request-display-link">
+          <h5 class="panel-title">Tags
+            <% tags = Tag.all %>
+            <% if !tags.empty? %>
+                <%= link_to "[Click to Toggle]", '#', class: "pull-right" %>
+            <% end %>
+          </h5>
+        </div>
+        <div class="panel-body users-request-display">
+          <% tags.each do |f| %>
+              <%= f.name %>,
+          <% end %>
         </div>
       </div>
+      <div class="form-group"> 
+        <%= f.label :tag, "Input tags to add", class: "col-lg-2 control-label" %>
+        <%= f.text_field :tag_list, 'data-role'=>'tagsinput' %>
+      </div> 
+      <!--TODO PUT INTO FORM ABOVE-->
+      <!--<p>No more tags available</p>-->
+
+      <!--<div class="form-group">-->
+      <!--<label for="select" class="col-lg-2 control-label">Tags</label>-->
+      <!--<div class="col-lg-10">-->
+      <!--<div class="form-group">-->
+      <!--<%=collection_select(:tag, :tag_id, Tag.all - item.tags.all, :id, :name, {:prompt => "&#45;&#45; select tags to add to item &#45;&#45;"}, {:multiple=> true, :class=>"form-control", :id=>"select"},) %>-->
+      <!--</div>-->
+      <!--</div>-->
+      <!--</div>-->
 
 
       <div class="form-group">
@@ -67,4 +80,4 @@
         </div>
       </div>
     </fieldset>
-<% end %>
+    <% end %>

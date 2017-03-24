@@ -1,0 +1,23 @@
+<%= form_for (item) do |f| %>
+
+    <p> <strong>Tags</strong></p>
+    <div class="form-group"> 
+      <%= f.label :tag, "Input tags to add", class: "col-lg-2 control-label" %>
+      <%= f.text_field :tag_list, 'data-role'=>'tagsinput' %>
+    </div> 
+
+    <div class="panel panel-success">
+      <div class="panel-heading users-request-display-link">
+        <h3 class="panel-title">Approved Requests
+          <% approved_req = Request.where(user_id: @user.id, status: "approved") %>
+          <% if !approved_req.empty? %>
+          <%= link_to "[Click to Toggle]", '#', class: "pull-right" %>
+          <% end %>
+        </h3>
+      </div>
+      <div class="panel-body users-request-display">
+        <%= render approved_req %>
+      </div>
+    </div>
+
+    <% end %>

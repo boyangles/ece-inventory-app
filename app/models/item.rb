@@ -40,6 +40,7 @@ class Item < ApplicationRecord
   has_many :logs, dependent: :destroy
 
   attr_accessor :curr_user
+  attr_accessor :tag_list
 
 	after_create {
     create_custom_fields_for_items(self.id)
