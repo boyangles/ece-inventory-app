@@ -59,7 +59,7 @@ class RequestsController < ApplicationController
 
       if items_valid
         update_to_index(@request, request_params)
-        UserMailer.request_initiated_email_all_subscribers(@request.user, @request).deliver_now
+        UserMailer.request_approved_email_all_subscribers(@request.user, @request).deliver_now
       else
         reject_to_edit(@request, error_msg)
       end
