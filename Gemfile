@@ -111,3 +111,10 @@ gem 'rails-settings-ui'
 
 #Trying this sidekiq gem out for many emails
 gem 'sidekiq'
+
+#Email sender
+
+# gem 'sendgrid-ruby'
+
+#still use action mailer
+gem 'sendgrid-actionmailer'

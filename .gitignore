@@ -22,4 +22,4 @@
 .byebug_history
 
 ## Ignore Swagger JSON files.
-/public/apidocs/
+/public/apidocs/sendgrid.env

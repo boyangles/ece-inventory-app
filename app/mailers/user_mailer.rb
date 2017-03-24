@@ -1,5 +1,5 @@
 class UserMailer < ApplicationMailer
-  default from: 'jx35@duke.edu'
+  default from: 'do-not-reply@3AndAHalfAsians.com'
 
   def welcome_email(user)
     @user = user
@@ -7,23 +7,24 @@ class UserMailer < ApplicationMailer
     mail(to: @user.email, subject: 'Welcome to My Awesome Site')
   end
 
-  def request_initiated_email(user, request)
-    @user = user
+  def request_initiated_email(requester, request, recipient)
+    @user = requester
     @request = request
+    @recipient = recipient
     @url  = 'https://spicysoftware.colab.duke.edu'
     @heading = Setting.email_heading
     @body = Setting.email_body
-    mail(to: @user.email, subject: @heading)
+    mail(to: @recipient.email, subject: @heading)
   end
 
   def request_initiated_email_all_subscribers(user, request)
     @subscribers = Subscriber.all
     @url  = 'https://spicysoftware.colab.duke.edu'
-    UserMailer.request_initiated_email(user, request).deliver_now
+    UserMailer.request_initiated_email(user, request,user).deliver_now
     @subscribers.each do |recipient|
       puts recipient
-      @tempUser = recipient.user
-      UserMailer.request_initiated_email(@tempUser, request).deliver_now
+      @tempRec = recipient.user
+      UserMailer.request_initiated_email(user, request,@tempRec).deliver_now
       # request_replacement(recipient, shift).deliver
     end
   end
