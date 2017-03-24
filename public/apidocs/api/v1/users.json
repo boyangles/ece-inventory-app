@@ -1,0 +1,447 @@
+{
+  "apiVersion": "1.0",
+  "swaggerVersion": "1.2",
+  "basePath": "",
+  "resourcePath": "users",
+  "apis": [
+    {
+      "path": "/api/users/{id}/update_password",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "Authorization",
+              "type": "string",
+              "description": "Authentication token",
+              "required": true
+            },
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "User ID",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "user[password]",
+              "type": "string",
+              "description": "Password",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "user[password_confirmation]",
+              "type": "string",
+              "description": "Password Confirmation",
+              "required": true
+            }
+          ],
+          "summary": "Updates an existing user password",
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "Ok"
+            },
+            {
+              "code": 401,
+              "responseModel": null,
+              "message": "Unauthorized"
+            },
+            {
+              "code": 404,
+              "responseModel": null,
+              "message": "Not Found"
+            },
+            {
+              "code": 422,
+              "responseModel": null,
+              "message": "Unprocessable Entity"
+            }
+          ],
+          "nickname": "Api::V1::Users#update_password",
+          "method": "put"
+        }
+      ]
+    },
+    {
+      "path": "/api/users/{id}/update_status",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "Authorization",
+              "type": "string",
+              "description": "Authentication token",
+              "required": true
+            },
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "User ID",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "user[status]",
+              "type": "string",
+              "description": "Approved or Disabled; must be: approved/waiting",
+              "required": true,
+              "allowableValues": {
+                "valueType": "LIST",
+                "values": [
+                  "waiting",
+                  "approved"
+                ]
+              }
+            }
+          ],
+          "summary": "Updates the status of an existing user",
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "Ok"
+            },
+            {
+              "code": 401,
+              "responseModel": null,
+              "message": "Unauthorized"
+            },
+            {
+              "code": 404,
+              "responseModel": null,
+              "message": "Not Found"
+            },
+            {
+              "code": 422,
+              "responseModel": null,
+              "message": "Unprocessable Entity"
+            }
+          ],
+          "nickname": "Api::V1::Users#update_status",
+          "method": "put"
+        }
+      ]
+    },
+    {
+      "path": "/api/users/{id}/update_privilege",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "Authorization",
+              "type": "string",
+              "description": "Authentication token",
+              "required": true
+            },
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "User ID",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "user[privilege]",
+              "type": "string",
+              "description": "Privilege; must be: student/manager/admin",
+              "required": true,
+              "allowableValues": {
+                "valueType": "LIST",
+                "values": [
+                  "student",
+                  "manager",
+                  "admin"
+                ]
+              }
+            }
+          ],
+          "summary": "Updates the privilege of an existing user",
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "Ok"
+            },
+            {
+              "code": 401,
+              "responseModel": null,
+              "message": "Unauthorized"
+            },
+            {
+              "code": 404,
+              "responseModel": null,
+              "message": "Not Found"
+            },
+            {
+              "code": 422,
+              "responseModel": null,
+              "message": "Unprocessable Entity"
+            }
+          ],
+          "nickname": "Api::V1::Users#update_privilege",
+          "method": "put"
+        }
+      ]
+    },
+    {
+      "path": "/api/users",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "Authorization",
+              "type": "string",
+              "description": "Authentication token",
+              "required": true
+            },
+            {
+              "paramType": "query",
+              "name": "email",
+              "type": "string",
+              "description": "Email Address",
+              "required": false
+            },
+            {
+              "paramType": "query",
+              "name": "status",
+              "type": "string",
+              "description": "Approved or Disabled; must be: approved/waiting",
+              "required": false,
+              "allowableValues": {
+                "valueType": "LIST",
+                "values": [
+                  "waiting",
+                  "approved"
+                ]
+              }
+            },
+            {
+              "paramType": "query",
+              "name": "privilege",
+              "type": "string",
+              "description": "User Permission; must be: student/manager/admin",
+              "required": false,
+              "allowableValues": {
+                "valueType": "LIST",
+                "values": [
+                  "student",
+                  "manager",
+                  "admin"
+                ]
+              }
+            }
+          ],
+          "summary": "Returns all Users",
+          "notes": "Search users",
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "Ok"
+            },
+            {
+              "code": 401,
+              "responseModel": null,
+              "message": "Unauthorized"
+            },
+            {
+              "code": 422,
+              "responseModel": null,
+              "message": "Unprocessable Entity"
+            }
+          ],
+          "nickname": "Api::V1::Users#index",
+          "method": "get"
+        }
+      ]
+    },
+    {
+      "path": "/api/users",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "Authorization",
+              "type": "string",
+              "description": "Authentication token",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "user[username]",
+              "type": "string",
+              "description": "Username",
+              "required": false
+            },
+            {
+              "paramType": "form",
+              "name": "user[email]",
+              "type": "string",
+              "description": "Email",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "user[password]",
+              "type": "string",
+              "description": "Password",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "user[password_confirmation]",
+              "type": "string",
+              "description": "Password Confirmation",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "user[privilege]",
+              "type": "string",
+              "description": "Privilege; must be: student/manager/admin",
+              "required": true,
+              "allowableValues": {
+                "valueType": "LIST",
+                "values": [
+                  "student",
+                  "manager",
+                  "admin"
+                ]
+              }
+            },
+            {
+              "paramType": "form",
+              "name": "user[status]",
+              "type": "string",
+              "description": "Status; must be: approved/waiting",
+              "required": false,
+              "allowableValues": {
+                "valueType": "LIST",
+                "values": [
+
+                ]
+              }
+            }
+          ],
+          "summary": "Creates a local User",
+          "responseMessages": [
+            {
+              "code": 201,
+              "responseModel": null,
+              "message": "Created"
+            },
+            {
+              "code": 401,
+              "responseModel": null,
+              "message": "Unauthorized"
+            },
+            {
+              "code": 422,
+              "responseModel": null,
+              "message": "Unprocessable Entity"
+            }
+          ],
+          "nickname": "Api::V1::Users#create",
+          "method": "post"
+        }
+      ]
+    },
+    {
+      "path": "/api/users/{id}",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "Authorization",
+              "type": "string",
+              "description": "Authentication token",
+              "required": true
+            },
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "User ID",
+              "required": true
+            }
+          ],
+          "summary": "Fetches a single user",
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": "user",
+              "message": "Success"
+            },
+            {
+              "code": 401,
+              "responseModel": null,
+              "message": "Unauthorized"
+            },
+            {
+              "code": 404,
+              "responseModel": null,
+              "message": "Not Found"
+            }
+          ],
+          "nickname": "Api::V1::Users#show",
+          "method": "get"
+        }
+      ]
+    },
+    {
+      "path": "/api/users/{id}",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "Authorization",
+              "type": "string",
+              "description": "Authentication token",
+              "required": true
+            },
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "id",
+              "required": true
+            }
+          ],
+          "summary": "Deletes a user",
+          "responseMessages": [
+            {
+              "code": 204,
+              "responseModel": null,
+              "message": "No Content"
+            },
+            {
+              "code": 401,
+              "responseModel": null,
+              "message": "Unauthorized"
+            },
+            {
+              "code": 404,
+              "responseModel": null,
+              "message": "Not Found"
+            }
+          ],
+          "nickname": "Api::V1::Users#destroy",
+          "method": "delete"
+        }
+      ]
+    }
+  ],
+  "authorizations": null
+}
