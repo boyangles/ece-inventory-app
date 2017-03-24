@@ -4,7 +4,7 @@ class UserMailer < ApplicationMailer
 
   def welcome_email(user)
     @user = user
-    # @url  = 'https://spicysoftware.colab.duke.edu'
+    @url  = 'https://spicysoftware.colab.duke.edu'
     mail(to: @user.email, subject: 'Welcome to My Awesome Site')
   end
 
@@ -12,7 +12,7 @@ class UserMailer < ApplicationMailer
     @user = requester
     @request = request
     @recipient = recipient
-    # @url  = 'https://spicysoftware.colab.duke.edu'
+    @url  = 'https://spicysoftware.colab.duke.edu'
     @heading = Setting.email_heading
     @body = Setting.email_body
     mail(to: @recipient.email, subject: @heading)
@@ -42,7 +42,7 @@ class UserMailer < ApplicationMailer
     @user = requester
     @request = request
     @recipient = recipient
-    # @url  = 'https://spicysoftware.colab.duke.edu'
+    @url  = 'https://spicysoftware.colab.duke.edu'
     @heading = Setting.email_heading
     @body = Setting.email_body
     mail(to: @recipient.email, subject: @heading)
@@ -63,7 +63,7 @@ class UserMailer < ApplicationMailer
   def loan_email(user, request)
     @user = user
     @request = request
-    # @url  = 'https://spicysoftware.colab.duke.edu'
+    @url  = 'https://spicysoftware.colab.duke.edu'
     @heading = Setting.email_heading
     @body = Setting.email_body
     mail(to: @user.email, subject: @heading)
