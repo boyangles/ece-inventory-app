@@ -42,7 +42,7 @@
       <li class="active"><a href="#home" data-toggle="tab">Item Details</a></li>
       <li><a href="#requests" data-toggle="tab"><%= (is_manager_or_admin?) ? "All Outstanding Requests" : "My Outstanding Requests" %></a></li>
       <li><a href="#loans" data-toggle="tab">Loans</a></li>
-			<li><a href="#logs" data-toggle="tab">Logs TBD</a></li>
+			<% if is_manager_or_admin? %><li><a href="#logs" data-toggle="tab">Logs</a></li><% end %>
     </ul>
 
     <div id="myTabContent" class="tab-content">
@@ -143,10 +143,15 @@
 
       </div>
 
-      <div class="tab-pane fade" id="logs">
-        <br>
-
-      </div>
+			<% if is_manager_or_admin? %>
+	      <div class="tab-pane fade" id="logs">
+  	      <br>
+					<% itemLogs = Log.where(id: ItemLog.select(:log_id).where(item_id: @item.id))%>
+	  	    <% itemInReqLogs = Log.where(id: RequestLog.select(:log_id).where(request_id: RequestItem.select(:request_id).where(item_id: @item.id))) %>
+ 					<% logss = Log.where(id: itemLogs | itemInReqLogs) %>
+					<%= render logss %>
+      	</div>
+			<% end %>
 
 
     </div>
