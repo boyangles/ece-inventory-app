@@ -8,10 +8,14 @@ class ItemsController < ApplicationController
   def index
     @tags = Tag.all
 
-    @required_tag_filters = (params[:required_tag_names]) ?
-        params[:required_tag_names] : []
-    @excluded_tag_filters = (params[:excluded_tag_names]) ?
-        params[:excluded_tag_names] : []
+    @required_tag_filters = params["/items"] ? ( params["/items"][:required_tag_names] ?
+        params["/items"][:required_tag_names] : [] ) : []
+    @excluded_tag_filters = params["/items"] ? ( params["/items"][:excluded_tag_names] ?
+        params["/items"][:excluded_tag_names] : [] ) : []
+
+    # Plug in Chosen populates array with first element '' always. Shift left to remove it.
+    @required_tag_filters.shift
+    @excluded_tag_filters.shift
 
     items_req = Item.tagged_with_all(@required_tag_filters).select("id")
     items_exc = Item.tagged_with_none(@excluded_tag_filters).select("id")
@@ -138,7 +142,7 @@ class ItemsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
-    params.fetch(:item, {}).permit( :unique_name, :quantity, :model_number, :description, :search, :model_search, :status, :last_action, :tag_list=>[])
+    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :search, :model_search, :status, :last_action, :tag_list=>[])
   end
 
 end
