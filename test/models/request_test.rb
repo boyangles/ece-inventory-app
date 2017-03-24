@@ -11,8 +11,8 @@ class RequestTest < ActiveSupport::TestCase
     @request = Request.new(
         reason: 'For test',
         status: 'outstanding',
-        request_type: 'disbursement',
-        user_id: @admin.id)
+        user_id: @admin.id,
+        request_initiator: @admin.id)
   end
 
   test "should be valid" do
@@ -28,8 +28,8 @@ class RequestTest < ActiveSupport::TestCase
     skip "Skipping for direct disbursements" do
       @prev_request = Request.where(:user_id => @admin.id).where(:status => :cart).first
       @request1 = Request.new(reason: 'test1', status: 'cart',
-                              request_type: 'disbursement',
-                              user_id: @prev_request[:user_id])
+                              user_id: @prev_request[:user_id],
+                              request_initiator: @prev_request[:user_id])
       assert_not @request1.valid?
     end
   end

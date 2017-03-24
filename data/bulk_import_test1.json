@@ -1,0 +1,18 @@
+[{
+  "unique_name": "test17", 
+  "quantity": 1, 
+  "tags": ["test_tag0", "ECE110"], 
+  "custom_fields": [
+    {"name": "price", "value": 35}, 
+    {"name": "price", "value": 36}
+  ]
+}, 
+{
+  "unique_name": "test18", 
+  "quantity": 1, 
+  "tags": ["test_tag0", "ECE110"], 
+  "custom_fields": [
+    {"name": "price", "value": 35}, 
+    {"name": "price", "value": 36}
+  ]
+}]

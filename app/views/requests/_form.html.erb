@@ -20,7 +20,8 @@
           <% else %>
               <%= Item.find(ff.object.item_id).unique_name %>
           <% end %>
-          <%= ff.number_field :quantity, :required => true %>
+          <%= ff.number_field :quantity_loan, :required => true %>
+          <%= ff.number_field :quantity_disburse, :required => true %>
           <%= ff.hidden_field :request_id, :value => (request.id) %>
           <%= ff.hidden_field :item_id, :value => (ff.object.item_id) %>
         </p>

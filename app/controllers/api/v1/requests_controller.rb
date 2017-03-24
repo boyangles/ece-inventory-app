@@ -176,11 +176,6 @@ class Api::V1::RequestsController < BaseController
             render_client_error(@request.errors, 422) and return
           end
 
-          @request.request_items.each do |sub_request|
-            item = Item.find(sub_request.item_id)
-            item.update_by_subrequest(sub_request, @request.request_type)
-            item.save!
-          end
           render_request_with_sub_requests(@request, @request.user)
         else
           render_client_error(error_msg, 422) and return
@@ -281,7 +276,8 @@ class Api::V1::RequestsController < BaseController
 
     status = (current_user_by_auth.privilege_student?) ? 'outstanding' : 'approved'
     @req = Request.create({:user_id => user.id, :reason => request_params[:reason],
-                           :status => status, :request_type => 'disbursement'})
+                           :status => status, :request_type => 'disbursement',
+                           :request_initiator => user.id})
 
     render_client_error(@req.errors, 422) and return unless @req
 
@@ -295,11 +291,6 @@ class Api::V1::RequestsController < BaseController
       request_valid, error_msg = @req.are_request_details_valid?
 
       if request_valid
-        @req.request_items.each do |sub_request|
-          item = Item.find(sub_request.item_id)
-          item.update_by_subrequest(sub_request, @req.request_type)
-          item.save!
-        end
         render_request_with_sub_requests(@req, user)
       else
         @req.destroy!
@@ -314,7 +305,8 @@ class Api::V1::RequestsController < BaseController
   private
   def handle_acquisition_creation(req_item_array, user)
     @req = Request.create({:user_id => user.id, :reason => request_params[:reason],
-                           :status => 'approved', :request_type => 'acquisition'})
+                           :status => 'approved', :request_type => 'acquisition',
+                           :request_initiator => user.id})
 
     render_client_error(@req.errors, 422) and return unless @req
 
@@ -326,11 +318,6 @@ class Api::V1::RequestsController < BaseController
 
     request_valid, error_msg = @req.are_request_details_valid?
     if request_valid
-      @req.request_items.each do |sub_request|
-        item = Item.find(sub_request.item_id)
-        item.update_by_subrequest(sub_request, @req.request_type)
-        item.save!
-      end
       render_request_with_sub_requests(@req, user)
     else
       @req.destroy!
@@ -342,7 +329,8 @@ class Api::V1::RequestsController < BaseController
   private
   def handle_destruction_creation(req_item_array, user)
     @req = Request.create({:user_id => user.id, :reason => request_params[:reason],
-                           :status => 'approved', :request_type => 'destruction'})
+                           :status => 'approved', :request_type => 'destruction',
+                           :request_initiator => user.id})
 
     render_client_error(@req.errors, 422) and return unless @req
 
@@ -354,11 +342,6 @@ class Api::V1::RequestsController < BaseController
 
     request_valid, error_msg = @req.are_request_details_valid?
     if request_valid
-      @req.request_items.each do |sub_request|
-        item = Item.find(sub_request.item_id)
-        item.update_by_subrequest(sub_request, @req.request_type)
-        item.save!
-      end
       render_request_with_sub_requests(@req, user)
     else
       @req.destroy!

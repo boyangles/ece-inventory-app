@@ -1,6 +1,5 @@
 class LogsController < ApplicationController
 
-  # TODO: no conscious log creation errr outside acquisition/destruction.
   before_action :check_logged_in_user
 
   def index
@@ -56,18 +55,7 @@ class LogsController < ApplicationController
 
   def create
     @log = Log.new(log_params)
-    # @log.item_id = params[:item][:id]
-    # @item = @log.item
-
-    #if !@item
-    #  reject_to_new("Item does not exist") and return
-    #elsif Log.oversubscribed?(@item, @log)
-    #  reject_to_new("Oversubscribed!") and return
-    #else
     save_form(@log)
-    #  @item.update_by_subrequest(@log, @log.request_type)
-    #  @item.save!
-    #end
   end
 
   private

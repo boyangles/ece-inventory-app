@@ -1,5 +1,5 @@
 class Request < ApplicationRecord
-  include Filterable, Subscribable
+  include Filterable
 
   #relationship with items
   has_many :items,  -> {uniq}, :through => :request_items
@@ -15,12 +15,6 @@ class Request < ApplicationRecord
   # Data Options:
   STATUS_OPTIONS = %w(outstanding approved denied cart cancelled)
 
-  enum request_type: {
-      disbursement: 0,
-      acquisition: 1,
-      destruction: 2
-  }
-
   enum status: {
     outstanding: 0,
     approved: 1,
@@ -34,14 +28,15 @@ class Request < ApplicationRecord
 	attr_accessor :curr_user
 
   after_update {
+    update_respective_items
     create_cart_on_status_change_from_cart(self.user_id)
 		log_on_status_change()
   }
 
   # Validations
-  validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
   validates :status, :inclusion => { :in => STATUS_OPTIONS }
   validates :user_id, presence: true
+  validates :request_initiator, presence: true
 
   def has_status_change_to_approved?(request_params)
     self.outstanding? && request_params[:status] == 'approved' || self.cart? && request_params[:status] == 'approved'
@@ -57,7 +52,7 @@ class Request < ApplicationRecord
 
       if @item.deactive?
         return false, @item.unique_name  + " doesn't exist anymore! Cannot be disbursed."
-      elsif Request.component_oversubscribed?(@item, self, sub_request)
+      elsif sub_request.oversubscribed?
         return false, "Item named #{@item.unique_name} is oversubscribed. Requested #{sub_request.quantity}, but only has #{@item.quantity}."
 	    end
     end
@@ -89,6 +84,21 @@ class Request < ApplicationRecord
     end
   end
 
+  ## Callbacks
+
+  def update_respective_items
+    if self.status_was != 'approved' && self.status == 'approved'
+			puts("hiho")
+      self.request_items.each do |req_item|
+        req_item.fulfill_subrequest
+      end
+    elsif self.status_was == 'approved' && self.status != 'approved'
+      self.request_items.each do |req_item|
+        req_item.rollback_fulfill_subrequest
+      end
+    end
+  end
+
   def create_cart_on_status_change_from_cart(id)
     old_status = self.status_was
     new_status = self.status
@@ -96,10 +106,10 @@ class Request < ApplicationRecord
 		cond1 = self.user_id_was != self.user_id
 
     if cond1
-      @cart = Request.new(:status => :cart, :user_id => self.user_id_was, :reason => 'TBD')
+      @cart = Request.new(:status => :cart, :user_id => self.user_id_was, :request_initiator => self.user_id_as, :reason => 'TBD')
       @cart.save!
 		elsif cond2
-			@cart = Request.new(:status => :cart, :user_id => self.user_id, :reason=> 'TBD')
+			@cart = Request.new(:status => :cart, :user_id => self.user_id, :request_initiator => self.user_id, :reason=> 'TBD')
 			@cart.save!
     end
   end

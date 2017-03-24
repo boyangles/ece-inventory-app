@@ -1,29 +1,29 @@
-<li id="request-<%= request.id %>">
-  <%= link_to gravatar_for(request.user, size:50), request.user %>
-  <span class="user">
-		<strong>Requested by: </strong><%= link_to request.user.username, request.user %>
-	</span>
-	<span class="reason">
-		</br><strong>Reason: </strong><%= request.reason %>
-	</span>
+<br>
+<div class="panel panel-info">
+  <div id="request-<%= request.id %>">
 
-  <div class="content">
-   <div class="pull-right">
-			<% if request.outstanding? %>
-				<p class="label label-warning"><%= request.status %>
-			<% elsif request.approved? %>			
-				<p class="label label-success"><%= request.status %>
-			<% elsif request.denied? %>
-				<p class="label label-danger"><%= request.status %>
-			<% elsif request.cancelled? %>
-				<p class="label label-default"><%= request.status %>
-			<% end %>
-		</div>
+    <div class="panel-body">
+      <strong>Requested by </strong><%= link_to request.user.username, user_path(request.user_id) %>
+      </br><strong>Reason </strong><%= request.reason %>
+
+      <br><br>
+      <div class="pull-right">
+	<% if request.outstanding? %>
+	  <p class="label label-warning"><%= request.status %>
+	<% elsif request.approved? %>			
+	  <p class="label label-success"><%= request.status %>
+	<% elsif request.denied? %>
+	  <p class="label label-danger"><%= request.status %>
+	<% elsif request.cancelled? %>
+	  <p class="label label-default"><%= request.status %>
+	<% end %>
+      </div>
+      
+      <%= link_to 'Show Request Details', request%>
+      </br>Posted <%= time_ago_in_words(request.created_at) %> ago.</p>
+
+    </div>
   </div>
+</div>
 
-	<br>
-  <span class="timestamp">
-  	<span><%= link_to 'Show Request Details', request%></span>
-    </br>Posted <%= time_ago_in_words(request.created_at) %> ago.</p>
-  </span>
-</li>
+
