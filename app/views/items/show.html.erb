@@ -1,134 +1,119 @@
 <p id="notice"><%= notice %></p>
+<% provide(:title, @item.unique_name) %>
+
+<% if !@item.active? %>
+  <div class="panel panel-danger">
+    <div class="panel-heading">
+      <h3 class="panel-title">Item has been deleted.</h3>
+    </div>
+  </div>
+<% end %>
 
 <% if @item.active? || is_manager_or_admin? %>
-<% provide(:title, @item.unique_name) %>
-<div class="row">
-    <section class="item_info">
-      <h2>
-        <%= @item.unique_name %>
-      </h2>
-    </section>
 
-    <ul class="nav nav-tabs">
-      <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
-      <li><a href="#profile" data-toggle="tab">More details</a></li>
-      <li><a href="#requests" data-toggle="tab">Pending Requests</a></li>
-    </ul>
-    <div id="myTabContent" class="tab-content">
-      <div class="tab-pane fade active in" id="home">
+<div class="center_jumbotron">
+  <h2 class="page-header"><%= @item.unique_name %>
+    <% if is_manager_or_admin? && @item.active? %>
+      <%= link_to "Edit Item", edit_item_url(@item.id), :class => "btn btn-primary pull-right" %>
+    <% end %>
+  </h2>
+</div>
+
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#home" data-toggle="tab">Item Details</a></li>
+  <li><a href="#requests" data-toggle="tab"><%= (is_manager_or_admin?) ? "All Outstanding Requests" : "My Outstanding Requests" %></a></li>
+  <li><a href="#loans" data-toggle="tab">Loans TBD</a></li>
+</ul>
+
+<div id="myTabContent" class="tab-content">
+  <div class="tab-pane fade active in" id="home">
+    <br>
+    <div class="panel panel-primary">
+      <div class="panel-heading">Main Details</div>
+      <div class="panel-body">
+      <!-- All Item Information: Quantity in Stock, Model Num, Description -->
         <p>
-          <strong>Unique Name:</strong>
-          <%= @item.unique_name %>
-        </p>
-        <p>
-          <strong>Quantity:</strong>
-          <%= @item.quantity %>
-        </p>
-        <p>
-          <strong>Model Number:</strong>
-          <%= @item.model_number %>
-        </p>
-        <p>
-          <strong>Description:</strong>
-          <%= @item.description %>
-        </p>
-        <p>
-          <strong>Tags:</strong>
-          <% @item.tags.each do |tag| %>
-              <%= tag.name + ', ' %>
-          <% end %>
-        </p>
-	<p>	
-	    <% if @item.deactive? %>
-		<strong>Status:</strong>
-		<%= @item.status %>
-	    <% end %>
-	</p>
-<% if @item.active? %>
-	<%= link_to "Add to Cart", new_request_item_url(:item_id => @item.id), :class => "btn btn-primary" %>
-<% end %>
-<% if is_manager_or_admin? and @item.active? %>
-  <%= link_to 'Edit Item Details', 
-    edit_item_path(@item.id), 
-    :class => "btn btn-primary" %>
-	<% if !is_admin? %>
-		<%= link_to 'Log Acquisition or Destruction', 
-		edit_quantity_item_path(@item.id),
-		:class => "btn btn-primary" %>
-	<% else %>
-		<%= link_to 'Log Acquisition or Destruction/Correct Quantity',
-		edit_quantity_item_path(@item.id),
-		:class => "btn btn-primary" %>
+          <strong>In Stock</strong>
+      	    <%= @item.quantity %> out of <%= @item.quantity_on_loan + @item.quantity %>
+    	</p>
+    	<p>
+      	  <strong>Model Number</strong>
+      	  <%= @item.model_number %>
+    	</p>
+    	<p>
+     	  <strong>Description</strong>
+    	  <%= @item.description %>
+    	</p>
+    	<p>
+    	  <strong>Tags TBD</strong>
+    	  <% @item.tags.each do |tag| %>
+	    <%= tag.name + ', ' %>
+    	  <% end %>
+    	</p>
+      </div>
+    </div>
+
+    <div class="col-lg-0.5"></div>
+
+    <div class="panel panel-info">
+      <div class="panel-heading">Additional Information</div>
+      <div class="panel-body">
+        <!-- Custom Fields -->
+	<% @item_custom_fields.each do |icf| %>
+	  <% field_content = ItemCustomField.field_content(@item.id, icf.custom_field_id) %>
+	  <% if is_manager_or_admin? || !icf.custom_field.private_indicator %>
+	    <p>
+	      <strong><%= icf.custom_field.field_name %></strong> 	      
+	      <% if !is_manager_or_admin? %>
+		<%= field_content %>
+	      <% else %>
+		<a href="#" data-xeditable="true"
+		   data-pk="<%= icf.id %>"
+		   data-model="item_custom_field"
+		   data-name="<%= CustomField.find_icf_field_column(icf.custom_field_id).to_s %>"
+		   data-url="<%= item_custom_field_url(icf) %>"
+		   data-title="enter modification">
+		  <%= field_content %>
+		</a>
+	      <% end %>
+	    </p>
+	  <% else %>
+	  <% end %>
 	<% end %>
-<% if is_admin? and @item.active? %>
- <%= render 'deactivateitemform', item: @item %>
-<% end %> 
-<% end %>
-
-<br>
-<br>
-<br>
-<%= link_to 'Back', :back%>
-
-
       </div>
-      <div class="tab-pane fade" id="profile">
-          <table class="table table-hover">
-            <tbody>
-            <% @item_custom_fields.each do |icf| %>
-                <% field_content = ItemCustomField.field_content(@item.id, icf.custom_field_id) %>
-               <% if is_manager_or_admin? ||
-                    !icf.custom_field.private_indicator %>
-                    <tr>
-                      <td><b><%= icf.custom_field.field_name %></b></td>
-                      <td>
-                        <% if !is_manager_or_admin? %>
-                            <%= field_content %>
-                        <% else %>
-                            <a href="#" data-xeditable="true"
-                               data-pk="<%= icf.id %>"
-                               data-model="item_custom_field"
-                               data-name="<%= CustomField.find_icf_field_column(icf.custom_field_id).to_s %>"
-
-                               data-url="<%= item_custom_field_url(icf) %>"
-                               data-title="Enter modification">
-                              <%= field_content %>
-                            </a>
-                        <% end %>
-                      </td>
-                    </tr>
-                <% end %>
-            <% end %>
-            </tbody>
-          </table>
-      </div>
-      <div class="tab-pane fade" id="requests">
-        <div class="col-md-8">
-          <% if @item.requests.any? %>
-              <h3>
-                <%= (is_manager_or_admin?) ?
-                        "Outstanding Requests" :
-                        "My Pending Requests" %>
-              </h3>
-							<p><% if @item.deactive? %>
-									(Requests with deactivated items will not be approved)
-								<% end %>
-							</p>
-              <ol class="requests">
-                <%= render @requests %>
-              </ol>
-
-              <%= will_paginate @requests %>
-          <% end %>
-        </div>
-    </div>
     </div>
 
+		<div class="pull-right">
+					<% ri = RequestItem.where(item_id: @item.id).where(request_id: grab_cart(current_user).id).take %>
+					<% if ri.nil? %>
+  					<%= render 'indexform', request_item: RequestItem.new(item_id: @item.id, 
+							request_id: grab_cart(current_user).id) %>
+  				<% else %>
+						<%= render 'indexform', request_item: ri %>
+					<% end %>
+		</div><br><br>
+  </div>
+
+
+  <div class="tab-pane fade" id="requests">
+    <br>
+    <% if @item.deactive? %>
+      <blockquote>
+	-- These requests cannot be approved as is -- 
+      </blockquote>
+    <% end %>
+
+    <%= render @requests %>
+    <%= will_paginate @requests %>
+
+  </div>
+
+  <div class="tab-pane fade" id="loans">
+    <br>
+
+  </div>
 
 </div>
 
-
-<% else %>
-<h1>This item has been deleted! #SorryNotSorry</h1>
 
 <% end %>

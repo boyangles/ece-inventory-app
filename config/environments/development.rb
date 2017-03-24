@@ -25,20 +25,25 @@ Rails.application.configure do
     config.cache_store = :null_store
   end
 
-  # Don't care if the mailer can't send.  -------EMAIL SHIT
-  config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.perform_deliveries = true
-  config.action_mailer.default_url_options = { :host => 'localhost:3000' }
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-      :address              => 'smtp.gmail.com',
-      :port                 => 587,
-      :domain               => 'gmail.com',
-      :user_name            => "eceinventoryduke@gmail.com",
-      :password             => "Simple4Telling",
-      :authentication       => 'login',
-      :enable_starttls_auto => true
+  config.action_mailer.delivery_method = :sendgrid_actionmailer
+  config.action_mailer.sendgrid_actionmailer_settings = {
+      api_key: ENV['SENDGRID_API_KEY']
   }
+
+  # # Don't care if the mailer can't send.  -------EMAIL SHIT
+  # config.action_mailer.raise_delivery_errors = true
+  # config.action_mailer.perform_deliveries = true
+  # config.action_mailer.default_url_options = { :host => 'localhost:3000' }
+  # config.action_mailer.delivery_method = :smtp
+  # config.action_mailer.smtp_settings = {
+  #     :address              => 'smtp.gmail.com',
+  #     :port                 => 587,
+  #     :domain               => 'gmail.com',
+  #     :user_name            => "eceinventoryduke@gmail.com",
+  #     :password             => "Simple4Telling",
+  #     :authentication       => 'login',
+  #     :enable_starttls_auto => true
+  # }
 
   config.action_mailer.perform_caching = false
 

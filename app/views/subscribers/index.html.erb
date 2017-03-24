@@ -1,0 +1,20 @@
+<% provide(:title, 'All Tags') %>
+
+<div class="center jumbotron">
+  <h1>Subscribers</h1>
+</div>
+
+<% @subscriber = Subscriber.new %>
+<% if @subscriber %>
+    <%= render 'form', { url: nil } %>
+<% end %>
+
+<%= will_paginate %>
+
+<ul class="subscribers">
+  <%= render @subscribers %>
+</ul>
+
+<%= will_paginate %>
+
+<%= link_to "View All", subscribers_path, class: "btn btn-lg btn-primary" %>

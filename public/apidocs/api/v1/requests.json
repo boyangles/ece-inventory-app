@@ -1,0 +1,316 @@
+{
+  "apiVersion": "1.0",
+  "swaggerVersion": "1.2",
+  "basePath": "",
+  "resourcePath": "requests",
+  "apis": [
+    {
+      "path": "/api/requests",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "Authorization",
+              "type": "string",
+              "description": "Authentication token",
+              "required": true
+            },
+            {
+              "paramType": "query",
+              "name": "page",
+              "type": "integer",
+              "description": "Page number",
+              "required": false
+            }
+          ],
+          "summary": "Returns all requests",
+          "notes": "These are some notes for everybody!",
+          "responseMessages": [
+            {
+              "code": 401,
+              "responseModel": null,
+              "message": "Unauthorized"
+            },
+            {
+              "code": 406,
+              "responseModel": null,
+              "message": "The request you made is not acceptable"
+            },
+            {
+              "code": 500,
+              "responseModel": null,
+              "message": "Requested Range Not Satisfiable"
+            }
+          ],
+          "nickname": "Api::V1::Requests#index",
+          "method": "get"
+        }
+      ]
+    },
+    {
+      "path": "/api/requests",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "Authorization",
+              "type": "string",
+              "description": "Authentication token",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "user_id",
+              "type": "number",
+              "description": "User ID",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "reason",
+              "type": "string",
+              "description": "Reason",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "request_type",
+              "type": "string",
+              "description": "Request Type",
+              "required": true,
+              "allowableValues": {
+                "valueType": "LIST",
+                "values": [
+                  "disbursement",
+                  "acquisition",
+                  "destruction"
+                ]
+              }
+            },
+            {
+              "paramType": "form",
+              "name": "status",
+              "type": "string",
+              "description": "Status",
+              "required": true,
+              "allowableValues": {
+                "valueType": "LIST",
+                "values": [
+                  "cart",
+                  "outstanding",
+                  "approved",
+                  "denied"
+                ]
+              }
+            },
+            {
+              "paramType": "form",
+              "name": "response",
+              "type": "string",
+              "description": "Admin Response",
+              "required": false
+            }
+          ],
+          "summary": "Creates a new request",
+          "notes": "Request types: disbursement, acquisition, destruction. Status: outstanding, approved, denied",
+          "responseMessages": [
+            {
+              "code": 401,
+              "responseModel": null,
+              "message": "Unauthorized"
+            },
+            {
+              "code": 406,
+              "responseModel": null,
+              "message": "Not Acceptable"
+            }
+          ],
+          "nickname": "Api::V1::Requests#create",
+          "method": "post"
+        }
+      ]
+    },
+    {
+      "path": "/api/requests/{id}",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "Authorization",
+              "type": "string",
+              "description": "Authentication token",
+              "required": true
+            },
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "id",
+              "required": true
+            }
+          ],
+          "summary": "Fetches a single request",
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": "request",
+              "message": "Success"
+            },
+            {
+              "code": 401,
+              "responseModel": null,
+              "message": "Unauthorized"
+            },
+            {
+              "code": 404,
+              "responseModel": null,
+              "message": "Not Found"
+            }
+          ],
+          "nickname": "Api::V1::Requests#show",
+          "method": "get"
+        }
+      ]
+    },
+    {
+      "path": "/api/requests/{id}",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "Authorization",
+              "type": "string",
+              "description": "Authentication token",
+              "required": true
+            },
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "id",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "user_id",
+              "type": "number",
+              "description": "User ID",
+              "required": false
+            },
+            {
+              "paramType": "form",
+              "name": "item_id",
+              "type": "number",
+              "description": "Item ID",
+              "required": false
+            },
+            {
+              "paramType": "form",
+              "name": "reason",
+              "type": "string",
+              "description": "Reason",
+              "required": false
+            },
+            {
+              "paramType": "form",
+              "name": "request_type",
+              "type": "string",
+              "description": "Request Type",
+              "required": false,
+              "allowableValues": {
+                "valueType": "LIST",
+                "values": [
+                  "disbursement",
+                  "acquisition",
+                  "destruction"
+                ]
+              }
+            },
+            {
+              "paramType": "form",
+              "name": "status",
+              "type": "string",
+              "description": "Status",
+              "required": false,
+              "allowableValues": {
+                "valueType": "LIST",
+                "values": [
+                  "cart",
+                  "outstanding",
+                  "approved",
+                  "denied"
+                ]
+              }
+            },
+            {
+              "paramType": "form",
+              "name": "response",
+              "type": "string",
+              "description": "Admin Response",
+              "required": false
+            }
+          ],
+          "summary": "Updates an existing request",
+          "notes": "Request types: disbursement, acquisition, destruction. Status: cart, outstanding, approved, denied",
+          "responseMessages": [
+            {
+              "code": 401,
+              "responseModel": null,
+              "message": "Unauthorized"
+            },
+            {
+              "code": 406,
+              "responseModel": null,
+              "message": "Not Acceptable"
+            }
+          ],
+          "nickname": "Api::V1::Requests#update",
+          "method": "patch"
+        }
+      ]
+    },
+    {
+      "path": "/api/requests/{id}",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "Authorization",
+              "type": "string",
+              "description": "Authentication token",
+              "required": true
+            },
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "id",
+              "required": true
+            }
+          ],
+          "summary": "Deletes a request",
+          "responseMessages": [
+            {
+              "code": 401,
+              "responseModel": null,
+              "message": "Unauthorized"
+            },
+            {
+              "code": 406,
+              "responseModel": null,
+              "message": "Not Acceptable"
+            }
+          ],
+          "nickname": "Api::V1::Requests#destroy",
+          "method": "delete"
+        }
+      ]
+    }
+  ],
+  "authorizations": null
+}

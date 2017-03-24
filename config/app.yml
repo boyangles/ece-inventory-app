@@ -1,0 +1,13 @@
+# config/app.yml for rails-settings-cached
+defaults: &defaults
+  email_heading: "You're an awesome person for using our site!!!!"
+  email_body: "Here is the prepended text that will edited"
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults

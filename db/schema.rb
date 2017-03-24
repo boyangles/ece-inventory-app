@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170226181722) do
+ActiveRecord::Schema.define(version: 20170321220847) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,8 +64,9 @@ ActiveRecord::Schema.define(version: 20170226181722) do
     t.integer "quantity"
     t.string  "description"
     t.string  "model_number"
-    t.integer "status",       default: 0
-    t.integer "last_action"
+    t.integer "status",           default: 0
+    t.integer "last_action",      default: 3
+    t.integer "quantity_on_loan", default: 0
   end
 
   create_table "logs", force: :cascade do |t|
@@ -79,9 +80,13 @@ ActiveRecord::Schema.define(version: 20170226181722) do
   create_table "request_items", force: :cascade do |t|
     t.integer  "request_id"
     t.integer  "item_id"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-    t.integer  "quantity",   default: 0
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.integer  "quantity_loan",     default: 0
+    t.integer  "quantity_disburse", default: 0
+    t.integer  "quantity_return",   default: 0
+    t.integer  "request_type",      default: 0
+    t.datetime "due_date"
     t.index ["item_id"], name: "index_request_items_on_item_id", using: :btree
     t.index ["request_id"], name: "index_request_items_on_request_id", using: :btree
   end
@@ -96,16 +101,33 @@ ActiveRecord::Schema.define(version: 20170226181722) do
 
   create_table "requests", force: :cascade do |t|
     t.string   "reason"
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.integer  "status",       default: 0
-    t.integer  "request_type", default: 0
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.integer  "status",            default: 0
     t.string   "response"
     t.integer  "user_id"
+    t.integer  "request_initiator",             null: false
+    t.index ["request_initiator"], name: "index_requests_on_request_initiator", using: :btree
     t.index ["user_id"], name: "index_requests_on_user_id", using: :btree
   end
 
+  create_table "settings", force: :cascade do |t|
+    t.string   "var",                   null: false
+    t.text     "value"
+    t.integer  "thing_id"
+    t.string   "thing_type", limit: 30
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["thing_type", "thing_id", "var"], name: "index_settings_on_thing_type_and_thing_id_and_var", unique: true, using: :btree
+  end
+
   create_table "stack_exchanges", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "subscribers", force: :cascade do |t|
+    t.integer  "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -148,5 +170,7 @@ ActiveRecord::Schema.define(version: 20170226181722) do
   add_foreign_key "item_logs", "logs"
   add_foreign_key "request_logs", "logs"
   add_foreign_key "requests", "users"
+  add_foreign_key "requests", "users", column: "request_initiator"
+  add_foreign_key "subscribers", "users"
   add_foreign_key "user_logs", "logs"
 end

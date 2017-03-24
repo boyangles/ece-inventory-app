@@ -6,28 +6,48 @@ Rails.application.routes.draw do
   root 'welcome#index'
 
   # User auth token
-  get "users/:id/auth_token", to: 'users#auth_token', :as => 'auth_token'
+  #get "users/:id/auth_token", to: 'users#auth_token', :as => 'auth_token'
+
+  # Loans
+  get 'loans/index'
+  root 'loans#index'
 
   # All resources
-  resources :users
+  resources :users do
+    member do
+      get :auth_token
+    end
+  end
+
   resources :requests
-    put 'requests/:id/clear' => 'requests#clear', :as => 'clear_request'    # Clears items from requests
-    patch 'requests/:id/clear', to: 'requests#clear'
-	#	get 'requests/:id/placeorder' => 'requests#place', :as => 'place_order'
+  put 'requests/:id/clear' => 'requests#clear', :as => 'clear_request'    # Clears items from requests
+  patch 'requests/:id/clear', to: 'requests#clear'
+  #	get 'requests/:id/placeorder' => 'requests#place', :as => 'place_order'
+
+  get  'items/import' => 'items#import_upload', :as => 'import_upload'
+  post 'items/import' => 'items#bulk_import', :as => 'bulk_import'
   resources :items do
-		member do
-			get :edit_quantity
-			put :update_quantity
-			patch :update_quantity	# in order to create separate form to specify quantity change - javascript?
-		end
-	end
+    member do
+      get :edit_quantity
+      put :update_quantity
+      patch :update_quantity	# in order to create separate form to specify quantity change - javascript?
+    end
+  end
   resources :tags
-  
+
   resources :item_custom_fields, :only => [:index, :show, :create, :update, :destroy]
   resources :custom_fields, :only => [:create, :destroy]
   resources :sessions
   resources :logs
-  resources :request_items, :except => [:index, :show]
+  resources :request_items, :except => [:index, :show] do
+		member do
+			put :return, as: :return
+			put :disburse_loaned, as: :disburse_loaned
+		end
+	end
+
+  resources :subscribers
+  resources :settings
 
   #Login and Sessions routes
   get   '/login',   to: 'sessions#new'      #Describes the login screen
@@ -85,6 +105,8 @@ Rails.application.routes.draw do
 
           put :update_field_entry
           patch :update_field_entry
+
+          post :bulk_import
         end
       end
 

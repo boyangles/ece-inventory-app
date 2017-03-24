@@ -4,60 +4,60 @@
 request_<%= user.id %>_outstanding_disbursement:
   reason: <%= "Reason number #{user.id} for user #{user.email}" %>
   status: 0
-  request_type: 0
   user_id: <%= user.id %>
+  request_initiator: <%= user.id %>
 
 request_<%= user.id %>_outstanding_acquisition:
   reason: <%= "Reason number #{user.id} for user #{user.email}" %>
   status: 0
-  request_type: 1
   user_id: <%= user.id %>
+  request_initiator: <%= user.id %>
 
 request_<%= user.id %>_outstanding_destruction:
   reason: <%= "Reason number #{user.id} for user #{user.email}" %>
   status: 0
-  request_type: 2
   user_id: <%= user.id %>
+  request_initiator: <%= user.id %>
 
 request_<%= user.id %>_approved_disbursement:
   reason: <%= "Reason number #{user.id} for user #{user.email}" %>
   status: 1
-  request_type: 0
   user_id: <%= user.id %>
+  request_initiator: <%= user.id %>
 
 request_<%= user.id %>_approved_acquisition:
   reason: <%= "Reason number #{user.id} for user #{user.email}" %>
   status: 1
-  request_type: 1
   user_id: <%= user.id %>
+  request_initiator: <%= user.id %>
 
 request_<%= user.id %>_approved_destruction:
   reason: <%= "Reason number #{user.id} for user #{user.email}" %>
   status: 1
-  request_type: 2
   user_id: <%= user.id %>
+  request_initiator: <%= user.id %>
 
 request_<%= user.id %>_denied_disbursement:
   reason: <%= "Reason number #{user.id} for user #{user.email}" %>
   status: 2
-  request_type: 0
   user_id: <%= user.id %>
+  request_initiator: <%= user.id %>
 
 request_<%= user.id %>_denied_acquisition:
   reason: <%= "Reason number #{user.id} for user #{user.email}" %>
   status: 2
-  request_type: 1
   user_id: <%= user.id %>
+  request_initiator: <%= user.id %>
 
 request_<%= user.id %>_denied_destruction:
   reason: <%= "Reason number #{user.id} for user #{user.email}" %>
   status: 2
-  request_type: 2
   user_id: <%= user.id %>
+  request_initiator: <%= user.id %>
 
 request_<%= user.id %>_cart_disbursement:
   reason: <%= "Reason number #{user.id} for user #{user.email}" %>
   status: 3
-  request_type: 0
   user_id: <%= user.id %>
+  request_initiator: <%= user.id %>
 <% end %>

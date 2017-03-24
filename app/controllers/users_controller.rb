@@ -21,6 +21,7 @@ class UsersController < ApplicationController
   # GET /users/1
   def show
     @user = User.find(params[:id])
+    #put here for now to test
     @requests = @user.requests.where.not(status: "cart").paginate(page: params[:page], per_page: 10)
   end
 
@@ -60,6 +61,8 @@ class UsersController < ApplicationController
 
     if @user.save
       flash[:success] = "#{@user.username} created"
+      ## Take care: This is when a user is created!!
+      UserMailer.welcome_email(@user).deliver_now
       redirect_to users_path
     else
       flash.now[:danger] = "Unable to create user! Try again?"
@@ -88,7 +91,7 @@ class UsersController < ApplicationController
 
   # DELETE /users/1
   def destroy
-    User.find(params[:id]).destroy
+    User.find(params[:id]).destroy!
     flash[:success] = "User account deleted!"
     redirect_to users_url
   end

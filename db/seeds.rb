@@ -46,6 +46,13 @@ User.create!(username: "student", email: "nonadminusername@example.com", status:
              privilege: "student", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
 User.create!(username: "manager", email: "manager123@example.com", status: "approved",
              privilege: "manager", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
+User.create!(username: "joshxu95", email: "joshxu95@gmail.com", status: "approved",
+             privilege: "manager", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
+User.create!(username: "jima", email: "eceinventoryduke@gmail.com", status: "approved",
+             privilege: "manager", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
+User.create!(username: "jimb", email: "duke2017champs6@gmail.com", status: "approved",
+             privilege: "manager", password: "password", password_confirmation: "password", auth_token: Devise.friendly_token)
+
 
 yo = User.create(username:"abcd", email: "f@example.com" , status: "approved",
                  privilege: "student", password: "yoyoyo", password_confirmation: "yoyoyo", auth_token: Devise.friendly_token)
@@ -61,6 +68,7 @@ items.each do |item|
   Item.create!(
     unique_name: item,
     quantity: quantity,
+    quantity_on_loan: 0,
     model_number: model_number,
     description: description,
     last_action: "created")
@@ -79,9 +87,9 @@ CustomField.create!(field_name: 'restock_info', private_indicator: true, field_t
 
  req = Request.create!(
      user_id: user.id,
+     request_initiator: user.id,
      reason: reason,
      status: "outstanding",
-     request_type: "disbursement",
  )
 
  ## Create RequestItems for each
@@ -89,7 +97,10 @@ CustomField.create!(field_name: 'restock_info', private_indicator: true, field_t
    item = Item.offset(rand(Item.count)).first
    RequestItem.create!(request_id: req.id,
                        item_id: item.id,
-                       quantity: rand(1...50))
+                       quantity_loan: rand(1...50),
+                       quantity_disburse: rand(1...50),
+                       quantity_return: rand(1...50),
+                       request_type: 'disbursement')
  end
 end
 
