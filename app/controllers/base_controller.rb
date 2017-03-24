@@ -67,4 +67,13 @@ class BaseController < ApplicationController
 
     return my_result, nil
   end
+
+  def valid_json?(json)
+    begin
+      JSON.parse(json)
+      return true
+    rescue JSON::ParserError => e
+      return false
+    end
+  end
 end

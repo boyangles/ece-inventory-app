@@ -22,9 +22,15 @@ class RequestItem < ApplicationRecord
 
   attr_readonly :request_id, :item_id
 
-  validates :quantity_loan, presence: true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}, :allow_nil => true
-  validates :quantity_disburse, presence: true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}, :allow_nil => true
-  validates :quantity_return, presence: true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}, :allow_nil => true
+  before_validation {
+    self.quantity_disburse = (self.quantity_disburse.blank?) ?  0 : self.quantity_disburse
+    self.quantity_return = (self.quantity_return.blank?) ? 0 : self.quantity_return
+    self.quantity_loan = (self.quantity_loan.blank?) ? 0 : self.quantity_loan
+  }
+
+  validates :quantity_loan, presence: true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
+  validates :quantity_disburse, presence: true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
+  validates :quantity_return, presence: true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
   #validate :request_type_quantity_validation
 
@@ -59,16 +65,8 @@ class RequestItem < ApplicationRecord
   # Output: @item upon success
   def fulfill_subrequest
     @item = self.item
-    @item.update(:quantity => item[:quantity] - self[:quantity_disburse] - self[:quantity_loan])
-		@item.update(:quantity_on_loan => item[:quantity_on_loan] + self[:quantity_loan])
-    #case self[:request_type]
-    #  when 'disbursement'
-    #    @item.update(:quantity => item[:quantity] - self[:quantity_disburse])
-    #  when 'loan'
-    #    @item.update(:quantity => item[:quantity] - self[:quantity_loan])
-    #  else # when 'mixed'
-    #    @item.update(:quantity => item[:quantity] - self[:quantity_disburse] - self[:quantity_loan])
-    #end
+    @item.update!(:quantity => item[:quantity] - self[:quantity_disburse] - self[:quantity_loan])
+    @item.update!(:quantity_on_loan => item[:quantity_on_loan] + self[:quantity_loan])
   end
 
   ##
@@ -77,17 +75,8 @@ class RequestItem < ApplicationRecord
   # outright deleted with old request status 'approved'
   def rollback_fulfill_subrequest
     @item = self.item
-    @item.update(:quantity => item[:quantity] + self[:quantity_disburse] + self[:quantity_loan])
-		@item.update(:quantity_on_loan => item[:quantity_on_loan] - self[:quantity_loan])
-
-    #case self[:request_type]
-    #  when 'disbursement'
-    #    @item.update(:quantity => item[:quantity] + self[:quantity_disburse])
-    #  when 'loan'
-    #    @item.update(:quantity => item[:quantity] + self[:quantity_loan])
-    #  else # when 'mixed'
-    #    @item.update(:quantity => item[:quantity] + self[:quantity_disburse] + self[:quantity_loan])
-    #end
+    @item.update!(:quantity => item[:quantity] + self[:quantity_disburse] + self[:quantity_loan])
+    @item.update!(:quantity_on_loan => item[:quantity_on_loan] - self[:quantity_loan])
   end
 
   ##
@@ -97,8 +86,8 @@ class RequestItem < ApplicationRecord
 		self.update!(:quantity_loan => self[:quantity_loan] - to_return)
 		self.update!(:quantity_return => self[:quantity_return] + to_return)
 
-    @item.update(:quantity => item[:quantity] + to_return)
-		@item.update(:quantity_on_loan => item[:quantity_on_loan] - to_return)
+    @item.update!(:quantity => item[:quantity] + to_return)
+		@item.update!(:quantity_on_loan => item[:quantity_on_loan] - to_return)
 	end
 
 	##
