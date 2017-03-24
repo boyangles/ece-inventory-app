@@ -6,7 +6,7 @@ class Api::V1::RequestsController < BaseController
   before_action :render_404_if_request_unknown, only: [:show, :decision, :update_general, :create_req_items, :destroy_req_items]
   before_action :set_request, only: [:show, :decision, :update_general, :create_req_items, :destroy_req_items]
 
-  before_action -> { render_422_if_request_not_outstanding_and_disbursement!(params[:id]) }, only: [:decision, :update_general, :create_req_items, :destroy_req_items]
+  before_action -> { render_422_if_request_not_outstanding!(params[:id]) }, only: [:decision, :update_general, :create_req_items, :destroy_req_items]
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
@@ -144,29 +144,12 @@ class Api::V1::RequestsController < BaseController
   end
 
   def decision
-    case request_params[:status]
-      when 'approved'
-        request_valid, error_msg = @request.are_request_details_valid?
-
-        if request_valid
-          if !@request.update(request_params)
-            render_client_error(@request.errors, 422) and return
-          end
-
-          render_request_with_sub_requests(@request, @request.user)
-        else
-          render_client_error(error_msg, 422) and return
-        end
-      when 'denied'
-        if @request.update(request_params)
-          render_request_with_sub_requests(@request, @request.user)
-        else
-          render_client_error(@request.errors, 422)
-        end
-      else
-        render_client_error("Enum incorrect: #{request_params[:status]}. Must be approved/denied", 422)
+    begin
+      @request.update!(request_params)
+      render_request_with_sub_requests(@request, @request.user)
+    rescue Exception => e
+      render_client_error(e.message, 422) and return
     end
-
   end
 
   def update_general
@@ -278,11 +261,11 @@ class Api::V1::RequestsController < BaseController
   end
 
   private
-  def render_422_if_request_not_outstanding_and_disbursement!(request_id)
+  def render_422_if_request_not_outstanding!(request_id)
     req = Request.find(request_id)
 
-    render json: { errors: 'Request is not outstanding and disbursement' }, status: 422 unless
-        req && req.outstanding? && req.disbursement?
+    render json: { errors: 'Request is not outstanding' }, status: 422 unless
+        req && req.outstanding?
   end
 
   private

@@ -41,16 +41,6 @@ class RequestItem < ApplicationRecord
   # Input: N/A
   # Output: true/false
   def oversubscribed?
-
-    #case self[:request_type]
-    #  when 'disbursement'
-    #    diff = item[:quantity] - self[:quantity_disburse]
-    #  when 'loan'
-    #    diff = item[:quantity] - self[:quantity_loan]
-    #  else # when 'mixed'
-    #    diff = item[:quantity] - (self[:quantity_disburse] + self[:quantity_loan])
-    #end
-
     diff = item[:quantity] - (self[:quantity_disburse] + self[:quantity_loan])
 
     return diff < 0
