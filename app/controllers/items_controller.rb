@@ -75,7 +75,7 @@ class ItemsController < ApplicationController
     @item.last_action = "created"
     @item.curr_user = current_user
 
-    add_tags_to_item(@item)
+    add_tags_to_item(@item, item_params)
 
     if @item.save
       redirect_to item_url(@item)
@@ -106,8 +106,8 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
     @item.curr_user = current_user
 
-    @item.tag_list = item_params[:tag_list]
-    add_tags_to_item(@item)
+    @item.tags.delete_all
+    add_tags_to_item(@item, item_params)
 
     if @item.update_attributes(item_params)
       flash[:success] = "Item updated successfully"
@@ -138,7 +138,7 @@ class ItemsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
-    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :search, :model_search, :status, :last_action, :tag_list)
+    params.fetch(:item, {}).permit( :unique_name, :quantity, :model_number, :description, :search, :model_search, :status, :last_action, :tag_list=>[])
   end
 
 end
