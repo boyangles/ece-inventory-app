@@ -106,6 +106,12 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
     @item.curr_user = current_user
 
+    puts "PARAMS: "
+    puts params[:tag_list]
+    puts "ITEM PARAMS: "
+    puts item_params[:tag_list]
+
+
     @item.tag_list = item_params[:tag_list]
     add_tags_to_item(@item)
 

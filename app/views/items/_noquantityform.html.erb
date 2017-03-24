@@ -26,7 +26,7 @@
         </div>
       </div>
 
-     <div class="form-group">
+      <div class="form-group">
         <%= f.label :model_number, "Model Number", class: "col-lg-2 control-label" %>
         <div class="col-lg-10">
           <%= f.text_field :model_number, class: "form-control",:placeholder=>"0" %>
@@ -49,11 +49,16 @@
           <% end %>
         </div>
       </div>
+
+      <%= f.select :tag_list,
+                   Tag.all.map { |u| [u.name, u.name] },
+                   { include_blank: true },
+                   { class: 'chosen-select' }
+      %>
+
       <div class="form-group"> 
-        <%= f.label :tag, "Input tags to add", class: "col-lg-2 control-label" %>
-        <%= f.text_field :tag_list, 'data-role'=>'tagsinput' %>
+
       </div> 
-      <!--TODO PUT INTO FORM ABOVE-->
 
       <div class="form-group">
         <div class="col-lg-8 col-lg-offset-2">
@@ -62,4 +67,5 @@
       </div>
 
     </fieldset>
-<% end %>
+
+    <% end %>
