@@ -41,8 +41,10 @@ class Item < ApplicationRecord
 
   attr_accessor :curr_user
   attr_accessor :tag_list
+  attr_accessor :tags_list
 
-	after_create {
+
+  after_create {
     create_custom_fields_for_items(self.id)
   	create_log("created", self.quantity)
 	}
