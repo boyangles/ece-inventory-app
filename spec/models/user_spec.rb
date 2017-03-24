@@ -59,8 +59,18 @@ RSpec.describe "sign in tests", :type => :feature do
     expect(page).to have_content @user.privilege
     expect(page).to have_content "Users"
     expect(page).to have_content "Items"
-    expect(page).to have_content "Home"
-    expect(page).to have_content "Account"
+    expect(page).to have_content "More"
+    expect(page).to have_content "My Cart"
+    expect(page).to have_content "Logs"
+    expect(page).to have_content "Tags"
+    expect(page).to have_content "Requests"
+    expect(page).to have_content "Loans"
+    expect(page).to have_content "My Account"
+    expect(page).to have_content "Profile"
+    expect(page).to have_content "Settings"
+    expect(page).to have_content "API Debugger"
+    expect(page).to have_content "Bulk Import"
+    expect(page).to have_content "Log out"
 
   end
 

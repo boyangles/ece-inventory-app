@@ -3,8 +3,7 @@
 
     <%= render 'noquantityform', item: @item %>
 
-    <%= link_to 'Show', @item %> |
-    <%= link_to 'Back', :back %>
+    <%= link_to 'Show', @item %>
 <% else %>
     <%= controller.redirect_to items_path %>
 <% end %>
