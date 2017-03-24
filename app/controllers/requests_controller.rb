@@ -40,9 +40,17 @@ class RequestsController < ApplicationController
 
     if @request.has_status_change_to_approved?(request_params)
       request_valid, error_msg = @request.are_request_details_valid?
-
       if request_valid
         update_to_index(@request, request_params)
+        @request.request_items.each do |sub_request|
+          @item = Item.find(sub_request.item_id)
+          @item.update_by_subrequest(sub_request, @request.request_type)
+          @item.save!
+        end
+
+        ## THIS NEEDS TO BE CHANGED TO REQUEST APPROVED!!!!
+        puts "the user to this request is " + @request.user
+        UserMailer.request_initiated_email_all_subscribers(@request.user, @request).deliver_now
       else
         reject_to_edit(@request, error_msg)
       end
@@ -51,7 +59,7 @@ class RequestsController < ApplicationController
 
       if items_valid
         update_to_index(@request, request_params)
-        UserMailer.request_initiated_email_all_subscribers(@user, @request).deliver_now
+        UserMailer.request_approved_email_all_subscribers(@request.user, @request).deliver_now
       else
         reject_to_edit(@request, error_msg)
       end

@@ -44,8 +44,8 @@ class Api::V1::ItemsController < BaseController
     summary "Create an Item"
     param :form, 'item[unique_name]', :string, :required, "Item Name"
     param :form, 'item[quantity]', :integer, :required, "Item Quantity"
-    param :form, 'item[description]', :string, :required, "Item Description"
-    param :form, 'item[model_number]', :string, :optional, "Optionality"
+    param :form, 'item[description]', :string, :optional, "Item Description"
+    param :form, 'item[model_number]', :string, :optional, "Optional Model Number"
     response :unauthorized
     response :created
     response :unprocessable_entity

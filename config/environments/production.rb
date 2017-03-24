@@ -25,19 +25,24 @@ Rails.application.configure do
   # Do not fallback to assets pipeline if a precompiled asset is missed.
   config.assets.compile = false
 
-  # EMAILS CONFIGURATION
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.default_url_options = { :host => 'spicysoftwareinventory.herokuapp.com' }
-  config.action_mailer.perform_deliveries = true
-  # SMTP settings for gmail
-  config.action_mailer.smtp_settings = {
-      :address              => "smtp.gmail.com",
-      :port                 => 587,
-      :user_name            => "eceinventoryduke@gmail.com",
-      :password             => "Simple4Telling",
-      :authentication       => "plain",
-      :enable_starttls_auto => true
+  config.action_mailer.delivery_method = :sendgrid_actionmailer
+  config.action_mailer.sendgrid_actionmailer_settings = {
+      api_key: ENV['SENDGRID_API_KEY']
   }
+
+  # # EMAILS CONFIGURATION
+  # config.action_mailer.delivery_method = :smtp
+  # config.action_mailer.default_url_options = { :host => 'spicysoftwareinventory.herokuapp.com' }
+  # config.action_mailer.perform_deliveries = true
+  # # SMTP settings for gmail
+  # config.action_mailer.smtp_settings = {
+  #     :address              => "smtp.gmail.com",
+  #     :port                 => 587,
+  #     :user_name            => "eceinventoryduke@gmail.com",
+  #     :password             => "Simple4Telling",
+  #     :authentication       => "plain",
+  #     :enable_starttls_auto => true
+  # }
 
   # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
 
