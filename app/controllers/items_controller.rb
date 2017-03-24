@@ -75,7 +75,7 @@ class ItemsController < ApplicationController
     @item.last_action = "created"
     @item.curr_user = current_user
 
-    add_tags_to_item(@item)
+    add_tags_to_item(@item, item_params)
 
     if @item.save
       redirect_to item_url(@item)
@@ -107,15 +107,7 @@ class ItemsController < ApplicationController
     @item.curr_user = current_user
 
     @item.tags.delete_all
-
-    @item.tag_list = item_params[:tag_list]
-    @item.tag_list.each do |tag_name|
-      unless tag_name.blank?
-        puts "TAG NAME :"
-        puts tag_name
-        @item.tags << Tag.find_or_create_by(name: tag_name)
-      end
-    end
+    add_tags_to_item(@item, item_params)
 
     if @item.update_attributes(item_params)
       flash[:success] = "Item updated successfully"

@@ -30,20 +30,31 @@ module ItemsHelper
 	# end
 	# end
 
-	def add_tags_to_item(item)
-		puts item.unique_name
+	# def add_tags_to_item(item)
+	# 	puts item.unique_name
+  #
+	# 	# if item.tag_list != nil
+	# 		if item.tag_list.include? ','
+	# 			tags = item.tag_list.split(',')
+	# 			tags.each do |name|
+	# 				tag = Tag.find_or_create_by(name: name)
+	# 				item.tags << tag
+	# 			end
+	# 		else
+	# 			item.tags << Tag.find_or_create_by(name: item.tag_list)
+	# 		end
+	# 	# end
+	# end
 
-		# if item.tag_list != nil
-			if item.tag_list.include? ','
-				tags = item.tag_list.split(',')
-				tags.each do |name|
-					tag = Tag.find_or_create_by(name: name)
-					item.tags << tag
-				end
-			else
-				item.tags << Tag.find_or_create_by(name: item.tag_list)
+	def add_tags_to_item(item, item_params)
+		item.tag_list = item_params[:tag_list]
+		item.tag_list.each do |tag_name|
+			unless tag_name.blank?
+				puts "TAG NAME :"
+				puts tag_name
+				@item.tags << Tag.find_or_create_by(name: tag_name)
 			end
-		# end
+		end
 	end
 
 
