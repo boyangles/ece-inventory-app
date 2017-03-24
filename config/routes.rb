@@ -41,9 +41,8 @@ Rails.application.routes.draw do
   resources :logs
   resources :request_items, :except => [:index, :show] do
 		member do
-	#		put 'return' => 'request_items#return', as :return
-	#		put 'disburse_loaned' => 'request_items#disburse_loaned', as :disburse_loaned
 			put :return, as: :return
+			put :disburse_loaned, as: :disburse_loaned
 		end
 	end
 

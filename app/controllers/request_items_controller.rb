@@ -56,21 +56,10 @@ class RequestItemsController < ApplicationController
 
 	def return
 		reqit = RequestItem.find(params[:id])
-		puts("HI!!!!!")
-		puts(params[:quantity_to_return])
-		puts(reqit.quantity_loan)
-		puts(params[:quantity_loan])
 		if (params[:quantity_to_return].to_f > reqit.quantity_loan)
 			flash[:danger] = "That's more than are loaned out!"
 		else
-			to_return = params[:quantity_to_return].to_f
-			reqit.update!(:quantity_loan => reqit[quantity_loan] - to_return)
-			reqit.update!(:quantity_return => reqit[quantity_return] + to_return)
-
-			item = Item.find(reqit.item_id)
-			item.update!(:quantity => item[:quantity] + to_return)
-			item.update!(:quantity_on_loan => item[:quantity_on_loan] - to_return)
-
+			reqit.return_subrequest(params[:quantity_to_return].to_f)
 			flash[:success] = "Quantity successfully returned!"
 		end		
 		redirect_to request_path(reqit.request_id)
@@ -78,14 +67,13 @@ class RequestItemsController < ApplicationController
 
 	def disburse_loaned 
 		reqit = RequestItem.find(params[:id])
-		if (params[:quantity_to_disburse] > reqit.quantity_loan)
-			flash[:error] = "That's more than are loaned out!"
-			redirect_to request_path(reqit.request_id)
+		if (params[:quantity_to_disburse].to_f > reqit.quantity_loan)
+			flash[:danger] = "That's more than are loaned out!"
 		else
-			# subtract quantity from quantity_loan
-			# add quantity to quantity_return
-			# redirect to request_path(reqit.request_id)
+			reqit.disburse_loaned_subrequest(params[:quantity_to_disburse].to_f)
+			flash[:success] = "Quantity successfully disbursed!"
 		end		
+		redirect_to request_path(reqit.request_id)
 	end
 
 

@@ -90,6 +90,27 @@ class RequestItem < ApplicationRecord
     #end
   end
 
+  ##
+  # REQ-ITEM-4: return_subrequest
+  def return_subrequest(to_return)
+    @item = self.item
+		self.update!(:quantity_loan => self[:quantity_loan] - to_return)
+		self.update!(:quantity_return => self[:quantity_return] + to_return)
+
+    @item.update(:quantity => item[:quantity] + to_return)
+		@item.update(:quantity_on_loan => item[:quantity_on_loan] - to_return)
+	end
+
+	##
+  # REQ-ITEM-5: disburse_loaned_subrequest
+  def disburse_loaned_subrequest(to_disburse)
+    @item = self.item
+		self.update!(:quantity_loan => self[:quantity_loan] - to_disburse)
+		self.update!(:quantity_disburse => self[:quantity_disburse] + to_disburse)
+		@item.update(:quantity_on_loan => item[:quantity_on_loan] - to_disburse)
+	end
+
+
   ## Validations
   def request_type_quantity_validation
     case self[:request_type]

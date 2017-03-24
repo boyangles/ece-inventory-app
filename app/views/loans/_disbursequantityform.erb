@@ -1,8 +1,8 @@
-<%= form_for (request_item) do |f| %>
+<%= form_for (request_item), :url => disburse_loaned_request_item_path(request_item.id), :html => {:method => "put"} do |f| %>
 
 	<div class="modal-body text-center">
 		<h4>Quantity to Convert to Disbursement</h4>
-		<%= number_field_tag params[:quantity_to_disburse] %>
+		<%= number_field_tag :quantity_to_disburse, params[:quantity_to_disburse] %>
 	</div>
 
 	<div class="modal-footer">
