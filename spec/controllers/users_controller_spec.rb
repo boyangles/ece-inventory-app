@@ -72,7 +72,7 @@ RSpec.describe "User Controller Tests", :type => :feature do
         select('admin', from: 'user[privilege]')
         find_button('Save changes').click
         expect(page).to have_current_path user_path(@user)
-        find('.dropdown-toggle').click
+        find('#my-account').click
         find_link('Log out').click
         expect(page).to have_current_path root_path
         visit login_path

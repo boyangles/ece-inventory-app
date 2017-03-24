@@ -10,7 +10,7 @@
 
 <div class="center_jumbotron">
   <h2 class="page-header"><strong><%= @user.username%></strong><%= " " + @user.privilege %>
-    <% if is_manager_or_admin? && !current_user?(@user) %>
+    <% if is_admin? && !current_user?(@user) %>
         <%= link_to "Edit User", edit_user_url(@user.id), :class => "btn btn-primary pull-right" %>
     <% end %>
   </h2>

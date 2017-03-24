@@ -77,7 +77,7 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     it "can update item except quantity as manager" do
       login(:user_manager)
       navigate_to_new_item
-      find_link('Edit Item Details').click
+      find_link('Edit Item').click
       expect(page).to have_no_content('Quantity')
       updated_name = Faker::Name.name
       fill_in('Name', with: updated_name)
@@ -90,13 +90,16 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     it "can update quantity as admin" do
       login(:user_admin)
       navigate_to_new_item
-      find_link('Log Acquisition or Destruction/Correct Quantity').click
-      expect(page).to have_content('New Quantity')
-      fill_in('Quantity', with: 333)
-      find_button('Update Item').click
-      updated_item = Item.find_by(unique_name: @item.unique_name)
-      expect(page).to have_current_path item_path(updated_item.id)
-      verify_item_fields(updated_item)
+      loans=2
+      disbursement=3
+      fill_in('loan_id', with: loans)
+      fill_in('disburse_id', with: disbursement)
+      find_button('Add to Cart').click
+      expect(page).to have_content(@item.unique_name)
+      expect(page).to have_content(loans)
+      expect(page).to have_content(disbursement)
+      expect(page).to have_selector(:link_or_button, 'Remove Item')
+      verify_cart_fields(User.find_by(username: 'admin'))
     end
 
     it "cannot update item as student" do
@@ -165,7 +168,6 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     expect(page).to have_content 'Description'
     expect(page).to have_content 'Model Number'
     expect(page).to have_content 'Tags'
-    expect(page).to have_content 'Associated Tags'
   end
 
   def fill_in_new_item_fields(name)
@@ -173,6 +175,22 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     fill_in('Quantity', with: 3)
     fill_in('Description', with: 'A nice description')
     fill_in('Model Number', with: 'Ab123')
+  end
+
+  def verify_cart_fields(user)
+    expect(page).to have_content 'Initiating User'
+    expect(page).to have_content user.username
+    expect(page).to have_content 'Item Name'
+    expect(page).to have_content 'Requested for Loan'
+    expect(page).to have_content 'Requested for Disbursement'
+    expect(page).to have_content 'Reason'
+    if user.privilege_admin?
+      expect(page).to have_content 'Response'
+      expect(page).to have_content 'User to make request for'
+    end
+    expect(page).to have_selector(:button, 'Place Order')
+    expect(page).to have_content 'Clear Items in Cart'
+    expect(page).to have_content 'Edit'
   end
 
   def verify_new_item_form_fields
@@ -197,10 +215,11 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     visit items_path
     expect(page).to have_current_path items_path
     expect(page).to have_content 'Items'
-    expect(page).to have_content 'Search by item name'
+    expect(page).to have_content 'Advanced Search'
+    expect(page).to have_content 'Search items'
     expect(page).to have_content 'Search by model number'
-    expect(page).to have_content 'Required Tags'
-    expect(page).to have_content 'Excluded Tags'
+    expect(page).to have_content 'Required tags'
+    expect(page).to have_content 'Excluded tags'
     expect(page).to have_selector(:link_or_button, 'Search')
 
     if user == 'admin'

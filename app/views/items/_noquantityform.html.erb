@@ -36,14 +36,12 @@
       <div class="form-group"> 
         <%= f.label :tag, "Tags", class: "col-lg-2 control-label" %>
         <div class="col-lg-10">
-
           <%= f.select :tag_list,
           Tag.all.map { |u| [u.name, u.name] },
           { include_blank: true, selected: item.tags.collect(&:name)},
           { multiple: true, class: 'chosen-select form-control'}
           %>
         </div>
-
       </div> 
 
       <div class="form-group">
