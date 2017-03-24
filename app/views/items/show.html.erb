@@ -41,7 +41,7 @@
 	   <ul class="nav nav-tabs">
       <li class="active"><a href="#home" data-toggle="tab">Item Details</a></li>
       <li><a href="#requests" data-toggle="tab"><%= (is_manager_or_admin?) ? "All Outstanding Requests" : "My Outstanding Requests" %></a></li>
-      <li><a href="#loans" data-toggle="tab">Loans TBD</a></li>
+      <li><a href="#loans" data-toggle="tab">Loans</a></li>
 			<li><a href="#logs" data-toggle="tab">Logs TBD</a></li>
     </ul>
 
@@ -134,7 +134,7 @@
 				<% end %>
 				<% if !loanss.empty? %>
 					<ol class="loans">
-						<%= render partial: "../views/loans/loandisplay", collection: loanss, as: :loan %>
+						<%= render partial: "loans/loandisplay", collection: loanss, as: :loan %>
 					</ol>
 				<% else %>
 					<% text = (is_manager_or_admin?) ? "There are no loans on this item currently." : "You have no loans on this item currently" %>
