@@ -1,20 +1,24 @@
 <% provide(:title, 'All Tags') %>
 
-<div class="center jumbotron">
-  <h1>Tags</h1>
+<div class="center_jumbotron">
+  <h2 class="page-header">Tags</h2>
 </div>
+
 
 <% @tag = Tag.new %>
 <% if @tag %>
 	<%= render 'form', { url: nil } %>
 <% end %>
 
-<%= will_paginate %>
+<br>
+<div class="tags">
+	<table class="table table-striped table-hover">
+		<tbody>
+  		<%= render @tags %>
+		</tbody>
+	</table>
+</div>
 
-<ul class="tags">
-  <%= render @tags %>
-</ul>
-
-<%= will_paginate %>
-
-<%= link_to "View All", tags_path, class: "btn btn-lg btn-primary" %>
+<div class="text-center">
+	<%= will_paginate %>
+</div>

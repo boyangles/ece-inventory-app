@@ -1,6 +1,7 @@
 class LogsController < ApplicationController
 
   before_action :check_logged_in_user
+  before_action :check_manager_or_admin, only [:index]
 
   def index
 
