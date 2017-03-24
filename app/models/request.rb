@@ -53,7 +53,7 @@ class Request < ApplicationRecord
       if @item.deactive?
         return false, @item.unique_name  + " doesn't exist anymore! Cannot be disbursed."
       elsif sub_request.oversubscribed?
-        return false, "Item named #{@item.unique_name} is oversubscribed. Requested #{sub_request.quantity}, but only has #{@item.quantity}."
+        return false, "Item named #{@item.unique_name} is oversubscribed. Requested #{sub_request.quantity_disburse + sub_request.quantity_loan}, but only has #{@item.quantity}."
 	    end
     end
 

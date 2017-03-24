@@ -118,6 +118,9 @@ Rails.application.routes.draw do
           post :create_req_items
           delete :destroy_req_items
 
+          put :update_general
+          patch :update_general
+
           put :update_req_items
           patch :update_req_items
         end
