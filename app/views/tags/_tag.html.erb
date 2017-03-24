@@ -1,16 +1,18 @@
-<p id="notice"><%= notice %></p>
+<tr>
+	<td>
 
-<table>
+		<a href="#" data-xeditable="true"
+			data-pk="<%= tag.id %>"
+			data-model="tag"
+			data-url="<%= tag_url(tag.id) %>"
+			data-name="name"
+			data-title="rename tag">
+			<%= tag.name %>
+		</a>
+  
+		<div class="pull-right"><%= link_to 'Destroy', tag, method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-primary"%></div>
+	</td>
+</tr>
 
-  <tbody>
-      <tr>
-        <%= tag.name %> |
-        <%= link_to 'Edit', edit_tag_path(tag) %> |
-        <%= link_to 'Destroy', tag, method: :delete, data: {confirm: "Are you sure?"} %>
-      </tr>
-  </tbody>
-</table>
 
-
-<br>
 
