@@ -35,6 +35,8 @@ class Item < ApplicationRecord
   # Relationship with CustomField
   has_many :custom_fields, -> { distinct }, :through => :item_custom_fields
   has_many :item_custom_fields, dependent: :destroy
+  accepts_nested_attributes_for :item_custom_fields
+
 
   # Relation with Logs
   has_many :logs, dependent: :destroy

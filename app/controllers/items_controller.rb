@@ -58,6 +58,7 @@ class ItemsController < ApplicationController
   # GET /items/1/edit
   def edit
     @item = Item.find(params[:id])
+    @item_custom_fields = ItemCustomField.where(item_id: @item.id)
   end
 
   def edit_quantity
@@ -72,22 +73,37 @@ class ItemsController < ApplicationController
     redirect_to items_url
   end
 
+
   # POST /items
   # POST /items.json
-  def create
-    @item = Item.new(item_params)
-    @item.last_action = "created"
-    @item.curr_user = current_user
+	def create
+		begin
 
-    add_tags_to_item(@item, item_params)
+			ActiveRecord::Base.transaction do
+				@item = Item.new(item_params)
+				@item.last_action = "created"
+				@item.curr_user = current_user
 
-    if @item.save
-      redirect_to item_url(@item)
-    else
-      flash.now[:danger] = "Unable to save!"
-      render 'new'
-    end
-  end
+				add_tags_to_item(@item, item_params)
+				@item.save!
+
+				CustomField.all.each do |cf|
+					cf_name = cf.field_name
+					icf = ItemCustomField.find_by(:item_id => @item.id, :custom_field_id => cf.id)
+					icf.update_attributes!(CustomField.find_icf_field_column(cf.id) => params[cf_name])
+				end
+			end
+
+      redirect_to item_url(@item.id)
+
+		rescue Exception => e
+			flash.now[:danger] = e.message
+			
+			render 'new'
+		end
+
+	end
+
 
   def import_upload
 

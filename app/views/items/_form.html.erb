@@ -54,8 +54,28 @@
 
       </div> 
 
+			<!-- CUSTOM_FIELDS! -->
+			<div class="page-header"><h4>Custom Fields</h4></div>
+			<% CustomField.all.each do |cf| %>
+				<% paren = (cf.private_indicator?) ? " (private)" : "" %>
+				<div class="form-group">
+					<%= f.label cf.field_name.to_sym, cf.field_name + paren, class: "col-lg-2 control-label" %>
+					<div class="col-lg-10">
+						<% if cf.short_text_type? %>
+							<%= text_field_tag cf.field_name.to_sym, params[cf.field_name.to_sym], class: "form-control" %>
+						<% elsif cf.long_text_type? %>
+							<%= text_area_tag cf.field_name.to_sym, params[cf.field_name.to_sym], class: "form-control" %>
+						<% elsif cf.integer_type? %>
+							<%= number_field_tag cf.field_name.to_sym, params[cf.field_name.to_sym], class: "form-control" %>
+						<% else %>
+							<%= number_field_tag cf.field_name.to_sym, params[cf.field_name.to_sym], class: "form-control", step: :any %>
+						<% end %>
+					</div>	
+				</div>
+			<% end %>
+
       <div class="form-group">
-        <div class="col-lg-8 col-lg-offset-2">
+        <div class="col-lg-10 col-lg-offset-2">
           <button type="submit" class="btn-default btn-lg btn-block">Submit</button>
         </div>
       </div>
