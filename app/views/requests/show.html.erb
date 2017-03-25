@@ -44,10 +44,12 @@
 		</div>
 	<% end %>
 
-<% elsif @request.approved? %>
+<% elsif @request.approved? || @request.denied? %>
 
 
-<% elsif @request.denied? %>
+
+	<%= render :partial => 'viewrequestitems', locals: {request: @request} %>
+
 
 <% elsif @request.cancelled? %>
 

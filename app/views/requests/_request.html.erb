@@ -10,6 +10,9 @@
       <div class="pull-right">
 	<% if request.outstanding? %>
 	  <p class="label label-warning"><%= request.status %>
+
+		<div></div>
+
 	<% elsif request.approved? %>			
 	  <p class="label label-success"><%= request.status %>
 	<% elsif request.denied? %>
