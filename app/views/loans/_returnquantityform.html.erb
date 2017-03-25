@@ -1,13 +1,27 @@
-<%= form_for (request_item), :url => return_request_item_path(request_item.id), :html => {:method => "put"} do |f| %>
-	<%= f.hidden_field :quantity_loan, :value => (request_item[:quantity_loan]) %>
+<button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#myModal1">Return</button>
 
-	<div class="modal-body text-center">
-		<h4>Quantity to Return</h4>
-		<%= number_field_tag :quantity_to_return, params[:quantity_to_return] %>
-	</div>
+<div id="myModal1" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
 
-	<div class="modal-footer">
-		<%= f.submit "Submit", class: "btn btn-primary" %>
-	</div>
+			<%= form_for (request_item), :url => return_request_item_path(request_item.id), :html => {:method => "put"} do |f| %>
+				<%= f.hidden_field :quantity_loan, :value => (request_item[:quantity_loan]) %>
+
+				<div class="modal-body text-center">
+					<h4>Quantity to Return</h4>
+					<%= number_field_tag :quantity_to_return, params[:quantity_to_return] %>
+				</div>
+		
+				<div class="modal-footer">
+					<%= f.submit "Submit", class: "btn btn-primary" %>
+				</div>
 	
-<% end %>
+			<% end %>
+		</div>
+	</div>
+</div>
+
+
