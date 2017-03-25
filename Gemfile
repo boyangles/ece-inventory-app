@@ -14,6 +14,7 @@ gem 'ruby-swagger'
 
 # Datepicker
 gem 'bootstrap-datepicker-rails'
+gem 'chosen-rails'
 
 # Capybara RSpec Selenium Testing
 gem 'capybara'

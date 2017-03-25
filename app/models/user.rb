@@ -147,15 +147,55 @@ class User < ApplicationRecord
   # USER-1: make_request
   # Allows individuals to request items from the inventory
   # Input: subrequests, reason, requested_for
+  #   subrequests: [{
+  #     'item_name': 'sample_item'  # Required
+  #     'quantity_loan': 325        # Optional
+  #     'quantity_disburse': 522    # Optional
+  #     'quantity_return': 42       # Optional
+  #     'request_type': 'loan'      # Required; must one of: 'loan', 'disbursement', or 'mixed'
+  #     'due_date': '06/07/2015'    # Optional
+  #   }, ...]
+  #   reason: 'Optional reason here'
+  #   requested_for: user
   # Return:
   #   On success: newly created request
   #   On failure: null
+  # Throws Exceptions:
+  #   On request creation failure
+  #
   def make_request(subrequests: [], reason: '', requested_for: self)
+    raise Exception.new("The user you're making a request for doesn't exist") unless requested_for
 
+    req = nil
+    Request.transaction do
+      req = Request.new(
+          :status => 'outstanding',
+          :reason => reason,
+          :request_initiator => self.id,
+          :user_id => requested_for.id)
+      raise Exception.new("Request creation error. The error hash is: #{req.errors.full_messages}") unless req.save
+
+      subrequests.each do |sub_req|
+        requested_item = Item.find_by(:unique_name => sub_req['item_name'])
+        raise Exception.new("Cannot request non-existent item named: #{sub_req['item_name']}. Subrequest hash is: #{JSON.pretty_generate(sub_req)}.") unless requested_item
+
+        new_req_item = RequestItem.new(:request_id => req.id,
+                                       :item_id => requested_item.id,
+                                       :quantity_loan => sub_req['quantity_loan'],
+                                       :quantity_disburse => sub_req['quantity_disburse'],
+                                       :quantity_return => sub_req['quantity_return'],
+                                       :request_type => sub_req['request_type'],
+                                       :due_date => sub_req['due_date'])
+        raise Exception.new("Subrequest creation error. The error hash is #{new_req_item.errors.full_messages}. Subrequest hash is: #{JSON.pretty_generate(sub_req)}.") unless new_req_item.save
+      end
+
+      req.update!(:status => 'approved') unless self.privilege_student?
+    end
+
+    return req
   end
 
   ##
-  # TODO
   # USER-2: approve_outstanding_request
   # Allows managers/admins to approve outstanding request
   # Input: @request
@@ -163,11 +203,14 @@ class User < ApplicationRecord
   #   On success: updated approved request object
   #   On failure: null
   def approve_outstanding_request(request)
-
+    if !request.outstanding? || self.privilege_student?
+      false
+    else
+      request.update(:status => 'approved')
+    end
   end
 
   ##
-  # TODO
   # USER-3: deny_outstanding_request
   # Allows managers/admins to deny outstanding request
   # Input: @request
@@ -175,7 +218,11 @@ class User < ApplicationRecord
   #   On success: updated denied request object
   #   On failure: null
   def deny_outstanding_request(request)
-
+    if !request.outstanding? || self.privilege_student?
+      false
+    else
+      request.update(:status => 'denied')
+    end
   end
 
   ##

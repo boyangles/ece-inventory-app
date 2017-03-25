@@ -1,5 +1,6 @@
 class RequestItemsController < ApplicationController
   before_action :check_logged_in_user
+	before_action :set_new_quantity, only: [:update]
 
   def new
     @request_item = RequestItem.new
@@ -33,13 +34,16 @@ class RequestItemsController < ApplicationController
 
 	def update
 		@request_item = RequestItem.find(params[:id])
-		if @request_item.update_attributes(request_item_params)
-      flash[:success] = "Item quantities updated successfully"
-      redirect_to request_path(grab_cart(current_user).id)
-    else
-      flash[:error] = "Failed updating quantity"
-      redirect_to items_path
-    end
+
+		respond_to do |format|
+			if @request_item.update_attributes(request_item_params)
+				format.html { redirect_to @request_item.request, notice: "Item quantity updated successfully."	}
+				format.json { head :no_content }
+			else
+				format.html { redirect_to @request_item.request, alert: "Failed updating quantity" } 
+				format.json { render json: @request_item.errors, status: :unprocessable_entity }
+			end
+		end
 	end
 
 	def show
@@ -84,5 +88,9 @@ class RequestItemsController < ApplicationController
     # Rails 4+ requires you to whitelist attributes in the controller.
     params.fetch(:request_item, {}).permit(:quantity_loan, :quantity_disburse, :quantity_return, :item_id, :request_id, :quantity_to_return, :quantity_to_disburse)
   end
+
+	def set_new_quantity
+		@request_item = RequestItem.find(params[:id])
+	end
 
 end
