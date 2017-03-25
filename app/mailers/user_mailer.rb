@@ -69,6 +69,31 @@ class UserMailer < ApplicationMailer
     mail(to: @user.email, subject: @heading)
   end
 
+  def loan_reminder_emails
 
+    puts "START HERE"
+    allRequestItems = RequestItem.all
 
+    requestItems = RequestItem.where("quantity_loan > ?", 0)
+    requestItems.each do |item|
+      puts "This is the item id"
+      puts item.item.unique_name
+      puts "This is quantity disbursed amount"
+      puts item.quantity_disburse
+      puts "This is quantity loaned amount"
+      puts item.quantity_loan
+      puts "This is the status"
+      puts item.request.status
+      puts "This is the item user"
+      puts item.request.user.email
+      @user = item.request.user.email
+      puts "This is the item due date"
+      puts item.created_at
+      mail(to: @user.email, subject: @heading)
+      # request_replacement(recipient, shift).deliver
+    # @url  = 'https://spicysoftware.colab.duke.edu'
+    @heading = Setting.email_heading
+    @body = Setting.email_body
+    end
+  end
 end
