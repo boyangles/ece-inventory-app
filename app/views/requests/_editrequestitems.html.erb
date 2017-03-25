@@ -1,0 +1,42 @@
+<table class="table table-striped table-hover">
+	<thead>
+  		<tr>
+	    		<th>Item Name</th>
+	    		<th class="text-center">Requested for Loan</th>
+	    		<th class="text-center">Requested for Disbursement</th>
+	    		<th></th>
+  		</tr>
+	</thead>
+	<tbody>
+		<% request.request_items.each do |req_item| %>
+		<% item = Item.find(req_item.item_id) %>
+			<tr>
+				<td><%= link_to item.unique_name, item_path(item.id) %></td>
+				<td class="text-right">
+					<a href="#" data-xeditable="true"
+					data-pk="<%= req_item.id %>"
+					data-model="request_item"
+					data-url="<%= request_item_url(req_item.id) %>"
+					data-name="quantity_loan"
+					data-type="number"
+					data-title="enter new quantity">
+						<%= req_item.quantity_loan %>
+					</a>
+				</td>
+				<td class="text-right">
+					<a href="#" data-xeditable="true"
+					data-pk="<%= req_item.id %>"
+					data-model="request_item"
+					data-url="<%= request_item_url(req_item.id)%>"
+					data-name="quantity_disburse"
+					data-type="number"
+					data-title="enter new quantity">
+						<%= req_item.quantity_disburse %>	
+					</a>
+				</td>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+
+
