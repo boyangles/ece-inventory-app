@@ -8,3 +8,7 @@ $ ->
     allow_single_deselect: true
     no_results_text: 'No results matched'
     width: '100%'
+
+$(document).on "page:change", ->
+	$('#quantity_change').change ->
+		$('.quantity_reason').slideToggle()

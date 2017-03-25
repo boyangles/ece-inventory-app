@@ -86,20 +86,9 @@
                 <% field_content = ItemCustomField.field_content(@item.id, icf.custom_field_id) %>
                 <% if is_manager_or_admin? || !icf.custom_field.private_indicator %>
                     <p>
-                      <strong><%= icf.custom_field.field_name %></strong>
-                      <% if !is_manager_or_admin? %>
-                          <%= field_content %>
-                      <% else %>
-                          <a href="#" data-xeditable="true"
-                             data-pk="<%= icf.id %>"
-                             data-model="item_custom_field"
-                             data-name="<%= CustomField.find_icf_field_column(icf.custom_field_id).to_s %>"
-                             data-url="<%= item_custom_field_url(icf) %>"
-                             data-title="enter modification">
-                            <%= field_content %>
-                          </a>
-                      <% end %>
-                    </p>
+                      <strong><%= icf.custom_field.field_name %>: </strong>
+											<%= field_content %>
+                   </p>
                 <% else %>
                 <% end %>
             <% end %>

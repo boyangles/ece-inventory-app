@@ -1,4 +1,5 @@
 require 'support/spec_test_helper.rb'
+require 'pry'
 
 RSpec.describe "Item Controller Tests", :type => :feature do
 
@@ -74,11 +75,10 @@ RSpec.describe "Item Controller Tests", :type => :feature do
       verify_item_fields(updated_item)
     end
 
-    it "can update item except quantity as manager" do
+    it "can update item as manager" do
       login(:user_manager)
       navigate_to_new_item
       find_link('Edit Item').click
-      expect(page).to have_no_content('Quantity')
       updated_name = Faker::Name.name
       fill_in('Name', with: updated_name)
       find_button('Submit').click
@@ -87,7 +87,7 @@ RSpec.describe "Item Controller Tests", :type => :feature do
       verify_item_fields(updated_item)
     end
 
-    it "can update quantity as admin" do
+    it "can update item as admin" do
       login(:user_admin)
       navigate_to_new_item
       loans=2
@@ -109,6 +109,33 @@ RSpec.describe "Item Controller Tests", :type => :feature do
       visit edit_item_path(@item.id)
       expect(page).to have_content 'You do not have permission to perform this operation'
     end
+
+    it "can update quantity as manager" do
+      login(:user_manager)
+      navigate_to_new_item
+      old_quantity = @item.quantity
+      click_link('Edit Item')
+      verify_item_parameters
+      fill_in('Description', with: 'new description')
+      fill_in('quantity_change', with: 10)
+      expect(page).to have_content('Reason for Change')
+      click_button('Submit')
+      expect(@item.reload.quantity).to eq(old_quantity+10)
+    end
+
+    it "can update quantity as admin" do
+      login(:user_admin)
+      navigate_to_new_item
+      old_quantity = @item.quantity
+      click_link('Edit Item')
+      verify_item_parameters
+      fill_in('Description', with: 'new description')
+      fill_in('quantity_change', with: 10)
+      expect(page).to have_content('Reason for Change')
+      click_button('Submit')
+      expect(@item.reload.quantity).to eq(old_quantity+10)
+    end
+
   end
 
   describe "DELETE destroy" do
@@ -164,7 +191,8 @@ RSpec.describe "Item Controller Tests", :type => :feature do
   end
 
   def verify_item_parameters
-    expect(page).to have_content 'Name'
+    expect(page).to have_content 'Unique Name'
+    expect(page).to have_content 'Quantity Change'
     expect(page).to have_content 'Description'
     expect(page).to have_content 'Model Number'
     expect(page).to have_content 'Tags'

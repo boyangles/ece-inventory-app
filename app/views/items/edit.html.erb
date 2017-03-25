@@ -1,9 +1,10 @@
 <% if is_manager_or_admin? %>
-    <h1>Editing Item</h1>
+		<div class="center_jumbotron">
+			<h2 class="page-header">Editing <strong><%= @item.unique_name %></strong></h2>
+		</div>
 
-    <%= render 'noquantityform', item: @item %>
+    <%= render 'edititemform', item: @item %>
 
-    <%= link_to 'Show', @item %>
 <% else %>
     <%= controller.redirect_to items_path %>
 <% end %>
