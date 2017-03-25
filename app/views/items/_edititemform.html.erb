@@ -1,0 +1,93 @@
+<%= form_for (item), :html => {:class => "form-horizontal"} do |f| %>
+    <fieldset>
+      <% if item.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(item.errors.count, "error") %> prohibited this item from being saved:</h2>
+
+            <ul>
+              <% item.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :unique_name, "Unique Name", class: "col-lg-2 control-label" %>
+        <div class="col-lg-10">
+          <%= f.text_field :unique_name, class: "form-control", :placeholder=>"Name" %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :total_quantity, "Total Quantity", class: "col-lg-2 control-label" %>
+        <div class="col-lg-10">
+          <%= number_field_tag :total_quantity, params[:total_quantity], class: "form-control",:value=> item.quantity + item.quantity_on_loan %>
+        </div>
+      </div>
+
+			<div class="quantity_reason">
+				<div class="form-group">
+					<%= f.label :last_action, "Reason for Change", class: "col-lg-2 control-label" %>
+					<div class="col-lg-10">
+						<%= f.select :last_action, Item.last_actions.keys.to_a, { :prompt => "Select One" }, { class: "form-control", :id => "select", :required => true } %>
+					</div>
+				</div>
+			</div>
+
+
+      <div class="form-group">
+        <%= f.label :description, "Description", class: "col-lg-2 control-label" %>
+        <div class="col-lg-10">
+          <%= f.text_field :description, class: "form-control",:placeholder=>"Description" %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :model_number, "Model Number", class: "col-lg-2 control-label" %>
+        <div class="col-lg-10">
+          <%= f.text_field :model_number, class: "form-control",:placeholder=>"0" %>
+        </div>
+      </div>
+
+      <div class="form-group"> 
+        <%= f.label :tag, "Tags", class: "col-lg-2 control-label" %>
+        <div class="col-lg-10">
+          <%= f.select :tag_list,
+          Tag.all.map { |u| [u.name, u.name] },
+          { include_blank: true, selected: item.tags.collect(&:name)},
+          { multiple: true, class: 'chosen-select form-control'}
+          %>
+        </div>
+      </div> 
+
+			<!-- CUSTOM FIELDS! -->
+			<div class="page-header"><h4>Custom Fields</h4></div>
+			
+			<%= f.fields_for :item_custom_fields do |ff| %>
+				<div class="form-group">
+					<% cf = CustomField.find(ff.object.custom_field_id) %>
+					<%= f.label cf.field_name.to_sym, cf.field_name, class: "col-lg-2 control-label" %>
+					<div class="col-lg-10">
+						<%= ff.hidden_field :custom_field_id, :value => (ff.object.custom_field_id) %>	
+						<% if cf.short_text_type? %>
+							<%= ff.text_field :short_text_content, class: "form-control" %>
+						<% elsif cf.long_text_type? %>
+							<%= ff.text_area :long_text_content, class: "form-control" %>
+						<% elsif cf.integer_type? %>
+							<%= ff.number_field :integer_content, class: "form-control" %>
+						<% else %>
+							<%= ff.number_field :float_content, class: "form-control", step: :any %>
+						<% end %>
+
+					</div>
+				</div>	
+			<% end %>
+
+      <div class="form-group">
+        <div class="col-lg-10 col-lg-offset-2">
+          <button type="submit" class="btn-default btn-lg btn-block">Submit</button>
+        </div>
+			</div>
+		</fieldset>
+<% end %>

@@ -3,7 +3,7 @@
 			<h2 class="page-header">Editing <strong><%= @item.unique_name %></strong></h2>
 		</div>
 
-    <%= render 'noquantityform', item: @item %>
+    <%= render 'edititemform', item: @item %>
 
 <% else %>
     <%= controller.redirect_to items_path %>
