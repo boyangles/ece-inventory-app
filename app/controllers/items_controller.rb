@@ -128,6 +128,10 @@ class ItemsController < ApplicationController
 
     @item.tags.delete_all
     add_tags_to_item(@item, item_params)
+		
+		if !params[:quantity_change].nil?
+			update_quantity
+		end
 
     if @item.update_attributes(item_params)
       flash[:success] = "Item updated successfully"
@@ -139,19 +143,15 @@ class ItemsController < ApplicationController
     end
   end
 
-  def update_quantity
-    @item = Item.find(params[:id])
+ 
+	def update_quantity
+		@item.quantity = @item.quantity + params[:quantity_change].to_f
+		if !@item.save!
+			flash.now[:danger] = "Quantity unable to be changed"
+			render 'edit'
+		end
+	end
 
-    # add action to last_action
-
-    if @item.update_attributes(item_params)
-      flash[:success] = "Item updated successfully"
-      redirect_to @item
-    else
-      flash.now[:danger] = "Unable to edit!"
-      render 'edit_quantity'
-    end
-  end
 
   private
 
