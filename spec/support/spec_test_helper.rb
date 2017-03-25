@@ -1,7 +1,7 @@
 module SpecTestHelper
   def login(name)
-    user = FactoryGirl.create(name)
-    login_as(user)
+    @user = FactoryGirl.create(name)
+    login_as(@user)
   end
 
   def login_as(user)
