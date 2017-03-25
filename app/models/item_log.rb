@@ -2,8 +2,8 @@ class ItemLog < ApplicationRecord
 	include Loggable
 
 	enum action: {
-		acquired_destroyed_quantity: 0,
-		admin_corr_quantity: 1,
+		acquired_or_destroyed_quantity: 0,
+		administrative_correction: 1,
 		disbursed: 2,
 		created: 3,
 		deleted: 4,
