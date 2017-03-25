@@ -77,37 +77,36 @@ class UserMailer < ApplicationMailer
 
     dates = Setting.email_dates
 
-    puts "Here are the dates!!!"
-    puts dates
-    # dates.each do |date|
-
-    allRequestItems = RequestItem.all
-
-    requestItems = RequestItem.where("quantity_loan > ?", 0)
-    # requestItems = requestItems.where(request: 'outstanding')
-    requestItems.each do |item|
-      # puts "The current date is : "
-      # puts current_date
-      # puts "This is the item id"
-      # puts item.item.unique_name
-      # puts "This is quantity disbursed amount"
-      # puts item.quantity_disburse
-      # puts "This is quantity loaned amount"
-      # puts item.quantity_loan
-      # puts "This is the status"
-      # puts item.request.status
-      # puts "This is the item user"
-      # puts item.request.user.email
-      # @user = item.request.user
-      # puts "This is the item due date"
-      # puts item.created_at
-      @user = item.request.user
-      @requestItem = item
-      mail(to: @user.email, subject: @heading)
-      # request_replacement(recipient, shift).deliver
-    # @url  = 'https://spicysoftware.colab.duke.edu'
-    @heading = Setting.email_heading
-    @body = Setting.email_body
+    dates.each do |date|
+      allRequestItems = RequestItem.all
+      requestItems = RequestItem.where("quantity_loan > ?", 0)
+      # requestItems = requestItems.where(request: 'outstanding')
+      requestItems.each do |item|
+        puts "Here are the dates!!!"
+        puts date
+        puts "Here are the dates!!!"
+        puts date
+        puts "Here are the dates!!!"
+        puts date
+        puts "Here are the dates!!!"
+        puts date
+        puts "Here are the dates!!!"
+        puts date
+        puts "Here are the dates!!!"
+        puts date
+        puts "Here are the dates!!!"
+        puts date
+        @user = item.request.user
+        @requestItem = item
+        mail(to: @user.email, subject: @heading)
+        puts "Sent email!!!"
+        puts "Sent email!!!"
+        puts "Sent email!!!"
+        # request_replacement(recipient, shift).deliver
+        # @url  = 'https://spicysoftware.colab.duke.edu'
+        @heading = Setting.email_heading
+        @body = Setting.email_body
+      end
     end
   end
 end
