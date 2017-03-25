@@ -13,5 +13,5 @@ class ApplicationController < ActionController::Base
   include SessionsHelper
   include RequestsHelper
   include ItemsHelper
-
+	include CustomFieldsHelper
 end
