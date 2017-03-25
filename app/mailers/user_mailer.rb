@@ -74,7 +74,7 @@ class UserMailer < ApplicationMailer
     puts "START HERE"
     allRequestItems = RequestItem.all
 
-    requestItems = RequestItem.where("quantity_loan > ?", 0)
+    requestItems = RequestItem.where("quantity_loan > ?", 0).where(:request.status => "outstanding")
     requestItems.each do |item|
       puts "This is the item id"
       puts item.item.unique_name
