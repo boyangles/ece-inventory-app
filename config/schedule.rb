@@ -11,7 +11,7 @@
 set :environment, "development"
 
 
-every 1.hour do
+every 1.minute do
   rake 'send_reminder_email'
 end
 #

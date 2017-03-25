@@ -12,6 +12,17 @@ class SettingsController < ApplicationController
   def edit
   end
 
+  def dates
+    @settings = Setting.new
+    # @settings = Setting.email_dates
+  end
+
+  def create
+    puts "Setting email dates here"
+    puts Setting.email_dates
+    redirect_to settings_path
+  end
+
   def update
     if @setting.value != params[:setting][:value]
       @setting.value = params[:setting][:value]

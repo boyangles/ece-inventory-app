@@ -1,0 +1,14 @@
+<%= form_for(@settings) do |f| %>
+
+    <%= "Email Dates:" %>
+    <%= text_field_tag :start_date, @settings['email_dates'], 'data-behaviour' => 'datepicker' %>
+    <script type="text/javascript">
+        $('[data-behaviour~=datepicker]').datepicker();
+    </script>
+
+    <%= f.submit class: "btn btn-primary" %>
+<% end %>
+
+
+
+
