@@ -7,6 +7,7 @@ end
 
 #Integration testing gem
 gem 'rails-controller-testing'
+gem 'pry-rails', :group => :development
 
 # API Testing Swagger
 gem 'swagger-docs'
