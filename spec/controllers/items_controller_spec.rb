@@ -99,7 +99,7 @@ RSpec.describe "Item Controller Tests", :type => :feature do
       expect(page).to have_content(loans)
       expect(page).to have_content(disbursement)
       expect(page).to have_selector(:link_or_button, 'Remove Item')
-      verify_cart_fields(User.find_by(username: 'admin'))
+      verify_cart_fields(@user)
     end
 
     it "cannot update item as student" do
@@ -179,7 +179,6 @@ RSpec.describe "Item Controller Tests", :type => :feature do
 
   def verify_cart_fields(user)
     expect(page).to have_content 'Initiating User'
-    expect(page).to have_content user.username
     expect(page).to have_content 'Item Name'
     expect(page).to have_content 'Requested for Loan'
     expect(page).to have_content 'Requested for Disbursement'

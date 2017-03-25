@@ -55,9 +55,11 @@
 			<ul>
 				<% request.request_items.each do |req_item| %>
 					<% item = Item.find(req_item.item_id) %>
-					<li><%= link_to item.unique_name, item_path(item) %>
-					: 
-					<%= req_item.quantity %></li>	
+					<li><strong><%= link_to item.unique_name, item_path(item) %></strong>
+					 loaned
+					<%= req_item.quantity_loan %>, 
+					 was disbursed
+					<%= req_item.quantity_disburse %></li>
 				<% end %>
 			</ul>
 
