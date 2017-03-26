@@ -60,6 +60,7 @@ class RequestItemsController < ApplicationController
 
 	def return
 		reqit = RequestItem.find(params[:id])
+		UserMailer.loan_convert_email(reqit)
 		if (params[:quantity_to_return].to_f > reqit.quantity_loan)
 			flash[:danger] = "That's more than are loaned out!"
 		else

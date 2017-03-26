@@ -69,6 +69,15 @@ class UserMailer < ApplicationMailer
     mail(to: @user.email, subject: @heading)
   end
 
+  def loan_convert_email(requestItem)
+    @user = User.all
+    # @request = request
+    @url  = 'https://spicysoftware.colab.duke.edu'
+    @heading = Setting.email_heading
+    @body = Setting.email_body
+    mail(to: @user.email, subject: @heading)
+  end
+
   def loan_reminder_emails
 
     current_date = Time.now.strftime("%m/%d/%Y").to_s
