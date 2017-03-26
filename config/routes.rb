@@ -26,7 +26,11 @@ Rails.application.routes.draw do
 
   get  'items/import' => 'items#import_upload', :as => 'import_upload'
   post 'items/import' => 'items#bulk_import', :as => 'bulk_import'
+
   get  'settings/dates' => 'settings#dates', :as => 'date_selection'
+  put'settings/dates' => 'settings#update_dates', :as => 'update_dates'
+  patch 'settings/dates', to: 'settings#update_dates'
+
   resources :items
   resources :tags
 

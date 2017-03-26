@@ -1,14 +1,13 @@
-<%= form_for(@settings) do |f| %>
+<%= form_for(@setting, url: update_dates_path, method: 'patch') do |f| %>
 
     <%= "Email Dates:" %>
-    <%= text_field_tag :start_date, @settings['email_dates'], 'data-behaviour' => 'datepicker' %>
+    <%= text_field_tag :start_date, @setting['email_dates'], 'data-behaviour' => 'datepicker' %>
     <script type="text/javascript">
-        $('[data-behaviour~=datepicker]').datepicker();
+        $('[data-behaviour~=datepicker]').datepicker({ multidate: true
+        }
+        );
+
     </script>
 
     <%= f.submit class: "btn btn-primary" %>
 <% end %>
-
-
-
-
