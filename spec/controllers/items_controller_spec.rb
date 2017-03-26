@@ -206,14 +206,11 @@ RSpec.describe "Item Controller Tests", :type => :feature do
   end
 
   def verify_cart_fields(user)
-    expect(page).to have_content 'Initiating User'
     expect(page).to have_content 'Item Name'
     expect(page).to have_content 'Requested for Loan'
     expect(page).to have_content 'Requested for Disbursement'
-    expect(page).to have_content 'Reason'
-    if user.privilege_admin?
-      expect(page).to have_content 'Response'
-      expect(page).to have_content 'User to make request for'
+    if user.privilege_admin? || user.privilege_manager?
+      expect(page).to have_content 'User to Make Request For'
     end
     expect(page).to have_selector(:button, 'Place Order')
     expect(page).to have_content 'Clear Items in Cart'

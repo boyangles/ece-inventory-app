@@ -48,7 +48,7 @@
 		<h3><strong>Requested  </strong>by 
 
 			<% if @request.user_id != @request.request_initiator %>
-				<%= link_to User.find(@request.request_initiator), user_path(@request.request_initiator) %> for 
+				<%= link_to User.find(@request.request_initiator).username, user_path(@request.request_initiator) %> for
 			<% end %>
 
 			<%= link_to @request.user.username, user_path(@request.user_id) %>

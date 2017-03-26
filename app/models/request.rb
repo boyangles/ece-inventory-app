@@ -77,7 +77,7 @@ class Request < ApplicationRecord
 		cond1 = self.user_id_was != self.user_id
 
     if cond1
-      @cart = Request.new(:status => :cart, :user_id => self.user_id_was, :request_initiator => self.user_id_as)
+      @cart = Request.new(:status => :cart, :user_id => self.user_id_was, :request_initiator => self.user_id_was)
       @cart.save!
 		elsif cond2
 			@cart = Request.new(:status => :cart, :user_id => self.user_id, :request_initiator => self.user_id)
