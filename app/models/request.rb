@@ -37,6 +37,7 @@ class Request < ApplicationRecord
   validates :status, :inclusion => { :in => STATUS_OPTIONS }
   validates :user_id, presence: true
   validates :request_initiator, presence: true
+	validate :cart_cannot_be_duplicated
 
   def determine_request_type
     current_request_type = 'indeterminate'
@@ -60,7 +61,7 @@ class Request < ApplicationRecord
   private
   def cart_cannot_be_duplicated
     if self.cart? &&
-        Request.where(:user_id => self.user_id).where(:status => :cart).exists? &&
+        Request.where(:request_initiator => self.user_id).where(:status => :cart).exists? &&
         self.status_was != self.status
       errors.add(:user_id, 'There cannot be two cart requests for a single user')
     end
@@ -95,10 +96,10 @@ class Request < ApplicationRecord
 		cond1 = self.user_id_was != self.user_id
 
     if cond1
-      @cart = Request.new(:status => :cart, :user_id => self.user_id_was, :request_initiator => self.user_id_as, :reason => 'TBD')
+      @cart = Request.new(:status => :cart, :user_id => self.user_id_was, :request_initiator => self.user_id_was)
       @cart.save!
 		elsif cond2
-			@cart = Request.new(:status => :cart, :user_id => self.user_id, :request_initiator => self.user_id, :reason=> 'TBD')
+			@cart = Request.new(:status => :cart, :user_id => self.user_id, :request_initiator => self.user_id)
 			@cart.save!
     end
   end

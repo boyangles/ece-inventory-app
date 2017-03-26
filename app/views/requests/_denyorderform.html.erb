@@ -1,0 +1,28 @@
+<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal2">Deny</button>
+
+<div id="myModal2" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Deny Request</h4>
+			</div>
+
+			<%= form_for(request) do |f| %>
+				<%= f.hidden_field :status, :value => "denied" %>
+
+				<div class="modal-body">
+					<%= f.label :response, "Response? (optional)", class: "control-label" %>
+					<%= f.text_area :response, class: "form-control" %>
+				</div>
+
+				<div class="modal-footer">
+					<%= f.submit "Deny Request", class: "btn btn-primary" %>
+				</div>
+			<% end %>
+		</div>
+	</div>
+</div>
+
+
+

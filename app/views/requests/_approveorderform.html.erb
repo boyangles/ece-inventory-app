@@ -1,0 +1,26 @@
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal1">Approve</button>
+<div id="myModal1" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Approve Request</h4>
+			</div>
+
+			<%= form_for(request) do |f| %>
+				<%= f.hidden_field :status, :value => "approved" %>
+
+				<div class="modal-body">
+					<%= f.label :response, "Response? (optional)", class: "control-label" %>
+					<%= f.text_area :response, class: "form-control" %>
+				</div>
+
+				<div class="modal-footer">
+					<%= f.submit "Approve Request", class: "btn btn-primary" %>
+				</div>
+			<% end %>
+		</div>
+	</div>
+</div>
+
+

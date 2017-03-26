@@ -42,7 +42,7 @@ class RequestsController < ApplicationController
     begin
       @request.update_attributes!(request_params)
       flash[:success] = "Operation successful!"
-      redirect_to request_path(req)
+      redirect_to request_path(@request)
     rescue Exception => e
       flash[:error] = "Request Could not be successfully updated! #{e.message}"
       redirect_back(fallback_location: request_path(@request))
