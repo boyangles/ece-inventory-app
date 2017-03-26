@@ -119,7 +119,7 @@
 				<% end %>
 
 				<% if !requestss.nil? %>
-					<% loanss = RequestItem.where("quantity_loan > ?", 0).where(request_id: requestss.select(:id)) %>
+					<% loanss = RequestItem.where("quantity_loan > ?", 0).where(item_id: @item.id).where(request_id: requestss.select(:id)) %>
 				<% end %>
 				<% if !loanss.empty? %>
 					<ol class="loans">
