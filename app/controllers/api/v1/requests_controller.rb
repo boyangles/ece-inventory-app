@@ -2,15 +2,15 @@ class Api::V1::RequestsController < BaseController
 
   before_action :authenticate_with_token!
   before_action :auth_by_approved_status!
-  before_action :auth_by_manager_privilege!, only: [:decision]
-  before_action :render_404_if_request_unknown, only: [:show, :decision, :update_general, :create_req_items, :destroy_req_items]
-  before_action :set_request, only: [:show, :decision, :update_general, :create_req_items, :destroy_req_items]
+  before_action :auth_by_manager_privilege!, only: [:decision, :create_req_items, :destroy_req_items, :update_req_items, :return_req_items, :index_subrequests]
+  before_action :render_404_if_request_unknown, only: [:show, :decision, :update_general, :create_req_items, :destroy_req_items, :update_req_items, :return_req_items]
+  before_action :set_request, only: [:show, :decision, :update_general, :create_req_items, :destroy_req_items, :update_req_items, :return_req_items]
 
-  before_action -> { render_422_if_request_not_outstanding!(params[:id]) }, only: [:decision, :update_general, :create_req_items, :destroy_req_items]
+  before_action -> { render_422_if_request_not_outstanding!(params[:id]) }, only: [:decision, :update_general] # :create_req_items, :destroy_req_items, :update_req_items, :return_req_items
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:decision, :update_general, :create_req_items, :destroy_req_items].each do |api_action|
+  [:decision, :update_general, :create_req_items, :destroy_req_items, :update_req_items, :return_req_items, :index_subrequests].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -22,10 +22,10 @@ class Api::V1::RequestsController < BaseController
 
   swagger_api :create do
     summary "Creates a Request"
-    notes 'List items and corresponding quantities you want in the requests. Request Type must be either "loan" or "disbursement"'
+    notes 'List items and corresponding quantities you want in the requests.'
     param :form, 'request[reason]', :string, :optional, "Reason for request"
     param :form, 'request[email]', :string, :required, "Email address of user to request for"
-    param :query, :request_items, :string, :required, 'Example --> [{"item_name": "item1", "quantity_loan": 15, "quantity_disburse": 13, "request_type": "loan"}, ...]'
+    param :query, :request_items, :string, :required, 'Example --> [{"item_name": "item1", "quantity_loan": 15, "quantity_disburse": 13}, ...]'
     response :ok
     response :unauthorized
     response :unprocessable_entity
@@ -51,18 +51,36 @@ class Api::V1::RequestsController < BaseController
   end
 
   swagger_api :create_req_items do
-    summary "Creates new subrequests for items on your own oustanding requests"
+    summary 'Creates new subrequests for existing requests.'
     param :path, :id, :integer, :required, "Request ID"
-    param :query, :request_items, :string, :optional, "Example --> item1: 15, item2: 34, item15: 14"
+    param :query, :request_items, :string, :required, 'Example --> [{"item_name": "item1", "quantity_loan": 15, "quantity_disburse": 13}, ...]'
     response :ok
     response :unauthorized
     response :unprocessable_entity
   end
 
   swagger_api :destroy_req_items do
-    summary "Removes subrequests for items on your own oustanding requests"
+    summary 'Deletes subrequests for existing requests.'
     param :path, :id, :integer, :required, "Request ID"
-    param :query, :request_items, :string, :optional, "Example --> item1, item2, item3, ..."
+    param :query, :request_items, :string, :required, 'Example --> ["item1", "item2", ...]'
+    response :ok
+    response :unauthorized
+    response :unprocessable_entity
+  end
+
+  swagger_api :update_req_items do
+    summary 'Updates new subrequests for existing requests.'
+    param :path, :id, :integer, :required, "Request ID"
+    param :query, :request_items, :string, :required, 'Example --> [{"item_name": "item1", "quantity_loan": 15, "quantity_disburse": 0}, ...]'
+    response :ok
+    response :unauthorized
+    response :unprocessable_entity
+  end
+
+  swagger_api :return_req_items do
+    summary 'Returns specific amounts for requested items'
+    param :path, :id, :integer, :required, "Request ID"
+    param :query, :request_items, :string, :required, 'Example --> [{"item_name": "item1", "quantity_return": 15}, ...]'
     response :ok
     response :unauthorized
     response :unprocessable_entity
@@ -83,41 +101,35 @@ class Api::V1::RequestsController < BaseController
     response :unprocessable_entity
   end
 
-  swagger_api :update do
-    summary "Deprecated in favor of other PATCH requests"
+  swagger_api :index_subrequests do
+    summary "Shows all or specified subrequests"
+    param :query, :item_name, :string, :optional, "Item Name"
+    param :query, :username, :string, :optional, "Username"
+    param :query, :req_type, :string, :optional, "Request Type (loan/disbursement/mixed)"
+    response :ok
+    response :unauthorized
+    response :unprocessable_entity
   end
 
   def index
-    if current_user_by_auth.privilege_student?
-      requests = Request.where(:user_id => current_user_by_auth.id)
+    requests = (current_user_by_auth.privilege_student?) ?
+        Request.where(:user_id => current_user_by_auth.id) : Request.all
+    render_multiple_requests(requests)
+  end
 
-      render :json => requests.map {
-          |req| {
-            :user => req.user.email,
-            :reason => req.reason,
-            :request_type => req.request_type,
-            :status => req.status,
-            :sub_requests => req.request_items.map {
-                |req_item| {
-                  :item => Item.find(req_item.item_id).unique_name,
-                  :quantity => req_item.quantity
-              }
-            }
-        }
-      }, status: 200
-    else
-      requests = Request.all
+  def index_subrequests
+    filter_params = params.slice(:item_name, :username, :req_type)
+    item_id = (Item.exists?(:unique_name => filter_params[:item_name])) ?
+        Item.find_by(:unique_name => filter_params[:item_name]).id : -1
+    user_id = (User.exists?(:username => filter_params[:username])) ?
+        User.find_by(:username => filter_params[:username]).id : -1
 
-      render :json => requests.map {
-          |req| {
-            :id => req.id,
-            :user => req.user.email,
-            :reason => req.reason,
-            :request_type => req.request_type,
-            :status => req.status
-        }
-      }, status: 200
-    end
+    request_items = RequestItem.all
+    request_items = request_items.filter({:item_id => item_id}) unless filter_params[:item_name].blank?
+    request_items = request_items.filter({:user_id => user_id}) unless filter_params[:username].blank?
+    request_items = request_items.filter({:request_type => filter_params[:req_type]}) unless filter_params[:req_type].blank?
+
+    render :json => request_items, status: 200
   end
 
   def show
@@ -164,68 +176,59 @@ class Api::V1::RequestsController < BaseController
   end
 
   def create_req_items
-    render_client_error("Cannot update request that is not your own!", 401) and
-        return unless @request.user_id == current_user_by_auth.id
-
     query_params = params.slice(:request_items)
-    req_item_array, req_item_errors = key_value_query_string_to_hash_array(query_params[:request_items])
+    render_client_error("Invalid JSON format", 422) and return unless valid_json?(query_params[:request_items])
+    req_items = JSON.parse(query_params[:request_items])
+    render_client_error("JSON format must be array", 422) and return unless req_items.kind_of?(Array)
 
-    render_client_error(req_item_errors, 422) and return unless req_item_errors.blank?
-
-    req_item_array.each do |req_item|
-      item_name = req_item[:key]
-      item_quantity = req_item[:value]
-
-      render_client_error("Item #{item_name} doesn't exist", 422) and
-          return unless Item.exists?(:unique_name => item_name)
-      render_client_error("Quantity #{item_quantity} is not an integer", 422) and
-          return unless !!/\A\d+\z/.match(item_quantity)
-
-      req_item[:key] = Item.find_by(:unique_name => item_name)
-      req_item[:value] = item_quantity.to_i
-
-      if RequestItem.exists?(:request_id => @request.id, :item_id => req_item[:key].id)
-        render_client_error("Item to Request Association already exists", 422) and return
-      end
+    begin
+      updated_request = current_user_by_auth.add_additional_subrequests(@request, req_items)
+      render_request_with_sub_requests(updated_request, updated_request.user)
+    rescue Exception => e
+      render_client_error(e.message, 422) and return
     end
-
-    req_item_array.each do |req_item|
-      RequestItem.create(:request_id => @request.id,
-                          :item_id => req_item[:key].id,
-                          :quantity => req_item[:value])
-    end
-
-    render_request_with_sub_requests(@request, @request.user)
   end
 
   def destroy_req_items
-    render_client_error("Cannot update request that is not your own!", 401) and
-        return unless @request.user_id == current_user_by_auth.id
-
     query_params = params.slice(:request_items)
-    req_item_array = (query_params[:request_items].blank?) ? [] : query_params[:request_items].split(",").map(&:strip)
+    render_client_error("Invalid JSON format", 422) and return unless valid_json?(query_params[:request_items])
+    req_items = JSON.parse(query_params[:request_items])
+    render_client_error("JSON format must be array", 422) and return unless req_items.kind_of?(Array)
 
-    items_list = []
-
-    req_item_array.each do |req_item|
-      item_name = req_item
-
-      render_client_error("Item #{item_name} doesn't exist", 422) and
-          return unless Item.exists?(:unique_name => item_name)
-
-      item = Item.find_by(:unique_name => item_name)
-      items_list.push(item)
-
-      render_client_error("Item to Request Association doesn't exists", 422) and
-          return unless RequestItem.exists?(:request_id => @request.id, :item_id => item.id)
+    begin
+      updated_request = current_user_by_auth.remove_specified_subrequests(@request, req_items)
+      render_request_with_sub_requests(updated_request, updated_request.user)
+    rescue Exception => e
+      render_client_error(e.message, 422) and return
     end
+  end
 
-    items_list.each do |my_item|
-      RequestItem.find_by(:request_id => @request.id,
-                       :item_id => my_item.id).destroy
+  def update_req_items
+    query_params = params.slice(:request_items)
+    render_client_error("Invalid JSON format", 422) and return unless valid_json?(query_params[:request_items])
+    req_items = JSON.parse(query_params[:request_items])
+    render_client_error("JSON format must be array", 422) and return unless req_items.kind_of?(Array)
+
+    begin
+      updated_request = current_user_by_auth.update_specified_subrequests(@request, req_items)
+      render_request_with_sub_requests(updated_request, updated_request.user)
+    rescue Exception => e
+      render_client_error(e.message, 422) and return
     end
+  end
 
-    render_request_with_sub_requests(@request, @request.user)
+  def return_req_items
+    query_params = params.slice(:request_items)
+    render_client_error("Invalid JSON format", 422) and return unless valid_json?(query_params[:request_items])
+    req_items = JSON.parse(query_params[:request_items])
+    render_client_error("JSON format must be array", 422) and return unless req_items.kind_of?(Array)
+
+    begin
+      updated_request = current_user_by_auth.return_specified_items(@request, req_items)
+      render_request_with_sub_requests(updated_request, updated_request.user)
+    rescue Exception => e
+      render_client_error(e.message, 422) and return
+    end
   end
 
   private
@@ -236,13 +239,38 @@ class Api::V1::RequestsController < BaseController
           :reason => req.reason,
           :status => req.status,
           :requested_for => User.find(req.user_id).username,
+          :request_type => req.determine_request_type,
           :sub_requests => req.request_items.map {
               |req_item| {
                 :item => Item.find(req_item.item_id).unique_name,
                 :quantity_on_loan => req_item.quantity_loan,
                 :quantity_disbursed => req_item.quantity_disburse,
                 :quantity_returned => req_item.quantity_return,
-                :request_type => req_item.request_type
+                :subrequest_type => req_item.determine_subrequest_type
+            }
+          }
+      }
+    }, status: 200
+  end
+
+  private
+  def render_multiple_requests(requests)
+    render :json => requests.map {
+        |req| {
+          :id => req.id,
+          :user => req.user.email,
+          :reason => req.reason,
+          :status => req.status,
+          :response => req.response,
+          :request_initiator => req.request_initiator,
+          :request_type => req.determine_request_type,
+          :sub_requests => req.request_items.map {
+              |req_item| {
+                :item => Item.find(req_item.item_id).unique_name,
+                :quantity_on_loan => req_item.quantity_loan,
+                :quantity_disbursed => req_item.quantity_disburse,
+                :quantity_returned => req_item.quantity_return,
+                :subrequest_type => req_item.determine_subrequest_type
             }
           }
       }

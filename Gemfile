@@ -118,5 +118,8 @@ gem 'sidekiq'
 
 # gem 'sendgrid-ruby'
 
-#still use action mailer
-gem 'sendgrid-actionmailer'
+
+gem 'sendgrid'
+
+# #still use action mailer
+# gem 'sendgrid-actionmailer'

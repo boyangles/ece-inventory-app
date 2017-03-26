@@ -1,116 +1,130 @@
-<p id="notice"><%= notice %></p>
-
-<% if !@request.cart? %>
-    <p>
-      <strong>Requested On</strong>
-      <%= @request.created_at.to_date %>
-    </p>
-<% end %>
-
-<p>
-  <strong>Initiating User</strong>
-  <%= link_to @user.username, user_path(@user.id) %>
-</p>
-
-<p>
-  <% if @request.request_items.empty? && @request.cart? %>
-    <p>Your cart is empty! Add items in order to checkout. </p>
-<% else %>
-
-    <table class="table table-striped table-hover">
-      <thead>
-      <tr>
-        <th>Item Name</th>
-        <th class="text-center">Requested for Loan</th>
-        <th class="text-center">Requested for Disbursement</th>
-        <th></th>
-      </tr>
-      </thead>
-      <tbody>
-
-      <% @request.request_items.each do |req_item| %>
-          <tr>
-            <% item = Item.find(req_item.item_id) %>
-            <td><%= link_to item.unique_name, item_path(item.id) %></td>
-            <% if @request.cart? || @request.outstanding? %>
-                <td class="text-right"><a href="#" data-xeditable="true"
-                                          data-pk="<%= req_item.id %>"
-                                          data-model="request_item"
-                                          data-url="<%= request_item_url(req_item.id) %>"
-                                          data-name="quantity_loan"
-                                          data-type="number"
-                                          data-title="enter new quantity">
-                  <%= req_item.quantity_loan %></a>
-                </td>
-                <td class="text-right"><a href="#" data-xeditable="true"
-                                          data-pk="<%= req_item.id %>"
-                                          data-model="request_item"
-                                          data-url="<%= request_item_url(req_item.id)%>"
-                                          data-name="quantity_disburse"
-                                          data-type="number"
-                                          data-title="enter new quantity">
-                  <%= req_item.quantity_disburse %></a>
-                </td>
-            <% else %>
-                <td class="text-right"><%= req_item.quantity_loan %></td>
-                <td class="text-right"><%= req_item.quantity_disburse %></td>
-            <% end %>
-
-            <% if @request.cart? || @request.outstanding? %>
-                <td><%= link_to "Remove Item", req_item, method: :delete, data: {confirm: "Are you sure you want to remove " + item.unique_name + " from your cart?"}, class: "btn btn-primary pull-right" %></td>
-            <% end %>
-          </tr>
-      <% end %>
-      </tbody>
-    </table>
-<% end %>
-</p>
-
-<p>
-  <% if !@request.cart? && !@request.cancelled? ||  !is_manager_or_admin? %>
-      <strong>Reason:</strong>
-      <%= @request.reason %>
-  <% end %>
-</p>
-
-
-<% if !@request.cart? %>
-    <p>
-      <strong>Status:</strong>
-      <%= @request.status %>
-    </p>
-<% end %>
-
-<% if !@request.outstanding? && !@request.cart? %>
-    <p>
-      <strong>Admin Response:</strong>
-      <%= (@request.response) ? @request.response : "None given." %>
-    </p>
-<% end %>
-
-<% if @request.outstanding? && is_manager_or_admin? %>
-    <%= render 'decisionform', request: @request %>
-<% end %>
-
-<% if !@request.request_items.empty? && @request.cart? && is_manager_or_admin? %>
-    <%= render 'placeorderform', request: @request %>
-<% end %>
 
 <% if @request.cart? %>
-    <%= link_to 'Clear Items in Cart', clear_request_path(@request), method: :put %> |
 
-    <% if is_manager_or_admin? %>
-        <%= link_to 'Edit', edit_request_path(@request) %> |
-    <% else %>
-        <%= link_to 'Edit/Supply Reason to Submit', edit_request_path(@request) %> |
-    <% end %>
-<% end %>
+	<h2 class="page-header">Your Cart</h2>
+	<% if @request.request_items.empty? %>
+		<h4>Your cart is empty! Add items in order to checkout. </h4>
+	<% else %>
+		<%= render :partial => 'editrequestitems', locals: {request: @request} %>
 
-<% if @request.outstanding? %>
-    <%= render 'cancelorderform', request: @request %>
-    <%= link_to 'Edit', edit_request_path(@request) %> |
-<% end %>
+		<% if is_manager_or_admin? %>
+			<%= render :partial => 'managerplaceorderform', locals: {request: @request} %>
+		<% else %>
+			<%= render :partial => 'userplaceorderform', locals: {request: @request} %>
+		<% end %>
+	<% end %>
 
-<% if @request.cancelled? %>
-    <%= render 'reviveorderform', request: @request %>
+	<br>
+	<% if !@request.request_items.empty? %>	
+		<%= link_to 'Clear Cart', clear_request_path(@request), { method: :put, class: "btn btn-danger pull-right", data: {confirm: "Are you sure?"}} %>
+	<% end %>
+
+<% elsif @request.outstanding? %>
+
+	<div class="panel panel-warning">
+		<div class="panel-heading">
+			<h3 class="panel-title text-center">Outstanding</h3>
+		</div>
+	</div>
+
+	<div class="page-header">
+		<h4 class="pull-right">Updated <%= time_ago_in_words(@request.updated_at) %> ago</h4>
+		<h3><strong>Requested  </strong>by 
+			<%= link_to @request.user.username, user_path(@request.user_id) %>
+		</h3>
+	</div>
+
+	<%= render :partial => 'editrequestitems', locals: {request: @request} %>
+
+	<!-- reason (updatable?)-->
+	<p>
+		<strong>Reason </strong>
+		<%= @request.reason %>
+	</p>
+
+	<% if current_user == @request.user %>
+		<%= render 'cancelorderform', request: @request %>
+	<% end %>
+
+	<% if is_manager_or_admin? %>
+		<div class="pull-right">
+			<%= render 'approveorderform', request: @request %>
+			<%= render 'denyorderform', request: @request %>
+			<br>
+		</div>
+	<% end %>
+
+<% elsif @request.approved? %>
+
+	<div class="panel panel-success">
+		<div class="panel-heading">
+			<h3 class="panel-title text-center">Approved</h3>
+		</div>
+	</div>
+
+	<div class="page-header">
+		<h4 class="pull-right">Updated <%= time_ago_in_words(@request.updated_at) %> ago</h4>
+		<h3><strong>Requested  </strong>by 
+
+			<% if @request.user_id != @request.request_initiator %>
+				<%= link_to User.find(@request.request_initiator).username, user_path(@request.request_initiator) %> for
+			<% end %>
+
+			<%= link_to @request.user.username, user_path(@request.user_id) %>
+		</h3>
+	</div>
+
+
+	<%= render 'viewapprovedrequestitems', request: @request %>
+
+	<p>
+		<strong>Reason </strong>
+		<%= @request.reason %>
+	</p>
+
+	<% if @request.response != "" %>
+		<p>
+			<strong>Admin Response </strong>
+			<%= @request.response %>
+		</p>
+	<% end %>
+
+<% elsif @request.cancelled? || @request.denied? %>
+
+	<% if @request.cancelled? %>
+		<div class="panel panel-danger">
+			<div class="panel-heading">
+				<h3 class="panel-title text-center">Cancelled</h3>
+			</div>
+		</div>
+		<%= render 'reviveorderform', request: @request %>
+	<% else %>
+		<div class="panel panel-danger">
+			<div class="panel-heading">
+				<h3 class="panel-title text-center">Denied</h3>
+			</div>
+		</div>
+	<% end %>
+
+	<div class="page-header">
+		<h4 class="pull-right">Updated <%= time_ago_in_words(@request.updated_at) %> ago</h4>
+		<h3><strong>Requested  </strong>by 
+			<%= link_to @request.user.username, user_path(@request.user_id) %>
+		</h3>
+	</div>
+
+	<%= render :partial => 'viewrequestitems', locals: {request: @request} %>
+
+	<p>
+		<strong>Reason </strong>
+		<%= @request.reason %>
+	</p>
+
+	<% if @request.denied? && @request.response != "" %>
+		<p>
+			<strong>Admin Response </strong>
+			<%= @request.response %>
+		</p>
+	<% end %>
+
 <% end %>
