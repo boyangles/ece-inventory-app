@@ -39,6 +39,25 @@ class Request < ApplicationRecord
   validates :request_initiator, presence: true
 	validate :cart_cannot_be_duplicated
 
+  def determine_request_type
+    current_request_type = 'indeterminate'
+    self.request_items.each do |request_item|
+      subrequest_type = request_item.determine_subrequest_type
+      case subrequest_type
+        when 'disbursement'
+          return 'loan' if current_request_type == 'loan'
+          current_request_type = 'disbursement'
+        when 'loan'
+          return 'mixed' if current_request_type == 'disbursement'
+          current_request_type = 'loan'
+        else # mixed
+          return 'mixed'
+      end
+    end
+
+    current_request_type
+  end
+
   private
   def cart_cannot_be_duplicated
     if self.cart? &&
