@@ -6,17 +6,17 @@ RSpec.describe "Item Controller Tests", :type => :feature do
   describe "GET index" do
     it "gets all items as admin and checks New Item option is listed" do
       login(:user_admin)
-      check_items_index('admin')
+      check_items_index(@user)
     end
 
     it "gets all items as manager" do
       login(:user_manager)
-      check_items_index('manager')
+      check_items_index(@user)
     end
 
     it "gets all items as student" do
       login(:user_student)
-      check_items_index('student')
+      check_items_index(@user)
     end
   end
 
@@ -24,16 +24,19 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     it "gets a specific item and displays info as admin" do
       login(:user_admin)
       navigate_to_new_item
+      verify_show_item_details_page(@user)
     end
 
     it "gets a specific item and displays info as manager" do
       login(:user_manager)
       navigate_to_new_item
+      verify_show_item_details_page(@user)
     end
 
     it "gets a specific item and displays info as student" do
       login(:user_student)
       navigate_to_new_item
+      verify_show_item_details_page(@user)
     end
   end
 
@@ -230,11 +233,29 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     expect(page).to have_selector(:link_or_button, 'Submit')
   end
 
+  def verify_show_item_details_page(user)
+    expect(page).to have_content 'Main Details'
+    expect(page).to have_content 'In Stock'
+    expect(page).to have_content 'Model Number'
+    expect(page).to have_content 'Description'
+    expect(page).to have_content 'Tags'
+    expect(page).to have_content 'Additional Information'
+    expect(page).to have_content (!user.privilege_student? ? 'All Outstanding Requests' : 'My Outstanding Requests')
+    expect(page).to have_content 'Loans'
+    expect(page).to have_content 'Loan'
+    expect(page).to have_content 'Disbursement'
+    expect(page).to have_selector(:link_or_button, 'Add to Cart')
+    if user.privilege_admin? || user.privilege_manager?
+      expect(page).to have_content 'Logs'
+      expect(page).to have_selector(:link_or_button, 'Edit Item')
+      expect(page).to have_selector(:link_or_button, 'Delete Item') if user.privilege_admin?
+    end
+  end
+
   def navigate_to_new_item
     @item = FactoryGirl.create(:item)
     visit item_path(@item.id)
     verify_item_fields(@item)
-    expect(page).to have_content 'Tags'
     expect(page).to have_selector(:link_or_button, 'Add to Cart')
   end
 
@@ -249,13 +270,13 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     expect(page).to have_content 'Excluded tags'
     expect(page).to have_selector(:link_or_button, 'Search')
 
-    if user == 'admin'
+    if user.privilege_admin?
       expect(page).to have_selector(:link_or_button, 'Custom Fields')
       expect(page).to have_selector(:link_or_button, 'New Item')
-    elsif user == 'manager'
+    elsif user.privilege_manager?
       expect(page).to have_selector(:link_or_button, 'New Item')
       expect(page).not_to have_selector(:link_or_button, 'Custom Fields')
-    elsif user == 'student'
+    elsif user.privilege_student?
       expect(page).not_to have_selector(:link_or_button, 'Custom Fields')
       expect(page).not_to have_selector(:link_or_button, 'New Item')
     end
