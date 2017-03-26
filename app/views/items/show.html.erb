@@ -13,36 +13,38 @@
 
     <div class="center_jumbotron">
       <h2 class="page-header"><%= @item.unique_name %>
-        
-				<div class="pull-right">
-					<table><tbody><tr>
-					<% if is_manager_or_admin? && @item.active? %>
-            <td><%= link_to "Edit Item", edit_item_url(@item.id), :class => "btn btn-primary" %></td>
-        	<% end %>
 
-					<% if is_admin? %>
-    				<td><%= render 'deactivateitemform', item: @item %></td>
-  				<% end %>
-					</tr></tbody></table>
-				</div>
+        <div class="pull-right">
+          <table><tbody><tr>
+            <% if is_manager_or_admin? && @item.active? %>
+                <td><%= link_to "Edit Item", edit_item_url(@item.id), :class => "btn btn-primary" %></td>
+            <% end %>
+
+            <% if is_admin?  && @item.active? %>
+                <td><%= render 'deactivateitemform', item: @item %></td>
+            <% end %>
+          </tr></tbody></table>
+        </div>
       </h2>
     </div>
 
-		<div class="pull-right">
-    	<% ri = RequestItem.where(item_id: @item.id).where(request_id: grab_cart(current_user).id).take %>
-      <% if ri.nil? %>
-      	<%= render 'indexform', request_item: RequestItem.new(item_id: @item.id,
-                                                              request_id: grab_cart(current_user).id) %>
-      <% else %>
-        <%= render 'indexform', request_item: ri %>
+    <div class="pull-right">
+      <% if @item.active? %>
+          <% ri = RequestItem.where(item_id: @item.id).where(request_id: grab_cart(current_user).id).take %>
+          <% if ri.nil? %>
+              <%= render 'indexform', request_item: RequestItem.new(item_id: @item.id,
+                                                                    request_id: grab_cart(current_user).id) %>
+          <% else %>
+              <%= render 'indexform', request_item: ri %>
+          <% end %>
       <% end %>
-		</div><br><br><br>
+    </div><br><br><br>
 
-	   <ul class="nav nav-tabs">
+    <ul class="nav nav-tabs">
       <li class="active"><a href="#home" data-toggle="tab">Item Details</a></li>
       <li><a href="#requests" data-toggle="tab"><%= (is_manager_or_admin?) ? "All Outstanding Requests" : "My Outstanding Requests" %></a></li>
       <li><a href="#loans" data-toggle="tab">Loans</a></li>
-			<% if is_manager_or_admin? %><li><a href="#logs" data-toggle="tab">Logs</a></li><% end %>
+      <% if is_manager_or_admin? %><li><a href="#logs" data-toggle="tab">Logs</a></li><% end %>
     </ul>
 
     <div id="myTabContent" class="tab-content">
@@ -87,15 +89,15 @@
                 <% if is_manager_or_admin? || !icf.custom_field.private_indicator %>
                     <p>
                       <strong><%= icf.custom_field.field_name %>: </strong>
-											<%= field_content %>
-                   </p>
+                      <%= field_content %>
+                    </p>
                 <% else %>
                 <% end %>
             <% end %>
           </div>
         </div>
 
-     </div>
+      </div>
 
 
       <div class="tab-pane fade" id="requests">
@@ -113,34 +115,34 @@
 
       <div class="tab-pane fade" id="loans">
         <br>
-				<% requestss = Request.where(status: "approved") %>
-				<% if !is_manager_or_admin? %>
-					<% requestss = requestss.where(user_id: current_user.id) %>
-				<% end %>
+        <% requestss = Request.where(status: "approved") %>
+        <% if !is_manager_or_admin? %>
+            <% requestss = requestss.where(user_id: current_user.id) %>
+        <% end %>
 
-				<% if !requestss.nil? %>
-					<% loanss = RequestItem.where("quantity_loan > ?", 0).where(item_id: @item.id).where(request_id: requestss.select(:id)) %>
-				<% end %>
-				<% if !loanss.empty? %>
-					<ol class="loans">
-						<%= render partial: "loans/loandisplay", collection: loanss, as: :loan %>
-					</ol>
-				<% else %>
-					<% text = (is_manager_or_admin?) ? "There are no loans on this item currently." : "You have no loans on this item currently" %>
-					<%= text %>
-				<% end %>
+        <% if !requestss.nil? %>
+            <% loanss = RequestItem.where("quantity_loan > ?", 0).where(item_id: @item.id).where(request_id: requestss.select(:id)) %>
+        <% end %>
+        <% if !loanss.empty? %>
+            <ol class="loans">
+              <%= render partial: "loans/loandisplay", collection: loanss, as: :loan %>
+            </ol>
+        <% else %>
+            <% text = (is_manager_or_admin?) ? "There are no loans on this item currently." : "You have no loans on this item currently" %>
+            <%= text %>
+        <% end %>
 
       </div>
 
-			<% if is_manager_or_admin? %>
-	      <div class="tab-pane fade" id="logs">
-  	      <br>
-					<% itemLogs = Log.where(id: ItemLog.select(:log_id).where(item_id: @item.id))%>
-	  	    <% itemInReqLogs = Log.where(id: RequestLog.select(:log_id).where(request_id: RequestItem.select(:request_id).where(item_id: @item.id))) %>
- 					<% logss = Log.where(id: itemLogs | itemInReqLogs) %>
-					<%= render logss %>
-      	</div>
-			<% end %>
+      <% if is_manager_or_admin? %>
+          <div class="tab-pane fade" id="logs">
+            <br>
+            <% itemLogs = Log.where(id: ItemLog.select(:log_id).where(item_id: @item.id))%>
+            <% itemInReqLogs = Log.where(id: RequestLog.select(:log_id).where(request_id: RequestItem.select(:request_id).where(item_id: @item.id))) %>
+            <% logss = Log.where(id: itemLogs | itemInReqLogs) %>
+            <%= render logss %>
+          </div>
+      <% end %>
 
 
     </div>
