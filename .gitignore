@@ -26,6 +26,6 @@
 /public/apidocs/sendgrid.env
 sendgrid.env
 
-development.rb
-production.rb
-test.rb
+config/environments/development.rb
+config/environments/production.rb
+config/environments/test.rb
