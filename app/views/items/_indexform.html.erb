@@ -13,10 +13,10 @@
 			<%= f.hidden_field :request_id, :value => request_item.request_id %>
 			<tr>
 			<td>
-				<%= f.number_field :quantity_loan, class: "col-lg-12", id: "loan_id" %><br>
+				<%= f.number_field :quantity_loan, class: "col-lg-12", id: "loan_id", min: 0, required: true %><br>
 			</td>
 			<td>
-        <%= f.number_field :quantity_disburse, class: "col-lg-12", id: "disburse_id"%><br>
+        <%= f.number_field :quantity_disburse, class: "col-lg-12", id: "disburse_id", min: 0, required: true %><br>
 			</td>
 	
 			<td>
