@@ -109,7 +109,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :requests, :only => [:index, :show, :create, :update, :destroy] do
+      resources :requests, :only => [:index, :show, :create] do
         member do
           put :decision
           patch :decision
@@ -122,7 +122,12 @@ Rails.application.routes.draw do
 
           put :update_req_items
           patch :update_req_items
+
+          put :return_req_items
+          patch :return_req_items
         end
+
+        get :index_subrequests
       end
       resources :tags, :only => [:index, :show, :create, :update, :destroy]
       resources :logs, :only => [:index, :show, :create, :update, :destroy]

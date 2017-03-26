@@ -1,13 +1,17 @@
 <% provide(:title, 'All Loans') %>
 
 <div class="center_jumbotron">
+  <h4 class="pull-right">
+	<%= link_to "Search loans", '#', id: 'search-log-link' %><br>
+  </h4>
   <h2 class="page-header">Loans
   </h2>
 </div>
 
+<%= render 'searchlogform' %>
+
 <div class="row">
 	<div class="col-md-9 col-md-offset-1">
-		TODO: add search form 
 		<% if !@loans.nil? %>
 			<ol class="loans">
 				<%= render partial: "loandisplay", collection: @loans, as: :loan %>
