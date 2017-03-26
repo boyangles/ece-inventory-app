@@ -37,12 +37,16 @@ class RequestItemsController < ApplicationController
 	def update
 		@request_item = RequestItem.find(params[:id])
 
-		begin
-			@request_item.update_attributes!(request_item_params)
-			redirect_to @request_item.request, notice: "Item quantity updated successfully."
-		rescue Exception => e
-			flash[:danger] = e.message
-			redirect_to item_path(Item.find(@request_item.item_id))
+		respond_to do |format|
+			begin
+				@request_item.update_attributes!(request_item_params)
+				format.html { redirect_to @request_item.request, notice: "Item quantity updated successfully." }
+				format.json { head :no_content }
+			rescue Exception => e
+				flash[:danger] = e.message
+				format.html { redirect_to item_path(Item.find(@request_item.item_id)) }
+				format.json { render json: @request_item.errors, status: :unprocessable_entity }
+			end
 		end
 
 	end
