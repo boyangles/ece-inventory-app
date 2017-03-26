@@ -13,95 +13,120 @@
     <% if is_admin? && !current_user?(@user) %>
         <%= link_to "Edit User", edit_user_url(@user.id), :class => "btn btn-primary pull-right" %>
     <% end %>
+		<% if current_user?(@user) %>
+			<%= link_to 'Authentication Token', auth_token_user_path, class: "btn btn-primary pull-right" %>
+		<% end %>
   </h2>
 </div>
 
-<!--<ul class="nav nav-tabs">-->
-<!--<li class="active"><a href="#home" data-toggle="tab">User Info</a></li>-->
-<!--</ul>-->
+<ul class="nav nav-tabs">
+	<li class="active"><a href="#home" data-toggle="tab">Loans and Disbursements</a></li>
+	<li><a href="#requests" data-toggle="tab">Requests</a></li>
+	<% if is_manager_or_admin? %><li><a href="#logs" data-toggle="tab">Logs</a></li><% end %>
+</ul>
 
-<!--<div id="myTabContent" class="tab-content">-->
-<!--<div class="tab-pane fade active in" id="home">-->
-<br>
-
-<div class="panel panel-primary">
-  <div class="panel-heading users-items-display-link">
-    <h3 class="panel-title">Loans TBD
-      <%= link_to "[toggle glyph]", '#', class: "pull-right" %></h3>
-  </div>
-  <div class="panel-body users-items-display">
-    <% request_items = RequestItem.where("quantity_loan > ?", 0).where(request_id: Request.select(:id).where(user_id: @user.id, status: "approved")) %>
-    <% request_items.each do |req_item| %>
-        <% item = Item.find(req_item.item_id) %>
-        <% if !is_manager_or_admin? %>
-            <strong><%= link_to item.unique_name, item_path(item.id) %></strong>
-            <%= req_item.quantity_loan %>
+<div id="myTabContent" class="tab-content">
+  <div class="tab-pane fade active in" id="home">
+    <br>
+    <div class="panel panel-primary">
+      <div class="panel-heading users-items-display-link">
+        <h3 class="panel-title">Loans
+          <%= link_to "[click to toggle]", '#', class: "pull-right" %></h3>
+      </div>
+      <div class="panel-body users-items-display">
+        <% request_items = RequestItem.where("quantity_loan > ?", 0).where(request_id: Request.select(:id).where(user_id: @user.id, status: "approved")) %>
+        <% if !request_items.empty? %>
+          <ol class="loans">
+            <%= render partial: 'loans/loandisplay', collection: request_items, as: :loan %>
+          </ol>
         <% else %>
-
+          "This user currently has no active loans."
         <% end %>
-    <% end %>
-  </div>
-</div>
+      </div>
+    </div>
 
-<div class="panel panel-info">
-  <div class="panel-heading users-items-display-link">
-    <h3 class="panel-title">Disbursements TBD
-      <%= link_to "[toggle glyph]", '#', class: "pull-right" %></h3>
-  </div>
-  <div class="panel-body users-items-display">
-    <% request_items = RequestItem.where("quantity_disburse > ?", 0).where(request_id: Request.select(:id).where(user_id: @user.id, status: "approved")) %>
-    <% request_items.each do |req_item| %>
-        <% item = Item.find(req_item.item_id) %>
-        <% if !is_manager_or_admin? %>
-            <strong><%= link_to item.unique_name, item_path(item.id) %></strong>
-            <%= req_item.quantity_disburse %>
+    <div class="panel panel-info">
+      <div class="panel-heading users-items-display-link">
+        <h3 class="panel-title">Disbursements
+          <%= link_to "[click to toggle]", '#', class: "pull-right" %></h3>
+      </div>
+      <div class="panel-body users-items-display">
+        <% request_items = RequestItem.where("quantity_disburse > ?", 0).where(request_id: Request.select(:id).where(user_id: @user.id, status: "approved")) %>
+        <% if !request_items.empty? %>
+          <ol class="disbursements">
+            <%= render partial: 'request_items/disbursementdisplay', collection: request_items, as: :disburse %>
+          </ol>
         <% else %>
-
+          "This user currently has no disbursements."
         <% end %>
-    <% end %>
+      </div>
+    </div>
   </div>
-</div>
 
-<div class="panel panel-success">
-  <div class="panel-heading users-request-display-link">
-    <h3 class="panel-title">Approved Requests
-      <% approved_req = Request.where(user_id: @user.id, status: "approved") %>
-      <% if !approved_req.empty? %>
-          <%= link_to "[Click to Toggle]", '#', class: "pull-right" %>
-      <% end %>
-    </h3>
-  </div>
-  <div class="panel-body users-request-display">
-    <%= render approved_req %>
-  </div>
-</div>
+  <div class="tab-pane fade " id="requests"> 
+    <br>   
+    <div class="panel panel-success">
+      <div class="panel-heading users-request-display-link">
+        <h3 class="panel-title">Approved Requests
+          <% approved_req = Request.where(user_id: @user.id, status: "approved") %>
+          <%= link_to "[click to toggle]", '#', class: "pull-right" %>
+        </h3>
+      </div>
+      <div class="panel-body users-request-display">
+        <% if !approved_req.empty? %>
+          <%= render approved_req %>
+        <% else %>
+          This user has no approved requests.
+        <% end %>
+      </div>
+    </div>
 
-<div class="panel panel-warning">
-  <div class="panel-heading users-request-display-link">
-    <h3 class="panel-title">Outstanding Requests
-      <% outstanding_req = Request.where(user_id: @user.id, status: "outstanding") %>
-      <% if !outstanding_req.empty? %>
-          <%= link_to "[Click to Toggle]", '#', class: "pull-right" %>
-      <% end %>
-    </h3>
-  </div>
-  <div class="panel-body users-request-display">
-    <%= render outstanding_req %>
-  </div>
-</div>
+    <div class="panel panel-warning">
+      <div class="panel-heading users-request-display-link">
+        <h3 class="panel-title">Outstanding Requests
+          <% outstanding_req = Request.where(user_id: @user.id, status: "outstanding") %>
+          <%= link_to "[click to toggle]", '#', class: "pull-right" %>
+        </h3>
+      </div>
+      <div class="panel-body users-request-display">
+        <% if !outstanding_req.empty? %>
+          <%= render outstanding_req %>
+        <% else %>
+          This user has no outstanding requests.
+        <% end %>
+      </div>
+    </div>
 
-<div class="panel panel-danger">
-  <div class="panel-heading users-request-display-link">
-    <h3 class="panel-title">Denied Requests
-      <% denied_req = Request.where(user_id: @user.id, status: "denied") %>
-      <% if !denied_req.empty? %>
-          <%= link_to "[Click to Toggle]", '#', class: "pull-right" %>
-      <% end %>
-    </h3>
+    <div class="panel panel-danger">
+      <div class="panel-heading users-request-display-link">
+        <h3 class="panel-title">Denied Requests
+          <% denied_req = Request.where(user_id: @user.id, status: "denied") %>
+          <%= link_to "[click to toggle]", '#', class: "pull-right" %>
+        </h3>
+      </div>
+      <div class="panel-body users-request-display">
+        <% if !denied_req.empty? %>
+          <%= render denied_req %>
+        <% else %>
+          This user has no denied requests.
+        <% end %>
+      </div>
+    </div>
   </div>
-  <div class="panel-body users-request-display">
-    <%= render denied_req %>
-  </div>
+
+  <% if is_manager_or_admin? %>
+    <div class="tab-pane fade " id="logs"> 
+      <br>   
+        <% userl = Log.where(user_id: @user.id) %>
+        <% userLogs = Log.where(id: UserLog.select(:log_id).where(user_id: @user.id)) %>
+        <% userInReqLogs = Log.where(id: RequestLog.select(:log_id).where(request_id: Request.select(:id).where(user_id: @user.id))) %>
+
+        <% logss = Log.where(id: userl | userLogs | userInReqLogs) %>
+
+        <%= render logss %>
+    </div>
+  <% end %>
+
 </div>
 
 
@@ -109,10 +134,4 @@
     <%= render 'deactivateuserform', user: @user %>
 <% end %>
 
-<%= link_to 'Edit', edit_user_path(@user) if (is_admin? || current_user?(@user)) %> |
-<%= link_to 'Authentication Token', auth_token_user_path %>
-
-<!--</div>-->
-
-<!--</div>-->
 
