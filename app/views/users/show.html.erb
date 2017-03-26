@@ -69,7 +69,8 @@
       <div class="panel-heading users-request-display-link">
         <h3 class="panel-title">Approved Requests
           <% approved_req = Request.where(user_id: @user.id, status: "approved") %>
-          <%= link_to "[click to toggle]", '#', class: "pull-right" %>
+ 					 (<%= approved_req.count %>)
+           <%= link_to "[click to toggle]", '#', class: "pull-right" %>
         </h3>
       </div>
       <div class="panel-body users-request-display">
@@ -85,6 +86,7 @@
       <div class="panel-heading users-request-display-link">
         <h3 class="panel-title">Outstanding Requests
           <% outstanding_req = Request.where(user_id: @user.id, status: "outstanding") %>
+  				 (<%= outstanding_req.count %>)
           <%= link_to "[click to toggle]", '#', class: "pull-right" %>
         </h3>
       </div>
@@ -101,6 +103,7 @@
       <div class="panel-heading users-request-display-link">
         <h3 class="panel-title">Denied Requests
           <% denied_req = Request.where(user_id: @user.id, status: "denied") %>
+					 (<%= denied_req.count %>)
           <%= link_to "[click to toggle]", '#', class: "pull-right" %>
         </h3>
       </div>
