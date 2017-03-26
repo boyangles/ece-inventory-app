@@ -13,10 +13,22 @@
 			<%= render :partial => 'userplaceorderform', locals: {request: @request} %>
 		<% end %>
 	<% end %>
+
+	<br>
+	<% if !@request.request_items.empty? %>	
+		<%= link_to 'Clear Cart', clear_request_path(@request), { method: :put, class: "btn btn-danger pull-right", data: {confirm: "Are you sure?"}} %>
+	<% end %>
+
 <% elsif @request.outstanding? %>
 
+	<div class="panel panel-warning">
+		<div class="panel-heading">
+			<h3 class="panel-title text-center">Outstanding</h3>
+		</div>
+	</div>
+
 	<div class="page-header">
-		<h4 class="pull-right"><%= time_ago_in_words(@request.created_at) %> ago</h4>
+		<h4 class="pull-right">Updated <%= time_ago_in_words(@request.updated_at) %> ago</h4>
 		<h3><strong>Requested  </strong>by 
 			<%= link_to @request.user.username, user_path(@request.user_id) %>
 		</h3>
@@ -43,8 +55,15 @@
 	<% end %>
 
 <% elsif @request.approved? %>
+
+	<div class="panel panel-success">
+		<div class="panel-heading">
+			<h3 class="panel-title text-center">Approved</h3>
+		</div>
+	</div>
+
 	<div class="page-header">
-		<h4 class="pull-right"><%= time_ago_in_words(@request.created_at) %> ago</h4>
+		<h4 class="pull-right">Updated <%= time_ago_in_words(@request.updated_at) %> ago</h4>
 		<h3><strong>Requested  </strong>by 
 
 			<% if @request.user_id != @request.request_initiator %>
@@ -73,22 +92,22 @@
 <% elsif @request.cancelled? || @request.denied? %>
 
 	<% if @request.cancelled? %>
-		<div class="panel panel-warning">
+		<div class="panel panel-danger">
 			<div class="panel-heading">
-				<h3 class="panel-title">This request has been cancelled</h3>
+				<h3 class="panel-title text-center">Cancelled</h3>
 			</div>
 		</div>
 		<%= render 'reviveorderform', request: @request %>
 	<% else %>
 		<div class="panel panel-danger">
 			<div class="panel-heading">
-				<h3 class="panel-title">This request has been denied</h3>
+				<h3 class="panel-title text-center">Denied</h3>
 			</div>
 		</div>
 	<% end %>
 
 	<div class="page-header">
-		<h4 class="pull-right"><%= time_ago_in_words(@request.created_at) %> ago</h4>
+		<h4 class="pull-right">Updated <%= time_ago_in_words(@request.updated_at) %> ago</h4>
 		<h3><strong>Requested  </strong>by 
 			<%= link_to @request.user.username, user_path(@request.user_id) %>
 		</h3>
