@@ -78,21 +78,6 @@ class RequestsController < ApplicationController
     @request = Request.find(params[:id])
   end
 
-  def update_to_index(req, params)
-    if req.update_attributes(params)
-      flash[:success] = "Operation successful!"
-      redirect_to request_path(req)
-    else
-      flash[:error] = "Request Could not be successfully updated!"
-      redirect_back(fallback_location: request_path(req))
-    end
-  end
-
-  def reject_to_edit(request, msg)
-    flash[:danger] = msg
-    redirect_to request_path(request)
-  end
-
   # Never trust parameters from the scary internet, only allow the white list through.
   def request_params
     params.fetch(:request, {}).permit(:user_id,
