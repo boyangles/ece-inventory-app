@@ -55,9 +55,11 @@
 			<ul>
 				<% request.request_items.each do |req_item| %>
 					<% item = Item.find(req_item.item_id) %>
-					<li><%= link_to item.unique_name, item_path(item) %>
-					: 
-					<%= req_item.quantity %></li>	
+					<li><strong><%= link_to item.unique_name, item_path(item) %></strong>
+					 loaned
+					<%= req_item.quantity_loan %>, 
+					 was disbursed
+					<%= req_item.quantity_disburse %></li>
 				<% end %>
 			</ul>
 
@@ -75,7 +77,7 @@
 				deleted the <%= link_to item.unique_name, item_path(item) %>
 				which had quantity <%= item.quantity %>
 
-			<% elsif itemlog.acquired_destroyed_quantity? %>
+			<% elsif itemlog.acquired_or_destroyed_quantity? %>
 				<% if (itemlog.quantity_change > 0) %>
 					logged the acquisition of <%= itemlog.quantity_change %>
 				<% elsif (itemlog.quantity_change < 0) %>
@@ -84,7 +86,7 @@
 				<%= link_to item.unique_name, item_path(item) %>
 				from <%= itemlog.curr_quantity - itemlog.quantity_change %> to a new total of <%= itemlog.curr_quantity %>
 	
-			<% elsif itemlog.admin_corr_quantity? %>
+			<% elsif itemlog.administrative_correction? %>
 					corrected the quantity of <%= link_to item.unique_name, item_path(item) %>
 					from <%= itemlog.curr_quantity - itemlog.quantity_change %>
 					to <%= itemlog.curr_quantity %>

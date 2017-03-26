@@ -37,48 +37,12 @@ class Request < ApplicationRecord
   validates :status, :inclusion => { :in => STATUS_OPTIONS }
   validates :user_id, presence: true
   validates :request_initiator, presence: true
-
-  def has_status_change_to_approved?(request_params)
-    self.outstanding? && request_params[:status] == 'approved' || self.cart? && request_params[:status] == 'approved'
-  end
-
-	def has_status_change_to_outstanding?(request_params)
-		self.cart? && request_params[:status] == 'outstanding'
-	end
-
-	def are_request_details_valid?
-    self.request_items.each do |sub_request|
-      @item = Item.find(sub_request.item_id)
-
-      if @item.deactive?
-        return false, @item.unique_name  + " doesn't exist anymore! Cannot be disbursed."
-      elsif sub_request.oversubscribed?
-        return false, "Item named #{@item.unique_name} is oversubscribed. Requested #{sub_request.quantity}, but only has #{@item.quantity}."
-	    end
-    end
-
-    return true, ""
-  end
-
-	def are_items_valid?
-    self.request_items.each do |sub_request|
-      @item = Item.find(sub_request.item_id)
-
-      if @item.deactive?
-        return false, @item.unique_name  + " doesn't exist anymore! Please remove from cart."
-	    end
-    end
-
-    return true, ""
-  end
-
-
+	validate :cart_cannot_be_duplicated
 
   private
-
   def cart_cannot_be_duplicated
     if self.cart? &&
-        Request.where(:user_id => self.user_id).where(:status => :cart).exists? &&
+        Request.where(:request_initiator => self.user_id).where(:status => :cart).exists? &&
         self.status_was != self.status
       errors.add(:user_id, 'There cannot be two cart requests for a single user')
     end
@@ -113,10 +77,10 @@ class Request < ApplicationRecord
 		cond1 = self.user_id_was != self.user_id
 
     if cond1
-      @cart = Request.new(:status => :cart, :user_id => self.user_id_was, :request_initiator => self.user_id_as, :reason => 'TBD')
+      @cart = Request.new(:status => :cart, :user_id => self.user_id_was, :request_initiator => self.user_id_was)
       @cart.save!
 		elsif cond2
-			@cart = Request.new(:status => :cart, :user_id => self.user_id, :request_initiator => self.user_id, :reason=> 'TBD')
+			@cart = Request.new(:status => :cart, :user_id => self.user_id, :request_initiator => self.user_id)
 			@cart.save!
     end
   end

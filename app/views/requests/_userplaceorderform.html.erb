@@ -1,0 +1,28 @@
+<button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#myModal1">Place Order</button>
+
+<div id="myModal1" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Place Order</h4>
+			</div>
+
+			<%= form_for(request) do |f| %>
+				<%= f.hidden_field :status, :value => "outstanding" %>
+
+				<div class="modal-body">
+					<%= f.label :reason, "Reason for request?", class: "control-label" %>
+					<%= f.text_area :reason, class: "form-control", :required => true %>
+				</div>
+
+				<div class="modal-footer">
+					<%= f.submit "Place Order", class: "btn btn-primary" %>
+				</div>
+			<% end %>
+		</div>
+	</div>
+</div>
+
+
+

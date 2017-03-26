@@ -32,45 +32,28 @@ class RequestsController < ApplicationController
 
   # PATCH/PUT /requests/1
   def update
-
     @request.curr_user = current_user
     if params[:user]
       @request.user_id = params[:user][:id]
     end
 
-    if @request.has_status_change_to_approved?(request_params)
-      request_valid, error_msg = @request.are_request_details_valid?
-      if request_valid
-        update_to_index(@request, request_params)
-        @request.request_items.each do |sub_request|
-          @item = Item.find(sub_request.item_id)
-          @item.update_by_subrequest(sub_request, @request.request_type)
-          @item.save!
-        end
+    old_status = @request.status
 
-        ## THIS NEEDS TO BE CHANGED TO REQUEST APPROVED!!!!
-        puts "the user to this request is " + @request.user
-        UserMailer.request_initiated_email_all_subscribers(@request.user, @request).deliver_now
-      else
-        reject_to_edit(@request, error_msg)
-      end
-    elsif @request.has_status_change_to_outstanding?(request_params)
-      items_valid, error_msg = @request.are_items_valid?
+    begin
+      @request.update_attributes!(request_params)
+      flash[:success] = "Operation successful!"
+      redirect_to request_path(@request)
+    rescue Exception => e
+      flash[:error] = "Request Could not be successfully updated! #{e.message}"
+      redirect_back(fallback_location: request_path(@request))
+    end
 
-      if items_valid
-        update_to_index(@request, request_params)
-        UserMailer.request_approved_email_all_subscribers(@request.user, @request).deliver_now
-      else
-        reject_to_edit(@request, error_msg)
-      end
-    else
-      update_to_index(@request, request_params)
+    if old_status == ('outstanding' && request_params[:status] == 'approved') || (old_status == 'cart' && request_params[:status] == 'approved')
+      UserMailer.request_initiated_email_all_subscribers(@request.user, @request).deliver_now
+    elsif old_status == 'cart' && request_params[:status] == 'outstanding'
+      UserMailer.request_approved_email_all_subscribers(@request.user, @request).deliver_now
     end
   end
-
-  #	def place
-  #		@request.update!(request_params)
-  #	end
 
   def clear
     @request.items.destroy_all
@@ -96,12 +79,11 @@ class RequestsController < ApplicationController
   end
 
   def update_to_index(req, params)
-
     if req.update_attributes(params)
       flash[:success] = "Operation successful!"
       redirect_to request_path(req)
     else
-      flash[:error] = "You loser"
+      flash[:error] = "Request Could not be successfully updated!"
       redirect_back(fallback_location: request_path(req))
     end
   end

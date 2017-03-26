@@ -6,7 +6,7 @@ class TagsController < ApplicationController
   end
 
   def index
-    @tags = Tag.paginate(page: params[:page], per_page: 10)
+    @tags = Tag.order(:name).paginate(page: params[:page], per_page: 10)
   end
 
   def new
@@ -37,13 +37,16 @@ class TagsController < ApplicationController
 
   def update
     @tag = Tag.find(params[:id])
-    if @tag.update_attributes(tag_params)
-      flash[:success] = "Tag updated successfully"
-      redirect_to tags_path
-    else
-      flash[:error] = "Failed updating tag"
-      render 'edit'
-    end
+
+		respond_to do |format|
+			if @tag.update_attributes(tag_params)
+				format.html { redirect_to tags_path, notice: "Tag name updated successfully" }
+				format.json { head :no_content }
+			else
+				format.html { redirect_to tags_path, alert: "Failed to update name" }
+				format.json { render json: @tag.errors, status: :unprocessable_entity }
+			end
+		end
   end
 
 

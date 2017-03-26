@@ -1,0 +1,49 @@
+Reminder that you have a Loan soon!!!!!!!
+
+<p>
+"This is the item id"
+</p>
+
+<p>
+<%=  @requestItem.item.unique_name %>.
+</p>
+
+<p>
+"This is quantity disbursed amount"
+</p>
+
+<p>
+<%=  @requestItem.quantity_disburse %>.
+</p>
+
+<p>
+"This is quantity loaned amount"
+</p>
+
+<p>
+<%=  @requestItem.quantity_loan %>.
+</p>
+
+<p>
+"This is the status"
+</p>
+
+<p>
+<%= @requestItem.request.status %>.
+</p>
+
+<p>
+"This is the item user"
+</p>
+
+<p>
+<%= @requestItem.request.user.email %>.
+</p>
+
+<p>
+  "This is the item due date"
+</p>
+
+<p>
+  <%= @requestItem.created_at %>.
+</p>

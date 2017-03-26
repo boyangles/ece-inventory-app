@@ -25,9 +25,18 @@ Rails.application.configure do
     config.cache_store = :null_store
   end
 
-  config.action_mailer.delivery_method = :sendgrid_actionmailer
-  config.action_mailer.sendgrid_actionmailer_settings = {
-      api_key: ENV['SENDGRID_API_KEY']
+  # config.action_mailer.delivery_method = :sendgrid_actionmailer
+  # config.action_mailer.sendgrid_actionmailer_settings = {
+  #     api_key: ENV['SENDGRID_API_KEY']
+  # }
+
+  ActionMailer::Base.smtp_settings = {
+      :address => "smtp.sendgrid.net",
+      :port => 587,
+      :domain => "mysite.com",
+      :authentication => :plain,
+      :user_name => "eceinventoryduke",
+      :password => "3.5asians"
   }
 
   # # Don't care if the mailer can't send.  -------EMAIL SHIT

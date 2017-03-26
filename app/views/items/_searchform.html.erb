@@ -1,52 +1,51 @@
 <div class="search">
   <%= form_for items_path, :method => 'get' do |f| %>
 
-    <div class="form-group">
-      <%= f.label "Search Items", :class=>"col-lg-3 control-label" %><br>
-      <div class="col-lg-12">
-        <%= text_field_tag :search, params[:search], :placeholder => "Item 1", :class => "form-control" %>
-    </div></div></br>
-
-    <h5 class="pull-right col-lg-2">
-      <%= link_to "Advanced Search", '#', id: 'search-link' %></br>
-    </h5><br>
-    
-    <div class="advanced-search">
-
       <div class="form-group">
-        <%= f.label "Search by Model Number", :class=>"col-lg-3 control-label" %>
+        <%= f.label "Search Items", :class=>"col-lg-3 control-label" %><br>
         <div class="col-lg-12">
-      	  <%= text_field_tag :model_search, params[:model_search], :placeholder => "A234",  :class => "form-control" %>
-      </div></div>
-      <br>
-      <br>
+          <%= text_field_tag :search, params[:search], :placeholder => "Item", :class => "form-control" %>
+        </div></div>
 
-      <%= f.label "Required Tags", :class=>"col-lg-2 control-label" %><br>
-      <div class="tags">
-        <% @tags.each do |tag| %>
-          <label class="checkbox-inline">
-            <%= check_box_tag 'required_tag_names[]',
-               tag.name,
-               (@required_tag_filters.include? tag.name) %><br>
-            <%= tag.name %>
-          </label>
-	<% end %>
+      <h5 class="pull-right col-lg-2">
+        <%= link_to "Advanced Search", '#', id: 'search-link' %></br>
+      </h5><br>
+
+      <div class="advanced-search">
+
+        <div class="form-group">
+          <%= f.label "Search by Model Number", :class=>"col-lg-3 control-label" %>
+          <div class="col-lg-12">
+            <%= text_field_tag :model_search, params[:model_search], :placeholder => "Model Number",  :class => "form-control" %>
+          </div></div>
+        <br>
+        <br>
+
+        <div class="form-group"> 
+          <%= f.label "Required Tags", :class=>"col-lg-2 control-label" %><br>
+          <div class="col-lg-12">
+            <%= f.select :required_tag_names, Tag.all.map { |u| [u.name, u.name] },
+                  { include_blank: true },
+                  { multiple: true, class: 'chosen-select form-control'}
+            %>
+          </div>
+        </div>
+				<br>
+
+        <div class="form-group"> 
+          <%= f.label "Excluded Tags", :class=>"col-lg-2 control-label" %><br>
+          <div class="col-lg-12">
+            <%= f.select :excluded_tag_names, Tag.all.map { |u| [u.name, u.name] },
+            { include_blank: true },
+            { multiple: true, class: 'chosen-select form-control'}
+            %>
+          </div>
+        </div>
+
+			<br><br>
       </div>
 
-      <%= f.label "Excluded Tags", :class=>"col-lg-2 control-label" %><br>
-      <div class="tags">
-        <% @tags.each do |tag| %>
-          <label class="checkbox-inline">
-            <%= check_box_tag 'excluded_tag_names[]',
-                tag.name,
-                (@excluded_tag_filters.include? tag.name) %><br>
-            <%= tag.name %>
-          </label>
-        <% end %>
-      </div>
-    </div>
-    </br>
 
-    <%= submit_tag "Search", class: "btn btn-default col-lg-2 col-lg-offset-10", type: "submit" %>
-  <% end %>
-</div>
+      <%= f.submit "Search", class: "btn btn-default col-lg-2 col-lg-offset-10", type: "submit" %>
+      <% end %>
+      </div>

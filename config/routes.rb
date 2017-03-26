@@ -26,13 +26,12 @@ Rails.application.routes.draw do
 
   get  'items/import' => 'items#import_upload', :as => 'import_upload'
   post 'items/import' => 'items#bulk_import', :as => 'bulk_import'
-  resources :items do
-    member do
-      get :edit_quantity
-      put :update_quantity
-      patch :update_quantity	# in order to create separate form to specify quantity change - javascript?
-    end
-  end
+
+  get  'settings/dates' => 'settings#dates', :as => 'date_selection'
+  put'settings/dates' => 'settings#update_dates', :as => 'update_dates'
+  patch 'settings/dates', to: 'settings#update_dates'
+
+  resources :items
   resources :tags
 
   resources :item_custom_fields, :only => [:index, :show, :create, :update, :destroy]
@@ -117,6 +116,9 @@ Rails.application.routes.draw do
 
           post :create_req_items
           delete :destroy_req_items
+
+          put :update_general
+          patch :update_general
 
           put :update_req_items
           patch :update_req_items

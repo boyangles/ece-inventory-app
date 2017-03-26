@@ -7,6 +7,7 @@ end
 
 #Integration testing gem
 gem 'rails-controller-testing'
+gem 'pry-rails', :group => :development
 
 # API Testing Swagger
 gem 'swagger-docs'
@@ -14,6 +15,7 @@ gem 'ruby-swagger'
 
 # Datepicker
 gem 'bootstrap-datepicker-rails'
+gem 'chosen-rails'
 
 # Capybara RSpec Selenium Testing
 gem 'capybara'
@@ -116,5 +118,8 @@ gem 'sidekiq'
 
 # gem 'sendgrid-ruby'
 
-#still use action mailer
-gem 'sendgrid-actionmailer'
+
+gem 'sendgrid'
+
+# #still use action mailer
+# gem 'sendgrid-actionmailer'

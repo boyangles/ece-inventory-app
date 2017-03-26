@@ -3,24 +3,40 @@
   <div id="request-<%= request.id %>">
 
     <div class="panel-body">
-      <strong>Requested by </strong><%= link_to request.user.username, user_path(request.user_id) %>
+			<% initiator = User.find(request.request_initiator) %>
+      <strong>Requested </strong>by <%= link_to initiator.username, user_path(initiator.id) %>
+			<% if request.request_initiator != request.user_id %>
+				for <%= link_to request.user.username, user_path(request.user_id) %>
+			<% end %>
       </br><strong>Reason </strong><%= request.reason %>
 
       <br><br>
       <div class="pull-right">
 	<% if request.outstanding? %>
-	  <p class="label label-warning"><%= request.status %>
+	  <p class="label label-warning pull-right"><%= request.status %>
+
 	<% elsif request.approved? %>			
-	  <p class="label label-success"><%= request.status %>
+	  <p class="label label-success pull-right"><%= request.status %>
 	<% elsif request.denied? %>
-	  <p class="label label-danger"><%= request.status %>
+	  <p class="label label-danger pull-right"><%= request.status %>
 	<% elsif request.cancelled? %>
-	  <p class="label label-default"><%= request.status %>
+	  <p class="label label-default pull-right"><%= request.status %>
 	<% end %>
-      </div>
+		</p>
+
+		<br><br>
+		<% if has_disbursements(request) %>
+			<p class="label label-default pull-right">Disbursement</p>
+		<% end %>
+  	<% if has_loans(request) %>
+ 			<p class="label label-default pull-right">Loan</p>
+		<% end %>
+   </div>
+
+	
       
       <%= link_to 'Show Request Details', request%>
-      </br>Posted <%= time_ago_in_words(request.created_at) %> ago.</p>
+      </br>Updated <%= time_ago_in_words(request.updated_at) %> ago.
 
     </div>
   </div>

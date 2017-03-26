@@ -8,10 +8,14 @@ class ItemsController < ApplicationController
   def index
     @tags = Tag.all
 
-    @required_tag_filters = (params[:required_tag_names]) ?
-        params[:required_tag_names] : []
-    @excluded_tag_filters = (params[:excluded_tag_names]) ?
-        params[:excluded_tag_names] : []
+    @required_tag_filters = params["/items"] ? ( params["/items"][:required_tag_names] ?
+        params["/items"][:required_tag_names] : [] ) : []
+    @excluded_tag_filters = params["/items"] ? ( params["/items"][:excluded_tag_names] ?
+        params["/items"][:excluded_tag_names] : [] ) : []
+
+    # Plug in Chosen populates array with first element '' always. Shift left to remove it.
+    @required_tag_filters.shift
+    @excluded_tag_filters.shift
 
     items_req = Item.tagged_with_all(@required_tag_filters).select("id")
     items_exc = Item.tagged_with_none(@excluded_tag_filters).select("id")
@@ -54,6 +58,7 @@ class ItemsController < ApplicationController
   # GET /items/1/edit
   def edit
     @item = Item.find(params[:id])
+    @item_custom_fields = ItemCustomField.where(item_id: @item.id)
   end
 
   def edit_quantity
@@ -68,23 +73,37 @@ class ItemsController < ApplicationController
     redirect_to items_url
   end
 
+
   # POST /items
   # POST /items.json
-  def create
-    @item = Item.new(item_params)
-    @item.last_action = "created"
-    @item.curr_user = current_user
+	def create
+		begin
 
-    add_tags_to_item(@item, params[:tag][:tag_id]) if params[:tag]
-    remove_tags_from_item(@item, params[:tag_to_remove][:tag_id_remove]) if params[:tag_to_remove]
+			ActiveRecord::Base.transaction do
+				@item = Item.new(item_params)
+				@item.last_action = "created"
+				@item.curr_user = current_user
 
-    if @item.save
-      redirect_to item_url(@item)
-    else
-      flash.now[:danger] = "Unable to save!"
-      render 'new'
-    end
-  end
+				add_tags_to_item(@item, item_params)
+				@item.save!
+
+				CustomField.all.each do |cf|
+					cf_name = cf.field_name
+					icf = ItemCustomField.find_by(:item_id => @item.id, :custom_field_id => cf.id)
+					icf.update_attributes!(CustomField.find_icf_field_column(cf.id) => params[cf_name])
+				end
+			end
+
+      redirect_to item_url(@item.id)
+
+		rescue Exception => e
+			flash.now[:danger] = e.message
+			
+			render 'new'
+		end
+
+	end
+
 
   def import_upload
 
@@ -107,8 +126,12 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
     @item.curr_user = current_user
 
-    add_tags_to_item(@item, params[:tag][:tag_id]) if params[:tag]
-    remove_tags_from_item(@item, params[:tag_to_remove][:tag_id_remove]) if params[:tag_to_remove]
+    @item.tags.delete_all
+    add_tags_to_item(@item, item_params)
+		
+		if !params[:quantity_change].nil?
+			update_quantity
+		end
 
     if @item.update_attributes(item_params)
       flash[:success] = "Item updated successfully"
@@ -120,26 +143,35 @@ class ItemsController < ApplicationController
     end
   end
 
-  def update_quantity
-    @item = Item.find(params[:id])
+ 
+	def update_quantity
+		@item.quantity = @item.quantity + params[:quantity_change].to_f
+		if !@item.save!
+			flash.now[:danger] = "Quantity unable to be changed"
+			render 'edit'
+		end
+	end
 
-    # add action to last_action
-
-    if @item.update_attributes(item_params)
-      flash[:success] = "Item updated successfully"
-      redirect_to @item
-    else
-      flash.now[:danger] = "Unable to edit!"
-      render 'edit_quantity'
-    end
-  end
 
   private
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
-    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :search, :model_search, :status, :last_action)
+    params.fetch(:item, {}).permit(	:unique_name, 
+																	  :quantity, 
+																		:model_number, 
+																		:description, 
+																		:search, 
+																		:model_search, 
+																		:status, 
+																		:last_action, 
+																		:tag_list=>[],
+																		item_custom_fields_attributes: [:short_text_content,
+																																		 :long_text_content,
+																																		 :integer_content,
+																																		 :float_content,
+																																		 :item_id, :custom_field_id, :id])
   end
 
 end

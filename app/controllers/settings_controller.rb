@@ -10,6 +10,29 @@ class SettingsController < ApplicationController
   end
 
   def edit
+    puts "Param is here: #{params[:id]}"
+    puts "Setting is here: #{Setting.all}"
+  end
+
+  def dates
+    @setting = Setting.find_by(var: 'email_dates') || Setting.new(var: 'email_dates')
+  end
+
+  def create
+    puts "Setting email dates here"
+    puts Setting.email_dates
+    redirect_to settings_path
+  end
+
+  def update_dates
+    @setting = Setting.find_by(var: 'email_dates') || Setting.new(var: 'email_dates')
+    if @setting.value != params[:start_date]
+      @setting.value = params[:start_date]
+      @setting.save
+      redirect_to settings_path, notice: 'Settings have been updated.'
+    else
+      redirect_to settings_path
+    end
   end
 
   def update
