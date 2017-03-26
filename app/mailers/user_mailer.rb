@@ -4,7 +4,7 @@ class UserMailer < ApplicationMailer
 
   def welcome_email(user)
     @user = user
-    # @url  = 'https://spicysoftware.colab.duke.edu'
+    @url  = 'https://spicysoftware.colab.duke.edu'
     mail(to: @user.email, subject: 'Welcome to My Awesome Site')
   end
 
@@ -12,7 +12,7 @@ class UserMailer < ApplicationMailer
     @user = requester
     @request = request
     @recipient = recipient
-    # @url  = 'https://spicysoftware.colab.duke.edu'
+    @url  = 'https://spicysoftware.colab.duke.edu'
     @heading = Setting.email_heading
     @body = Setting.email_body
     mail(to: @recipient.email, subject: @heading)
@@ -42,7 +42,7 @@ class UserMailer < ApplicationMailer
     @user = requester
     @request = request
     @recipient = recipient
-    # @url  = 'https://spicysoftware.colab.duke.edu'
+    @url  = 'https://spicysoftware.colab.duke.edu'
     @heading = Setting.email_heading
     @body = Setting.email_body
     mail(to: @recipient.email, subject: @heading)
@@ -63,12 +63,66 @@ class UserMailer < ApplicationMailer
   def loan_email(user, request)
     @user = user
     @request = request
-    # @url  = 'https://spicysoftware.colab.duke.edu'
+    @url  = 'https://spicysoftware.colab.duke.edu'
     @heading = Setting.email_heading
     @body = Setting.email_body
     mail(to: @user.email, subject: @heading)
   end
 
+  def loan_reminder_emails
 
+    current_date = Time.now.strftime("%m/%d/%Y").to_s
 
+    puts "START HERE"
+
+    dates = Setting.email_dates
+
+    puts "DATES"
+    puts "DATES"
+    puts "DATES"
+    puts "DATES"
+    puts "DATES"
+    dates = dates.split(",")
+    puts dates
+    puts dates
+
+    dates.each do |date|
+      if current_date == date.to_s
+        allRequestItems = RequestItem.all
+        requestItems = RequestItem.where("quantity_loan > ?", 0)
+        # requestItems = requestItems.where(request: 'outstanding')
+        requestItems.each do |item|
+          # puts "Here are the dates!!!"
+          # puts date
+          # puts "Here are the dates!!!"
+          # puts date
+          # puts "Here are the dates!!!"
+          # puts date
+          # puts "Here are the dates!!!"
+          # puts date
+          # puts "Here are the dates!!!"
+          # puts date
+          # puts "Here are the dates!!!"
+          # puts date
+          # puts "Here are the dates!!!"
+          # puts date
+          @user = item.request.user
+          @requestItem = item
+          mail(to: @user.email, subject: @heading)
+          # puts "Sent email!!!"
+          # puts "Sent email!!!"
+          # puts "Sent email!!!"
+          # request_replacement(recipient, shift).deliver
+          # @url  = 'https://spicysoftware.colab.duke.edu'
+          @heading = Setting.email_heading
+          @body = Setting.email_body
+        end
+      else
+        puts "the date is the not the same"
+        puts date
+        puts current_date
+        puts "The dates were listed above"
+      end
+    end
+  end
 end
