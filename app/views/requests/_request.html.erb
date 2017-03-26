@@ -25,12 +25,7 @@
 		</p>
 
 		<br><br>
-		<% if has_disbursements(request) %>
-			<p class="label label-default pull-right">Disbursement</p>
-		<% end %>
-  	<% if has_loans(request) %>
- 			<p class="label label-default pull-right">Loan</p>
-		<% end %>
+		<p class="label label-default pull-right"><%= request.determine_request_type%></p>
    </div>
 
 	

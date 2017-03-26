@@ -129,12 +129,12 @@ class ItemsController < ApplicationController
     @item.tags.delete_all
     add_tags_to_item(@item, item_params)
 		
-		if !params[:quantity_change].nil?
-			update_quantity
-		end
-
     if @item.update_attributes(item_params)
-      flash[:success] = "Item updated successfully"
+ 			if !params[:quantity_change].nil?
+				update_quantity
+			end
+
+     	flash[:success] = "Item updated successfully"
       puts(@item.last_action)
       redirect_to @item
     else

@@ -20,7 +20,7 @@
 			<% acting_user = User.find(log.user_id) %>
 			<%= link_to acting_user.username, user_path(acting_user.id) %>
 		<% else %>
-			3.5 Asians
+			Three and a Half Asians
 		<% end %>
 	</td>
 	
@@ -54,12 +54,12 @@
 			<% reqUser = User.find(request.user_id) %>
 			<%= link_to reqUser.username, user_path(reqUser.id) %>
 		<% else %> <!-- item -->
-			None
+				None
 		<% end %>
 
 	</td>
 
 	<!--View Details-->
-	<td><%= link_to "View More Details", log_path(log.id) %></td>
+	<td><%= link_to "View Details", log_path(log.id) %></td>
 
 </tr>

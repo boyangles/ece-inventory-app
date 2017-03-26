@@ -45,7 +45,7 @@ class Request < ApplicationRecord
       subrequest_type = request_item.determine_subrequest_type
       case subrequest_type
         when 'disbursement'
-          return 'loan' if current_request_type == 'loan'
+          return 'mixed' if current_request_type == 'loan'
           current_request_type = 'disbursement'
         when 'loan'
           return 'mixed' if current_request_type == 'disbursement'

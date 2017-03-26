@@ -40,7 +40,7 @@
             <%= render partial: 'loans/loandisplay', collection: request_items, as: :loan %>
           </ol>
         <% else %>
-          "This user currently has no active loans."
+          This user currently has no active loans.
         <% end %>
       </div>
     </div>
@@ -57,7 +57,7 @@
             <%= render partial: 'request_items/disbursementdisplay', collection: request_items, as: :disburse %>
           </ol>
         <% else %>
-          "This user currently has no disbursements."
+          This user currently has no disbursements.
         <% end %>
       </div>
     </div>
@@ -126,7 +126,26 @@
 
         <% logss = Log.where(id: userl | userLogs | userInReqLogs) %>
 
-        <%= render logss %>
+		    <% if logss.any? %>
+
+					<table class="table table-striped table-hover">
+						<thead>
+							<tr>
+								<th>Time</th>
+								<th>Initiator</th>
+								<th>Object Affected</th>
+								<th>Action</th>
+								<th>Affected User</th>
+								<th></th>
+							</tr>	
+						</thead>
+						<tbody>
+        	  	<%= render logss %>
+						</tbody>
+					</table>
+
+    		<% end %>
+
     </div>
   <% end %>
 
