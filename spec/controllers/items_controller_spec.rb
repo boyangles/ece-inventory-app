@@ -213,8 +213,7 @@ RSpec.describe "Item Controller Tests", :type => :feature do
       expect(page).to have_content 'User to Make Request For'
     end
     expect(page).to have_selector(:button, 'Place Order')
-    expect(page).to have_content 'Clear Items in Cart'
-    expect(page).to have_content 'Edit'
+    expect(page).to have_content 'Clear Cart'
   end
 
   def verify_new_item_form_fields
