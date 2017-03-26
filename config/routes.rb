@@ -125,10 +125,11 @@ Rails.application.routes.draw do
 
           put :return_req_items
           patch :return_req_items
-        end
 
-        get :index_subrequests
+          get :index_subrequests
+        end
       end
+
       resources :tags, :only => [:index, :show, :create, :update, :destroy]
       resources :logs, :only => [:index, :show, :create, :update, :destroy]
       resources :sessions, :only => [:create, :destroy]

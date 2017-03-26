@@ -36,7 +36,7 @@ class Api::V1::UsersController < BaseController
   swagger_api :show do
     summary "Fetches a single user"
     param :path, :id, :integer, :required, "User ID"
-    response :ok, "Success", :user
+    response :ok
     response :unauthorized
     response :not_found
   end

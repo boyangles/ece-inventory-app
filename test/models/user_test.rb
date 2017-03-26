@@ -111,7 +111,7 @@ class UserTest < ActiveSupport::TestCase
 
     # One for cart, one for normal request
     assert_difference ['Request.count'], -2 do
-      @admin.deactivate
+      @admin.deactivate!
     end
   end
 
