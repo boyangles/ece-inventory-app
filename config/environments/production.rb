@@ -31,6 +31,7 @@ Rails.application.configure do
   #     api_key: ENV['SENDGRID_API_KEY']
   # }
 
+  # Is this adding?!?!?!?
 
   # # EMAILS CONFIGURATION
   # config.action_mailer.delivery_method = :smtp
