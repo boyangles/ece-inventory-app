@@ -13,7 +13,6 @@
 			<%= render :partial => 'userplaceorderform', locals: {request: @request} %>
 		<% end %>
 	<% end %>
-
 <% elsif @request.outstanding? %>
 
 	<div class="page-header">
@@ -44,7 +43,6 @@
 	<% end %>
 
 <% elsif @request.approved? %>
-
 	<div class="page-header">
 		<h4 class="pull-right"><%= time_ago_in_words(@request.created_at) %> ago</h4>
 		<h3><strong>Requested  </strong>by 

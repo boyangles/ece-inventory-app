@@ -86,7 +86,7 @@ class RequestItemsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def request_item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
-    params.fetch(:request_item, {}).permit(:quantity_loan, :quantity_disburse, :quantity_return, :item_id, :request_id, :quantity_to_return, :quantity_to_disburse)
+    params.fetch(:request_item, {}).permit(:id, :quantity_loan, :quantity_disburse, :quantity_return, :item_id, :request_id, :quantity_to_return, :quantity_to_disburse)
   end
 
 	def set_new_quantity
