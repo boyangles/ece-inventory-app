@@ -10,9 +10,11 @@
 
         <tbody>
 		<% @request.request_items.each do |req_item| %> 
-			<td><%= link_to req_item.item.unique_name, item_path(req_item.item_id) %></td>
-			<td class="text-right"><%= req_item.quantity_loan %></td>
-			<td class="text-right"><%= req_item.quantity_disburse %></td>
+			<tr>
+				<td><%= link_to req_item.item.unique_name, item_path(req_item.item_id) %></td>
+				<td class="text-right"><%= req_item.quantity_loan %></td>
+				<td class="text-right"><%= req_item.quantity_disburse %></td>
+			</tr>
 		<% end %>	
 	</tbody>
 </table>
