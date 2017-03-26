@@ -31,7 +31,22 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     end
 
     scenario "cannot add item to cart with negative requested" do
-      # needs to be implemented
+      login(:user_student)
+      add_item_to_cart(@item, -1, 2)
+      expect(page).to have_content "You may not add this to the cart! Error: Validation failed: Quantity loan must be greater than or equal to 0"
+      expect(page).to have_current_path item_path(@item.id)
+
+      add_item_to_cart(@item, 2, -1)
+      expect(page).to have_content "You may not add this to the cart! Error: Validation failed: Quantity disburse must be greater than or equal to 0"
+      expect(page).to have_current_path item_path(@item.id)
+
+      add_item_to_cart(@item, -1, -1)
+      expect(page).to have_content "Error: Validation failed: Quantity loan must be greater than or equal to 0, Quantity disburse must be greater than or equal to 0"
+      expect(page).to have_current_path item_path(@item.id)
+    end
+
+    scenario "cannot add duplicate items to cart" do
+
     end
 
   end

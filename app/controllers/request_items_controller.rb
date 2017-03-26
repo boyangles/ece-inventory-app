@@ -37,18 +37,14 @@ class RequestItemsController < ApplicationController
 	def update
 		@request_item = RequestItem.find(params[:id])
 
-		failure_alert = ( (request_item_params[:quantity_disburse].to_f < 0 || request_item_params[:quantity_loan].to_f < 0) ? "Quantity cannot be less than 0" : "Failed updating quantity")
-
-		respond_to do |format|
-			if @request_item.update_attributes(request_item_params)
-				format.html { redirect_to @request_item.request, notice: "Item quantity updated successfully."	}
-				format.json { head :no_content }
-			else
-				flash[:danger] = failure_alert
-				format.html { redirect_to item_path(Item.find(@request_item.item_id)) }
-				format.json { render json: @request_item.errors, status: :unprocessable_entity }
-			end
+		begin
+			@request_item.update_attributes!(request_item_params)
+			redirect_to @request_item.request, notice: "Item quantity updated successfully."
+		rescue Exception => e
+			flash[:danger] = e.message
+			redirect_to item_path(Item.find(@request_item.item_id))
 		end
+
 	end
 
 	def show

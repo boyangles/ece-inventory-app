@@ -52,6 +52,8 @@ class RequestItem < ApplicationRecord
   # validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
   #validate :request_type_quantity_validation
 
+  validate  :validates_loan_and_disburse_not_zero
+
   ##
   # REQ-ITEM-1: oversubscribed?
   # Determines if a subrequest is valid or invalid
@@ -99,23 +101,23 @@ class RequestItem < ApplicationRecord
     quantity_to_return = (to_return.nil?) ? 0 : to_return
 
     @item = self.item
-		self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_return)
-		self.update!(:quantity_return => self[:quantity_return] + quantity_to_return)
+    self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_return)
+    self.update!(:quantity_return => self[:quantity_return] + quantity_to_return)
 
     @item.update!(:quantity => item[:quantity] + quantity_to_return)
-		@item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_return)
-	end
+    @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_return)
+  end
 
-	##
+  ##
   # REQ-ITEM-5: disburse_loaned_subrequest
   def disburse_loaned_subrequest(to_disburse)
     quantity_to_disburse = (to_disburse.nil?) ? 0 : to_disburse
 
     @item = self.item
-		self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_disburse)
-		self.update!(:quantity_disburse => self[:quantity_disburse] + quantity_to_disburse)
-		@item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_disburse)
-	end
+    self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_disburse)
+    self.update!(:quantity_disburse => self[:quantity_disburse] + quantity_to_disburse)
+    @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_disburse)
+  end
 
   def determine_subrequest_type
     loan_quantity = (self[:quantity_loan].nil?) ? 0 : self[:quantity_loan]
@@ -144,6 +146,11 @@ class RequestItem < ApplicationRecord
   end
 
   ## Validations
+
+  def validates_loan_and_disburse_not_zero
+    errors.add(:base, "Loan and Disburse cannot both be 0") if quantity_disburse == 0 && quantity_loan == 0
+  end
+
   def request_type_quantity_validation
     case self[:request_type]
       when 'disbursement'
