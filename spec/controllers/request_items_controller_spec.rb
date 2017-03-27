@@ -81,8 +81,61 @@ RSpec.describe "Item Controller Tests", :type => :feature do
       expect(page).to have_no_content @item2.unique_name
       expect(page).to have_no_content @item3.unique_name
     end
+  end
+
+  feature "Placing order" do
+    before :each do
+      @item = create :item
+      @item2 = create :item
+      @item3 = create :item
+    end
+
+    scenario "student places order" do
+      login(:user_student)
+      add_item_to_cart(@item, 10, 10)
+      add_item_to_cart(@item2, 20, 20)
+      add_item_to_cart(@item3, 30, 30)
+      reason = "sick order! very nice!"
+      find_button("Place Order", match: :first).click
+      fill_in('Reason for request?', with: reason)
+      within(".modal-dialog") do
+        click_on('Place Order')
+      end
+      expect(page).to have_content(reason)
+      verify_submitted_order_default_text_fields(@user)
+      item_params = RequestItem.where(request_id: Request.select(:id).where(user_id: @user.id))
+      item_params.each do |f|
+        expect(page).to have_content(f.quantity_loan)
+        expect(page).to have_content(f.quantity_disburse)
+      end
+    end
 
 
+    scenario "admin places order" do
+      login(:user_admin)
+      add_item_to_cart(@item, 10, 10)
+      add_item_to_cart(@item2, 20, 20)
+      add_item_to_cart(@item3, 30, 30)
+      reason = "sick order my dude! very nice!"
+      find_button("Place Order", match: :first).click
+      fill_in('Reason for request?', with: reason)
+      within(".modal-dialog") do
+        click_on('Place Order')
+      end
+      expect(page).to have_content(reason)
+      verify_submitted_order_default_text_fields(@user)
+
+      item_params = RequestItem.where(request_id: Request.select(:id).where(user_id: @user.id))
+      item_params.each do |f|
+        expect(page).to have_content(f.quantity_loan)
+        expect(page).to have_content(f.quantity_disburse)
+        expect(page).to have_content(f.quantity_return)
+        if f.quantity_return > 0
+          expect(page).to have_selector(:link_or_button, "Return")
+          expect(page).to have_selector(:link_or_button, "Convert to Disbursement")
+        end
+      end
+    end
 
   end
 
@@ -118,6 +171,18 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     fill_in("loan_id", with: loan_quantity)
     fill_in("disburse_id", with: disburse_quantity)
     click_button("Add to Cart")
+  end
+
+  def verify_submitted_order_default_text_fields(user)
+    expect(page).to have_content("Operation successful!")
+    expect(page).to have_content( (user.privilege_student? ? "Outstanding" : "Approved") )
+    expect(page).to have_content("Requested by #{user.username}")
+    expect(page).to have_content("Item Name")
+    expect(page).to have_content( (user.privilege_student? ? "Requested for Loan" : "Quantity Loaned") )
+    expect(page).to have_content( (user.privilege_student? ? "Requested for Disbursement" : "Quantity Disbursed") )
+    expect(page).to have_content("Quantity Returned") if !user.privilege_student?
+    expect(page).to have_content("Reason")
+    expect(page).to have_content("Admin Response") if !user.privilege_student?
   end
 
 
