@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>APIGuide</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+/* GitHub stylesheet for MarkdownPad (http://markdownpad.com) */
+/* Author: Nicolas Hery - http://nicolashery.com */
+/* Version: b13fe65ca28d2e568c6ed5d7f06581183df8f2ff */
+/* Source: https://github.com/nicolahery/markdownpad-github */
+
+/* RESET
+=============================================================================*/
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* BODY
+=============================================================================*/
+
+body {
+  font-family: Helvetica, arial, freesans, clean, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+  padding: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+body>*:first-child {
+  margin-top: 0 !important;
+}
+
+body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* BLOCKS
+=============================================================================*/
+
+p, blockquote, ul, ol, dl, table, pre {
+  margin: 15px 0;
+}
+
+/* HEADERS
+=============================================================================*/
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 tt, h1 code, h2 tt, h2 code, h3 tt, h3 code, h4 tt, h4 code, h5 tt, h5 code, h6 tt, h6 code {
+  font-size: inherit;
+}
+
+h1 {
+  font-size: 28px;
+  color: #000;
+}
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #ccc;
+  color: #000;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777;
+  font-size: 14px;
+}
+
+body>h2:first-child, body>h1:first-child, body>h1:first-child+h2, body>h3:first-child, body>h4:first-child, body>h5:first-child, body>h6:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+h1+p, h2+p, h3+p, h4+p, h5+p, h6+p {
+  margin-top: 10px;
+}
+
+/* LINKS
+=============================================================================*/
+
+a {
+  color: #4183C4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* LISTS
+=============================================================================*/
+
+ul, ol {
+  padding-left: 30px;
+}
+
+ul li > :first-child, 
+ol li > :first-child, 
+ul li ul:first-of-type, 
+ol li ol:first-of-type, 
+ul li ol:first-of-type, 
+ol li ul:first-of-type {
+  margin-top: 0px;
+}
+
+ul ul, ul ol, ol ol, ol ul {
+  margin-bottom: 0;
+}
+
+dl {
+  padding: 0;
+}
+
+dl dt {
+  font-size: 14px;
+  font-weight: bold;
+  font-style: italic;
+  padding: 0;
+  margin: 15px 0 5px;
+}
+
+dl dt:first-child {
+  padding: 0;
+}
+
+dl dt>:first-child {
+  margin-top: 0px;
+}
+
+dl dt>:last-child {
+  margin-bottom: 0px;
+}
+
+dl dd {
+  margin: 0 0 15px;
+  padding: 0 15px;
+}
+
+dl dd>:first-child {
+  margin-top: 0px;
+}
+
+dl dd>:last-child {
+  margin-bottom: 0px;
+}
+
+/* CODE
+=============================================================================*/
+
+pre, code, tt {
+  font-size: 12px;
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+}
+
+code, tt {
+  margin: 0 0px;
+  padding: 0px 0px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px;
+}
+
+pre>code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent;
+}
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px;
+}
+
+pre code, pre tt {
+  background-color: transparent;
+  border: none;
+}
+
+kbd {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #DDDDDD;
+    background-image: linear-gradient(#F1F1F1, #DDDDDD);
+    background-repeat: repeat-x;
+    border-color: #DDDDDD #CCCCCC #CCCCCC #DDDDDD;
+    border-image: none;
+    border-radius: 2px 2px 2px 2px;
+    border-style: solid;
+    border-width: 1px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 10px;
+    padding: 1px 4px;
+}
+
+/* QUOTES
+=============================================================================*/
+
+blockquote {
+  border-left: 4px solid #DDD;
+  padding: 0 15px;
+  color: #777;
+}
+
+blockquote>:first-child {
+  margin-top: 0px;
+}
+
+blockquote>:last-child {
+  margin-bottom: 0px;
+}
+
+/* HORIZONTAL RULES
+=============================================================================*/
+
+hr {
+  clear: both;
+  margin: 15px 0;
+  height: 0px;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  border-bottom: 4px solid #ddd;
+  padding: 0;
+}
+
+/* TABLES
+=============================================================================*/
+
+table th {
+  font-weight: bold;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 6px 13px;
+}
+
+table tr {
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+/* IMAGES
+=============================================================================*/
+
+img {
+  max-width: 100%
+}
+</style>
+<style type="text/css">
+.highlight  { background: #ffffff; }
+.highlight .c { color: #999988; font-style: italic } /* Comment */
+.highlight .err { color: #a61717; background-color: #e3d2d2 } /* Error */
+.highlight .k { font-weight: bold } /* Keyword */
+.highlight .o { font-weight: bold } /* Operator */
+.highlight .cm { color: #999988; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #999999; font-weight: bold } /* Comment.Preproc */
+.highlight .c1 { color: #999988; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #999999; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #000000; background-color: #ffdddd } /* Generic.Deleted */
+.highlight .gd .x { color: #000000; background-color: #ffaaaa } /* Generic.Deleted.Specific */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #aa0000 } /* Generic.Error */
+.highlight .gh { color: #999999 } /* Generic.Heading */
+.highlight .gi { color: #000000; background-color: #ddffdd } /* Generic.Inserted */
+.highlight .gi .x { color: #000000; background-color: #aaffaa } /* Generic.Inserted.Specific */
+.highlight .go { color: #888888 } /* Generic.Output */
+.highlight .gp { color: #555555 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #aaaaaa } /* Generic.Subheading */
+.highlight .gt { color: #aa0000 } /* Generic.Traceback */
+.highlight .kc { font-weight: bold } /* Keyword.Constant */
+.highlight .kd { font-weight: bold } /* Keyword.Declaration */
+.highlight .kp { font-weight: bold } /* Keyword.Pseudo */
+.highlight .kr { font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #445588; font-weight: bold } /* Keyword.Type */
+.highlight .m { color: #009999 } /* Literal.Number */
+.highlight .s { color: #d14 } /* Literal.String */
+.highlight .na { color: #008080 } /* Name.Attribute */
+.highlight .nb { color: #0086B3 } /* Name.Builtin */
+.highlight .nc { color: #445588; font-weight: bold } /* Name.Class */
+.highlight .no { color: #008080 } /* Name.Constant */
+.highlight .ni { color: #800080 } /* Name.Entity */
+.highlight .ne { color: #990000; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #990000; font-weight: bold } /* Name.Function */
+.highlight .nn { color: #555555 } /* Name.Namespace */
+.highlight .nt { color: #000080 } /* Name.Tag */
+.highlight .nv { color: #008080 } /* Name.Variable */
+.highlight .ow { font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mf { color: #009999 } /* Literal.Number.Float */
+.highlight .mh { color: #009999 } /* Literal.Number.Hex */
+.highlight .mi { color: #009999 } /* Literal.Number.Integer */
+.highlight .mo { color: #009999 } /* Literal.Number.Oct */
+.highlight .sb { color: #d14 } /* Literal.String.Backtick */
+.highlight .sc { color: #d14 } /* Literal.String.Char */
+.highlight .sd { color: #d14 } /* Literal.String.Doc */
+.highlight .s2 { color: #d14 } /* Literal.String.Double */
+.highlight .se { color: #d14 } /* Literal.String.Escape */
+.highlight .sh { color: #d14 } /* Literal.String.Heredoc */
+.highlight .si { color: #d14 } /* Literal.String.Interpol */
+.highlight .sx { color: #d14 } /* Literal.String.Other */
+.highlight .sr { color: #009926 } /* Literal.String.Regex */
+.highlight .s1 { color: #d14 } /* Literal.String.Single */
+.highlight .ss { color: #990073 } /* Literal.String.Symbol */
+.highlight .bp { color: #999999 } /* Name.Builtin.Pseudo */
+.highlight .vc { color: #008080 } /* Name.Variable.Class */
+.highlight .vg { color: #008080 } /* Name.Variable.Global */
+.highlight .vi { color: #008080 } /* Name.Variable.Instance */
+.highlight .il { color: #009999 } /* Literal.Number.Integer.Long */
+.pl-c {
+    color: #969896;
+}
+
+.pl-c1,.pl-mdh,.pl-mm,.pl-mp,.pl-mr,.pl-s1 .pl-v,.pl-s3,.pl-sc,.pl-sv {
+    color: #0086b3;
+}
+
+.pl-e,.pl-en {
+    color: #795da3;
+}
+
+.pl-s1 .pl-s2,.pl-smi,.pl-smp,.pl-stj,.pl-vo,.pl-vpf {
+    color: #333;
+}
+
+.pl-ent {
+    color: #63a35c;
+}
+
+.pl-k,.pl-s,.pl-st {
+    color: #a71d5d;
+}
+
+.pl-pds,.pl-s1,.pl-s1 .pl-pse .pl-s2,.pl-sr,.pl-sr .pl-cce,.pl-sr .pl-sra,.pl-sr .pl-sre,.pl-src,.pl-v {
+    color: #df5000;
+}
+
+.pl-id {
+    color: #b52a1d;
+}
+
+.pl-ii {
+    background-color: #b52a1d;
+    color: #f8f8f8;
+}
+
+.pl-sr .pl-cce {
+    color: #63a35c;
+    font-weight: bold;
+}
+
+.pl-ml {
+    color: #693a17;
+}
+
+.pl-mh,.pl-mh .pl-en,.pl-ms {
+    color: #1d3e81;
+    font-weight: bold;
+}
+
+.pl-mq {
+    color: #008080;
+}
+
+.pl-mi {
+    color: #333;
+    font-style: italic;
+}
+
+.pl-mb {
+    color: #333;
+    font-weight: bold;
+}
+
+.pl-md,.pl-mdhf {
+    background-color: #ffecec;
+    color: #bd2c00;
+}
+
+.pl-mdht,.pl-mi1 {
+    background-color: #eaffea;
+    color: #55a532;
+}
+
+.pl-mdr {
+    color: #795da3;
+    font-weight: bold;
+}
+
+.pl-mo {
+    color: #1d3e81;
+}
+.task-list {
+padding-left:10px;
+margin-bottom:0;
+}
+
+.task-list li {
+    margin-left: 20px;
+}
+
+.task-list-item {
+list-style-type:none;
+padding-left:10px;
+}
+
+.task-list-item label {
+font-weight:400;
+}
+
+.task-list-item.enabled label {
+cursor:pointer;
+}
+
+.task-list-item+.task-list-item {
+margin-top:3px;
+}
+
+.task-list-item-checkbox {
+display:inline-block;
+margin-left:-20px;
+margin-right:3px;
+vertical-align:1px;
+}
+</style>
+</head>
+<body>
+<h1>Spicy Software Inc., Inventory System API</h1>
+<h1>Sessions API</h1>
+<hr>
+<h2>SESS-1: Login to a Session</h2>
+<h3><em>POST /api/sessions</em></h3>
+<h3>Brief Description</h3>
+<p>Creates an authentication token for a newcomer to the website. The authentication token is randomly generated and is associated with a user account. Further interaction with the user API requires use of the entered alphanumeric token as an Authorization header.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Email</td>
+<td>User email address</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Password</td>
+<td>Password associated with user</td>
+<td>String</td>
+</tr></tbody></table>
+<h3>Response Messages</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP Status Code</th>
+<th>Reasons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Unprocessable Entity</td>
+</tr></tbody></table>
+<h3>Sample Outputs</h3>
+<p><strong>Successful Login (200)</strong></p>
+<div class="highlight highlight-source-js"><pre>{
+  id<span class="pl-k">:</span> <span class="pl-c1">13</span>,
+  email<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>exampleapproved-1@example.com<span class="pl-pds">"</span></span>,
+  permission<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>admin<span class="pl-pds">"</span></span>,
+  authorization<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>MRM_kQsq4TD61QRaVNN_<span class="pl-pds">"</span></span>
+}</pre></div>
+<p><strong>Incorrect Username/Password (422)</strong></p>
+<div class="highlight highlight-source-js"><pre>{
+  errors<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>Invalid username or password<span class="pl-pds">"</span></span>
+}</pre></div>
+<p><strong>Account has been deactivated (401)</strong></p>
+<div class="highlight highlight-source-js"><pre>{
+  errors<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>Your account has not been approved by an administrator<span class="pl-pds">"</span></span>
+}</pre></div>
+<h2>SESS-2 Logout of a Session</h2>
+<h3><em>GET /api/custom_fields</em></h3>
+<h3>Brief Description</h3>
+<p>Removes your authorization token, creating a randomly generated alphanumerical token that is not shown as output.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>Authorization Token</td>
+<td>String</td>
+</tr></tbody></table>
+<h3>Response Messages</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP Status Code</th>
+<th>Reasons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>204</td>
+<td>No Content</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Unprocessable Entity</td>
+</tr></tbody></table>
+<h3>Sample Outputs</h3>
+<p><strong>Successful Session Deletion (204)</strong></p>
+<div class="highlight highlight-source-js"><pre>no content</pre></div>
+<p><strong>Incorrect Authorization Token (422)</strong></p>
+<div class="highlight highlight-source-js"><pre>{
+  errors<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>Invalid authorization token<span class="pl-pds">"</span></span>
+}</pre></div>
+<h1>CustomFields API</h1>
+<hr>
+<h2>CF-1 Show Specified Custom Fields</h2>
+<h3><em>GET /api/custom_fields</em></h3>
+<h3>Brief Description</h3>
+<p>Queries all available custom fields and returns as JSON if no query parameters specified. Otherwise, queries by query parameters.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>Authorization Token</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Field Name</td>
+<td>Name of the Field</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Private?</td>
+<td>Determines if students may see this field</td>
+<td>Boolean</td>
+</tr>
+<tr>
+<td>Field Type</td>
+<td>Content Type of Field</td>
+<td>Enum [short_text_type, long_text_type, integer_type, float_type]</td>
+</tr></tbody></table>
+<h3>Response Messages</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP Status Code</th>
+<th>Reasons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Unprocessable Entity</td>
+</tr></tbody></table>
+<h3>Sample Outputs</h3>
+<p><strong>Correct Query (200)</strong></p>
+<div class="highlight highlight-source-js"><pre>[
+  {
+    <span class="pl-s"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">1</span>,
+    <span class="pl-s"><span class="pl-pds">"</span>field_name<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>location<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>private_indicator<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">false</span>,
+    <span class="pl-s"><span class="pl-pds">"</span>field_type<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>short_text_type<span class="pl-pds">"</span></span>
+  },
+  {
+    <span class="pl-s"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">2</span>,
+    <span class="pl-s"><span class="pl-pds">"</span>field_name<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>restock_info<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>private_indicator<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">true</span>,
+    <span class="pl-s"><span class="pl-pds">"</span>field_type<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>long_text_type<span class="pl-pds">"</span></span>
+  }
+]</pre></div>
+<h2>CF-2 Create Custom Fields</h2>
+<h3><em>POST /api/custom_fields</em></h3>
+<h3>Brief Description</h3>
+<p>Admins may create a new custom field that is available for all items to reference.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>Authorization Token</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Field Name</td>
+<td>Name of the Field</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Private?</td>
+<td>Determines if students may see this field</td>
+<td>Boolean</td>
+</tr>
+<tr>
+<td>Field Type</td>
+<td>Content Type of Field</td>
+<td>Enum [short_text_type, long_text_type, integer_type, float_type]</td>
+</tr></tbody></table>
+<h3>Response Messages</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP Status Code</th>
+<th>Reasons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>201</td>
+<td>Created</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Unprocessable Entity</td>
+</tr></tbody></table>
+<h3>Sample Outputs</h3>
+<p><strong>Successful Custom Field Creation (200)</strong></p>
+<div class="highlight highlight-source-js"><pre>{
+  <span class="pl-s"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">3</span>,
+  <span class="pl-s"><span class="pl-pds">"</span>field_name<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>rarity<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>private_indicator<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">false</span>,
+  <span class="pl-s"><span class="pl-pds">"</span>field_type<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>long_text_type<span class="pl-pds">"</span></span>
+}</pre></div>
+<h2>CF-3 DELETE Custom Fields</h2>
+<h3><em>DELETE /api/custom_fields/{id}</em></h3>
+<h3>Brief Description</h3>
+<p>Admins may delete a custom field, cascading deletion of all the item association.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>header</td>
+<td>Authorization Token</td>
+<td>String</td>
+</tr>
+<tr>
+<td>id</td>
+<td>Custom Field ID</td>
+<td>Integer</td>
+</tr></tbody></table>
+<h3>Response Messages</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP Status Code</th>
+<th>Reasons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>201</td>
+<td>Created</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not found</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Unprocessable Entity</td>
+</tr></tbody></table>
+<h3>Sample Outputs</h3>
+<p><strong>Successful CustomField Deletion (204)</strong></p>
+<div class="highlight highlight-source-js"><pre>{
+  <span class="pl-s"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">3</span>,
+  <span class="pl-s"><span class="pl-pds">"</span>field_name<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>rarity<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>private_indicator<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">false</span>,
+  <span class="pl-s"><span class="pl-pds">"</span>field_type<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>long_text_type<span class="pl-pds">"</span></span>
+}</pre></div>
+<h2>CF-4 Fetches a specific CustomField</h2>
+<h3><em>GET /api/custom_fields/{id}</em></h3>
+<h3>Brief Description</h3>
+<p>Admins/Managers may view any particular custom field. Students may only view public custom fields. Query by custom field id.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>header</td>
+<td>Authorization Token</td>
+<td>String</td>
+</tr>
+<tr>
+<td>id</td>
+<td>Custom Field ID</td>
+<td>Integer</td>
+</tr></tbody></table>
+<h3>Response Messages</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP Status Code</th>
+<th>Reasons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not found</td>
+</tr></tbody></table>
+<h3>Sample Outputs</h3>
+<p><strong>Successful CustomField Fetch (200)</strong></p>
+<div class="highlight highlight-source-js"><pre>{
+  <span class="pl-s"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">1</span>,
+  <span class="pl-s"><span class="pl-pds">"</span>field_name<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>location<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>private_indicator<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">false</span>,
+  <span class="pl-s"><span class="pl-pds">"</span>field_type<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>short_text_type<span class="pl-pds">"</span></span>
+}</pre></div>
+<h2>CF-5 Updates the name of a CustomField</h2>
+<h3><em>PUT/PATCH /api/custom_fields/{id}/update_name</em></h3>
+<h3>Brief Description</h3>
+<p>Admins may change the name of a custom field.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>header</td>
+<td>Authorization Token</td>
+<td>String</td>
+</tr>
+<tr>
+<td>id</td>
+<td>Custom Field ID</td>
+<td>Integer</td>
+</tr>
+<tr>
+<td>Field Name</td>
+<td>Custom Field Name</td>
+<td>String</td>
+</tr></tbody></table>
+<h3>Response Messages</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP Status Code</th>
+<th>Reasons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not found</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Unprocessable Entity</td>
+</tr></tbody></table>
+<h3>Sample Outputs</h3>
+<p><strong>Successful CustomField Name Update (200)</strong></p>
+<div class="highlight highlight-source-js"><pre>{
+  <span class="pl-s"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">1</span>,
+  <span class="pl-s"><span class="pl-pds">"</span>field_name<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>finally<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>private_indicator<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">false</span>,
+  <span class="pl-s"><span class="pl-pds">"</span>field_type<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>short_text_type<span class="pl-pds">"</span></span>
+}</pre></div>
+<h2>CF-6 Updates the privacy of a CustomField</h2>
+<h3><em>PUT/PATCH /api/custom_fields/{id}/update_privacy</em></h3>
+<h3>Brief Description</h3>
+<p>Admins may change the privacy of a custom field.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>header</td>
+<td>Authorization Token</td>
+<td>String</td>
+</tr>
+<tr>
+<td>id</td>
+<td>Custom Field ID</td>
+<td>Integer</td>
+</tr>
+<tr>
+<td>Private?</td>
+<td>Custom Field Private?</td>
+<td>Boolean</td>
+</tr></tbody></table>
+<h3>Response Messages</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP Status Code</th>
+<th>Reasons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not found</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Unprocessable Entity</td>
+</tr></tbody></table>
+<h3>Sample Outputs</h3>
+<p><strong>Successful CustomField Type Update (200)</strong></p>
+<div class="highlight highlight-source-js"><pre>{
+  <span class="pl-s"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">1</span>,
+  <span class="pl-s"><span class="pl-pds">"</span>field_name<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>location<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>private_indicator<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">true</span>,
+  <span class="pl-s"><span class="pl-pds">"</span>field_type<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>short_text_type<span class="pl-pds">"</span></span>
+}</pre></div>
+<h2>CF-7 Updates the type of a CustomField</h2>
+<h3><em>PUT/PATCH /api/custom_fields/{id}/update_type</em></h3>
+<h3>Brief Description</h3>
+<p>Admins may change the type of a custom field. As a side effect, All associated</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>header</td>
+<td>Authorization Token</td>
+<td>String</td>
+</tr>
+<tr>
+<td>id</td>
+<td>Custom Field ID</td>
+<td>Integer</td>
+</tr>
+<tr>
+<td>Type</td>
+<td>Custom Field Type</td>
+<td>Enum [short_text_type, long_text_type, integer_type, float_type]</td>
+</tr></tbody></table>
+<h3>Response Messages</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP Status Code</th>
+<th>Reasons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not found</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Unprocessable Entity</td>
+</tr></tbody></table>
+<h3>Sample Outputs</h3>
+<p><strong>Successful CustomField Type Update (200)</strong></p>
+<div class="highlight highlight-source-js"><pre>{
+  <span class="pl-s"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">1</span>,
+  <span class="pl-s"><span class="pl-pds">"</span>field_name<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>location<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>private_indicator<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">true</span>,
+  <span class="pl-s"><span class="pl-pds">"</span>field_type<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>long_text_type<span class="pl-pds">"</span></span>
+}</pre></div>
+<h1>Tags API</h1>
+<hr>
+<h2>TAG-1 Obtains all or specified tags</h2>
+<h3><em>GET /api/tags</em></h3>
+<h3>Brief Description</h3>
+<p>Admins may change the type of a custom field. As a side effect, All associated</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>header</td>
+<td>Authorization Token</td>
+<td>String</td>
+</tr>
+<tr>
+<td>name</td>
+<td>Query param for Tag</td>
+<td>String</td>
+</tr></tbody></table>
+<h3>Response Messages</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP Status Code</th>
+<th>Reasons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr></tbody></table>
+<h3>Sample Outputs</h3>
+<p><strong>Successful Searching Tags (200)</strong></p>
+<div class="highlight highlight-source-js"><pre>[
+  {
+    <span class="pl-s"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">4</span>,
+    <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>Resistor<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>created_at<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>2017-02-28T07:24:56.123Z<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>updated_at<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>2017-02-28T07:24:56.123Z<span class="pl-pds">"</span></span>
+  }
+]</pre></div>
+<h2>TAG-2 Create a new tag</h2>
+<h3><em>POST /api/tags</em></h3>
+<h3>Brief Description</h3>
+<p>Admins may create their own tags for association later with items</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>header</td>
+<td>Authorization Token</td>
+<td>String</td>
+</tr>
+<tr>
+<td>name</td>
+<td>Tag Name</td>
+<td>String</td>
+</tr></tbody></table>
+<h3>Response Messages</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP Status Code</th>
+<th>Reasons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr></tbody></table>
+<h3>Sample Outputs</h3>
+<p><strong>Create New Tags (200)</strong></p>
+<div class="highlight highlight-source-js"><pre>{
+  <span class="pl-s"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-c1">7</span>,
+  <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>test name<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>created_at<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>2017-02-28T11:14:26.253Z<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>updated_at<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>2017-02-28T11:14:26.253Z<span class="pl-pds">"</span></span>
+}
+</pre></div>
+<h2>TAG-3 Delete a tag</h2>
+<h3><em>DELETE /api/tags/{:id}</em></h3>
+<h3>Brief Description</h3>
+<p>Admins may view all tags</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>header</td>
+<td>Authorization Token</td>
+<td>String</td>
+</tr>
+<tr>
+<td>id</td>
+<td>Tags ID</td>
+<td>String</td>
+</tr></tbody></table>
+<h3>Response Messages</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP Status Code</th>
+<th>Reasons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+</tr></tbody></table>
+<h2>TAG-4 Obtain a specified tag</h2>
+<h3><em>SHOW /api/tags/{:id}</em></h3>
+<h3>Brief Description</h3>
+<p>Admins may create their own tags for association later with items</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>header</td>
+<td>Authorization Token</td>
+<td>String</td>
+</tr>
+<tr>
+<td>id</td>
+<td>Tags ID</td>
+<td>String</td>
+</tr></tbody></table>
+<h3>Response Messages</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP Status Code</th>
+<th>Reasons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>204</td>
+<td>No Content</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+</tr></tbody></table>
+<h2>TAG-4 Update a specific tag</h2>
+<h3><em>PATCH /api/tags/{:id}</em></h3>
+<h3>Brief Description</h3>
+<p>Admins may change name of an existing tag</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>header</td>
+<td>Authorization Token</td>
+<td>String</td>
+</tr>
+<tr>
+<td>id</td>
+<td>Tags ID</td>
+<td>Integer</td>
+</tr>
+<tr>
+<td>name</td>
+<td>Tags Name</td>
+<td>String</td>
+</tr></tbody></table>
+<h3>Response Messages</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP Status Code</th>
+<th>Reasons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>204</td>
+<td>No Content</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+</tr></tbody></table>
+<h1>Users API</h1>
+<hr>
+<h2>USERS-1 Update Password</h2>
+<h3><em>PUT/PATCH /api/users/{id}/update_password</em></h3>
+<h3>Brief Description</h3>
+<p>Only users updating their own passwords may access this function.</p>
+<p><a href="https://camo.githubusercontent.com/eab1cb496359d0f78925c8af8c512bafdf5a4ae0/687474703a2f2f692e696d6775722e636f6d2f4a6430365752312e706e67" target="_blank"><img src="https://camo.githubusercontent.com/eab1cb496359d0f78925c8af8c512bafdf5a4ae0/687474703a2f2f692e696d6775722e636f6d2f4a6430365752312e706e67" alt="" data-canonical-src="http://i.imgur.com/Jd06WR1.png" style="max-width:100%;"></a></p>
+<h2>USERS-2 Update Status</h2>
+<h3><em>PUT/PATCH /api/users/{id}/update_status</em></h3>
+<h3>Brief Description</h3>
+<p>Admins may update the status of others</p>
+<p><a href="https://camo.githubusercontent.com/88c0f15c3fb4534f3b602892c395590642d30afd/687474703a2f2f692e696d6775722e636f6d2f30534f457149302e706e67" target="_blank"><img src="https://camo.githubusercontent.com/88c0f15c3fb4534f3b602892c395590642d30afd/687474703a2f2f692e696d6775722e636f6d2f30534f457149302e706e67" alt="" data-canonical-src="http://i.imgur.com/0SOEqI0.png" style="max-width:100%;"></a></p>
+<h2>USERS-3 Update Privilege</h2>
+<h3><em>PUT/PATCH /api/users/{id}/update_privilege</em></h3>
+<h3>Brief Description</h3>
+<p>Admins may update the privilege of users but not themselves</p>
+<p><a href="https://camo.githubusercontent.com/beb0f6d074ed58beae3cf32be8944cddc09a4a6f/687474703a2f2f692e696d6775722e636f6d2f35483474424c4c2e706e67" target="_blank"><img src="https://camo.githubusercontent.com/beb0f6d074ed58beae3cf32be8944cddc09a4a6f/687474703a2f2f692e696d6775722e636f6d2f35483474424c4c2e706e67" alt="" data-canonical-src="http://i.imgur.com/5H4tBLL.png" style="max-width:100%;"></a></p>
+<h2>USERS-4 Index</h2>
+<h3><em>GET /api/users/index</em></h3>
+<h3>Brief Description</h3>
+<p>Admins access all users</p>
+<p><a href="https://camo.githubusercontent.com/70cc2ad8bb0ea975269b800f073ecba11a8806eb/687474703a2f2f692e696d6775722e636f6d2f4c5164516277442e706e67" target="_blank"><img src="https://camo.githubusercontent.com/70cc2ad8bb0ea975269b800f073ecba11a8806eb/687474703a2f2f692e696d6775722e636f6d2f4c5164516277442e706e67" alt="" data-canonical-src="http://i.imgur.com/LQdQbwD.png" style="max-width:100%;"></a></p>
+<h2>USERS-5 New User</h2>
+<h3><em>POST /api/users</em></h3>
+<p><a href="https://camo.githubusercontent.com/7060f4425c4ac6b91162b7aff61aad35e836dc1c/687474703a2f2f692e696d6775722e636f6d2f4f544b707533472e706e67" target="_blank"><img src="https://camo.githubusercontent.com/7060f4425c4ac6b91162b7aff61aad35e836dc1c/687474703a2f2f692e696d6775722e636f6d2f4f544b707533472e706e67" alt="" data-canonical-src="http://i.imgur.com/OTKpu3G.png" style="max-width:100%;"></a></p>
+<h2>USERS-5 Delete User</h2>
+<h3><em>DELETE /api/users/{id}</em></h3>
+<p><a href="https://camo.githubusercontent.com/2046e3c35a2c5d71a10db645494eb4b43ffbb45a/687474703a2f2f692e696d6775722e636f6d2f374c6a6a3751432e706e67" target="_blank"><img src="https://camo.githubusercontent.com/2046e3c35a2c5d71a10db645494eb4b43ffbb45a/687474703a2f2f692e696d6775722e636f6d2f374c6a6a3751432e706e67" alt="" data-canonical-src="http://i.imgur.com/7Ljj7QC.png" style="max-width:100%;"></a></p>
+<h2>USERS-6 Show Particular User</h2>
+<h3><em>SHOW /api/users/{id}</em></h3>
+<p><a href="https://camo.githubusercontent.com/f34c2e125b86b56a482676aad3a3136a0994d562/687474703a2f2f692e696d6775722e636f6d2f586c4f4f3262632e706e67" target="_blank"><img src="https://camo.githubusercontent.com/f34c2e125b86b56a482676aad3a3136a0994d562/687474703a2f2f692e696d6775722e636f6d2f586c4f4f3262632e706e67" alt="" data-canonical-src="http://i.imgur.com/XlOO2bc.png" style="max-width:100%;"></a></p>
+<h1>Items API</h1>
+<hr>
+<p><a href="https://camo.githubusercontent.com/74255d71d3bdc31608d1e3b916bc7be9a3e08cc4/687474703a2f2f692e696d6775722e636f6d2f337a33366a54582e706e67" target="_blank"><img src="https://camo.githubusercontent.com/74255d71d3bdc31608d1e3b916bc7be9a3e08cc4/687474703a2f2f692e696d6775722e636f6d2f337a33366a54582e706e67" alt="" data-canonical-src="http://i.imgur.com/3z36jTX.png" style="max-width:100%;"></a><br>
+<a href="https://camo.githubusercontent.com/798c14043e194c9c0ee7a7750d01eb452d1cf625/687474703a2f2f692e696d6775722e636f6d2f496f65486d66542e706e67" target="_blank"><img src="https://camo.githubusercontent.com/798c14043e194c9c0ee7a7750d01eb452d1cf625/687474703a2f2f692e696d6775722e636f6d2f496f65486d66542e706e67" alt="" data-canonical-src="http://i.imgur.com/IoeHmfT.png" style="max-width:100%;"></a><br>
+<a href="https://camo.githubusercontent.com/c33c813700fd10471e8091b132f67d946b719dbe/687474703a2f2f692e696d6775722e636f6d2f433679316a7a502e706e67" target="_blank"><img src="https://camo.githubusercontent.com/c33c813700fd10471e8091b132f67d946b719dbe/687474703a2f2f692e696d6775722e636f6d2f433679316a7a502e706e67" alt="" data-canonical-src="http://i.imgur.com/C6y1jzP.png" style="max-width:100%;"></a><br>
+<a href="https://camo.githubusercontent.com/bde99be3c346904e57e8eb3e9d9f89e07d5baa35/687474703a2f2f692e696d6775722e636f6d2f325965397648692e706e67" target="_blank"><img src="https://camo.githubusercontent.com/bde99be3c346904e57e8eb3e9d9f89e07d5baa35/687474703a2f2f692e696d6775722e636f6d2f325965397648692e706e67" alt="" data-canonical-src="http://i.imgur.com/2Ye9vHi.png" style="max-width:100%;"></a><br>
+<a href="https://camo.githubusercontent.com/72fed60b7c7da7c13f1eb2ae4cd29065f3bc4c23/687474703a2f2f692e696d6775722e636f6d2f42317a76736f6b2e706e67" target="_blank"><img src="https://camo.githubusercontent.com/72fed60b7c7da7c13f1eb2ae4cd29065f3bc4c23/687474703a2f2f692e696d6775722e636f6d2f42317a76736f6b2e706e67" alt="" data-canonical-src="http://i.imgur.com/B1zvsok.png" style="max-width:100%;"></a><br>
+<a href="https://camo.githubusercontent.com/59843825f37653b390f163b8156277fcbca357ff/687474703a2f2f692e696d6775722e636f6d2f796974354865622e706e67" target="_blank"><img src="https://camo.githubusercontent.com/59843825f37653b390f163b8156277fcbca357ff/687474703a2f2f692e696d6775722e636f6d2f796974354865622e706e67" alt="" data-canonical-src="http://i.imgur.com/yit5Heb.png" style="max-width:100%;"></a><br>
+<a href="https://camo.githubusercontent.com/8e8cc128e3697cc949c9f2de8ad4dbed44fb4f7e/687474703a2f2f692e696d6775722e636f6d2f374761395934792e706e67" target="_blank"><img src="https://camo.githubusercontent.com/8e8cc128e3697cc949c9f2de8ad4dbed44fb4f7e/687474703a2f2f692e696d6775722e636f6d2f374761395934792e706e67" alt="" data-canonical-src="http://i.imgur.com/7Ga9Y4y.png" style="max-width:100%;"></a><br>
+<a href="https://camo.githubusercontent.com/2d011d0e520f4e8734c3da8e90729e57c5ccf20d/687474703a2f2f692e696d6775722e636f6d2f6349514b6276612e706e67" target="_blank"><img src="https://camo.githubusercontent.com/2d011d0e520f4e8734c3da8e90729e57c5ccf20d/687474703a2f2f692e696d6775722e636f6d2f6349514b6276612e706e67" alt="" data-canonical-src="http://i.imgur.com/cIQKbva.png" style="max-width:100%;"></a><br>
+<a href="https://camo.githubusercontent.com/a5e3f8c95b4b8c150daf154403c01697fb95bae8/687474703a2f2f692e696d6775722e636f6d2f3770525373774b2e706e67" target="_blank"><img src="https://camo.githubusercontent.com/a5e3f8c95b4b8c150daf154403c01697fb95bae8/687474703a2f2f692e696d6775722e636f6d2f3770525373774b2e706e67" alt="" data-canonical-src="http://i.imgur.com/7pRSswK.png" style="max-width:100%;"></a><br>
+<a href="https://camo.githubusercontent.com/79cd38546ab6d9554b640a00091262fb73662505/687474703a2f2f692e696d6775722e636f6d2f464236547566772e706e67" target="_blank"><img src="https://camo.githubusercontent.com/79cd38546ab6d9554b640a00091262fb73662505/687474703a2f2f692e696d6775722e636f6d2f464236547566772e706e67" alt="" data-canonical-src="http://i.imgur.com/FB6Tufw.png" style="max-width:100%;"></a></p>
+<h1>Requests API</h1>
+<hr>
+<p><a href="https://camo.githubusercontent.com/62f8cadde6651862b3846d0760dfb6bafe3b1d61/687474703a2f2f692e696d6775722e636f6d2f36354978666e4b2e706e67" target="_blank"><img src="https://camo.githubusercontent.com/62f8cadde6651862b3846d0760dfb6bafe3b1d61/687474703a2f2f692e696d6775722e636f6d2f36354978666e4b2e706e67" alt="" data-canonical-src="http://i.imgur.com/65IxfnK.png" style="max-width:100%;"></a><br>
+<a href="https://camo.githubusercontent.com/0c8b76325460473ad4e9158e5be5bd00ef7baf80/687474703a2f2f692e696d6775722e636f6d2f436d6f653648442e706e67" target="_blank"><img src="https://camo.githubusercontent.com/0c8b76325460473ad4e9158e5be5bd00ef7baf80/687474703a2f2f692e696d6775722e636f6d2f436d6f653648442e706e67" alt="" data-canonical-src="http://i.imgur.com/Cmoe6HD.png" style="max-width:100%;"></a><br>
+<a href="https://camo.githubusercontent.com/053f1b2dcd3458c6187c2760350bfd2c4719cc28/687474703a2f2f692e696d6775722e636f6d2f4b3877586a63472e706e67" target="_blank"><img src="https://camo.githubusercontent.com/053f1b2dcd3458c6187c2760350bfd2c4719cc28/687474703a2f2f692e696d6775722e636f6d2f4b3877586a63472e706e67" alt="" data-canonical-src="http://i.imgur.com/K8wXjcG.png" style="max-width:100%;"></a><br>
+<a href="https://camo.githubusercontent.com/855b9b2de75a8cd68cb9dffe581cf48b0e0b0bb7/687474703a2f2f692e696d6775722e636f6d2f37594c6b4f486e2e706e67" target="_blank"><img src="https://camo.githubusercontent.com/855b9b2de75a8cd68cb9dffe581cf48b0e0b0bb7/687474703a2f2f692e696d6775722e636f6d2f37594c6b4f486e2e706e67" alt="" data-canonical-src="http://i.imgur.com/7YLkOHn.png" style="max-width:100%;"></a><br>
+<a href="https://camo.githubusercontent.com/819c7f655a268e72addc68f943c6dcc78cd9e651/687474703a2f2f692e696d6775722e636f6d2f4847644370536d2e706e67" target="_blank"><img src="https://camo.githubusercontent.com/819c7f655a268e72addc68f943c6dcc78cd9e651/687474703a2f2f692e696d6775722e636f6d2f4847644370536d2e706e67" alt="" data-canonical-src="http://i.imgur.com/HGdCpSm.png" style="max-width:100%;"></a><br>
+<a href="https://camo.githubusercontent.com/8e00aaa55d27414ac2b4a59876f0de0099f2eb3f/687474703a2f2f692e696d6775722e636f6d2f77626972796e772e706e67" target="_blank"><img src="https://camo.githubusercontent.com/8e00aaa55d27414ac2b4a59876f0de0099f2eb3f/687474703a2f2f692e696d6775722e636f6d2f77626972796e772e706e67" alt="" data-canonical-src="http://i.imgur.com/wbirynw.png" style="max-width:100%;"></a></p>
+<h1>Logs API</h1>
+<hr>
+<p><a href="https://camo.githubusercontent.com/7d3ab37a0731d002aece1473e4e8448334cc33d0/687474703a2f2f692e696d6775722e636f6d2f367a52794238502e706e67" target="_blank"><img src="https://camo.githubusercontent.com/7d3ab37a0731d002aece1473e4e8448334cc33d0/687474703a2f2f692e696d6775722e636f6d2f367a52794238502e706e67" alt="" data-canonical-src="http://i.imgur.com/6zRyB8P.png" style="max-width:100%;"></a><br>
+<a href="https://camo.githubusercontent.com/b385671b8fafe2822cddac391fb28c7a98f65586/687474703a2f2f692e696d6775722e636f6d2f6862486b35497a2e706e67" target="_blank"><img src="https://camo.githubusercontent.com/b385671b8fafe2822cddac391fb28c7a98f65586/687474703a2f2f692e696d6775722e636f6d2f6862486b35497a2e706e67" alt="" data-canonical-src="http://i.imgur.com/hbHk5Iz.png" style="max-width:100%;"></a></p>
+</body>
+</html>
+<!-- This document was created with MarkdownPad, the Markdown editor for Windows (http://markdownpad.com) -->

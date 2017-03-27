@@ -54,7 +54,7 @@
 			<% reqUser = User.find(request.user_id) %>
 			<%= link_to reqUser.username, user_path(reqUser.id) %>
 		<% else %> <!-- item -->
-			<% if !itemlog.affected_request.nil? %>
+			<% if !itemlog[:affected_request].nil? %>
 				<% itemUser = User.find(Request.find(itemlog.affected_request).user_id) %>
 				<%= link_to itemUser.username, user_path(itemUser.id) %>
 			<% else %>

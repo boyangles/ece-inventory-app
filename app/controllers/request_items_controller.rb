@@ -72,6 +72,7 @@ class RequestItemsController < ApplicationController
 		else
 			reqit.curr_user = current_user
 			reqit.return_subrequest(params[:quantity_to_return].to_f)
+			UserMailer.loan_return_email(reqit).deliver_now
 			flash[:success] = "Quantity successfully returned!"
 		end
 		redirect_to request_path(reqit.request_id)
@@ -84,6 +85,7 @@ class RequestItemsController < ApplicationController
 		else
 			reqit.curr_user = current_user
 			reqit.disburse_loaned_subrequest(params[:quantity_to_disburse].to_f)
+			UserMailer.loan_convert_email(reqit).deliver_now
 			flash[:success] = "Quantity successfully disbursed!"
 		end
 		redirect_to request_path(reqit.request_id)
