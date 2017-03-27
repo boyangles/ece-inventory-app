@@ -25,7 +25,7 @@ class SubscribersController < ApplicationController
 
   def destroy
     if (@subscriber.destroy)
-      flash[:success] = "Subscriber deleted!"
+      flash[:success] = "You have been deleted off the subscriber list!"
     else
       flash[:danger] = "Unable to destroy subscriber!"
     end
@@ -38,7 +38,7 @@ class SubscribersController < ApplicationController
       @subscriber = Subscriber.new(sub_params)
       @subscriber.user = current_user
       if @subscriber.save
-        flash[:success] = "Subscriber saved"
+        flash[:success] = "You are now on the subscriber list"
         redirect_to subscribers_path
       else
         @subscribers = Subscriber.paginate(page: params[:page], per_page: 10)
@@ -46,6 +46,7 @@ class SubscribersController < ApplicationController
         render :index
       end
     else
+      flash[:success] = "You are already on the subscriber list"
          # at least 1 record for this user
     end
   end

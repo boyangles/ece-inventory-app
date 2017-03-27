@@ -111,7 +111,7 @@ class UserMailer < ApplicationMailer
     10.times do |i|
       puts "START HERE"
     end
-    dates = Setting.email_dates
+    dates = Setting.email_dates.gsub(/\s+/, "")
     dates = dates.split(",")
     dates.each do |date|
       # 10.times do |i|

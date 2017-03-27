@@ -4,7 +4,6 @@ defaults: &defaults
   email_body: "Here is the prepended text that will edited"
   email_dates: "03/31/17"
 
-
 development:
   <<: *defaults
 
