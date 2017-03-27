@@ -39,8 +39,6 @@ class RequestItem < ApplicationRecord
   scope :quantity_return, -> (quantity_return) { where quantity_return: quantity_return }
 
   attr_readonly :request_id, :item_id
-  attr_accessor :curr_user
-
 
   before_validation {
     self.quantity_disburse = (self.quantity_disburse.blank?) ?  0 : self.quantity_disburse
@@ -172,7 +170,7 @@ e		  self.update!(:quantity_disburse => self[:quantity_disburse] + quantity_to_d
     
     log = Log.new(:user_id => curr, :log_type => 'item')
     log.save!
-    itemlog = ItemLog.new(:log_id => log.id, :item_id => itemo.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => itemo.unique_name, :old_desc => old_desc, :new_desc => itemo.description, :old_model_num => old_model, :new_model_num => itemo.model_number, :curr_quantity => itemo.quantity)
+    itemlog = ItemLog.new(:log_id => log.id, :item_id => itemo.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => itemo.unique_name, :old_desc => old_desc, :new_desc => itemo.description, :old_model_num => old_model, :new_model_num => itemo.model_number, :curr_quantity => itemo.quantity, :affected_request => self.request.id)
     itemlog.save!
   end
 
