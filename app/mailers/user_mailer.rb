@@ -9,9 +9,7 @@ class UserMailer < ApplicationMailer
   end
 
   def request_initiated_email(requester, request, recipient)
-    @user = requester
-    @request = request
-    @recipient = recipient
+    request_params(requester, request, recipient)
     email_params
     mail(to: @recipient.email, subject: @heading)
   end
@@ -20,26 +18,20 @@ class UserMailer < ApplicationMailer
     @subscribers = Subscriber.all
     UserMailer.request_initiated_email(user, request,user).deliver_now
     @subscribers.each do |recipient|
-      puts recipient
       @tempRec = recipient.user
       UserMailer.request_initiated_email(user, request,@tempRec).deliver_now
-      # request_replacement(recipient, shift).deliver
     end
   end
 
-  def welcome_email_all
-    @user = User.all
-    @user.each do |recipient|
-      puts recipient
-      UserMailer.welcome_email(recipient).deliver_now
-      # request_replacement(recipient, shift).deliver
-    end
-  end
+  # def welcome_email_all
+  #   @user = User.all
+  #   @user.each do |recipient|
+  #     UserMailer.welcome_email(recipient).deliver_now
+  #   end
+  # end
 
   def request_approved_email(requester, request, recipient)
-    @user = requester
-    @request = request
-    @recipient = recipient
+    request_params(requester, request, recipient)
     email_params
     mail(to: @recipient.email, subject: @heading)
   end
@@ -48,10 +40,23 @@ class UserMailer < ApplicationMailer
     @subscribers = Subscriber.all
     UserMailer.request_approved_email(user, request,user).deliver_now
     @subscribers.each do |recipient|
-      puts recipient
       @tempRec = recipient.user
       UserMailer.request_approved_email(user, request,@tempRec).deliver_now
-      # request_replacement(recipient, shift).deliver
+    end
+  end
+
+  def request_denied_email(requester, request, recipient)
+    request_params(requester, request, recipient)
+    email_params
+    mail(to: @recipient.email, subject: @heading)
+  end
+
+  def request_denied_email_all_subscribers(user, request)
+    @subscribers = Subscriber.all
+    UserMailer.request_denied_email(user, request,user).deliver_now
+    @subscribers.each do |recipient|
+      @tempRec = recipient.user
+      UserMailer.request_denied_email(user, request,@tempRec).deliver_now
     end
   end
 
@@ -109,15 +114,26 @@ class UserMailer < ApplicationMailer
     dates = Setting.email_dates
     dates = dates.split(",")
     dates.each do |date|
-      10.times do |i|
-        puts "GOT HERE 1"
-      end
+      # 10.times do |i|
+      #   puts "GOT HERE 1"
+      # end
       if current_date == date.to_s
         allUsers.each do |tempUser|
           @request_items = RequestItem.where("quantity_loan > ?", 0).where(request_id: Request.select(:id).where(user_id: tempUser, status: "approved"))
-          puts "request items is this:"
-          puts @request_items
-          UserMailer.loan_reminder_email(@request_items, tempUser).deliver_now
+          # 10.times do |i|
+          #   puts "request items is this:"
+          #   puts @request_items
+          #   puts "the user is this: "
+          #   puts tempUser.email
+          # end
+          if !@request_items.blank?
+            UserMailer.loan_reminder_email(@request_items, tempUser).deliver_now
+          else
+            10.times do |i|
+              puts "the user is this and their request items is blank"
+              puts tempUser.email
+            end
+          end
         end
       else
       end
@@ -126,6 +142,12 @@ class UserMailer < ApplicationMailer
 
 
   private
+
+  def request_params(requester, request, recipient)
+    @user = requester
+    @request = request
+    @recipient = recipient
+  end
 
   def email_params
     @heading = Setting.email_subject
