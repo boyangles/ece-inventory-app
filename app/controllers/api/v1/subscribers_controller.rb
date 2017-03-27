@@ -68,7 +68,8 @@ class Api::V1::SubscribersController < BaseController
   end
 
   def destroy
-    Subscriber.find_by(:user_id => current_user_by_auth.id).destroy
+    Subscriber.find_by(:user_id => current_user_by_auth.id).destroy if
+        Subscriber.exists?(:user_id => current_user_by_auth.id)
     head 204
   end
 

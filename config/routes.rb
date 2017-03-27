@@ -140,8 +140,8 @@ Rails.application.routes.draw do
       resources :subscribers, :only => [:index, :create, :destroy]
       resources :settings, :only => [:index] do
         member do
-          put :modify_email_heading
-          patch :modify_email_heading
+          put :modify_email_subject
+          patch :modify_email_subject
 
           put :modify_email_body
           patch :modify_email_body
