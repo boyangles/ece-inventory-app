@@ -1,50 +1,26 @@
+<p>
+   Here are your loans
+  <strong>
+  <%= @user.username %>.
+  </strong>
+</p>
 
 <% Array(@request_items).each do |req_item| %>
     <p>
-      <strong> This is the item id </strong>
+      <h3>
+      <strong>
+        <%=  req_item.item.unique_name %>.
+      </strong>
+      </h3>
     </p>
 
     <p>
-      <%=  req_item.item.unique_name %>.
-    </p>
-
-    <p>
-      <strong> This is quantity disbursed amount </strong>
-    </p>
-
-    <p>
-      <%=  req_item.quantity_disburse %>.
-    </p>
-
-    <p>
-      <strong> This is quantity loaned amount </strong>
-    </p>
-
-    <p>
+      <strong> Loan amount: </strong>
       <%=  req_item.quantity_loan %>.
     </p>
 
     <p>
-      <strong> This is the status </strong>
-    </p>
-
-    <p>
-      <%= req_item.request.status %>.
-    </p>
-
-    <p>
-      <strong> This is the item user </strong>
-    </p>
-
-    <p>
-      <%= req_item.request.user.email %>.
-    </p>
-
-    <p>
-      <strong> This is the item due date </strong>
-    </p>
-
-    <p>
+      <strong> Due date </strong>
       <%= req_item.created_at %>.
     </p>
 <% end %>

@@ -1,19 +1,12 @@
 <p>
-  <strong>Requested On:</strong>
-  <%= @request.created_at.to_date %>
-</p>
-
-<p>
-  <strong>User:</strong>
-  <%= @user.username %>
-</p>
-
-<p>
   <strong>Items:</strong>
   <% @request.request_items.each do |req_item| %>
       <% item = Item.find(req_item.item_id) %>
-    <p><%=item.unique_name %>
-      <br>
+    <p>
+      <strong>
+      <%=item.unique_name %>
+      </strong>
+    </p>
       <% if (req_item.quantity_loan > 0) %>
           Quantity Loaned:
           <%= req_item.quantity_loan %>
@@ -23,7 +16,17 @@
           Quantity Disbursed:
           <%= req_item.quantity_disburse %>
       <% end %>
-    </p>
 <% end %>
 </p>
+<p>
+  <strong>Requested On:</strong>
+  <%= @request.created_at.to_date %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @request.user.username %>
+</p>
+
+
 

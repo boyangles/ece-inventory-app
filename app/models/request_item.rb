@@ -129,7 +129,7 @@ class RequestItem < ApplicationRecord
       end
 
 	   	self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_disburse)
-e		  self.update!(:quantity_disburse => self[:quantity_disburse] + quantity_to_disburse)
+		  self.update!(:quantity_disburse => self[:quantity_disburse] + quantity_to_disburse)
 		  @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_disburse)
     end
 	end

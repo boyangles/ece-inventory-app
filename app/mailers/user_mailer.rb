@@ -30,33 +30,34 @@ class UserMailer < ApplicationMailer
   #   end
   # end
 
-  def request_approved_email(requester, request, recipient)
-    request_params(requester, request, recipient)
+  def request_approved_email(reqOperator, request, recipient,userMadeRequest)
+    request_params(reqOperator, request, recipient)
+    @userMadeRequest = userMadeRequest
     email_params
     mail(to: @recipient.email, subject: @heading)
   end
 
-  def request_approved_email_all_subscribers(user, request)
+  def request_approved_email_all_subscribers(reqApprover, request, userMadeRequest)
     @subscribers = Subscriber.all
-    UserMailer.request_approved_email(user, request,user).deliver_now
+    UserMailer.request_approved_email(reqApprover, request, request.user, userMadeRequest).deliver_now
     @subscribers.each do |recipient|
       @tempRec = recipient.user
-      UserMailer.request_approved_email(user, request,@tempRec).deliver_now
+      UserMailer.request_approved_email(reqApprover, request,@tempRec,userMadeRequest).deliver_now
     end
   end
 
-  def request_denied_email(requester, request, recipient)
-    request_params(requester, request, recipient)
+  def request_denied_email(reqDenier, request, recipient)
+    request_params(reqDenier, request, recipient)
     email_params
     mail(to: @recipient.email, subject: @heading)
   end
 
-  def request_denied_email_all_subscribers(user, request)
+  def request_denied_email_all_subscribers(reqDenier, request)
     @subscribers = Subscriber.all
-    UserMailer.request_denied_email(user, request,user).deliver_now
+    UserMailer.request_denied_email(reqDenier, request,request.user).deliver_now
     @subscribers.each do |recipient|
       @tempRec = recipient.user
-      UserMailer.request_denied_email(user, request,@tempRec).deliver_now
+      UserMailer.request_denied_email(reqDenier, request,@tempRec).deliver_now
     end
   end
 
@@ -82,69 +83,29 @@ class UserMailer < ApplicationMailer
     mail(to: @user.email, subject: @heading)
   end
 
-  # def loan_reminder_emails_all
-  #   current_date = Time.now.strftime("%m/%d/%Y").to_s
-  #   puts "START HERE"
-  #   dates = Setting.email_dates
-  #   dates = dates.split(",")
-  #   dates.each do |date|
-  #     if current_date == date.to_s
-  #       allRequestItems = RequestItem.all
-  #       requestItems = RequestItem.where("quantity_loan > ?", 0)
-  #       requestItems.each do |loanItem|
-  #         10.times do |i|
-  #           puts "DATE"
-  #           puts date
-  #         end
-  #         UserMailer.loan_reminder_email(loanItem).deliver_now
-  #       end
-  #     else
-  #     end
-  #   end
-  # end
-
   def loan_reminder_emails_all
 
     allUsers = User.all
 
     current_date = Time.now.strftime("%m/%d/%Y").to_s
-    10.times do |i|
-      puts "START HERE"
-    end
     dates = Setting.email_dates.gsub(/\s+/, "")
     dates = dates.split(",")
     dates.each do |date|
-      # 10.times do |i|
-      #   puts "GOT HERE 1"
-      # end
       if current_date == date.to_s
         allUsers.each do |tempUser|
           @request_items = RequestItem.where("quantity_loan > ?", 0).where(request_id: Request.select(:id).where(user_id: tempUser, status: "approved"))
-          # 10.times do |i|
-          #   puts "request items is this:"
-          #   puts @request_items
-          #   puts "the user is this: "
-          #   puts tempUser.email
-          # end
           if !@request_items.blank?
             UserMailer.loan_reminder_email(@request_items, tempUser).deliver_now
-          else
-            10.times do |i|
-              puts "the user is this and their request items is blank"
-              puts tempUser.email
-            end
           end
         end
-      else
       end
     end
   end
 
-
   private
 
-  def request_params(requester, request, recipient)
-    @user = requester
+  def request_params(reqOperator, request, recipient)
+    @user = reqOperator
     @request = request
     @recipient = recipient
   end
