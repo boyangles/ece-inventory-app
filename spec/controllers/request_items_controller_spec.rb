@@ -110,6 +110,31 @@ RSpec.describe "Item Controller Tests", :type => :feature do
       end
     end
 
+    scenario "manager places order" do
+      login(:user_manager)
+      add_item_to_cart(@item, 10, 10)
+      add_item_to_cart(@item2, 20, 20)
+      add_item_to_cart(@item3, 30, 30)
+      reason = "sick order my dude! very nice!"
+      find_button("Place Order", match: :first).click
+      fill_in('Reason for request?', with: reason)
+      within(".modal-dialog") do
+        click_on('Place Order')
+      end
+      expect(page).to have_content(reason)
+      verify_submitted_order_default_text_fields(@user)
+
+      item_params = RequestItem.where(request_id: Request.select(:id).where(user_id: @user.id))
+      item_params.each do |f|
+        expect(page).to have_content(f.quantity_loan)
+        expect(page).to have_content(f.quantity_disburse)
+        expect(page).to have_content(f.quantity_return)
+        if f.quantity_return > 0
+          expect(page).to have_selector(:link_or_button, "Return")
+          expect(page).to have_selector(:link_or_button, "Convert to Disbursement")
+        end
+      end
+    end
 
     scenario "admin places order" do
       login(:user_admin)
