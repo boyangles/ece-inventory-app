@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <%= @heading %>.
+</head>
 
-<%= render 'preamble' %>
+<body>
+<%= @body %>.
 
 <p>
   Your request has been approved! Here are the following items you requested!
 </p>
 
 <%= render 'request_info' %>
-
-<p>
-  <strong>Reason:</strong>
-  <%= @request.response %>
-</p>
 
 <%= render 'ending' %>
 
