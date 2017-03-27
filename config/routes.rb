@@ -106,6 +106,10 @@ Rails.application.routes.draw do
           patch :update_field_entry
 
           post :bulk_import
+
+          get :self_outstanding_requests
+
+          get :self_loans
         end
       end
 
