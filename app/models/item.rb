@@ -210,7 +210,7 @@ class Item < ApplicationRecord
 		end
 	end
 
-	def deactivate
+	def deactivate!
 		self.status = 'deactive'
 		self.save!
 	end
