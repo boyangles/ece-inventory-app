@@ -76,7 +76,8 @@ class RequestItem < ApplicationRecord
   # Input: N/A
   # Output: @item upon success
   def fulfill_subrequest
-    disbursement_quantity = (self[:quantity_disburse].nil?) ? 0 : self[:quantity_disburse]
+    
+		disbursement_quantity = (self[:quantity_disburse].nil?) ? 0 : self[:quantity_disburse]
     loan_quantity = (self[:quantity_loan].nil?) ? 0 : self[:quantity_loan]
 
     @item = self.item
