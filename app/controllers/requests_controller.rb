@@ -36,7 +36,9 @@ class RequestsController < ApplicationController
     if params[:user]
       @request.user_id = params[:user][:id]
     end
+
     old_status = @request.status
+
     begin
       @request.update_attributes!(request_params)
       flash[:success] = "Operation successful!"
@@ -46,20 +48,10 @@ class RequestsController < ApplicationController
       redirect_back(fallback_location: request_path(@request))
     end
 
-
-
-
-    #Two separate emails, one if user made own request, or if manager made request for him.
-    if (old_status == 'outstanding' && request_params[:status] == 'approved') || (old_status == 'cart' && request_params[:status] == 'approved')
-      UserMailer.request_approved_email_all_subscribers(@request.user, @request).deliver_now
-    elsif (old_status == 'cart' && request_params[:status] == 'outstanding')
+    if old_status == ('outstanding' && request_params[:status] == 'approved') || (old_status == 'cart' && request_params[:status] == 'approved')
       UserMailer.request_initiated_email_all_subscribers(@request.user, @request).deliver_now
-    elsif (old_status =='outstanding' && request_params[:status] == 'denied')
-      10.times do |i|
-        puts "YOUR REQUEST WAS DENEID HAHAHAH"
-      end
-      UserMailer.request_denied_email_all_subscribers(@request.user, @request).deliver_now
-    e
+    elsif old_status == 'cart' && request_params[:status] == 'outstanding'
+      UserMailer.request_approved_email_all_subscribers(@request.user, @request).deliver_now
     end
   end
 

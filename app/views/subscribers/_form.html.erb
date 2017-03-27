@@ -6,6 +6,7 @@
 
     <%= button_to "Add yourself to Subscriber list", :action => "new" %>
 
-    <%= button_to 'Destroy', @subscriber, method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-primary"%></div>
+    <%= button_to "Remove yourself from Subscriber list", :action => "destroy" , :id => Subscriber.where(:user_id => current_user.id) %>
+
 
 <% end %>

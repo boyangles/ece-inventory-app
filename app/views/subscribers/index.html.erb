@@ -4,20 +4,9 @@
   <h1>Subscribers</h1>
 </div>
 
-<% if Subscriber.exists?(:user_id => current_user.id) %>
-    <% @subscriber = Subscriber.find_by(:user_id => current_user.id) %>
-    <%= form_for(@subscriber) do |f| %>
-        <%= button_to 'Remove yourself from Subscriber list', @subscriber, method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-primary"%>
-    <% end %>
-<% else %>
-    <% @subscriber = Subscriber.new %>
-    <%= form_for(@subscriber) do |f| %>
-        <% @form_obj = @subscriber %>
-        <% if @form_obj %>
-            <%= render 'shared/error_messages', object: @form_obj %>
-        <% end %>
-        <%= button_to "Add yourself to Subscriber list", :action => "new", class: "btn btn-primary" %>
-    <% end %>
+<% @subscriber = Subscriber.new %>
+<% if @subscriber %>
+    <%= render 'form', { url: nil } %>
 <% end %>
 
 <%= will_paginate %>
