@@ -7,7 +7,10 @@ class ItemLog < ApplicationRecord
 		disbursed: 2,
 		created: 3,
 		deleted: 4,
-		desc_updated: 5
+		description_updated: 5,
+		loaned: 6,
+		returned: 7,
+		disbursed_from_loan: 8
 	}
 
 	validates :action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }

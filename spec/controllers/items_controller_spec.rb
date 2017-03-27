@@ -168,7 +168,7 @@ RSpec.describe "Item Controller Tests", :type => :feature do
         User.destroy(@user)
       end
       if(@item != nil)
-        @item.deactivate
+        @item.deactivate!
       end
     end
   end

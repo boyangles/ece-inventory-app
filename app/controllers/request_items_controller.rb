@@ -22,6 +22,7 @@ class RequestItemsController < ApplicationController
 
 	def create
 		@request_item = RequestItem.new(request_item_params)
+	@request_item.curr_user = current_user 
 
 		begin
 			@request_item.save!
@@ -31,11 +32,12 @@ class RequestItemsController < ApplicationController
 			flash[:danger] = "You may not add this to the cart! Error: #{e}"
 			redirect_to item_path(Item.find(@request_item.item_id))
 		end
-
+    
 	end
 
 	def update
 		@request_item = RequestItem.find(params[:id])
+    		@request_item.curr_user = current_user
 
 		respond_to do |format|
 			begin
@@ -68,6 +70,7 @@ class RequestItemsController < ApplicationController
 		if (params[:quantity_to_return].to_f > reqit.quantity_loan)
 			flash[:danger] = "That's more than are loaned out!"
 		else
+			reqit.curr_user = current_user
 			reqit.return_subrequest(params[:quantity_to_return].to_f)
 			flash[:success] = "Quantity successfully returned!"
 		end
@@ -79,6 +82,7 @@ class RequestItemsController < ApplicationController
 		if (params[:quantity_to_disburse].to_f > reqit.quantity_loan)
 			flash[:danger] = "That's more than are loaned out!"
 		else
+			reqit.curr_user = current_user
 			reqit.disburse_loaned_subrequest(params[:quantity_to_disburse].to_f)
 			flash[:success] = "Quantity successfully disbursed!"
 		end

@@ -1,14 +1,7 @@
 <p id="notice"><%= notice %></p>
 
-<table>
 
-  <tbody>
-  <tr>
-    <th><%= subscriber.user.username %></th>
-  </tr>
-  </tbody>
-</table>
-
-
+<td><%= link_to subscriber.user.username, user_path(subscriber.user_id) %></td>
+  
 <br>
 

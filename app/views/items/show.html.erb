@@ -135,15 +135,35 @@
 
       </div>
 
-      <% if is_manager_or_admin? %>
-          <div class="tab-pane fade" id="logs">
-            <br>
-            <% itemLogs = Log.where(id: ItemLog.select(:log_id).where(item_id: @item.id))%>
-            <% itemInReqLogs = Log.where(id: RequestLog.select(:log_id).where(request_id: RequestItem.select(:request_id).where(item_id: @item.id))) %>
-            <% logss = Log.where(id: itemLogs | itemInReqLogs) %>
-            <%= render logss %>
-          </div>
-      <% end %>
+			<% if is_manager_or_admin? %>
+	      <div class="tab-pane fade" id="logs">
+  	      <br>
+					<% itemLogs = Log.where(id: ItemLog.select(:log_id).where(item_id: @item.id))%>
+	  	    <% itemInReqLogs = Log.where(id: RequestLog.select(:log_id).where(request_id: RequestItem.select(:request_id).where(item_id: @item.id))) %>
+ 					<% logss = Log.where(id: itemLogs | itemInReqLogs) %>
+	
+			    <% if logss.any? %>
+
+						<table class="table table-striped table-hover">
+							<thead>
+								<tr>
+									<th>Time</th>
+									<th>Initiator</th>
+									<th>Object Affected</th>
+									<th>Action</th>
+									<th>Affected User</th>
+									<th></th>
+								</tr>	
+							</thead>
+							<tbody>
+	        	  	<%= render logss %>
+							</tbody>
+						</table>
+	
+  	  		<% end %>
+
+      	</div>
+			<% end %>
 
 
     </div>
