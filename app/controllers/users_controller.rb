@@ -22,7 +22,7 @@ class UsersController < ApplicationController
   def show
     @user = User.find(params[:id])
     #put here for now to test
-    # UserMailer.loan_reminder_emails.deliver_now()
+    UserMailer.loan_reminder_emails_all.deliver_now
     @requests = @user.requests.where.not(status: "cart").paginate(page: params[:page], per_page: 10)
   end
 
