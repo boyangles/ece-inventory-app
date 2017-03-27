@@ -1,8 +1,8 @@
 # config/app.yml for rails-settings-cached
 defaults: &defaults
-  email_heading: "You're an awesome person for using our site!!!!"
+  email_subject: "You're an awesome person for using our site!!!!"
   email_body: "Here is the prepended text that will edited"
-  email_dates: ["march 31" , "april 1" , "april 3"]
+  email_dates: "03/31/17"
 
 
 development:
