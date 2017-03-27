@@ -27,9 +27,8 @@
                 <% if is_manager_or_admin? %>
                     <li><%= link_to "Logs", logs_path %></li>
                     <li><%= link_to "Tags", tags_path %></li>
+                    <li><%= link_to "Emails", settings_path %></li>
               <% end %>
-                <li><%= link_to "Emails", settings_path %></li>
-
                 <% request_label = (is_manager_or_admin?) ? "Requests" : "My Requests" %>
                 <li><%= link_to request_label, requests_path %></li>
                 <% loans_label = (is_manager_or_admin?) ? "Loans" : "My Loans" %>

@@ -58,40 +58,66 @@ class UserMailer < ApplicationMailer
 
   def loan_convert_email(requestItem)
     @user = requestItem.request.user
-    @requestItem  = requestItem
+    @request_items  = requestItem
     email_params
     mail(to: @user.email, subject: @heading)
   end
 
   def loan_return_email(requestItem)
     @user = requestItem.request.user
-    @requestItem  = requestItem
+    @request_items  = requestItem
     email_params
     mail(to: @user.email, subject: @heading)
   end
 
-  def loan_reminder_email(loanItem)
-    @user = loanItem.request.user
-    @requestItem = loanItem
+  def loan_reminder_email(loanItem, tempUser)
+    @user = tempUser
+    @request_items = loanItem
     email_params
     mail(to: @user.email, subject: @heading)
   end
+
+  # def loan_reminder_emails_all
+  #   current_date = Time.now.strftime("%m/%d/%Y").to_s
+  #   puts "START HERE"
+  #   dates = Setting.email_dates
+  #   dates = dates.split(",")
+  #   dates.each do |date|
+  #     if current_date == date.to_s
+  #       allRequestItems = RequestItem.all
+  #       requestItems = RequestItem.where("quantity_loan > ?", 0)
+  #       requestItems.each do |loanItem|
+  #         10.times do |i|
+  #           puts "DATE"
+  #           puts date
+  #         end
+  #         UserMailer.loan_reminder_email(loanItem).deliver_now
+  #       end
+  #     else
+  #     end
+  #   end
+  # end
 
   def loan_reminder_emails_all
+
+    allUsers = User.all
+
     current_date = Time.now.strftime("%m/%d/%Y").to_s
-    puts "START HERE"
+    10.times do |i|
+      puts "START HERE"
+    end
     dates = Setting.email_dates
     dates = dates.split(",")
     dates.each do |date|
+      10.times do |i|
+        puts "GOT HERE 1"
+      end
       if current_date == date.to_s
-        allRequestItems = RequestItem.all
-        requestItems = RequestItem.where("quantity_loan > ?", 0)
-        requestItems.each do |loanItem|
-          10.times do |i|
-            puts "DATE"
-            puts date
-          end
-          UserMailer.loan_reminder_email(loanItem).deliver_now
+        allUsers.each do |tempUser|
+          @request_items = RequestItem.where("quantity_loan > ?", 0).where(request_id: Request.select(:id).where(user_id: tempUser, status: "approved"))
+          puts "request items is this:"
+          puts @request_items
+          UserMailer.loan_reminder_email(@request_items, tempUser).deliver_now
         end
       else
       end

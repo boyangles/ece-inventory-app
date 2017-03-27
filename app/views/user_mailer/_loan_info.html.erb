@@ -1,47 +1,51 @@
-<p>
-  <strong> This is the item id </strong>
-</p>
+if
+<% @request_items.each do |req_item| %>
+    <p>
+      <strong> This is the item id </strong>
+    </p>
 
-<p>
-  <%=  @requestItem.item.unique_name %>.
-</p>
+    <p>
+      <%=  req_item.item.unique_name %>.
+    </p>
 
-<p>
-  <strong> This is quantity disbursed amount </strong>
-</p>
+    <p>
+      <strong> This is quantity disbursed amount </strong>
+    </p>
 
-<p>
-  <%=  @requestItem.quantity_disburse %>.
-</p>
+    <p>
+      <%=  req_item.quantity_disburse %>.
+    </p>
 
-<p>
-  <strong> This is quantity loaned amount </strong>
-</p>
+    <p>
+      <strong> This is quantity loaned amount </strong>
+    </p>
 
-<p>
-  <%=  @requestItem.quantity_loan %>.
-</p>
+    <p>
+      <%=  req_item.quantity_loan %>.
+    </p>
 
-<p>
-  <strong> This is the status </strong>
-</p>
+    <p>
+      <strong> This is the status </strong>
+    </p>
 
-<p>
-  <%= @requestItem.request.status %>.
-</p>
+    <p>
+      <%= req_item.request.status %>.
+    </p>
 
-<p>
-  <strong> This is the item user </strong>
-</p>
+    <p>
+      <strong> This is the item user </strong>
+    </p>
 
-<p>
-  <%= @requestItem.request.user.email %>.
-</p>
+    <p>
+      <%= req_item.request.user.email %>.
+    </p>
 
-<p>
-  <strong> This is the item due date </strong>
-</p>
+    <p>
+      <strong> This is the item due date </strong>
+    </p>
 
-<p>
-  <%= @requestItem.created_at %>.
-</p>
+    <p>
+      <%= req_item.created_at %>.
+    </p>
+<% end %>
+
