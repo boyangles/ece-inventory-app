@@ -4,7 +4,7 @@
         <%= render 'shared/error_messages', object: @form_obj %>
     <% end %>
 
-    <%= button_to "Add yourself to Subscriber list", :action => "new" %>
+    <%= button_to "Add yourself to Subscriber list", :action => "new", class: "text-center"%>
 
     <%= button_to 'Destroy', @subscriber, method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-primary"%></div>
 

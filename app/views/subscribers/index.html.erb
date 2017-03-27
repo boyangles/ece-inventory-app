@@ -1,7 +1,7 @@
 <% provide(:title, 'All Tags') %>
 
-<div class="center jumbotron">
-  <h1>Subscribers</h1>
+<div class="center_jumbotron">
+  <h2 class="page-header">Subscribers</h2>
 </div>
 
 <% if Subscriber.exists?(:user_id => current_user.id) %>
@@ -20,10 +20,16 @@
     <% end %>
 <% end %>
 
-<%= will_paginate %>
 
-<ul class="subscribers">
-  <%= render @subscribers %>
-</ul>
+<div class="subscribers">
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr><th>Current Subscribers</th></tr>
+    </thead>
+    <tbody>
+	<%= render @subscribers %>
+    </tbody>
+  </table>
+</div>
 
-<%= will_paginate %>
+<div class="text-center"><%= will_paginate %></div>

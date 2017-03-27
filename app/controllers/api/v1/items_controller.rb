@@ -3,13 +3,13 @@ class Api::V1::ItemsController < BaseController
   before_action :auth_by_approved_status!
   before_action :auth_by_manager_privilege!, only: [:create, :create_tag_associations, :destroy_tag_associations, :update_general, :bulk_import]
   before_action :auth_by_admin_privilege!, only: [:destroy, :fix_quantity, :clear_field_entries, :update_field_entry]
-  before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry]
-  before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry]
+  before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans]
+  before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans]
 
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import].each do |api_action|
+  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import, :self_outstanding_requests, :self_loans].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -129,6 +129,45 @@ class Api::V1::ItemsController < BaseController
     response :unauthorized
     response :created
     response :unprocessable_entity
+  end
+
+  swagger_api :self_outstanding_requests do
+    summary "View own outstanding requests for specified item"
+    param :path, :id, :integer, :required, "Item ID"
+    response :ok
+    response :unauthorized
+    response :not_found
+  end
+
+  swagger_api :self_loans do
+    summary "View subrequest loans for a specific item"
+    param :path, :id, :integer, :required, "Item ID"
+    response :ok
+    response :unauthorized
+    response :not_found
+  end
+
+  def self_outstanding_requests
+    request_items = RequestItem.filter({:user_id => current_user_by_auth.id, :status => 'outstanding', :item_id => @item.id})
+    render :json => request_items, status: 200
+  end
+
+  def self_loans
+    request_items = RequestItem.filter({:user_id => current_user_by_auth.id, :item_id => @item.id, :status => 'approved'})
+    request_items = request_items.filter({:request_type => 'loan'}).or(request_items.filter({:request_type => 'mixed'}))
+    render :json => request_items.map {
+        |req_item| {
+          :id => req_item.id,
+          :request_id => req_item.request.id,
+          :item_id => @item.id,
+          :item => @item.unique_name,
+          :due_date => req_item.due_date,
+          :quantity_on_loan => req_item.quantity_loan,
+          :quantity_disbursed => req_item.quantity_disburse,
+          :quantity_returned => req_item.quantity_return,
+          :subrequest_type => req_item.determine_subrequest_type
+      }
+    }, status: 200
   end
 
   def index

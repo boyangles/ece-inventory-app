@@ -1,7 +1,7 @@
 <% provide(:title, 'Login Homepage') %>
 
 <div class="center_jumbotron">
-  <h2 class="page-header text-center">Welcome to Bletsch's Barn</h2>
+  <h2 class="page-header text-center">Welcome to Our Barn</h2>
 </div>
 
 <% if !logged_in? %>
@@ -9,7 +9,12 @@
 	<%= render '../views/sessions/loginform' %>
 </div>
 <% else %>
-	<%= image_tag("austin.jpg", :alt => "rss feed", class: "center-block") %>
+	<div class="text-center">
+		<%= image_tag("austin.jpg", :alt => "rss feed", :size => "180x180") %>
+		<%= image_tag("jordan.jpg", :alt => "rss feed", :size => "180x180") %>
+		<%= image_tag("josh.jpeg", :alt => "rss feed", :size => "180x180") %>
+		<%= image_tag("bridget.jpeg", :alt => "rss feed", :size => "180x180") %>
+	</div>
 <% end %>
 
 <div class="center_jumbotron">

@@ -14,7 +14,10 @@ class Item < ApplicationRecord
 		disbursed: 2,
 		created: 3,
 		deleted: 4,
-		desc_updated: 5
+		description_updated: 5,
+		loaned: 6,
+		returned: 7,
+		disbursed_from_loan: 8
 	}
 	
   validates :unique_name, presence: true, length: { maximum: 50 },
@@ -162,7 +165,7 @@ class Item < ApplicationRecord
 		end
 
 		quantity_increase = self.quantity - self.quantity_was
-		if quantity_increase != 0 && self.last_action != "disbursed"
+		if (quantity_increase != 0 && (self.administrative_correction? || self.acquired_or_destroyed_quantity? ))
 			create_log(self.last_action, quantity_increase)
 		end
 	end
@@ -203,11 +206,11 @@ class Item < ApplicationRecord
 
 	def create_log_on_desc_update()
 		if (self.unique_name_was != self.unique_name || self.description_was != self.description || self.model_number_was != self.model_number)
-			create_log("desc_updated", self.quantity)
+			create_log("description_updated", self.quantity)
 		end
 	end
 
-	def deactivate
+	def deactivate!
 		self.status = 'deactive'
 		self.save!
 	end

@@ -13,8 +13,9 @@
 				<br>
 				<strong>Quantity Loaned </strong><%= loan.quantity_loan %>
 				<br>
-				<!--<br>-->
+				<br>
 				<!--<strong>Due Date </strong> tbd-->
+				<%= link_to "Related Request", request_path(request.id) %>
 			</div>
 
 			<% if is_manager_or_admin? %>
@@ -23,8 +24,6 @@
 				</br>
 				<%= render 'loans/disbursequantityform', request_item: loan %>
 				<br>
-				<br>
-				<%= link_to "Related Request", request_path(request.id), class: "pull-right" %>
 			</div>
 			<% end %>
 		</div>
