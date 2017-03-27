@@ -39,6 +39,7 @@ class RequestItem < ApplicationRecord
   scope :quantity_disburse, -> (quantity_disburse) { where quantity_disburse: quantity_disburse }
   scope :quantity_return, -> (quantity_return) { where quantity_return: quantity_return }
 
+  attr_accessor :curr_user
   attr_readonly :request_id, :item_id
 
   before_validation {
@@ -77,6 +78,7 @@ class RequestItem < ApplicationRecord
     loan_quantity = (self[:quantity_loan].nil?) ? 0 : self[:quantity_loan]
 
     @item = self.item
+
     @item.update!(:quantity => item[:quantity] - disbursement_quantity - loan_quantity)
     @item.update!(:quantity_on_loan => item[:quantity_on_loan] + loan_quantity)
   end
@@ -100,11 +102,18 @@ class RequestItem < ApplicationRecord
     quantity_to_return = (to_return.nil?) ? 0 : to_return
 
     @item = self.item
-		self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_return)
-		self.update!(:quantity_return => self[:quantity_return] + quantity_to_return)
 
-    @item.update!(:quantity => item[:quantity] + quantity_to_return)
-		@item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_return)
+    ActiveRecord::Base.transaction do
+      if quantity_to_return > 0
+        create_log("returned", quantity_to_return)
+      end
+
+		  self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_return)
+		  self.update!(:quantity_return => self[:quantity_return] + quantity_to_return)
+
+      @item.update!(:quantity => item[:quantity] + quantity_to_return)
+		  @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_return)
+    end
 	end
 
 	##
@@ -113,10 +122,49 @@ class RequestItem < ApplicationRecord
     quantity_to_disburse = (to_disburse.nil?) ? 0 : to_disburse
 
     @item = self.item
-		self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_disburse)
-		self.update!(:quantity_disburse => self[:quantity_disburse] + quantity_to_disburse)
-		@item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_disburse)
+
+    ActiveRecord::Base.transaction do
+      if quantity_to_disburse > 0
+        create_log("disbursed_from_loan", quantity_to_disburse)
+      end
+
+	   	self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_disburse)
+e		  self.update!(:quantity_disburse => self[:quantity_disburse] + quantity_to_disburse)
+		  @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_disburse)
+    end
 	end
+
+  ##
+  # REQ-ITEM-6: create log!!!
+  def create_log(action, quan_change)
+    itemo = self.item
+    itemo.update!(:last_action => action)
+
+    if self.curr_user.nil?
+      curr = nil
+    else
+      curr = self.curr_user.id
+    end
+
+    old_name = ""
+    old_desc = ""
+    old_model = ""
+
+    if itemo.unique_name_was != itemo.unique_name
+      old_name = itemo.unique_name_was
+    end
+    if itemo.description_was != itemo.description
+      old_desc = itemo.description_was
+    end
+    if itemo.model_number_was != itemo.model_number
+      old_model = itemo.model_number_was
+    end
+    
+    log = Log.new(:user_id => curr, :log_type => 'item')
+    log.save!
+    itemlog = ItemLog.new(:log_id => log.id, :item_id => itemo.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => itemo.unique_name, :old_desc => old_desc, :new_desc => itemo.description, :old_model_num => old_model, :new_model_num => itemo.model_number, :curr_quantity => itemo.quantity, :affected_request => self.request.id)
+    itemlog.save!
+  end
 
   def determine_subrequest_type
     loan_quantity = (self[:quantity_loan].nil?) ? 0 : self[:quantity_loan]
