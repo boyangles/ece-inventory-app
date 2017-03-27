@@ -39,6 +39,7 @@ class RequestItem < ApplicationRecord
   scope :quantity_disburse, -> (quantity_disburse) { where quantity_disburse: quantity_disburse }
   scope :quantity_return, -> (quantity_return) { where quantity_return: quantity_return }
 
+  attr_accessor :curr_user
   attr_readonly :request_id, :item_id
 
   before_validation {
@@ -149,10 +150,10 @@ e		  self.update!(:quantity_disburse => self[:quantity_disburse] + quantity_to_d
     itemo = self.item
     itemo.update!(:last_action => action)
 
-    if itemo.curr_user.nil?
+    if self.curr_user.nil?
       curr = nil
     else
-      curr = itemo.curr_user.id
+      curr = self.curr_user.id
     end
 
     old_name = ""

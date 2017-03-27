@@ -10,5 +10,21 @@ $ ->
     width: '100%'
 
 $(document).on "page:change", ->
-	$('#quantity_change').change ->
-		$('.quantity_reason').slideToggle()
+	heyy = $('#quantity_change')
+	quantityA = $('.quantity-A').val()
+	quantityB = $('.quantity-B').val()
+	change = heyy.val()
+	currenttotal = + +quantityA + +quantityB
+	$('.display-new-total').val("Current Quantity Total: " + currenttotal)
+
+	heyy.change ->
+		if(heyy.val())
+			$('.quantity_reason').show()
+			change = $('.quantity-change').val()
+			newtotal = +quantityA + +quantityB + +change
+			$('.display-new-total').val("New Quantity Total: " + newtotal)
+		else
+			$('.quantity_reason').hide()
+			$('.display-new-total').val("Current Quantity Total: " + currenttotal)
+
+

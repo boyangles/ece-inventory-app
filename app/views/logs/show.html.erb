@@ -76,11 +76,47 @@
 			<strong>Quantity </strong>
 			<%= itemlog.curr_quantity %>
 		</p>
-	<% elsif itemlog.disbursed? || itemlog.loaned? || itemlog.returned? || itemlog.disbursed_from_loan %>
+	<% elsif itemlog.disbursed? || itemlog.loaned? || itemlog.returned? || itemlog.disbursed_from_loan? %>
+		<p>
+			<% itemrequser = User.find(Request.find(itemlog.affected_request).user_id) %>
+			<strong>For </strong> <%= link_to itemrequser.username, user_path(itemrequser.id) %>
+		</p>
+		<p>
+			<strong>Related</strong> <%= link_to "Request", request_path(itemlog.affected_request) %>
+		</p>
+		<p>
+			<strong>Quantity <%= itemlog.action %></strong> <%= itemlog.quantity_change %>
+		</p>
+	<% elsif itemlog.acquired_or_destroyed_quantity? || itemlog.administrative_correction? %>
+		<p>
+			<strong>Quantity Change </strong>
+			<%= itemlog.quantity_change %>
+		</p>
 
-	<% elsif itemlog.acquired_or_destroyed_quantity || itemlog.administrative_correction? %>
+		<p>
+			<strong>New Quantity </strong>
+			<%= itemlog.curr_quantity %>
+		</p>
 
 	<% elsif itemlog.description_updated? %>
+		<% if itemlog.old_name != nil && itemlog.old_name != "" && itemlog.old_name != itemlog.new_name %>
+			<p>
+				<strong>Name from </strong><%= itemlog.old_name %> <strong>to </strong><%= itemlog.new_name %>
+			</p>
+		<% end %>
+						
+		<% if itemlog.old_desc != nil && itemlog.old_desc != "" && itemlog.old_desc != itemlog.new_desc %>
+			<p>
+				<strong>Description from </strong><%= itemlog.old_desc %> <strong>to </strong><%= itemlog.new_desc %>
+			</p>
+		<% end %>	
+							
+		<% if itemlog.old_model_num != nil && itemlog.old_model_num != "" && itemlog.old_model_num != itemlog.new_model_num %>
+			<p>
+				<strong>Model Number from </strong><%= itemlog.old_model_num %> <strong>to </strong><%= itemlog.new_model_num %>
+			</p>
+		<% end %>	
+
 
 	<% end %>
 <% end %>
