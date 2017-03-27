@@ -27,6 +27,7 @@ Our inventory system now runs on Duke Colab VM!
  - In order to update and deploy over your remote server, follow the Colab guides to set up your environment. http://docs.colab.duke.edu/guides/ssh.html. Install the necessary versions of ruby, rails, etc.
  - Updating:
     - Sign on to the remote server. Currently, we are using 114. To update, git pull from our remote repository here, run ```rails assets:precompile``` to compile your css, then run necessary migrations with ```rails db:migrate``` and update Swagger with ```rails swagger:docs```. A simple ```rails server``` will then start your server and you should be able to access spicysoftware.colab.duke.edu through your local browser. 
+    - When pulling new changes to your server, ensure you stop your nginx server with ```sudo systemctl stop nginx``` and restart postgresql to sever connections with ```sudo systemctl restart postgresql```. From there, you can pull, compile assets, generate swagger docs, and restart nginx ```sudo systemctl restart nginx```.
 
 #### Swagger API Debugger
  - You may need to install the submodule Swagger UI. 
