@@ -137,6 +137,19 @@ Rails.application.routes.draw do
       resources :tags, :only => [:index, :show, :create, :update, :destroy]
       resources :logs, :only => [:index, :show, :create, :update, :destroy]
       resources :sessions, :only => [:create, :destroy]
+      resources :subscribers, :only => [:index, :create, :destroy]
+      resources :settings, :only => [:index] do
+        member do
+          put :modify_email_heading
+          patch :modify_email_heading
+
+          put :modify_email_body
+          patch :modify_email_body
+
+          put :modify_email_dates
+          patch :modify_email_dates
+        end
+      end
     end
   end
 
