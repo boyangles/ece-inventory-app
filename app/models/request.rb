@@ -74,8 +74,17 @@ class Request < ApplicationRecord
       self.request_items.each do |req_item|
         begin
           req_item.fulfill_subrequest
+          if !req_item.quantity_disburse.nil? 
+            if req_item.quantity_disburse. > 0
+              create_item_log("disbursed", req_item, req_item[:quantity_disburse])
+            end
+          end
+          if !req_item.quantity_loan.nil? && req_item.quantity_loan > 0
+            create_item_log("loaned", req_item, req_item.quantity_loan)
+          end
+
         rescue Exception => e
-          raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity_was}")
+          raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity}")
         end
       end
     elsif self.status_was == 'approved' && self.status != 'approved'
@@ -112,10 +121,6 @@ class Request < ApplicationRecord
 			create_log("placed")
 		elsif old_status != new_status
 			create_log(new_status)
-#		elsif old_status == 'cart' && new_status == 'approved' #admin direct
-#		create_log(new_status)
-#		elsif old_status == 'outstanding' && new_status != old_status
-#			create_log(new_status)
 		end
 
 	end
@@ -136,5 +141,35 @@ class Request < ApplicationRecord
 		reqlog = RequestLog.new(:log_id => log.id, :request_id => self.id, :action => action)
 		reqlog.save!
 	end 
+
+  def create_item_log(action, req_item, quantity_change)
+    itemo = req_item.item
+    itemo.update!(:last_action => action)
+
+    if self.curr_user.nil?
+      curr = nil
+    else
+      curr = self.curr_user.id
+    end
+
+    old_name = ""
+    old_desc = ""
+    old_model = ""
+
+    if itemo.unique_name_was != itemo.unique_name
+      old_name = itemo.unique_name_was
+    end
+    if itemo.description_was != itemo.description
+      old_desc = itemo.description_was
+    end
+    if itemo.model_number_was != itemo.model_number
+      old_model = itemo.model_number_was
+    end
+    
+    log = Log.new(:user_id => curr, :log_type => 'item')
+    log.save!
+    itemlog = ItemLog.new(:log_id => log.id, :item_id => itemo.id, :action => action, :quantity_change => quantity_change, :old_name => old_name, :new_name => itemo.unique_name, :old_desc => old_desc, :new_desc => itemo.description, :old_model_num => old_model, :new_model_num => itemo.model_number, :curr_quantity => itemo.quantity, :affected_request => self.id)
+    itemlog.save!
+  end
 
 end

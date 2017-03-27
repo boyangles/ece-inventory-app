@@ -74,23 +74,13 @@ class RequestItem < ApplicationRecord
   # Input: N/A
   # Output: @item upon success
   def fulfill_subrequest
-    puts("Hey now")
     disbursement_quantity = (self[:quantity_disburse].nil?) ? 0 : self[:quantity_disburse]
     loan_quantity = (self[:quantity_loan].nil?) ? 0 : self[:quantity_loan]
 
     @item = self.item
 
-    ActiveRecord::Base.transaction do
-      if disbursement_quantity > 0
-        create_log("disbursed", disbursement_quantity)
-      end
-      if loan_quantity > 0
-        create_log("loaned", loan_quantity)
-      end
-
-      @item.update!(:quantity => item[:quantity] - disbursement_quantity - loan_quantity)
-      @item.update!(:quantity_on_loan => item[:quantity_on_loan] + loan_quantity)
-    end
+    @item.update!(:quantity => item[:quantity] - disbursement_quantity - loan_quantity)
+    @item.update!(:quantity_on_loan => item[:quantity_on_loan] + loan_quantity)
   end
 
   ##

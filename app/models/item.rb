@@ -40,6 +40,10 @@ class Item < ApplicationRecord
   has_many :item_custom_fields, dependent: :destroy
   accepts_nested_attributes_for :item_custom_fields
 
+
+  # Relation with Logs
+  has_many :logs, dependent: :destroy
+
   attr_accessor :curr_user
   attr_accessor :tag_list
   attr_accessor :tags_list
@@ -206,10 +210,10 @@ class Item < ApplicationRecord
 		end
 	end
 
-	def deactivate!
+	def deactivate
 		self.status = 'deactive'
 		self.save!
-  end
+	end
 
   private
   def create_custom_fields_for_items(item_id)

@@ -65,7 +65,7 @@ class RequestItemsController < ApplicationController
 		if (params[:quantity_to_return].to_f > reqit.quantity_loan)
 			flash[:danger] = "That's more than are loaned out!"
 		else
-			@request_item.curr_user = current_user
+			reqit.curr_user = current_user
 			reqit.return_subrequest(params[:quantity_to_return].to_f)
 			flash[:success] = "Quantity successfully returned!"
 		end		
@@ -77,7 +77,7 @@ class RequestItemsController < ApplicationController
 		if (params[:quantity_to_disburse].to_f > reqit.quantity_loan)
 			flash[:danger] = "That's more than are loaned out!"
 		else
-			@request_item.curr_user = current_user
+			reqit.curr_user = current_user
 			reqit.disburse_loaned_subrequest(params[:quantity_to_disburse].to_f)
 			flash[:success] = "Quantity successfully disbursed!"
 		end		
