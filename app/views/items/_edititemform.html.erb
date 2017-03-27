@@ -21,10 +21,15 @@
 
       <div class="form-group">
         <%= f.label :quantity_change, "Quantity Change", class: "col-lg-2 control-label" %>
-        <div class="col-lg-10">
+        <div class="col-lg-6">
 					<% place = "Field optional - currently " + item.quantity.to_s + " in stock, " + item.quantity_on_loan.to_s + " on loan" %>
           <%= number_field_tag :quantity_change, params[:quantity_change], class: "form-control quantity-change",:placeholder => place %>
         </div>
+
+				<div class="col-lg-4">
+					<%= text_field_tag :ohohoho, params[:ohohoho], class: "form-control display-new-total", :readonly => true %>
+				</div>
+
       </div>
 
 			<div class="quantity_reason">
@@ -40,6 +45,17 @@
 						<% end %>
 						<%= f.select :last_action, reasons, { :prompt => "Select One" }, { class: "form-control", :id => "select", :selected => 0 } %>
 					</div>
+
+					<!-- hidden quantity fields for displaying total purposes -->
+ 	      	<div class="col-lg-10">
+						<%= f.hidden_field :quantity, class: "quantity-A form-control" %>
+   	    	</div>
+
+       		<div class="col-lg-10">
+						<%= f.hidden_field :quantity_on_loan, class: "quantity-B form-control" %>
+       		</div>
+
+
 				</div>
 			</div>
 
