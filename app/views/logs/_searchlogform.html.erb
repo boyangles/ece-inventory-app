@@ -1,0 +1,51 @@
+<div class="search">
+  <%= form_for logs_path, :method => 'get' do |f| %>
+
+		<div class="search-logs">
+
+			<div class="form-group">
+				<%= f.label "Search by User Name", :class=>"col-lg-3 control-label" %><br>
+				<div class="col-lg-12">
+					<%= text_field_tag :user_search, params[:user_search], :placeholder => "User", :class => "form-control" %>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<br><%= f.label "Search by Item Name", :class=>"col-lg-3 control-label" %><br>
+				<div class="col-lg-12">
+					<%= text_field_tag :item_search, params[:item_search], :placeholder => "Item", :class => "form-control" %>
+				</div>
+			</div><br>
+
+			<div class="col-lg-6">
+			<div class="form-group">
+				<%= f.label "From Date", :class=>"col-lg-4 control-label" %>
+				<div class="col-lg-8">
+		      <%= text_field_tag :start_date, params[:start_date], 'data-behaviour' => 'datepicker' %>
+    		  <script type="text/javascript">
+          	$('[data-behaviour~=datepicker]').datepicker();
+      		</script>
+				</div>
+			</div>
+			</div>
+
+			<div class="col-lg-6">
+			<div class="form-group">
+				<%= f.label "To Date", :class=>"col-lg-4 control-label" %>
+				<div class="col-lg-8">
+		      <%= text_field_tag :end_date, params[:end_date], 'data-behaviour' => 'datepicker' %>
+    	  	<script type="text/javascript">
+          	$('[data-behaviour~=datepicker]').datepicker();
+      		</script>
+				</div>
+			</div>
+			</div>
+
+			<br><br>
+      <%= submit_tag "Search", class: "btn btn-default col-lg-2 col-lg-offset-10", type: "submit" %>
+
+		</div>
+	<% end %>
+</div>
+
+

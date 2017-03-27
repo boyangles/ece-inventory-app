@@ -3,10 +3,10 @@
 	<%= f.hidden_field :request_id, :value => request_item.request_id %>
 
 	<td>
-		<%= f.number_field :quantity_loan, class: "col-lg-12" %>
+		<%= f.number_field :quantity_loan, class: "col-lg-12", min: 0 %>
 	</td>
 	<td>
-		<%= f.number_field :quantity_disburse, class: "col-lg-12" %>
+		<%= f.number_field :quantity_disburse, class: "col-lg-12", min: 0 %>
 	</td>
 	
 	<td>
