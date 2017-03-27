@@ -1,0 +1,124 @@
+<% if @log.user? %>
+	<% userlog = UserLog.find_by(:log_id => @log.id) %>
+	<% user = User.find(userlog.user_id) %>
+	<% action = userlog.action %>
+<% elsif @log.request? %>
+	<% reqlog = RequestLog.find_by(:log_id => @log.id) %>
+	<% request = Request.find(reqlog.request_id) %>
+	<% action = reqlog.action %>
+<% else %> <!-- item -->
+	<% itemlog = ItemLog.find_by(:log_id => @log.id) %>
+	<% item = Item.find(itemlog.item_id) %>
+	<% action = itemlog.action %>
+<% end %>
+
+<h2 class="page-header"><strong>Log</strong> - <%= @log.log_type %> <%= action %></h2>
+
+<h4 class="pull-right">
+	<%= @log.created_at.strftime("%B %e, %Y at %I:%M%p") %>
+</h4>
+
+<br>
+<p>
+	<strong>Initiator</strong> 
+	<% if !@log.user_id.nil? %>
+		<% acting_user = User.find(@log.user_id) %>
+		<%= link_to acting_user.username, user_path(acting_user.id) %>
+	<% else %>
+		Three and a Half Asians
+	<% end %>
+</p>
+
+
+<!-- USER -->
+<% if @log.user? %>
+
+	<p>
+		<strong>User</strong> 
+		<%= link_to user.username, user_path(user.id) %>
+
+		<% if userlog.created? %>
+			with <strong>privilege</strong> <%= userlog.new_privilege %>
+		<% end %>
+	</p>
+
+	<% if userlog.privilege_updated? %>
+		<p>
+			<strong>Old Privilege </strong><%= userlog.old_privilege %>
+		</p>
+		<p>
+			<strong>New Privilege </strong><%= userlog.new_privilege %>
+		</p>
+	<% end %>
+
+<% elsif @log.request? %>
+	<% if request.user_id != @log.user_id %>
+		<p>
+			<strong>Request Owner </strong>
+			<% usero = User.find(request.user_id) %>
+			<%= link_to usero.username, user_path(usero.id) %>
+		</p>
+	<% end %>
+
+	<p>
+		<strong>Affected </strong>
+		<%= link_to "Request", request_path(reqlog.request_id) %>
+	</p>
+
+<% elsif @log.item? %>
+	<p>
+		<strong>Item </strong>
+		<%= link_to item.unique_name, item_path(item.id) %>
+	</p>
+	
+	<% if itemlog.created? || itemlog.deleted? %>
+		<p>
+			<strong>Quantity </strong>
+			<%= itemlog.curr_quantity %>
+		</p>
+	<% elsif itemlog.disbursed? || itemlog.loaned? || itemlog.returned? || itemlog.disbursed_from_loan? %>
+		<p>
+			<% itemrequser = User.find(Request.find(itemlog.affected_request).user_id) %>
+			<strong>For </strong> <%= link_to itemrequser.username, user_path(itemrequser.id) %>
+		</p>
+		<p>
+			<strong>Related</strong> <%= link_to "Request", request_path(itemlog.affected_request) %>
+		</p>
+		<p>
+			<strong>Quantity <%= itemlog.action %></strong> <%= itemlog.quantity_change %>
+		</p>
+	<% elsif itemlog.acquired_or_destroyed_quantity? || itemlog.administrative_correction? %>
+		<p>
+			<strong>Quantity Change </strong>
+			<%= itemlog.quantity_change %>
+		</p>
+
+		<p>
+			<strong>New Quantity </strong>
+			<%= itemlog.curr_quantity %>
+		</p>
+
+	<% elsif itemlog.description_updated? %>
+		<% if itemlog.old_name != nil && itemlog.old_name != "" && itemlog.old_name != itemlog.new_name %>
+			<p>
+				<strong>Name from </strong><%= itemlog.old_name %> <strong>to </strong><%= itemlog.new_name %>
+			</p>
+		<% end %>
+						
+		<% if itemlog.old_desc != nil && itemlog.old_desc != "" && itemlog.old_desc != itemlog.new_desc %>
+			<p>
+				<strong>Description from </strong><%= itemlog.old_desc %> <strong>to </strong><%= itemlog.new_desc %>
+			</p>
+		<% end %>	
+							
+		<% if itemlog.old_model_num != nil && itemlog.old_model_num != "" && itemlog.old_model_num != itemlog.new_model_num %>
+			<p>
+				<strong>Model Number from </strong><%= itemlog.old_model_num %> <strong>to </strong><%= itemlog.new_model_num %>
+			</p>
+		<% end %>	
+
+
+	<% end %>
+<% end %>
+
+

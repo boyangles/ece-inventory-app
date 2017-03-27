@@ -58,6 +58,10 @@ class LogsController < ApplicationController
     save_form(@log)
   end
 
+	def show
+		@log = Log.find(params[:id])
+	end
+
   private
   def log_params
     params.fetch(:log, {}).permit(:user_id, :log_type)
