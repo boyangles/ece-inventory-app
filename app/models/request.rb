@@ -76,13 +76,12 @@ class Request < ApplicationRecord
           req_item.fulfill_subrequest
           if !req_item.quantity_disburse.nil? 
             if req_item.quantity_disburse. > 0
-              create_item_log("disbursed", req_item, req_item[:quantity_disburse])
+              create_item_log("disbursed", req_item, req_item.quantity_disburse)
             end
           end
           if !req_item.quantity_loan.nil? && req_item.quantity_loan > 0
             create_item_log("loaned", req_item, req_item.quantity_loan)
           end
-
         rescue Exception => e
           raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity}")
         end
@@ -92,7 +91,7 @@ class Request < ApplicationRecord
         begin
           req_item.rollback_fulfill_subrequest
         rescue Exception => e
-          raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity_was}")
+          raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity}")
         end
       end
     end
