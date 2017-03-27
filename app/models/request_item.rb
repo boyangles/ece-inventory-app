@@ -17,6 +17,7 @@ class RequestItem < ApplicationRecord
   scope :request_id, -> (request_id) { where request_id: request_id }
   scope :item_id, -> (item_id) { where item_id: item_id }
   scope :user_id, -> (user_id) { joins(:request).where(requests: { user_id: user_id }) }
+  scope :status, -> (status) { joins(:request).where(requests: { status: status }) }
   scope :request_type, -> (request_type) {
     case request_type
       when 'disbursement'

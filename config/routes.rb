@@ -106,6 +106,10 @@ Rails.application.routes.draw do
           patch :update_field_entry
 
           post :bulk_import
+
+          get :self_outstanding_requests
+
+          get :self_loans
         end
       end
 
@@ -125,13 +129,27 @@ Rails.application.routes.draw do
 
           put :return_req_items
           patch :return_req_items
-        end
 
-        get :index_subrequests
+          get :index_subrequests
+        end
       end
+
       resources :tags, :only => [:index, :show, :create, :update, :destroy]
       resources :logs, :only => [:index, :show, :create, :update, :destroy]
       resources :sessions, :only => [:create, :destroy]
+      resources :subscribers, :only => [:index, :create, :destroy]
+      resources :settings, :only => [:index] do
+        member do
+          put :modify_email_heading
+          patch :modify_email_heading
+
+          put :modify_email_body
+          patch :modify_email_body
+
+          put :modify_email_dates
+          patch :modify_email_dates
+        end
+      end
     end
   end
 
