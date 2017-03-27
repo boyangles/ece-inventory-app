@@ -69,10 +69,11 @@
             <p>
               <strong>Tags:</strong>
               <% if @item.tags.first != NIL %>
-                  <% @item.tags.each do |tag| %>
-                      <%= tag.name + ', ' %>
+                  <% @item.tags.each_with_index do |tag, index| %>
+                      <%= tag.name + ((index == @item.tags.size-1) ? '' : ', ') %>
                   <% end %>
-              <% else %> None
+              <% else %>
+                  None
               <% end %>
             </p>
           </div>
