@@ -27,6 +27,7 @@ The database consists of tables with the model classes as the primary (lookup) k
 | Request_Log | log_id, request_id, action |
 | Stack_Exchange | created_at, updated_at |
 | Subscriber | user_id |
+| Setting | var| value|
 
 The User, Item, Custom_Field, Tag, Request, and Log refer to items explicitly mentioned in the requirements. The additional fields are to improve and enhance associations and navigation between the classes. They will all be discussed in detail below.
 
