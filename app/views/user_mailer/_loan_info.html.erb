@@ -1,0 +1,27 @@
+<p>
+   Here are your loans
+  <strong>
+  <%= @user.username %>.
+  </strong>
+</p>
+
+<% Array(@request_items).each do |req_item| %>
+    <p>
+      <h3>
+      <strong>
+        <%=  req_item.item.unique_name %>.
+      </strong>
+      </h3>
+    </p>
+
+    <p>
+      <strong> Loan amount: </strong>
+      <%=  req_item.quantity_loan %>.
+    </p>
+
+    <p>
+      <strong> Due date </strong>
+      <%= req_item.created_at %>.
+    </p>
+<% end %>
+

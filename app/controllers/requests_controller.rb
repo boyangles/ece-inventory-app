@@ -39,9 +39,7 @@ class RequestsController < ApplicationController
     if params[:user]
       @request.user_id = params[:user][:id]
     end
-
     old_status = @request.status
-
     begin
       @request.update_attributes!(request_params)
       flash[:success] = "Operation successful!"
@@ -51,26 +49,37 @@ class RequestsController < ApplicationController
       redirect_back(fallback_location: request_path(@request))
     end
 
-    if old_status == ('outstanding' && request_params[:status] == 'approved') || (old_status == 'cart' && request_params[:status] == 'approved')
+
+
+
+    #Two separate emails, one if user made own request, or if manager made request for him.
+    if (old_status == 'outstanding' && request_params[:status] == 'approved')
+      userMadeRequest = true
+      UserMailer.request_approved_email_all_subscribers(current_user, @request, userMadeRequest).deliver_now
+    elsif (old_status == 'cart' && request_params[:status] == 'approved')
+      userMadeRequest = false
+      UserMailer.request_approved_email_all_subscribers(current_user, @request, userMadeRequest).deliver_now
+    elsif (old_status == 'cart' && request_params[:status] == 'outstanding')
       UserMailer.request_initiated_email_all_subscribers(@request.user, @request).deliver_now
-    elsif old_status == 'cart' && request_params[:status] == 'outstanding'
-      UserMailer.request_approved_email_all_subscribers(@request.user, @request).deliver_now
+    elsif (old_status =='outstanding' && request_params[:status] == 'denied')
+      UserMailer.request_denied_email_all_subscribers(current_user, @request).deliver_now
     end
   end
 
   def clear
     @request.items.destroy_all
+    # UserMailer.request_destroyed_email(current_user, @request).deliver_now
     redirect_to request_path(@request)
   end
 
   # DELETE /requests/1
+  ## s
   def destroy
     if (@request.destroy)
       flash[:success] = "Request destroyed!"
     else
       flash[:danger] = "Unable to destroy request!"
     end
-
     redirect_to requests_url
   end
 

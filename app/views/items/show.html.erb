@@ -86,7 +86,7 @@
           <div class="panel-body">
             <!-- Custom Fields -->
             <% @item_custom_fields.each do |icf| %>
-                <% field_content = ItemCustomField.field_content(@item.id, icf.custom_field_id) %>
+                <% field_content = ( ItemCustomField.field_content(@item.id, icf.custom_field_id).blank? ?  'None' : ItemCustomField.field_content(@item.id, icf.custom_field_id) ) %>
                 <% if is_manager_or_admin? || !icf.custom_field.private_indicator %>
                     <p>
                       <strong><%= icf.custom_field.field_name %>: </strong>

@@ -3,12 +3,11 @@
   <td><%= link_to "Subscribers", subscribers_path, class: "btn btn-primary pull-right" %></td>
 </h2>
 
-
 <p>
-    <strong>Email Heading:</strong>
+    <strong>Email Subject:</strong>
   </p>
   <p>
-    <td><%= link_to @settings['email_heading'], edit_setting_path('email_heading') %></td>
+    <td><%= link_to @settings['email_subject'] + " :click here to edit" , edit_setting_path('email_subject') %></td>
   </p>
 
 
@@ -16,13 +15,13 @@
     <strong>Email Body:</strong>
   </p>
   <p>
-    <td><%= link_to @settings['email_body'], edit_setting_path('email_body') %></td>
+    <td><%= link_to @settings['email_body'] + " :click here to edit", edit_setting_path('email_body') %></td>
   </p>
 
 <p>
   <strong>Email Dates:</strong>
 </p>
 <p>
-<td><%= link_to @settings['email_dates'], date_selection_path('email_dates') %></td>
+<td><%= link_to @settings['email_dates'] + + ": click here to edit" , date_selection_path('email_dates') %></td>
 </p>
 
