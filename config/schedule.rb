@@ -10,10 +10,10 @@
 
 set :environment, "development"
 
-
-every 1.hour do
+every 5.minute do
   rake 'send_reminder_email'
 end
+
 #
 # every 4.days do
 #   runner "AnotherModel.prune_old_records"
