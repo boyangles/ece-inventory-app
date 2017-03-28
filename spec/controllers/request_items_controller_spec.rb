@@ -112,58 +112,78 @@ RSpec.describe "Item Controller Tests", :type => :feature do
 
     scenario "manager places order" do
       login(:user_manager)
-      add_item_to_cart(@item, 10, 10)
-      add_item_to_cart(@item2, 20, 20)
-      add_item_to_cart(@item3, 30, 30)
-      reason = "sick order my dude! very nice!"
-      find_button("Place Order", match: :first).click
-      fill_in('Reason for request?', with: reason)
-      within(".modal-dialog") do
-        click_on('Place Order')
-      end
-      expect(page).to have_content(reason)
-      verify_submitted_order_default_text_fields(@user)
-
-      item_params = RequestItem.where(request_id: Request.select(:id).where(user_id: @user.id))
-      item_params.each do |f|
-        expect(page).to have_content(f.quantity_loan)
-        expect(page).to have_content(f.quantity_disburse)
-        expect(page).to have_content(f.quantity_return)
-        if f.quantity_return > 0
-          expect(page).to have_selector(:link_or_button, "Return")
-          expect(page).to have_selector(:link_or_button, "Convert to Disbursement")
-        end
-      end
+      place_order_as_user(@user)
     end
 
     scenario "admin places order" do
       login(:user_admin)
+      place_order_as_user(@user)
+    end
+  end
+
+  feature "convert loan to disbursement" do
+    scenario "as admin" do
+      login(:user_admin)
+      @item = create :item
       add_item_to_cart(@item, 10, 10)
-      add_item_to_cart(@item2, 20, 20)
-      add_item_to_cart(@item3, 30, 30)
-      reason = "sick order my dude! very nice!"
-      find_button("Place Order", match: :first).click
-      fill_in('Reason for request?', with: reason)
       within(".modal-dialog") do
         click_on('Place Order')
       end
-      expect(page).to have_content(reason)
-      verify_submitted_order_default_text_fields(@user)
-
-      item_params = RequestItem.where(request_id: Request.select(:id).where(user_id: @user.id))
-      item_params.each do |f|
-        expect(page).to have_content(f.quantity_loan)
-        expect(page).to have_content(f.quantity_disburse)
-        expect(page).to have_content(f.quantity_return)
-        if f.quantity_return > 0
-          expect(page).to have_selector(:link_or_button, "Return")
-          expect(page).to have_selector(:link_or_button, "Convert to Disbursement")
-        end
+      item_params = RequestItem.where(request_id: Request.select(:id).where(user_id: @user.id)).first
+      click_on("Convert to Disbursement")
+      fill_in("quantity_to_disburse", with: item_params.quantity_loan - 1)
+      within("#DisburseModal-#{item_params.id}") do
+        click_on("Submit")
       end
+      expect(page).to have_content("Quantity successfully disbursed!")
+      expect(page).to have_content(item_params.quantity_loan - 1)
+      expect(page).to have_content(1)
+    end
+
+    scenario "convert more than available" do
+      login(:user_admin)
+      @item = create :item
+      loan_quantity=10
+      add_item_to_cart(@item, loan_quantity, 10)
+      within(".modal-dialog") do
+        click_on('Place Order')
+      end
+      item_params = RequestItem.where(request_id: Request.select(:id).where(user_id: @user.id)).first
+      click_on("Convert to Disbursement")
+      fill_in("quantity_to_disburse", with: loan_quantity + 1)
+      within("#DisburseModal-#{item_params.id}") do
+        click_on("Submit")
+      end
+      expect(page).to have_content("That's more than are loaned out!")
+      expect(page).to have_content(loan_quantity)
     end
 
   end
 
+  def place_order_as_user(user)
+    add_item_to_cart(@item, 10, 10)
+    add_item_to_cart(@item2, 20, 20)
+    add_item_to_cart(@item3, 30, 30)
+    reason = "sick order my dude! very nice!"
+    find_button("Place Order", match: :first).click
+    fill_in('Reason for request?', with: reason)
+    within(".modal-dialog") do
+      click_on('Place Order')
+    end
+    expect(page).to have_content(reason)
+    verify_submitted_order_default_text_fields(user)
+
+    item_params = RequestItem.where(request_id: Request.select(:id).where(user_id: user.id))
+    item_params.each do |f|
+      expect(page).to have_content(f.quantity_loan)
+      expect(page).to have_content(f.quantity_disburse)
+      expect(page).to have_content(f.quantity_return)
+      if f.quantity_return > 0
+        expect(page).to have_selector(:link_or_button, "Return")
+        expect(page).to have_selector(:link_or_button, "Convert to Disbursement")
+      end
+    end
+  end
 
   def adding_multiple_items
     loan1 = 5
