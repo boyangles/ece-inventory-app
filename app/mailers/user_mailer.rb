@@ -52,20 +52,26 @@ class UserMailer < ApplicationMailer
     mail(to: @recipient.email, subject: @heading)
   end
 
-  def request_denied_email_all_subscribers(reqDenier, request)
-    @subscribers = Subscriber.all
-    UserMailer.request_denied_email(reqDenier, request,request.user).deliver_now
-    @subscribers.each do |recipient|
-      @tempRec = recipient.user
-      UserMailer.request_denied_email(reqDenier, request,@tempRec).deliver_now
-    end
+  def request_edited_email(reqEditor, request, recipient)
+    request_params(reqEditor, request, recipient)
+    email_params
+    mail(to: @recipient.email, subject: @heading)
   end
 
-  # def request_destroyed_email(reqDestroyer, request, recipient)
-  #   request_params(reqDestroyer, request, recipient)
-  #   email_params
-  #   mail(to: @recipient.email, subject: @heading)
+  # def request_denied_email_all_subscribers(reqDenier, request)
+  #   @subscribers = Subscriber.all
+  #   UserMailer.request_denied_email(reqDenier, request,request.user).deliver_now
+  #   @subscribers.each do |recipient|
+  #     @tempRec = recipient.user
+  #     UserMailer.request_denied_email(reqDenier, request,@tempRec).deliver_now
+  #   end
   # end
+
+  def request_cancelled_email(reqDestroyer, request, recipient)
+    request_params(reqDestroyer, request, recipient)
+    email_params
+    mail(to: @recipient.email, subject: @heading)
+  end
   #
   # def request_destroyed_email_all_subscribers(reqDestroyer, request)
   #   @subscribers = Subscriber.all
