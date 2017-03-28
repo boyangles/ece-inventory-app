@@ -5,7 +5,9 @@
 
 Some of your loans have been converted to disbursements! Here is information about your loans.
 
-
-<%= render 'loan_info' %>
-
+<p>
+  <strong>
+<%=@quantity %> <%=@request_items.item.unique_name %> were converted to disbursements.
+  </strong>
+</p>
 </html>

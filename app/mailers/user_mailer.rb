@@ -76,11 +76,13 @@ class UserMailer < ApplicationMailer
   #   end
   # end
 
-  def loan_convert_email(requestItem)
+  def loan_convert_email(requestItem, quantity)
+    @quantity = quantity
     loan_email_template(requestItem, requestItem.request.user)
   end
 
-  def loan_return_email(requestItem)
+  def loan_return_email(requestItem, quantity)
+    @quantity = quantity
     loan_email_template(requestItem, requestItem.request.user)
   end
 

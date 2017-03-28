@@ -60,17 +60,17 @@ class RequestsController < ApplicationController
       UserMailer.request_initiated_email_all_subscribers(@request.user, @request).deliver_now
     elsif (old_status =='outstanding' && request_params[:status] == 'denied')
       UserMailer.request_denied_email_all_subscribers(current_user, @request).deliver_now
-    e
     end
   end
 
   def clear
     @request.items.destroy_all
+    # UserMailer.request_destroyed_email(current_user, @request).deliver_now
     redirect_to request_path(@request)
   end
 
   # DELETE /requests/1
-  ## should be deprecated
+  ## s
   def destroy
     if (@request.destroy)
       flash[:success] = "Request destroyed!"
