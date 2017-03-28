@@ -115,7 +115,7 @@ class Item < ApplicationRecord
   # Input: items in JSON format
   # Output: Outputted Items
   def self.bulk_import(items_as_json)
-    raise Exception.new('Invalid JSON format') unless
+    raise Exception.new('Invalid JSON format. Please recheck the syntax of your input!!') unless
         valid_json?(items_as_json)
 
     items_hash = JSON.parse(items_as_json)
