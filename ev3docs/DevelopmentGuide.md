@@ -192,7 +192,7 @@ Stack Exchanges is a class provided by OAuth in order to allow for NetID login f
 A manager can add or take himself off the subscriber list. If a manager is subscribed, he/she will receive an email every time a request is made.
 
 ##### FIELDS
-* **user_id** - This references the entry in the users table which this subscriber belongs to. In this way, we can query the user in order to find the specific details of any user.
+* **user_id** - This references the entry in the users table which this subscriber belongs to. In this way, we can query the user in order to find the specific details of any user who is subscribed.
 
 ### Settings
 Settings are currently used to log all the settings regarding emails. Currently in Evolution 3, there are 3 main settings: the email subject tag, email body, and dates that the email will be sent out. 
