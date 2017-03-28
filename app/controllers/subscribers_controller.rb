@@ -10,7 +10,8 @@ class SubscribersController < ApplicationController
     # not_deactivated_subscribers = Subscriber.user.where.not(status: 'deactivated')
     ## Need to filter out all unsubscribed users. How to do this??? Ask austin
     # Subscriber.filter(:user.status => 'approved')
-    @subscribers = Subscriber.paginate(page: params[:page], per_page: 10)
+    @subscribers = Subscriber.filter({:status => 'approved'}).paginate(page: params[:page], per_page: 10)
+    # @subscribers = Subscriber.where(:user.status => 'approved').paginate(page: params[:page], per_page: 10)
   end
 
   def new

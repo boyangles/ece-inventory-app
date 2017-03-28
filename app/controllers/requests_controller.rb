@@ -42,6 +42,7 @@ class RequestsController < ApplicationController
     old_status = @request.status
     begin
       @request.update_attributes!(request_params)
+      # UserMailer.request_edited_email(current_user, @request, @request.user).deliver_now
       flash[:success] = "Operation successful!"
       redirect_to request_path(@request)
     rescue Exception => e
@@ -49,21 +50,32 @@ class RequestsController < ApplicationController
       redirect_back(fallback_location: request_path(@request))
     end
 
-
-
-
     #Two separate emails, one if user made own request, or if manager made request for him.
+
+    #If request became approved through manager approving request. No subscriber email required.
     if (old_status == 'outstanding' && request_params[:status] == 'approved')
       userMadeRequest = true
-      UserMailer.request_approved_email_all_subscribers(current_user, @request, userMadeRequest).deliver_now
+      # UserMailer.request_approved_email_all_subscribers(current_user, @request, userMadeRequest).deliver_now
+      UserMailer.request_approved_email(current_user, @request, @request.user,userMadeRequest).deliver_now
+
+      #If request became approved through manager making request for him. Subscriber email required.
     elsif (old_status == 'cart' && request_params[:status] == 'approved')
       userMadeRequest = false
       UserMailer.request_approved_email_all_subscribers(current_user, @request, userMadeRequest).deliver_now
+
+      #If request was initiated through user checking out cart. Subscriber email required.
     elsif (old_status == 'cart' && request_params[:status] == 'outstanding')
       UserMailer.request_initiated_email_all_subscribers(@request.user, @request).deliver_now
+
+      #If request was denied by manager. No subscriber email required.
     elsif (old_status =='outstanding' && request_params[:status] == 'denied')
-      UserMailer.request_denied_email_all_subscribers(current_user, @request).deliver_now
+      UserMailer.request_denied_email(current_user, @request, @request.user).deliver_now
+
+    elsif (old_status =='outstanding' && request_params[:status] == 'cancelled')
+      UserMailer.request_cancelled_email(current_user, @request, @request.user).deliver_now
     end
+
+
   end
 
   def clear
@@ -73,7 +85,7 @@ class RequestsController < ApplicationController
   end
 
   # DELETE /requests/1
-  ## s
+  ## should we deprecate this??
   def destroy
     if (@request.destroy)
       flash[:success] = "Request destroyed!"
