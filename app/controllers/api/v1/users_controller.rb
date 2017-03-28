@@ -24,7 +24,7 @@ class Api::V1::UsersController < BaseController
 
   swagger_api :index do
     summary 'Returns all Users'
-    notes 'Search users'
+    notes 'Managers can view all users as well as filtered users. Managers are able to optionally filter by: email, status, and privilege.'
     param :query, :email, :string, :optional, "Email Address"
     param_list :query, :status, :string, :optional, "Approved or Disabled; must be: approved/deactivated", [:deactivated, :approved]
     param_list :query, :privilege, :string, :optional, "User Permission; must be: student/manager/admin", [:student, :manager, :admin]

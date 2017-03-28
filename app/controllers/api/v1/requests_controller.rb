@@ -22,7 +22,21 @@ class Api::V1::RequestsController < BaseController
 
   swagger_api :create do
     summary "Creates a Request"
-    notes 'List items and corresponding quantities you want in the requests.'
+    notes "
+    Example for request_items:
+    [
+      {
+        \"item_name\": \"item1\",
+        \"quantity_loan\": 15,
+        \"quantity_disburse\": 13
+      },
+      {
+        \"item_name\": \"item2\",
+        \"quantity_loan\": 0,
+        \"quantity_disburse\": 12
+      }
+    ]
+    "
     param :form, 'request[reason]', :string, :optional, "Reason for request"
     param :form, 'request[email]', :string, :required, "Email address of user to request for"
     param :query, :request_items, :string, :required, 'Example --> [{"item_name": "item1", "quantity_loan": 15, "quantity_disburse": 13}, ...]'
@@ -33,6 +47,10 @@ class Api::V1::RequestsController < BaseController
 
   swagger_api :decision do
     summary "Approve or Deny a Disbursement that is Outstanding"
+    notes "
+    request[status] refers to the manager's decision to approve or deny the request.
+    Must be 'approved' or 'denied'
+    "
     param :path, :id, :integer, :required, "Request ID"
     param_list :form, 'request[status]', :string, :required, "Status to update to (approved/denied)"
     param :form, 'request[response]', :string, :optional, "Response"
@@ -43,6 +61,9 @@ class Api::V1::RequestsController < BaseController
 
   swagger_api :update_general do
     summary "Update general attributes for your own requests"
+    notes "
+    Allows users to update their reason before an admin makes a decision on the request.
+    "
     param :path, :id, :integer, :required, "Request ID"
     param :form, 'request[reason]', :string, :optional, "Reason"
     response :ok
@@ -52,6 +73,22 @@ class Api::V1::RequestsController < BaseController
 
   swagger_api :create_req_items do
     summary 'Creates new subrequests for existing requests.'
+    notes "
+    The functionality of this is meant to be able to modify requests after they are made
+    Example for request_items:
+    [
+      {
+        \"item_name\": \"item1\",
+        \"quantity_loan\": 15,
+        \"quantity_disburse\": 13
+      },
+      {
+        \"item_name\": \"item2\",
+        \"quantity_loan\": 0,
+        \"quantity_disburse\": 12
+      }
+    ]
+    "
     param :path, :id, :integer, :required, "Request ID"
     param :query, :request_items, :string, :required, 'Example --> [{"item_name": "item1", "quantity_loan": 15, "quantity_disburse": 13}, ...]'
     response :ok
@@ -61,6 +98,11 @@ class Api::V1::RequestsController < BaseController
 
   swagger_api :destroy_req_items do
     summary 'Deletes subrequests for existing requests.'
+    notes "
+    Deletes subrequests from existing requests. Meant to allow users to modify their existing request before admin makes a decision.
+    Example for request_items:
+      [\"Resistor\", \"Transistor\"]
+    "
     param :path, :id, :integer, :required, "Request ID"
     param :query, :request_items, :string, :required, 'Example --> ["item1", "item2", ...]'
     response :ok
@@ -70,6 +112,22 @@ class Api::V1::RequestsController < BaseController
 
   swagger_api :update_req_items do
     summary 'Updates new subrequests for existing requests.'
+    notes "
+    Modify subrequests that you've made for a particular request. Meant to be used before admin makes a decision.
+    Example for request_items:
+    [
+      {
+        \"item_name\": \"item1\",
+        \"quantity_loan\": 15,
+        \"quantity_disburse\": 13
+      },
+      {
+        \"item_name\": \"item2\",
+        \"quantity_loan\": 0,
+        \"quantity_disburse\": 12
+      }
+    ]
+    "
     param :path, :id, :integer, :required, "Request ID"
     param :query, :request_items, :string, :required, 'Example --> [{"item_name": "item1", "quantity_loan": 15, "quantity_disburse": 0}, ...]'
     response :ok
@@ -79,6 +137,20 @@ class Api::V1::RequestsController < BaseController
 
   swagger_api :return_req_items do
     summary 'Returns specific amounts for requested items'
+    notes "
+    Allows for a return mechanism after a request has been approved. Specifies how much quantity of an item that is to be returned.
+    Example for request_items:
+    [
+      {
+        \"item_name\": \"item1\",
+        \"quantity_return\": 15
+      },
+      {
+        \"item_name\": \"item2\",
+        \"quantity_return\": 1,
+      }
+    ]
+    "
     param :path, :id, :integer, :required, "Request ID"
     param :query, :request_items, :string, :required, 'Example --> [{"item_name": "item1", "quantity_return": 15}, ...]'
     response :ok
@@ -129,7 +201,18 @@ class Api::V1::RequestsController < BaseController
     request_items = request_items.filter({:user_id => user_id}) unless filter_params[:username].blank?
     request_items = request_items.filter({:request_type => filter_params[:req_type]}) unless filter_params[:req_type].blank?
 
-    render :json => request_items, status: 200
+    render :json => request_items.map {
+        |req_item| {
+          :subrequest_id => req_item.id,
+          :corresponding_request_id => req_item.request_id,
+          :item_id => req_item.item_id,
+          :item => Item.find(req_item.item_id).unique_name,
+          :quantity_on_loan => req_item.quantity_loan,
+          :quantity_disbursed => req_item.quantity_disburse,
+          :quantity_returned => req_item.quantity_return,
+          :subrequest_type => RequestItem.find(req_item.id).determine_subrequest_type
+      }
+    }, status: 200
   end
 
   def show
@@ -235,6 +318,7 @@ class Api::V1::RequestsController < BaseController
   def render_request_with_sub_requests(request, user)
     render :json => request.instance_eval {
         |req| {
+          :request_id => req.id,
           :user => user.email,
           :reason => req.reason,
           :status => req.status,
@@ -242,6 +326,7 @@ class Api::V1::RequestsController < BaseController
           :request_type => req.determine_request_type,
           :sub_requests => req.request_items.map {
               |req_item| {
+                :subrequest_id => req_item.id,
                 :item => Item.find(req_item.item_id).unique_name,
                 :quantity_on_loan => req_item.quantity_loan,
                 :quantity_disbursed => req_item.quantity_disburse,
@@ -257,7 +342,7 @@ class Api::V1::RequestsController < BaseController
   def render_multiple_requests(requests)
     render :json => requests.map {
         |req| {
-          :id => req.id,
+          :request_id => req.id,
           :user => req.user.email,
           :reason => req.reason,
           :status => req.status,
@@ -266,6 +351,7 @@ class Api::V1::RequestsController < BaseController
           :request_type => req.determine_request_type,
           :sub_requests => req.request_items.map {
               |req_item| {
+                :subrequest_id => req_item.id,
                 :item => Item.find(req_item.item_id).unique_name,
                 :quantity_on_loan => req_item.quantity_loan,
                 :quantity_disbursed => req_item.quantity_disburse,
