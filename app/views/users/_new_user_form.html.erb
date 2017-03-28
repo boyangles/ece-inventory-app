@@ -4,39 +4,42 @@
 
     <!-- Username -->
     <div class="form-group">
-      <%= f.label :username %>
+      <%= f.label :username, "Username", class: "col-lg-2 control-label" %>
       <div class="col-lg-10">
         <%= f.text_field :username, class: 'form-control',:placeholder=>"user" %>
       </div>
     </div>
 
     <!-- Email -->
+    <br>
     <div class="form-group">
-      <%= f.label :email %>
+      <%= f.label :email, "Email", class: "col-lg-2 control-label"%>
       <div class="col-lg-10">
         <%= f.text_field :email, class: 'form-control',:placeholder=>"email" %>
       </div>
     </div>
 
     <!-- Password -->
+    <br>
     <div class="form-group">
-      <%= f.label :password %>
+      <%= f.label :password, "Password", class: "col-lg-2 control-label" %>
       <div class="col-lg-10">
         <%= f.password_field :password, class: 'form-control' ,:placeholder=>"Minimum 6 characters"%>
       </div>
     </div>
 
     <!-- Password Confirm -->
+    <br>
     <div class="form-group">
-      <%= f.label :password_confirmation, "Confirm Password" %>
+      <%= f.label :password_confirmation, "Confirm Password", class: "col-lg-2 control-label" %>
       <div class="col-lg-10">
         <%= f.password_field :password_confirmation, class: 'form-control',:placeholder=>"Minimum 6 characters"%>
       </div>
     </div>
 
-
+    <br>
     <div class="form-group">
-      <%= f.label :privilege, "Define Privilege" %>
+      <%= f.label :privilege, "Define Privilege", class: "col-lg-2 control-label" %>
       <div class="col-lg-10">
         <div class="form-group">
           <%= f.select :privilege, User.privileges.keys.to_a , { :prompt => 'Select One' }, { class: "form-control", :id => "select" } %>
@@ -45,6 +48,9 @@
     </div>
 
 
-
-    <%= f.submit yield(:button_text), class: "btn btn-primary" %>
+  <div class="form-group">
+    <div class="col-lg-10 col-lg-offset-2">
+      <%= f.submit yield(:button_text), class: "btn btn-default btn-lg btn-block" %>
+    </div>
+  </div>
 <% end %>

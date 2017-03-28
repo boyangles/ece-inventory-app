@@ -102,7 +102,7 @@ class User < ApplicationRecord
   end
 
   def create_new_cart(id)
-    @cart = Request.new(:status => :cart, :user_id => id, :reason => 'TBD', :request_initiator => id)
+    @cart = Request.new(:status => :cart, :user_id => id, :request_initiator => id)
     @cart.save!
   end
 

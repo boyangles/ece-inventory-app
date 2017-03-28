@@ -28,3 +28,9 @@ $(document).on "page:change", ->
 			$('.display-new-total').val("Current Quantity Total: " + currenttotal)
 
 
+$(document).on "page:change", ->
+	$('#submit').click (event) ->
+		if ($('#quantity_change').val())
+			r = confirm("Are you sure you want to edit the quantity?")
+			if (r == false)
+				event.preventDefault()
