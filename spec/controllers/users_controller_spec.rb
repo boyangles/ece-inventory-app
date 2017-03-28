@@ -53,6 +53,7 @@ RSpec.describe "User Controller Tests", :type => :feature do
       expect(page).to have_current_path new_user_path
       username = Faker::Name.name
       fill_in('Username', with: username)
+      fill_in('Email', with: "#{username}@email.com")
       fill_in('Password', with: "password")
       fill_in('Confirm Password', with: "password")
       select('student', from: 'user[privilege]')
