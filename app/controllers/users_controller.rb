@@ -76,7 +76,7 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
 		@user.curr_user = current_user
 
-    old_status = @user.status
+    # old_status = @user.status
 
     if user_params[:password].blank? && !current_user?(@user)
       user_params.delete(:password)
