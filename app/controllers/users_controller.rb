@@ -76,6 +76,8 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
 		@user.curr_user = current_user
 
+    old_status = @user.status
+
     if user_params[:password].blank? && !current_user?(@user)
       user_params.delete(:password)
       user_params.delete(:password_confirmation)
@@ -88,6 +90,11 @@ class UsersController < ApplicationController
       flash[:danger] = "Unable to edit user"
       render 'edit'
     end
+
+    #Future code to deactivate subscriber.
+    # if (old_status == 'approved' && user_params[:status] == 'deactivated')
+    #   flash[:success] = "User has been deactivated"
+    # end
   end
 
   # DELETE /users/1
