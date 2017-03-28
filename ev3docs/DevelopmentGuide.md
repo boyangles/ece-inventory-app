@@ -223,5 +223,9 @@ and see the local copy of the project, with all local changes.
 For information about deploying our project onto a remote server, please refer to the our [deployment guide](DeploymentGuide.md). 
 
 
-
+## Testing
+There are two separate test suites, a Rails test suite and an Rspec/Capybara suite. 
+test rails: ```rails test```
+test rspec: ```bundle exec rspec```
+The rails tests focus on controller and model back end validations. The rspec tests use the Capybara framework to leverage Selenium testing, simulating the clicks and inputs that a real user would do. With Capybara, we can test real Feature Use Cases. The upside is that we have a sort of 'acceptance' testing with this framework, ensuring all the buttons can be clicked, without delving deep into the back end. Downside is that feature tests take a considerably longer amount of time to run, which, in a larger project, is not ideal for continuous integration. The Pry gem helps debug and write capybara tests more efficiently, as you can debug inside of a test, as opposed to running the suite/test file multiple times. 
 
