@@ -70,13 +70,13 @@ class RequestsController < ApplicationController
   end
 
   # DELETE /requests/1
+  ## should be deprecated
   def destroy
     if (@request.destroy)
       flash[:success] = "Request destroyed!"
     else
       flash[:danger] = "Unable to destroy request!"
     end
-
     redirect_to requests_url
   end
 

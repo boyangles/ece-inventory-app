@@ -1,12 +1,18 @@
 class UserMailer < ApplicationMailer
   default from: 'do-not-reply@3AndAHalfAsians.com'
-  @url  = 'https://spicysoftware.colab.duke.edu'
 
-  def welcome_email(user)
-    @user = user
-    @url  = 'https://spicysoftware.colab.duke.edu'
-    mail(to: @user.email, subject: 'Welcome to My Awesome Site')
-  end
+  # def welcome_email(user)
+  #   @user = user
+  #   @url  = 'https://spicysoftware.colab.duke.edu'
+  #   mail(to: @user.email, subject: 'Welcome to My Awesome Site')
+  # end
+
+  # def welcome_email_all
+  #   @user = User.all
+  #   @user.each do |recipient|
+  #     UserMailer.welcome_email(recipient).deliver_now
+  #   end
+  # end
 
   def request_initiated_email(requester, request, recipient)
     request_params(requester, request, recipient)
@@ -23,12 +29,6 @@ class UserMailer < ApplicationMailer
     end
   end
 
-  # def welcome_email_all
-  #   @user = User.all
-  #   @user.each do |recipient|
-  #     UserMailer.welcome_email(recipient).deliver_now
-  #   end
-  # end
 
   def request_approved_email(reqOperator, request, recipient,userMadeRequest)
     request_params(reqOperator, request, recipient)
@@ -61,30 +61,35 @@ class UserMailer < ApplicationMailer
     end
   end
 
+  # def request_destroyed_email(reqDestroyer, request, recipient)
+  #   request_params(reqDestroyer, request, recipient)
+  #   email_params
+  #   mail(to: @recipient.email, subject: @heading)
+  # end
+  #
+  # def request_destroyed_email_all_subscribers(reqDestroyer, request)
+  #   @subscribers = Subscriber.all
+  #   UserMailer.request_denied_email(reqDestroyer, request,request.user).deliver_now
+  #   @subscribers.each do |recipient|
+  #     @tempRec = recipient.user
+  #     UserMailer.request_destroyed_email(reqDestroyer, request,@tempRec).deliver_now
+  #   end
+  # end
 
   def loan_convert_email(requestItem)
-    @user = requestItem.request.user
-    @request_items  = requestItem
-    email_params
-    mail(to: @user.email, subject: @heading)
+    loan_email_template(requestItem, requestItem.request.user)
   end
 
   def loan_return_email(requestItem)
-    @user = requestItem.request.user
-    @request_items  = requestItem
-    email_params
-    mail(to: @user.email, subject: @heading)
+    loan_email_template(requestItem, requestItem.request.user)
   end
 
   def loan_reminder_email(loanItem, tempUser)
-    @user = tempUser
-    @request_items = loanItem
-    email_params
-    mail(to: @user.email, subject: @heading)
+    loan_email_template(loanItem, tempUser)
   end
 
-  def loan_reminder_emails_all
 
+  def loan_reminder_emails_all
     allUsers = User.all
 
     current_date = Time.now.strftime("%m/%d/%Y").to_s
@@ -103,6 +108,13 @@ class UserMailer < ApplicationMailer
   end
 
   private
+
+  def loan_email_template(reqItem, user)
+    @user = user
+    @request_items = reqItem
+    email_params
+    mail(to: @user.email, subject: @heading)
+  end
 
   def request_params(reqOperator, request, recipient)
     @user = reqOperator
