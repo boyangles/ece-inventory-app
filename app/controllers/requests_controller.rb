@@ -53,15 +53,16 @@ class RequestsController < ApplicationController
 
 
     #Two separate emails, one if user made own request, or if manager made request for him.
-    if (old_status == 'outstanding' && request_params[:status] == 'approved') || (old_status == 'cart' && request_params[:status] == 'approved')
-      UserMailer.request_approved_email_all_subscribers(@request.user, @request).deliver_now
+    if (old_status == 'outstanding' && request_params[:status] == 'approved')
+      userMadeRequest = true
+      UserMailer.request_approved_email_all_subscribers(current_user, @request, userMadeRequest).deliver_now
+    elsif (old_status == 'cart' && request_params[:status] == 'approved')
+      userMadeRequest = false
+      UserMailer.request_approved_email_all_subscribers(current_user, @request, userMadeRequest).deliver_now
     elsif (old_status == 'cart' && request_params[:status] == 'outstanding')
       UserMailer.request_initiated_email_all_subscribers(@request.user, @request).deliver_now
     elsif (old_status =='outstanding' && request_params[:status] == 'denied')
-      10.times do |i|
-        puts "YOUR REQUEST WAS DENEID HAHAHAH"
-      end
-      UserMailer.request_denied_email_all_subscribers(@request.user, @request).deliver_now
+      UserMailer.request_denied_email_all_subscribers(current_user, @request).deliver_now
     e
     end
   end

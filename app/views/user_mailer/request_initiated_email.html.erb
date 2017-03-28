@@ -3,9 +3,18 @@
 
 <%= render 'preamble' %>
 
+
+<% if @request.user == @recipient %>
+
 <p>
-    You made a request!! Here are the following items you requested!
+    You made a request! Here are the following items you requested.
 </p>
+
+<% else %>
+    <p>
+      <strong> <%= @request.user.username %> </strong> made a request. Here are the following items of the request.
+    </p>
+<%end%>
 
 <%= render 'request_info' %>
 
