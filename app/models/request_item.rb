@@ -111,8 +111,7 @@ class RequestItem < ApplicationRecord
         create_log("returned", quantity_to_return)
       end
 
-		  self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_return)
-		  self.update!(:quantity_return => self[:quantity_return] + quantity_to_return)
+		  self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_return, :quantity_return => self[:quantity_return] + quantity_to_return)
 
       @item.update!(:quantity => item[:quantity] + quantity_to_return)
 		  @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_return)
@@ -131,8 +130,7 @@ class RequestItem < ApplicationRecord
         create_log("disbursed_from_loan", quantity_to_disburse)
       end
 
-	   	self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_disburse)
-      self.update!(:quantity_disburse => self[:quantity_disburse] + quantity_to_disburse)
+	   	self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_disburse, :quantity_disburse => self[:quantity_disburse] + quantity_to_disburse)
 		  @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_disburse)
     end
 	end
@@ -198,7 +196,7 @@ class RequestItem < ApplicationRecord
   ## Validations
 
   def validates_loan_and_disburse_not_zero
-    errors.add(:base, "Loan and Disburse cannot both be 0") if quantity_disburse == 0 && quantity_loan == 0
+    errors.add(:base, "Loan and Disburse cannot both be 0") if (quantity_disburse == 0 && quantity_loan == 0 && quantity_return == 0)
   end
 
   def request_type_quantity_validation

@@ -3,32 +3,60 @@
   <%= render 'shared/error_messages', object: @form_obj %>
       
   <!-- Username -->
-      <%= f.label :username %>
-      <%= f.text_field :username, class: 'form-control' %>
+    <div class="form-group">
+      <%= f.label :username, "Username", class: "col-lg-2 control-label" %>
+      <div class="col-lg-10">
+          <%= f.text_field :username, class: "form-control", :placeholder=>"Name" %>
+      </div>
+    </div>
 
   <!-- Email -->
-      <%= f.label :email %>
-      <%= f.email_field :email, class: 'form-control' %>
+    <div class="form-group">
+      <%= f.label :email, "Email", class: "col-lg-2 control-label" %>
+      <div class="col-lg-10">
+          <%= f.email_field :email, class: "form-control", :placeholder=>"example123@fakemail.com" %>
+      </div>
+    </div>
 
   <!-- If not logged in, or if editing your own info -->
   <% if !logged_in? || current_user?(@user) %>
   	<br>
 	  <!-- Password -->
-          <%= f.label :password %>
-          <%= f.password_field :password, class: 'form-control',:placeholder=>"" %>
+    <div class="form-group">
+      <%= f.label :password, "Password", class: "col-lg-2 control-label" %>
+      <div class="col-lg-10">
+          <%= f.password_field :password, class: "form-control", :placeholder=>"Minimum 6 characters" %>
+      </div>
+    </div>
+
 
     <!-- Password Confirm -->
-          <%= f.label :password_confirmation, "Confirm Password" %>
-          <%= f.password_field :password_confirmation, class: 'form-control',:placeholder=>"" %>
+    <div class="form-group">
+      <%= f.label :password_confirmation, "Password Confirmation", class: "col-lg-2 control-label" %>
+      <div class="col-lg-10">
+          <%= f.password_field :password_confirmation, class: "form-control", :placeholder=>"" %>
+      </div>
+    </div>
+
   <% end %>
 
 	<br>
   <% if logged_in? && is_admin? %>
-          <%= f.label :privilege, "Define Privilege" %>
-              <%= f.select :privilege, User.privileges.keys.to_a , { :prompt => 'Select One' }, { class: "form-control", :id => "select" } %>
+    <div class="form-group">
+      <%= f.label :privilege, "Privilege", class: "col-lg-2 control-label" %>
+      <div class="col-lg-10">
+          <%= f.select :privilege, User.privileges.keys.to_a , { :prompt => 'Select One' }, { class: "form-control", :id => "select" } %>
+      </div>
+    </div>
+
   <% end %>
 
-		<br>
-    <%= f.submit yield(:button_text), class: "btn btn-primary btn-block" %>
+	<br>
+
+  <div class="form-group">
+    <div class="col-lg-10 col-lg-offset-2">
+      <%= f.submit yield(:button_text), class: "btn btn-default btn-lg btn-block" %>
+    </div>
+  </div>
 
 <% end %>
