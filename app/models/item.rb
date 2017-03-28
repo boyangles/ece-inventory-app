@@ -42,7 +42,7 @@ class Item < ApplicationRecord
 
 
   # Relation with Logs
-  has_many :logs, dependent: :destroy
+  has_many :logs
 
   attr_accessor :curr_user
   attr_accessor :tag_list
