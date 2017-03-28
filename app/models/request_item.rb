@@ -54,6 +54,8 @@ class RequestItem < ApplicationRecord
   # validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
   #validate :request_type_quantity_validation
 
+  validate  :validates_loan_and_disburse_not_zero
+
   ##
   # REQ-ITEM-1: oversubscribed?
   # Determines if a subrequest is valid or invalid
@@ -74,7 +76,8 @@ class RequestItem < ApplicationRecord
   # Input: N/A
   # Output: @item upon success
   def fulfill_subrequest
-    disbursement_quantity = (self[:quantity_disburse].nil?) ? 0 : self[:quantity_disburse]
+    
+		disbursement_quantity = (self[:quantity_disburse].nil?) ? 0 : self[:quantity_disburse]
     loan_quantity = (self[:quantity_loan].nil?) ? 0 : self[:quantity_loan]
 
     @item = self.item
@@ -116,7 +119,7 @@ class RequestItem < ApplicationRecord
     end
 	end
 
-	##
+  ##
   # REQ-ITEM-5: disburse_loaned_subrequest
   def disburse_loaned_subrequest(to_disburse)
     quantity_to_disburse = (to_disburse.nil?) ? 0 : to_disburse
@@ -193,6 +196,11 @@ class RequestItem < ApplicationRecord
   end
 
   ## Validations
+
+  def validates_loan_and_disburse_not_zero
+    errors.add(:base, "Loan and Disburse cannot both be 0") if quantity_disburse == 0 && quantity_loan == 0
+  end
+
   def request_type_quantity_validation
     case self[:request_type]
       when 'disbursement'

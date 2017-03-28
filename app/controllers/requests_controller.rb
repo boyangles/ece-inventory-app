@@ -17,7 +17,10 @@ class RequestsController < ApplicationController
   # GET /requests/1
   def show
     @request = Request.find(params[:id])
-
+    if @request.user_id != current_user.id && @request.status == "cart"
+      flash[:danger] = "Request #{@request.id} has not been submitted"
+      redirect_to requests_path and return
+    end
     @user = @request.user
   end
 
@@ -42,7 +45,7 @@ class RequestsController < ApplicationController
       flash[:success] = "Operation successful!"
       redirect_to request_path(@request)
     rescue Exception => e
-      flash[:error] = "Request Could not be successfully updated! #{e.message}"
+      flash[:error] = "Request could not be successfully updated! #{e.message}"
       redirect_back(fallback_location: request_path(@request))
     end
 
