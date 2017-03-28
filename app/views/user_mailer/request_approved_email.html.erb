@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html>
 
-<%= render 'preamble' %>
-
 
 <% if @userMadeRequest %>
     <p>
       Your request has been approved by<strong> <%= @user.username %>! </strong> Here are the following items you requested.
     </p>
 <% else %>
-    <p>
-      <%= @user.username %> made a request for you. Here are the following items <%= @user.username %> checked out for you.
-    </p>
+
+    <% if @request.user == @recipient%>
+        <p>
+          <%= @user.username %> made a request for you. Here are the following items <%= @user.username %> checked out for you.
+        </p>
+    <% else %>
+         <p>
+        <%= @user.username %> made a request for <%=@request.user.username%>. Here are the following items <%= @user.username %> checked out for <%=@request.user.username%>.
+        </p>
+    <%end%>
 <%end%>
 
 <%= render 'request_info' %>
