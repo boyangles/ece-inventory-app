@@ -112,6 +112,7 @@ class ItemsController < ApplicationController
   def bulk_import
     begin
       Item.bulk_import(params[:items_as_json].read)
+      flash[:success] = "Bulk Import Successful"
       redirect_to items_path
     rescue NoMethodError => nme
       @imported_error_msg = "Must input a file"

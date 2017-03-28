@@ -1,5 +1,11 @@
 class Api::V1::SessionsController < ApplicationController
 
+  [:destroy].each do |api_action|
+    swagger_api api_action do
+      param :header, :Authorization, :string, :required, 'Authentication token'
+    end
+  end
+
   respond_to :json
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
@@ -17,7 +23,6 @@ class Api::V1::SessionsController < ApplicationController
   swagger_api :destroy do
     summary 'Logout of a session'
     notes 'Removes your authorization token'
-    param :path, :id, :string, :required, "Authorization Token"
     response :no_content
     response :unprocessable_entity
   end
