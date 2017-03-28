@@ -10,10 +10,10 @@
         <div class="form-group">
           <%= f.label "Search Users", :class=>"col-lg-3 control-label" %><br>
           <div class="col-lg-12">
-            <%= text_field_tag :search, params[:search], :placeholder => "Item", :class => "form-control" %>
+            <%= text_field_tag :search, params[:search], :placeholder => "User", :class => "form-control" %>
+            <%= f.submit "Search", class: "btn btn-default ", type: "submit" %>
           </div>
         </div>
-        <%= f.submit "Search", class: "btn btn-default col-lg-2 pull-left", type: "submit" %> </br> </br>
 
       </div>
 
