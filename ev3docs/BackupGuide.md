@@ -1,4 +1,4 @@
-# Backup Admin Guide
+# Evolution 3 Backup Admin Guide
 
 This guide will explain how to back up your database using rsnapshot on a separate server and notify admin through emails on success or failure.
 
@@ -6,13 +6,14 @@ Please follow the steps below to setup your separate server.
 1. Obtain a separate server with unique admin credentials, different from your production server credentials. We have used a Duke Colab Server, on a Debian 8 Jessie environment.
 2. Switch to your root user with sudo -i. Generate SSH keys and add them to your production server.
 3. Download rsnapshot with `apt-get install rsnapshot`
-4. Create /root/.pgpass with your host:port:databasename:username:password (ex. localhost:*:yourdatabase_name:yourusername:yourpassword)
+4. Create /root/.pgpass with your host:port:databasename:username:password
 5. Create a backup shell script in /usr/local/bin/backup.sh
 6. Add these lines (Change your host, user, database name, and email as needed)
 ```
 #!/bin/bash                                                                                                                                         
 export PGPASS=/root/.pgpass
 
+# to tunnel pg dump over ssh
 ssh user@productionserver pg_dump database_name > postgresql-dump.sql
 
 if [ "$?" -ne 0 ]
@@ -34,7 +35,7 @@ Follow this guide if errors occur. https://www.howtoforge.com/set-up-rsnapshot-a
 ### To set up email:
 Ensure exim4 is downloaded. Default configuration is currently being used. If errors occur, check configuration with
 `dpkg-reconfigure exim4-config`. Ensure server configuration allows mail to be sent. 
-In order to change the email address the database backup emails are sent to, modify your backup.sh script lines beginning `mail`.
+In order to change the email address the database backup emails are sent to, modify your backup.sh script lines beginning with `mail`.
 
 
 ### To Restore Database:

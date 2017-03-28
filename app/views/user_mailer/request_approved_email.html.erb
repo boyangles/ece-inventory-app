@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <%= @heading %>.
-</head>
 
-<body>
-<%= @body %>.
+<%= render 'preamble' %>
 
-<p>
-  Your request has been approved! Here are the following items you requested!
-</p>
+
+<% if @userMadeRequest %>
+    <p>
+      Your request has been approved by<strong> <%= @user.username %>! </strong> Here are the following items you requested.
+    </p>
+<% else %>
+    <p>
+      <%= @user.username %> made a request for you. Here are the following items <%= @user.username %> checked out for you.
+    </p>
+<%end%>
 
 <%= render 'request_info' %>
 
+<p>
+  <strong>Reason:</strong>
+  <%= @request.response %>
+</p>
+
 <%= render 'ending' %>
 
-</body>
 </html>

@@ -28,6 +28,7 @@ class Request < ApplicationRecord
 	attr_accessor :curr_user
 
   after_update {
+		check_items_still_valid
     update_respective_items
     create_cart_on_status_change_from_cart(self.user_id)
 		log_on_status_change()
@@ -71,18 +72,17 @@ class Request < ApplicationRecord
 
   def update_respective_items
     if self.status_was != 'approved' && self.status == 'approved'
-      self.request_items.each do |req_item|
+		  self.request_items.each do |req_item|
         begin
-          req_item.fulfill_subrequest
+	        req_item.fulfill_subrequest
           if !req_item.quantity_disburse.nil? 
             if req_item.quantity_disburse. > 0
-              create_item_log("disbursed", req_item, req_item[:quantity_disburse])
+              create_item_log("disbursed", req_item, req_item.quantity_disburse)
             end
           end
           if !req_item.quantity_loan.nil? && req_item.quantity_loan > 0
             create_item_log("loaned", req_item, req_item.quantity_loan)
           end
-
         rescue Exception => e
           raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity}")
         end
@@ -92,11 +92,19 @@ class Request < ApplicationRecord
         begin
           req_item.rollback_fulfill_subrequest
         rescue Exception => e
-          raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity_was}")
+          raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity}")
         end
       end
     end
   end
+
+	def check_items_still_valid
+    if (self.status_was != 'approved' && self.status == 'approved') or (self.status_was != 'outstanding' && self.status == 'outstanding')
+			self.request_items.each do |req_item| # checking to see that none of the items in the request are deactive 
+				raise Exception.new(req_item.item.unique_name + " is deactive. Please remove from the request and try again." ) if req_item.item.deactive?
+			end
+		end
+	end
 
   def create_cart_on_status_change_from_cart(id)
     old_status = self.status_was

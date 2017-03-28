@@ -76,7 +76,8 @@ class RequestItem < ApplicationRecord
   # Input: N/A
   # Output: @item upon success
   def fulfill_subrequest
-    disbursement_quantity = (self[:quantity_disburse].nil?) ? 0 : self[:quantity_disburse]
+    
+		disbursement_quantity = (self[:quantity_disburse].nil?) ? 0 : self[:quantity_disburse]
     loan_quantity = (self[:quantity_loan].nil?) ? 0 : self[:quantity_loan]
 
     @item = self.item
@@ -131,7 +132,7 @@ class RequestItem < ApplicationRecord
       end
 
 	   	self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_disburse)
-e		  self.update!(:quantity_disburse => self[:quantity_disburse] + quantity_to_disburse)
+      self.update!(:quantity_disburse => self[:quantity_disburse] + quantity_to_disburse)
 		  @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_disburse)
     end
 	end

@@ -4,11 +4,7 @@
   <h2 class="page-header">Subscribers</h2>
 </div>
 
-<% @subscriber = Subscriber.new %>
-<% if @subscriber %>
-    <%= render 'form', { url: nil } %>
-<% end %>
-
+<%= render 'form'%>
 
 <div class="subscribers">
   <table class="table table-striped table-hover">
