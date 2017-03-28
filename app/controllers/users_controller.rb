@@ -63,7 +63,7 @@ class UsersController < ApplicationController
     if @user.save
       flash[:success] = "#{@user.username} created"
       ## Take care: This is when a user is created!!
-      UserMailer.welcome_email(@user).deliver_now
+      # UserMailer.welcome_email(@user).deliver_now
       redirect_to users_path
     else
       flash.now[:danger] = "Unable to create user! Try again?"
