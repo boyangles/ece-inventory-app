@@ -164,6 +164,9 @@ class User < ApplicationRecord
   def make_request(subrequests: [], reason: '', requested_for: self)
     raise Exception.new("The user you're making a request for doesn't exist") unless requested_for
 
+    # TODO: Unprivileged users cannot request for a user that's not themselves
+    raise Exception.new("Unprivileged users cannot request something for another user") if self.privilege_student? && self.id != requested_for.id
+
     req = nil
     Request.transaction do
       req = Request.new(
