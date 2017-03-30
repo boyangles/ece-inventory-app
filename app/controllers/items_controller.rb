@@ -28,7 +28,6 @@ class ItemsController < ApplicationController
         order('unique_name ASC').paginate(page: params[:page], per_page: 10)
   end
 
-
   # GET /items/1
   # GET /items/1.json
   def show
