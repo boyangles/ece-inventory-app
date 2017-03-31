@@ -16,3 +16,7 @@
 <p>
   <strong> <td><%= link_to "Email Dates: " + @settings['email_dates'], date_selection_path('email_dates') %></td> </strong>
 </p>
+
+<p>
+  <strong> <td><%= link_to "Minimum Stock Email: " + @settings['email_min_stock'], edit_setting_path('email_min_stock') %></td> </strong>
+</p>

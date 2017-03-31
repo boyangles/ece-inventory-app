@@ -96,6 +96,20 @@ class UserMailer < ApplicationMailer
     loan_email_template(loanItem, tempUser)
   end
 
+  def minimum_stock(q_before, q_after, item)
+    puts "Got to this method"
+    puts "The subscribers are"
+    @subscribers = Subscriber.all
+    @subscribers.each do |recipient|
+      puts "email sending now!!!!!!!!"
+      @item = item
+      @q_before = q_before
+      @q_after = q_after
+      @tempRec = recipient.user
+      mail(to: @tempRec.email, subject: @heading)
+    end
+  end
+
 
   def loan_reminder_emails_all
     allUsers = User.all

@@ -82,7 +82,11 @@ class RequestItem < ApplicationRecord
 
     @item = self.item
 
-    @item.update!(:quantity => item[:quantity] - disbursement_quantity - loan_quantity)
+    # Need to send out minimum stock email if applicable!!
+
+    newItemQuant = @item[:quantity] - disbursement_quantity - loan_quantity
+    minimum_stock_email(@item.quantity,newItemQuant, @item)
+    @item.update!(:quantity => newItemQuant)
     @item.update!(:quantity_on_loan => item[:quantity_on_loan] + loan_quantity)
   end
 
@@ -197,6 +201,25 @@ class RequestItem < ApplicationRecord
 
   def validates_loan_and_disburse_not_zero
     errors.add(:base, "Loan and Disburse cannot both be 0") if (quantity_disburse == 0 && quantity_loan == 0 && quantity_return == 0)
+  end
+
+  def minimum_stock_email(q_before, q_after, item)
+    10.times do |i|
+      puts "The quantity before is:"
+      puts q_before
+      puts "The quantity after is:"
+      puts q_after
+      puts "The item is:"
+      puts item.unique_name
+      puts "The minimum stock is:"
+      puts Setting.email_min_stock.to_i
+    end
+    if q_before >= Setting.email_min_stock.to_i && q_after < Setting.email_min_stock.to_i
+      10.times do |i|
+        puts "The email should deliver now!!!!"
+      end
+      UserMailer.minimum_stock(q_before, q_after, item).deliver_now
+    end
   end
 
   def request_type_quantity_validation
