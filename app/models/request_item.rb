@@ -3,6 +3,7 @@ class RequestItem < ApplicationRecord
 
   belongs_to :request
   belongs_to :item
+	has_many :backfill
 
   ## Constants
   REQUEST_TYPE_OPTIONS = %w(disbursement loan mixed)
@@ -61,11 +62,10 @@ class RequestItem < ApplicationRecord
   # Determines if a subrequest is valid or invalid
   #
   # Input: N/A
-  # Output: true/false
-  def oversubscribed?
-    diff = item[:quantity] - (self[:quantity_disburse] + self[:quantity_loan])
+  def oversubscribed
+    diff = item[:quantity] - (self[:quantity_disburse] + self[:quantity_loan] + get_total_backfill_quantity)
 
-    return diff < 0
+    errors.add(:base, "Oversubscribed!") if (diff < 0)
   end
 
   ##
@@ -84,7 +84,13 @@ class RequestItem < ApplicationRecord
 
     @item.update!(:quantity => item[:quantity] - disbursement_quantity - loan_quantity)
     @item.update!(:quantity_on_loan => item[:quantity_on_loan] + loan_quantity)
-  end
+  
+		self.backfills.each do |bf|
+			if (bf.outstanding?)
+				bf.update!(:status => "approved")
+			end
+		end
+	end
 
   ##
   # REQ-ITEM-3: rollback_fulfill_subrequest
@@ -192,6 +198,15 @@ class RequestItem < ApplicationRecord
       return 'mixed'
     end
   end
+
+	def get_total_backfill_quantity
+		bf_quantity = 0
+		self.backfills.each do |bf|
+			bf_quantity = bf_quantity + bf.quantity
+		end
+
+		return bf_quantity
+	end
 
   ## Validations
 

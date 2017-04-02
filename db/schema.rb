@@ -10,10 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170327003917) do
+ActiveRecord::Schema.define(version: 20170402163945) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "backfills", force: :cascade do |t|
+    t.integer "request_item_id"
+    t.integer "quantity"
+    t.integer "bf_status"
+    t.index ["request_item_id"], name: "index_backfills_on_request_item_id", using: :btree
+  end
 
   create_table "custom_fields", force: :cascade do |t|
     t.string  "field_name",                        null: false
