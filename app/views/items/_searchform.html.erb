@@ -42,8 +42,17 @@
           </div>
         </div>
 
-			<br><br>
+        <div class="form-group">
+          <%= f.label :status, "Above Minimum Stock?", class: "col-lg-4 control-label" %>
+          <div class="col-lg-1">
+            <%= f.check_box :status, {:id => "dd-check"}, "approved", "outstanding" %>
+          </div>
+        </div>
+
+        <br><br>
       </div>
+
+
 
 
       <%= f.submit "Search", class: "btn btn-default col-lg-2 col-lg-offset-10", type: "submit" %>

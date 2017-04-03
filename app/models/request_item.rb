@@ -214,7 +214,7 @@ class RequestItem < ApplicationRecord
       puts "The minimum stock is:"
       puts Setting.email_min_stock.to_i
     end
-    if q_before >= Setting.email_min_stock.to_i && q_after < Setting.email_min_stock.to_i
+    if q_before >= item.minimum_stock && q_after < item.minimum_stock
       10.times do |i|
         puts "The email should deliver now!!!!"
       end

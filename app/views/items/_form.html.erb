@@ -24,7 +24,6 @@
         <div class="col-lg-10">
           <%= f.text_field :description, class: "form-control",:placeholder=>"Description" %>
         </div>
-
       </div>
 
       <div class="form-group">
@@ -38,6 +37,13 @@
         <%= f.label :model_number, "Model Number", class: "col-lg-2 control-label" %>
         <div class="col-lg-10">
           <%= f.text_field :model_number, class: "form-control",:placeholder=>"0" %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :minimum_stock, "Minimum Stock", class: "col-lg-2 control-label" %>
+        <div class="col-lg-10">
+          <%= f.number_field :minimum_stock, class: "form-control",:placeholder=>"0" %>
         </div>
       </div>
 

@@ -67,6 +67,10 @@
               <%= @item.description %>
             </p>
             <p>
+              <strong>Minimum Stock:</strong>
+              <%= @item.minimum_stock %>
+            </p>
+            <p>
               <strong>Tags:</strong>
               <% if @item.tags.first != NIL %>
                   <% @item.tags.each_with_index do |tag, index| %>

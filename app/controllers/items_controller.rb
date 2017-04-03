@@ -150,22 +150,35 @@ class ItemsController < ApplicationController
 			flash.now[:danger] = "Quantity unable to be changed"
 			render 'edit'
 		end
-	end
+  end
 
+  #probably needs to go in the model but testing here
+  def set_all_minimum_stock
+    puts "FUCK"
+  end
+
+  def update_minimum_stock
+    10.times do |i|
+      puts "FUCK OFF"
+    end
+    Item.update_all(:minimum_stock => @stock_quantity)
+    puts Item.all
+  end
 
   private
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
-    params.fetch(:item, {}).permit(	:unique_name, 
-																	  :quantity, 
+    params.fetch(:item, {}).permit(	:unique_name,
+																	  :quantity,
 																		:model_number, 
-																		:description, 
+																		:description,
+                                     :minimum_stock,
 																		:search, 
 																		:model_search, 
 																		:status, 
-																		:last_action, 
+																		:last_action,
 																		:tag_list=>[],
 																		item_custom_fields_attributes: [:short_text_content,
 																																		 :long_text_content,

@@ -2,9 +2,10 @@
   <td><%= link_to item.unique_name, item_path(item.id) %></td>
   <td><%= item.quantity %></td>
   <td><%= item.model_number %></td>
+  <td><%= item.minimum_stock %></td>
   <td><%= item.description %></td>
 
-	<% if is_manager_or_admin? %>
+  <% if is_manager_or_admin? %>
     <td><%= link_to "Edit", edit_item_path(item.id), class: "btn btn-primary" %></td>
   <% end %>
   <% if is_admin? %>

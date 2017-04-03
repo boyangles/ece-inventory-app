@@ -31,6 +31,9 @@ Rails.application.routes.draw do
   put'settings/dates' => 'settings#update_dates', :as => 'update_dates'
   patch 'settings/dates', to: 'settings#update_dates'
 
+  get  'items/stock' => 'items#minimum_stock', :as => 'set_all_minimum_stock'
+  put 'items/update_all_minimum_stock' => 'items#update_all_minimum_stock', :as => 'update_all_minimum_stock'
+
   resources :items
   resources :tags
 

@@ -26,6 +26,7 @@ class Item < ApplicationRecord
   validates :description, length: { maximum: 255 }
 	validates :status, :inclusion => { :in => ITEM_STATUS_OPTIONS }
 	validates :last_action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }
+  validates :minimum_stock,:numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
 
   # Relation with Tags
   has_many :tags, -> { distinct },  :through => :item_tags
@@ -213,7 +214,7 @@ class Item < ApplicationRecord
 	def deactivate!
 		self.status = 'deactive'
 		self.save!
-	end
+  end
 
   private
   def create_custom_fields_for_items(item_id)
