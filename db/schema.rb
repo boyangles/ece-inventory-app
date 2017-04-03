@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170327003917) do
+ActiveRecord::Schema.define(version: 20170403233115) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20170327003917) do
     t.string  "field_name",                        null: false
     t.boolean "private_indicator", default: false, null: false
     t.integer "field_type",        default: 0,     null: false
+    t.boolean "is_stock",          default: false
     t.index ["field_name"], name: "index_custom_fields_on_field_name", unique: true, using: :btree
   end
 
@@ -127,6 +128,27 @@ ActiveRecord::Schema.define(version: 20170327003917) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "stock_custom_fields", force: :cascade do |t|
+    t.integer "stock_id"
+    t.integer "custom_field_id"
+    t.text    "short_text_content"
+    t.text    "long_text_content"
+    t.integer "integer_content"
+    t.float   "float_content"
+    t.index ["custom_field_id"], name: "index_stock_custom_fields_on_custom_field_id", using: :btree
+    t.index ["stock_id", "custom_field_id"], name: "index_stock_custom_fields_on_stock_id_and_custom_field_id", unique: true, using: :btree
+    t.index ["stock_id"], name: "index_stock_custom_fields_on_stock_id", using: :btree
+  end
+
+  create_table "stocks", force: :cascade do |t|
+    t.integer  "item_id"
+    t.boolean  "available"
+    t.string   "serial_tag"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_stocks_on_item_id", using: :btree
+  end
+
   create_table "subscribers", force: :cascade do |t|
     t.integer  "user_id"
     t.datetime "created_at", null: false
@@ -172,6 +194,8 @@ ActiveRecord::Schema.define(version: 20170327003917) do
   add_foreign_key "request_logs", "logs"
   add_foreign_key "requests", "users"
   add_foreign_key "requests", "users", column: "request_initiator"
+  add_foreign_key "stock_custom_fields", "custom_fields"
+  add_foreign_key "stock_custom_fields", "stocks"
   add_foreign_key "subscribers", "users"
   add_foreign_key "user_logs", "logs"
 end
