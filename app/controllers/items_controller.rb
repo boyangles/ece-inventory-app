@@ -67,6 +67,9 @@ class ItemsController < ApplicationController
 
   # DELETE /items/1
   def destroy
+
+    # Delete stocks with destroy_stocks_by_serial_tags! - surround with try catch
+
     item = Item.find(params[:id]).status = 'deactive'
     item.save!
     flash[:success] = "Item deleted!"

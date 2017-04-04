@@ -21,8 +21,6 @@ class Item < ApplicationRecord
 	}
 
   before_validation {
-    puts "hahahahahahahahhaahaaaaaaaaaaa)!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-    puts (self.quantity - (self.quantity_was ? self.quantity_was : self.quantity))
     convert_quantity_to_stocks(self.quantity - (self.quantity_was ? self.quantity_was : self.quantity))
   }
 
