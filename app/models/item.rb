@@ -140,7 +140,8 @@ class Item < ApplicationRecord
     for i in 1..self.quantity do
       Stock.create!(:item_id => self.id, :available => true)
     end
-
+    self.has_stocks = "true"
+    self.save!
     return true
   end
 
