@@ -148,12 +148,13 @@ class Item < ApplicationRecord
   end
 
   def convert_quantity_to_stocks(num_to_create)
-    return false if self.has_stocks
+    return false unless self.has_stocks
 
     for i in 1..num_to_create do
       Stock.create!(:item_id => self.id, :available => true)
     end
-
+    puts " ALL STOCK WITH ITEM ID"
+    puts Stock.where(item_id: self.id).count
     return true
   end
 
