@@ -15,7 +15,8 @@ class UsersController < ApplicationController
 
   # GET /users
   def index
-    @users = User.where(status: 'approved').paginate(page: params[:page], per_page: 10)
+    users = User.where(status: 'approved').paginate(page: params[:page], per_page: 10)
+    @users = users.filter_by_search(params[:search])
   end
 
   # GET /users/1

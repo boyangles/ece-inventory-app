@@ -9,6 +9,10 @@ $ ->
     no_results_text: 'No results matched'
     width: '100%'
 
+
+$(document).getElementById('fuck_you').value
+$('#fuck_you').trigger('chosen:updated');
+
 $(document).on "page:change", ->
 	heyy = $('#quantity_change')
 	quantityA = $('.quantity-A').val()
