@@ -13,6 +13,8 @@ class Stock < ApplicationRecord
   has_many :stock_custom_fields, dependent: :destroy
   accepts_nested_attributes_for :stock_custom_fields
 
+  # Belongs to items
+  belongs_to :item
 
   # Relation with Logs
   has_many :logs

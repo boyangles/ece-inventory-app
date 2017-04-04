@@ -40,6 +40,8 @@ class Item < ApplicationRecord
   has_many :item_custom_fields, dependent: :destroy
   accepts_nested_attributes_for :item_custom_fields
 
+  # Per Asset
+  has_many :stocks
 
   # Relation with Logs
   has_many :logs

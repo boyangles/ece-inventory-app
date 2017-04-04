@@ -75,7 +75,7 @@ items.each do |item|
 end
 
 ## Default Custom Fields
-CustomField.create!(field_name: 'location', private_indicator: false, field_type: 'short_text_type')
+CustomField.create!(field_name: 'location', private_indicator: false, field_type: 'short_text_type', is_stock: true)
 CustomField.create!(field_name: 'restock_info', private_indicator: true, field_type: 'long_text_type')
 
 # Creating Requests:
