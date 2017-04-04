@@ -36,6 +36,16 @@ class Stock < ApplicationRecord
     end while self.class.exists?(serial_tag: serial_tag)
   end
 
+  def create_stocks!(num, item_id)
+    puts "CREATESTOCKS HERE"
+    puts num
+    Stock.transaction do
+      for i in 1..num do
+        Stock.create!(item_id: item_id, available: true)
+      end
+    end
+  end
+
   ## Private variables
   private
   def generate_code(number)

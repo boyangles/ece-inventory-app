@@ -20,9 +20,9 @@ class Item < ApplicationRecord
 		disbursed_from_loan: 8
 	}
 
-  before_validation {
-    convert_quantity_to_stocks(self.quantity - (self.quantity_was ? self.quantity_was : self.quantity))
-  }
+  # before_validation {
+  #   convert_quantity_to_stocks(self.quantity - (self.quantity_was ? self.quantity_was : self.quantity))
+  # }
 
   validates :unique_name, presence: true, length: { maximum: 50 },
             uniqueness: { case_sensitive: false }

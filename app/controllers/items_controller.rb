@@ -79,33 +79,33 @@ class ItemsController < ApplicationController
 
   # POST /items
   # POST /items.json
-	def create
-		begin
+  def create
+    begin
 
-			ActiveRecord::Base.transaction do
-				@item = Item.new(item_params)
-				@item.last_action = "created"
-				@item.curr_user = current_user
+      ActiveRecord::Base.transaction do
+        @item = Item.new(item_params)
+        @item.last_action = "created"
+        @item.curr_user = current_user
 
-				add_tags_to_item(@item, item_params)
-				@item.save!
+        add_tags_to_item(@item, item_params)
+        @item.save!
 
-				CustomField.all.each do |cf|
-					cf_name = cf.field_name
-					icf = ItemCustomField.find_by(:item_id => @item.id, :custom_field_id => cf.id)
-					icf.update_attributes!(CustomField.find_icf_field_column(cf.id) => params[cf_name])
-				end
-			end
+        CustomField.all.each do |cf|
+          cf_name = cf.field_name
+          icf = ItemCustomField.find_by(:item_id => @item.id, :custom_field_id => cf.id)
+          icf.update_attributes!(CustomField.find_icf_field_column(cf.id) => params[cf_name])
+        end
+      end
 
       redirect_to item_url(@item.id)
 
-		rescue Exception => e
-			flash.now[:danger] = e.message
-			
-			render 'new'
-		end
+    rescue Exception => e
+      flash.now[:danger] = e.message
 
-	end
+      render 'new'
+    end
+
+  end
 
 
   def import_upload
@@ -132,13 +132,13 @@ class ItemsController < ApplicationController
 
     @item.tags.delete_all
     add_tags_to_item(@item, item_params)
-		
-    if @item.update_attributes(item_params)
- 			if !params[:quantity_change].nil?
-				update_quantity
-			end
 
-     	flash[:success] = "Item updated successfully"
+    if @item.update_attributes(item_params)
+      if !params[:quantity_change].nil?
+        update_quantity
+      end
+
+      flash[:success] = "Item updated successfully"
       puts(@item.last_action)
       redirect_to @item
     else
@@ -147,13 +147,13 @@ class ItemsController < ApplicationController
     end
   end
 
- 
-	def update_quantity
-		@item.quantity = @item.quantity + params[:quantity_change].to_f
-		if !@item.save
-			flash.now[:danger] = "Quantity unable to be changed"
-			render 'edit'
-		end
+
+  def update_quantity
+    @item.quantity = @item.quantity + params[:quantity_change].to_f
+    if !@item.save
+      flash.now[:danger] = "Quantity unable to be changed"
+      render 'edit'
+    end
   end
 
   def convert_to_stocks
@@ -167,25 +167,36 @@ class ItemsController < ApplicationController
     end
   end
 
+  def create_stocks
+    begin
+      Stock.create_stocks!(item_params[:num_stocks], params[:id])
+      return true
+    rescue Exception => e
+      flash.now[:danger] = e.message
+      return false
+    end
+  end
+
   private
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
-    params.fetch(:item, {}).permit(	:unique_name, 
-																	  :quantity, 
-																		:model_number, 
-																		:description, 
-																		:search, 
-																		:model_search, 
-																		:status, 
-																		:last_action, 
-																		:tag_list=>[],
-																		item_custom_fields_attributes: [:short_text_content,
-																																		 :long_text_content,
-																																		 :integer_content,
-																																		 :float_content,
-																																		 :item_id, :custom_field_id, :id])
+    params.fetch(:item, {}).permit(	:unique_name,
+                                     :quantity,
+                                     :model_number,
+                                     :description,
+                                     :search,
+                                     :model_search,
+                                     :status,
+                                     :last_action,
+                                     :num_stocks,
+                                     :tag_list=>[],
+                                     item_custom_fields_attributes: [:short_text_content,
+                                                                     :long_text_content,
+                                                                     :integer_content,
+                                                                     :float_content,
+                                                                     :item_id, :custom_field_id, :id])
   end
 
 end
