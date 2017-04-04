@@ -22,11 +22,17 @@ class RequestItemsController < ApplicationController
 
 	def create
 		@request_item = RequestItem.new(request_item_params)
-	@request_item.curr_user = current_user 
+		@request_item.curr_user = current_user 
 
 		begin
 			@request_item.save!
 			@request = grab_cart(current_user)
+
+#			if !params[:quantity_for_bf].nil?
+#				bf = Backfill.new(:request_item_id => req_item.id, :bf_status => "in-cart")
+#				bf.save!
+#			end
+
 			redirect_to request_path(@request.id)
 		rescue Exception => e
 			flash[:danger] = "You may not add this to the cart! Error: #{e}"

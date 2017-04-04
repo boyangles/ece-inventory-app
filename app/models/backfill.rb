@@ -1,5 +1,5 @@
 class Backfill < ApplicationRecord
-	include FIlterable
+	include Filterable
 
 	belongs_to :request_item
 
@@ -19,6 +19,8 @@ class Backfill < ApplicationRecord
 		direct_request: 0,
 		converted_loan: 1
 	}
+
+	scope :bf_status, -> (bf_status) { where bf_status: bf_status }
 
 	validates :bf_status, :inclusion => { :in => BF_STATUS_OPTIONS }
 	validates :quantity, presence: true, :numericality => {:only_integer => true, :greater_than => 0}

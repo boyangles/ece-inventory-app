@@ -1,0 +1,11 @@
+<% provide(:title, 'Backfills') %>
+
+<h2 class="page-header">Backfills</h2>
+
+<div class="pull-right">
+	<%= link_to "Backfill Requests", backfills_path(:bf_status => "outstanding"), class: "btn btn-primary btn-lg" %>
+	<%= link_to "Backfills-in-Transit", backfills_path(:bf_status => "in_transit"), class: "btn btn-primary btn-lg" %>
+	<%= link_to "Satisfied Backfills", backfills_path(:bf_status => "satisfied"), class: "btn btn-primary btn-lg" %>
+	<%= link_to "View All", backfills_path, class: "btn btn-primary btn-lg" %>
+
+</div>

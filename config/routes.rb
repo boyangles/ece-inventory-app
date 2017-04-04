@@ -47,6 +47,7 @@ Rails.application.routes.draw do
 
   resources :subscribers
   resources :settings
+	resources :backfills
 
   #Login and Sessions routes
   get   '/login',   to: 'sessions#new'      #Describes the login screen
