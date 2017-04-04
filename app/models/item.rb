@@ -127,6 +127,10 @@ class Item < ApplicationRecord
     end
   end
 
+  def self.convert_to_assets(item)
+    
+  end
+
   def self.tagged_with_all(tag_filters)
     if tag_filters.length == 0
       all
