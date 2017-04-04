@@ -147,7 +147,7 @@ class ItemsController < ApplicationController
  
 	def update_quantity
 		@item.quantity = @item.quantity + params[:quantity_change].to_f
-		if !@item.save!
+		if !@item.save
 			flash.now[:danger] = "Quantity unable to be changed"
 			render 'edit'
 		end
