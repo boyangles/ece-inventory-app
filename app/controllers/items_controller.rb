@@ -154,10 +154,15 @@ class ItemsController < ApplicationController
   end
 
   def convert_to_stocks
+    @item = Item.find(params[:id])
     begin
       @item.convert_to_stocks
+      flash[:success] = "Item successfully converted!"
+      redirect_to item_stocks_path(@item)
     rescue Exception => e
       @convert_to_stock_err_msg = e.message
+      puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+      puts e.message
       render :show
     end
   end

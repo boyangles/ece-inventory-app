@@ -17,6 +17,7 @@ class CreateStocks < ActiveRecord::Migration[5.0]
       t.float   :float_content
     end
 
+    add_column :items, :is_stock, :boolean, default: false
     add_column :custom_fields, :is_stock, :boolean
 
     add_index :stock_custom_fields, [:stock_id, :custom_field_id], :unique => true

@@ -16,7 +16,7 @@
 
         <div class="pull-right">
           <table><tbody><tr>
-
+            <td><%= link_to 'Convert to Assets', convert_to_stocks_item_path(@item), method: :post, class: 'btn btn-primary' %></td>
             <td><%= link_to 'Show Instances', item_stocks_path(@item.id), class: 'btn btn-primary' %></td>
 
             <% if is_manager_or_admin? && @item.active? %>

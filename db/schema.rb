@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(version: 20170403233115) do
     t.integer "status",           default: 0
     t.integer "last_action",      default: 3
     t.integer "quantity_on_loan", default: 0
+    t.boolean "is_stock",         default: false
   end
 
   create_table "logs", force: :cascade do |t|
