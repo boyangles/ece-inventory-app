@@ -155,18 +155,14 @@ class ItemsController < ApplicationController
 
   def convert_to_stocks
     @item = Item.find(params[:id])
-    begin
-      @item.convert_to_stocks
-      flash[:success] = "Item successfully converted!"
+    if @item.convert_to_stocks
+      flash[:success] = "Item successfully converted to Assets!"
       redirect_to item_stocks_path(@item)
-    rescue Exception => e
-      @convert_to_stock_err_msg = e.message
-      puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-      puts e.message
+    else
+      flash.now[:danger] = "Item already converted to Assets"
       render :show
     end
   end
-
 
   private
 
