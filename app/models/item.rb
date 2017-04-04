@@ -20,10 +20,6 @@ class Item < ApplicationRecord
 		disbursed_from_loan: 8
 	}
 
-  before_validation {
-    convert_quantity_to_stocks(self.quantity - (self.quantity_was ? self.quantity_was : self.quantity))
-  }
-
   validates :unique_name, presence: true, length: { maximum: 50 },
             uniqueness: { case_sensitive: false }
   validates :quantity, presence: true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
@@ -55,8 +51,8 @@ class Item < ApplicationRecord
   attr_accessor :tag_list
   attr_accessor :tags_list
 
-
   after_create {
+    initialize_stocks
     create_custom_fields_for_items(self.id)
   	create_log("created", self.quantity)
 	}
@@ -137,12 +133,45 @@ class Item < ApplicationRecord
   def convert_to_stocks
     return false if self.has_stocks
 
-    for i in 1..self.quantity do
-      Stock.create!(:item_id => self.id, :available => true)
+    begin
+      ActiveRecord::Base.transaction do
+        for i in 1..self.quantity do
+          Stock.create!(:item_id => self.id, :available => true)
+        end
+
+        for i in 1..self.quantity_on_loan do
+          Stock.create!(:item_id => self.id, :available => false)
+        end
+
+        self.has_stocks = "true"
+        self.save!
+      end
+
+      return true
+    rescue Exception => e
+      return false
     end
-    self.has_stocks = "true"
-    self.save!
-    return true
+  end
+
+  def initialize_stocks
+    return false unless self.has_stocks && Stock.where(:item_id => self.id).count == 0
+
+    begin
+      ActiveRecord::Base.transaction do
+        for i in 1..self.quantity do
+          Stock.create!(:item_id => self.id, :available => true)
+        end
+
+        for i in 1..self.quantity_on_loan do
+          Stock.create!(:item_id => self.id, :available => false)
+        end
+      end
+
+      return true
+
+    rescue Exception => e
+      return false
+    end
   end
 
   def convert_quantity_to_stocks(num_to_create)
@@ -256,8 +285,8 @@ class Item < ApplicationRecord
 
   private
   def check_stock_count
-    if self.has_stocks
-      errors.add(:quantity, "stocked item quantity must match number of corresponding assets") unless
+    if self.has_stocks && !self.new_record?
+      errors.add(:quantity, "stocked item quantity must match number of corresponding assets. Cannot modify quantity directly for assets.") unless
           self.quantity == Stock.where(:item_id => self.id).size
     end
   end
