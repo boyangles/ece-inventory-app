@@ -41,12 +41,16 @@ class StocksController < ApplicationController
   def destroy
 
     @stock = @item.stocks.find(params[:id])
-    @stock.delete
+    @stock.destroy!
+
+    # Reduce the quantity of the item by 1 when a stock is destroyed
+    @item.quantity = @item.quantity - 1
+    @item.save!
+
     respond_to do |format|
-      format.html { redirect_to root_path }
+      format.html { redirect_to item_stocks_path(@item) }
       format.js
     end
-
 
   end
 
