@@ -31,7 +31,10 @@ Rails.application.routes.draw do
   put'settings/dates' => 'settings#update_dates', :as => 'update_dates'
   patch 'settings/dates', to: 'settings#update_dates'
 
-  resources :items
+  resources :items do
+    resources :stocks
+  end
+
   resources :tags
 
   resources :item_custom_fields, :only => [:index, :show, :create, :update, :destroy]

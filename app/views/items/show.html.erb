@@ -16,6 +16,9 @@
 
         <div class="pull-right">
           <table><tbody><tr>
+
+            <td><%= link_to 'Show Instances', item_stocks_path(@item.id), class: 'btn btn-primary' %></td>
+
             <% if is_manager_or_admin? && @item.active? %>
                 <td><%= link_to "Edit Item", edit_item_url(@item.id), :class => "btn btn-primary" %></td>
             <% end %>
