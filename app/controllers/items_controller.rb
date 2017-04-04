@@ -145,12 +145,14 @@ class ItemsController < ApplicationController
     end
   end
  
-	def update_quantity
-		@item.quantity = @item.quantity + params[:quantity_change].to_f
-		if !@item.save
-			flash.now[:danger] = "Quantity unable to be changed"
-			render 'edit'
-		end
+ 
+
+  def update_quantity
+    @item.quantity = @item.quantity + params[:quantity_change].to_f
+    if !@item.save
+      flash.now[:danger] = "Quantity unable to be changed"
+      render 'edit'
+    end
 
   end
 
@@ -165,6 +167,16 @@ class ItemsController < ApplicationController
     end
   end
 
+  def create_stocks
+    begin
+      Stock.create_stocks!(item_params[:num_stocks], params[:id])
+      return true
+    rescue Exception => e
+      flash.now[:danger] = e.message
+      return false
+    end
+  end
+
   private
 
   # Never trust parameters from the scary internet, only allow the white list through.
@@ -174,8 +186,12 @@ class ItemsController < ApplicationController
                                      :quantity,
                                      :model_number,
                                      :description,
+                                     :search,
+                                     :model_search,
                                      :status,
                                      :last_action,
+                                     :num_stocks,
+                                     :tag_list=>[],
                                      item_custom_fields_attributes: [:short_text_content,
                                                                      :long_text_content,
                                                                      :integer_content,

@@ -17,6 +17,7 @@ class StocksController < ApplicationController
   end
 
   def create
+    puts "FUCK"
     @stock = @item.stocks.new
     if @stock.save
       respond_to do |format|
