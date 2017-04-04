@@ -160,6 +160,8 @@ class Item < ApplicationRecord
     if tag_filters.length == 0
       all
     else
+      puts "TAG FILTERS HERE"
+      puts tag_filters
       joins(:tags).where('tags.name IN (?)', tag_filters).group('items.id').having('count(*)=?', tag_filters.count)
     end
   end
