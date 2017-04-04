@@ -19,13 +19,18 @@ class Item < ApplicationRecord
 		returned: 7,
 		disbursed_from_loan: 8
 	}
-	
+
+  before_validation {
+    convert_quantity_to_stocks(self.quantity - self.quantity_was)
+  }
+
   validates :unique_name, presence: true, length: { maximum: 50 },
             uniqueness: { case_sensitive: false }
   validates :quantity, presence: true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   validates :description, length: { maximum: 255 }
 	validates :status, :inclusion => { :in => ITEM_STATUS_OPTIONS }
 	validates :last_action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }
+  validate :check_stock_count
 
   # Relation with Tags
   has_many :tags, -> { distinct },  :through => :item_tags
@@ -139,7 +144,15 @@ class Item < ApplicationRecord
     return true
   end
 
+  def convert_quantity_to_stocks(num_to_create)
+    return false if self.has_stocks
 
+    for i in 1..num_to_create do
+      Stock.create!(:item_id => self.id, :available => true)
+    end
+
+    return true
+  end
 
   def self.tagged_with_all(tag_filters)
     if tag_filters.length == 0
@@ -230,6 +243,13 @@ class Item < ApplicationRecord
 	end
 
   private
+  def check_stock_count
+    if self.has_stocks
+      errors.add(:quantity, "stocked item quantity must match number of corresponding assets") unless
+          self.quantity == Stock.count(:item_id => self.id)
+    end
+  end
+
   def create_custom_fields_for_items(item_id)
     CustomField.all.each do |cf|
       ItemCustomField.create!(item_id: item_id, custom_field_id: cf.id,
@@ -240,7 +260,6 @@ class Item < ApplicationRecord
     end
   end
 
-  private
   def self.valid_json?(json)
     begin
       JSON.parse(json)
