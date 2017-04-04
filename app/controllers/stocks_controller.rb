@@ -1,7 +1,7 @@
 class StocksController < ApplicationController
 
   before_action :set_stock, only: [:show, :edit, :update, :destroy]
-  before_action :set_item, only: [:destroy, :create]
+  before_action :set_item, only: [:show, :edit, :update, :destroy, :create]
 
   def index
     @item = Item.find(params[:item_id])

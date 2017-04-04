@@ -21,7 +21,9 @@ class Item < ApplicationRecord
 	}
 
   before_validation {
-    convert_quantity_to_stocks(self.quantity - self.quantity_was)
+    puts "hahahahahahahahhaahaaaaaaaaaaa)!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    puts (self.quantity - (self.quantity_was ? self.quantity_was : self.quantity))
+    convert_quantity_to_stocks(self.quantity - (self.quantity_was ? self.quantity_was : self.quantity))
   }
 
   validates :unique_name, presence: true, length: { maximum: 50 },
@@ -247,7 +249,7 @@ class Item < ApplicationRecord
   def check_stock_count
     if self.has_stocks
       errors.add(:quantity, "stocked item quantity must match number of corresponding assets") unless
-          self.quantity == Stock.count(:item_id => self.id)
+          self.quantity == Stock.where(:item_id => self.id).size
     end
   end
 
