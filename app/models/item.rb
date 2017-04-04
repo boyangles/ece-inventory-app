@@ -21,8 +21,6 @@ class Item < ApplicationRecord
 	}
 
   before_validation {
-    puts "hahahahahahahahhaahaaaaaaaaaaa)!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-    puts (self.quantity - (self.quantity_was ? self.quantity_was : self.quantity))
     convert_quantity_to_stocks(self.quantity - (self.quantity_was ? self.quantity_was : self.quantity))
   }
 
@@ -156,6 +154,14 @@ class Item < ApplicationRecord
     puts " ALL STOCK WITH ITEM ID"
     puts Stock.where(item_id: self.id).count
     return true
+  end
+
+  def destroy_stocks_by_serial_tags!(serial_tag_list)
+    Stock.transaction do
+      Stock.destroy_all(:serial_tag => serial_tag_list)
+      self.quantity -= serial_tag_list.size
+      self.save!
+    end
   end
 
   def self.tagged_with_all(tag_filters)
