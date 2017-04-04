@@ -21,7 +21,7 @@ class Item < ApplicationRecord
 	}
 
   before_validation {
-    convert_quantity_to_stocks(self.quantity - self.quantity_was)
+    convert_quantity_to_stocks(self.quantity - ((self.quantity_was) ? self.quantity_was : 0))
   }
 
   validates :unique_name, presence: true, length: { maximum: 50 },
