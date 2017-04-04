@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(version: 20170403233115) do
     t.string  "field_name",                        null: false
     t.boolean "private_indicator", default: false, null: false
     t.integer "field_type",        default: 0,     null: false
-    t.boolean "is_stock",          default: false
+    t.boolean "is_stock"
     t.index ["field_name"], name: "index_custom_fields_on_field_name", unique: true, using: :btree
   end
 

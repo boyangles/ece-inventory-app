@@ -2,8 +2,6 @@ class Stock < ApplicationRecord
 
   SERIAL_TAG_LENGTH = 8
 
-  validates :serial_tag, presence: true, uniqueness: { case_sensitive: true }
-
   # Relation with Tags
   has_many :tags, -> { distinct },  :through => :item_tags
   has_many :item_tags
@@ -23,17 +21,14 @@ class Stock < ApplicationRecord
     generate_serial_tag!
   }
 
-  before_validation {
-  }
-
   ## Validations
-  validates :serial_tag, presence: true,
+  validates :serial_tag,
             length: { :minimum => SERIAL_TAG_LENGTH, :maximum => SERIAL_TAG_LENGTH },
-            unique: true
+            uniqueness: { case_sensitive: true }, :allow_nil => true
 
   def generate_serial_tag!
     begin
-      self.auth_token = generate_code(SERIAL_TAG_LENGTH)
+      self.serial_tag = generate_code(SERIAL_TAG_LENGTH)
     end while self.class.exists?(serial_tag: serial_tag)
   end
 

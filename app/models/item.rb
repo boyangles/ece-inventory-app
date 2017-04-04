@@ -129,8 +129,10 @@ class Item < ApplicationRecord
     end
   end
 
-  def self.convert_to_assets(item)
-    
+  def convert_to_stocks
+    for i in 1..self.quantity do
+      Stock.create!(:item_id => self.id, :available => true)
+    end
   end
 
   def self.tagged_with_all(tag_filters)
