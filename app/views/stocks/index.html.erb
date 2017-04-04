@@ -1,4 +1,14 @@
 
+<div class="pull-right">
+  <%= form_tag( create_stocks_item_path(@item), method: :post, multipart: true) do |f| %>
+      <div class="form-group">
+        <div class="col-lg-12">
+          <%= number_field_tag :num_stocks, placeholder: 0, :class => "form-control" %>
+        </div>
+      </div>
+      <%= submit_tag "Create Asset", class: "btn btn-default", type: "submit" %>
+  <% end %>
+</div>
 
 <table class="table table-striped table-hover">
   <thead>
@@ -11,16 +21,7 @@
     </h1>
   </div>
 
-  <div class="pull-right">
-    <%= form_tag( create_stocks_item_path(@item), method: :post, multipart: true) do |f| %>
-        <div class="form-group">
-          <div class="col-lg-12">
-            <%= number_field_tag :num_stocks, placeholder: 0, :class => "form-control" %>
-          </div>
-        </div>
-        <%= submit_tag "Create Assetsasdf", class: "btn btn-default", type: "submit" %>
-    <% end %>
-  </div>
+
 
 
   <tr>

@@ -19,7 +19,7 @@
             <% if @item.has_stocks? %>
                 <td><%= link_to 'Show Assets', item_stocks_path(@item.id), class: 'btn btn-primary' %></td>
             <% else %>
-                <td><%= link_to 'Convert to Assets', convert_to_stocks_item_path(@item), method: :post, class: 'btn btn-primary' %></td>
+                <td><%= link_to 'Convert to Assets', convert_to_stocks_item_path(@item.id), method: :post, class: 'btn btn-primary' %></td>
             <% end %>
             <% if is_manager_or_admin? && @item.active? %>
                 <td><%= link_to "Edit Item", edit_item_url(@item.id), :class => "btn btn-primary" %></td>

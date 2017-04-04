@@ -31,13 +31,11 @@ Rails.application.routes.draw do
   put'settings/dates' => 'settings#update_dates', :as => 'update_dates'
   patch 'settings/dates', to: 'settings#update_dates'
 
-  post 'items/:id/create_stocks' => 'items#create_stocks', :as => 'create_stocks_item'
-
 
   resources :items do
     member do
       post :convert_to_stocks
-      # post :create_stocks
+      post :create_stocks
     end
     resources :stocks
   end

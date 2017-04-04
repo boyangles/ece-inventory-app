@@ -30,15 +30,15 @@ class Stock < ApplicationRecord
             length: { :minimum => SERIAL_TAG_LENGTH, :maximum => SERIAL_TAG_LENGTH },
             uniqueness: { case_sensitive: true }, :allow_nil => true
 
+
+
   def generate_serial_tag!
     begin
       self.serial_tag = generate_code(SERIAL_TAG_LENGTH)
     end while self.class.exists?(serial_tag: serial_tag)
   end
 
-  def create_stocks!(num, item_id)
-    puts "CREATESTOCKS HERE"
-    puts num
+  def self.create_stocks!(num, item_id)
     Stock.transaction do
       for i in 1..num do
         Stock.create!(item_id: item_id, available: true)

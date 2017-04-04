@@ -168,11 +168,15 @@ class ItemsController < ApplicationController
   end
 
   def create_stocks
+    @item = Item.find(params[:id])
     begin
-      Stock.create_stocks!(item_params[:num_stocks], params[:id])
+      Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
+      flash[:success] = "Assets successfully created!"
+      redirect_to item_stocks_path @item
       return true
     rescue Exception => e
       flash.now[:danger] = e.message
+      redirect_to users_path
       return false
     end
   end
