@@ -1,5 +1,4 @@
 class StockCustomField < ApplicationRecord
-
   belongs_to :stock
   belongs_to :custom_field
 
@@ -18,7 +17,7 @@ class StockCustomField < ApplicationRecord
     return selected_icf[relevant_icf_column]
   end
 
-  def self.clear_field_content(input_item_id, input_custom_field_id)
+  def self.clear_field_content(input_stock_id, input_custom_field_id)
     clear_params = {
         short_text_content: nil,
         long_text_content: nil,
@@ -26,7 +25,7 @@ class StockCustomField < ApplicationRecord
         float_content: nil
     }
 
-    StockCustomField.find_by(:stock_id => input_item_id, :custom_field_id => input_custom_field_id)
+    StockCustomField.find_by(:stock_id => input_stock_id, :custom_field_id => input_custom_field_id)
         .update_attributes!(clear_params)
   end
 end

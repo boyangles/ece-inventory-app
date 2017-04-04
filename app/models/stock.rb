@@ -21,6 +21,10 @@ class Stock < ApplicationRecord
     generate_serial_tag!
   }
 
+  after_create {
+    create_custom_fields_for_stocks(self.id)
+  }
+
   ## Validations
   validates :serial_tag,
             length: { :minimum => SERIAL_TAG_LENGTH, :maximum => SERIAL_TAG_LENGTH },
@@ -39,4 +43,14 @@ class Stock < ApplicationRecord
     Array.new(number) { charset.sample }.join
   end
 
+  private
+  def create_custom_fields_for_stocks(stock_id)
+    CustomField.filter({:is_stock => true}).each do |cf|
+      StockCustomField.create!(stock_id: stock_id, custom_field_id: cf.id,
+                               short_text_content: nil,
+                               long_text_content: nil,
+                               integer_content: nil,
+                               float_content: nil)
+    end
+  end
 end

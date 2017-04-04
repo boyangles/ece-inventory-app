@@ -135,6 +135,8 @@ class Item < ApplicationRecord
     end
   end
 
+
+
   def self.tagged_with_all(tag_filters)
     if tag_filters.length == 0
       all
