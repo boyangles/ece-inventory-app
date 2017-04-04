@@ -1,3 +1,18 @@
 
 
-<%= render @stocks %>
+<table class="table table-striped table-hover">
+  <thead>
+  <h1><% if !@stocks.first.nil? %> <%= Item.where(id: @stocks.first.item_id).unique_name %> <% end %> </h1>
+  <tr>
+    <th></th>
+    <th>Serial Tag</th>
+    <th>Available</th>
+    <th></th>
+    <th></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <%= render @stocks %>
+  </tbody>
+</table>

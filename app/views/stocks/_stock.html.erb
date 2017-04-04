@@ -1,5 +1,12 @@
-
-<h1>STOCKS for <%= @item.unique_name %></h1>
-<%= stock.item_id %>
-<%= stock.available %>
-<%= stock.serial_tag %>
+<tr>
+  <td><% @item = Item.where(id: stock.item_id) %> <%= link_to @item.unique_name, item_path(@item) %></td>
+  <td><%= stock.serial_tag %></td>
+  <td><%= stock.available %></td>
+  <% if is_manager_or_admin? %>
+      <td><%= link_to "Edit", edit_item_stock_path(item, stock), class: "btn btn-primary" %></td>
+      <td><%= link_to "Delete", item_stock_path(item, stock), method: :delete, class: "btn btn-primary" %></td>
+  <% else %>
+      <td></td>
+      <td></td>
+  <% end %>
+</tr>

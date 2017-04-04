@@ -32,6 +32,9 @@ Rails.application.routes.draw do
   patch 'settings/dates', to: 'settings#update_dates'
 
   resources :items do
+    member do
+      post :convert_to_stocks
+    end
     resources :stocks
   end
 
@@ -42,11 +45,11 @@ Rails.application.routes.draw do
   resources :sessions
   resources :logs
   resources :request_items, :except => [:index, :show] do
-		member do
-			put :return, as: :return
-			put :disburse_loaned, as: :disburse_loaned
-		end
-	end
+    member do
+      put :return, as: :return
+      put :disburse_loaned, as: :disburse_loaned
+    end
+  end
 
   resources :subscribers
   resources :settings

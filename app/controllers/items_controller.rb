@@ -151,7 +151,16 @@ class ItemsController < ApplicationController
 			flash.now[:danger] = "Quantity unable to be changed"
 			render 'edit'
 		end
-	end
+  end
+
+  def convert_to_stocks
+    begin
+      @item.convert_to_stocks
+    rescue Exception => e
+      @convert_to_stock_err_msg = e.message
+      render :show
+    end
+  end
 
 
   private

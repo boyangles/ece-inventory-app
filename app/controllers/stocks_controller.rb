@@ -3,8 +3,8 @@ class StocksController < ApplicationController
   before_action :set_stock, only: [:show, :edit, :update, :destroy]
 
   def index
-    @stocks = Stock.all
-    @item = @stocks.first
+    @item = Item.find(params[:item_id])
+    @stocks = Stock.where(item_id: @item.id)
   end
 
   def show
