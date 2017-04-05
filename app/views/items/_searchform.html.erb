@@ -24,9 +24,8 @@
         <div class="form-group"> 
           <%= f.label "Required Tags", :class=>"col-lg-2 control-label" %><br>
           <div class="col-lg-12">
-            <%= f.select :required_tag_names, Tag.all.map { |u| [u.name, u.name] },
-                  { include_blank: true },
-                  { multiple: true, class: 'chosen-select form-control'}
+            <%= select_tag :required_tag_names, options_for_select(Tag.all.map { |u| [u.name, u.name] }, params[:required_tag_names]),
+                   { include_blank: true, multiple: true, class: 'chosen-select', id: 'fuck_you'}
             %>
           </div>
         </div>
@@ -35,17 +34,18 @@
         <div class="form-group"> 
           <%= f.label "Excluded Tags", :class=>"col-lg-2 control-label" %><br>
           <div class="col-lg-12">
-            <%= f.select :excluded_tag_names, Tag.all.map { |u| [u.name, u.name] },
-            { include_blank: true },
-            { multiple: true, class: 'chosen-select form-control'}
+            <%= select_tag :excluded_tag_names, options_for_select(Tag.all.map { |u| [u.name, u.name] }, params[:excluded_tag_names]),
+             { include_blank: true , multiple: true, class: 'chosen-select form-control', selected: params[:excluded_tag_names]}
             %>
           </div>
         </div>
 
+
+
         <div class="form-group">
-          <%= f.label :status, "Above Minimum Stock?", class: "col-lg-4 control-label" %>
+          <%= f.label "Above Minimum Stock?", class: "col-lg-4 control-label" %>
           <div class="col-lg-1">
-            <%= f.check_box :status, {:id => "dd-check"}, "approved", "outstanding" %>
+            <%= f.check_box :stocked, {}, "true", "false"%>
           </div>
         </div>
 

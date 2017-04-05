@@ -97,11 +97,12 @@ class UserMailer < ApplicationMailer
   end
 
   def minimum_stock(q_before, q_after, item)
-    puts "Got to this method"
-    puts "The subscribers are"
+    # puts "Got to this method"
+    # puts "The subscribers are"
+    email_params
     @subscribers = Subscriber.all
     @subscribers.each do |recipient|
-      puts "email sending now!!!!!!!!"
+      # puts "email sending now!!!!!!!!"
       @item = item
       @q_before = q_before
       @q_after = q_after

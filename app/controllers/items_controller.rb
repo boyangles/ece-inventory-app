@@ -8,19 +8,43 @@ class ItemsController < ApplicationController
   def index
     @tags = Tag.all
 
-    @required_tag_filters = params["/items"] ? ( params["/items"][:required_tag_names] ?
-        params["/items"][:required_tag_names] : [] ) : []
-    @excluded_tag_filters = params["/items"] ? ( params["/items"][:excluded_tag_names] ?
-        params["/items"][:excluded_tag_names] : [] ) : []
+    items_excluded = Item.all
+    items_required = Item.all
+    items_stocked = Item.all
 
-    # Plug in Chosen populates array with first element '' always. Shift left to remove it.
-    @required_tag_filters.shift
-    @excluded_tag_filters.shift
+    15.times do|i|
+      puts "THE VALUE OF PARAMS STOCKED IS"
+      puts params[:stocked]
+    end
 
-    items_req = Item.tagged_with_all(@required_tag_filters).select("id")
-    items_exc = Item.tagged_with_none(@excluded_tag_filters).select("id")
-    items_req_and_exc = Item.where(:id => items_req & items_exc)
-    items_active = items_req_and_exc.filter_active
+    if params[:excluded_tag_names]
+      @excluded_tag_filters = params[:excluded_tag_names]
+      items_excluded = Item.tagged_with_none(@excluded_tag_filters).select(:id)
+    end
+    if params[:required_tag_names]
+      @required_tag_filters = params[:required_tag_names]
+      items_required = Item.tagged_with_all(@required_tag_filters).select(:id)
+    end
+    if params[:stocked]
+      @stocked = params[:stocked]
+      items_stocked = Item.minimum_stock
+      15.times do|i|
+        puts "YES"
+      end
+    else
+      15.times do|i|
+        puts "NO"
+      end
+    end
+
+    items_active = Item.where(id: items_excluded & items_required & items_stocked).filter_active
+
+    10.times do|i|
+      puts "FUCK"
+      items_active.minimum_stock.each do |item|
+        puts item.unique_name
+      end
+    end
 
     @items = items_active.
         filter_by_search(params[:search]).
@@ -75,33 +99,33 @@ class ItemsController < ApplicationController
 
   # POST /items
   # POST /items.json
-	def create
-		begin
+  def create
+    begin
 
-			ActiveRecord::Base.transaction do
-				@item = Item.new(item_params)
-				@item.last_action = "created"
-				@item.curr_user = current_user
+      ActiveRecord::Base.transaction do
+        @item = Item.new(item_params)
+        @item.last_action = "created"
+        @item.curr_user = current_user
 
-				add_tags_to_item(@item, item_params)
-				@item.save!
+        add_tags_to_item(@item, item_params)
+        @item.save!
 
-				CustomField.all.each do |cf|
-					cf_name = cf.field_name
-					icf = ItemCustomField.find_by(:item_id => @item.id, :custom_field_id => cf.id)
-					icf.update_attributes!(CustomField.find_icf_field_column(cf.id) => params[cf_name])
-				end
-			end
+        CustomField.all.each do |cf|
+          cf_name = cf.field_name
+          icf = ItemCustomField.find_by(:item_id => @item.id, :custom_field_id => cf.id)
+          icf.update_attributes!(CustomField.find_icf_field_column(cf.id) => params[cf_name])
+        end
+      end
 
       redirect_to item_url(@item.id)
 
-		rescue Exception => e
-			flash.now[:danger] = e.message
-			
-			render 'new'
-		end
+    rescue Exception => e
+      flash.now[:danger] = e.message
 
-	end
+      render 'new'
+    end
+
+  end
 
 
   def import_upload
@@ -128,13 +152,13 @@ class ItemsController < ApplicationController
 
     @item.tags.delete_all
     add_tags_to_item(@item, item_params)
-		
-    if @item.update_attributes(item_params)
- 			if !params[:quantity_change].nil?
-				update_quantity
-			end
 
-     	flash[:success] = "Item updated successfully"
+    if @item.update_attributes(item_params)
+      if !params[:quantity_change].nil?
+        update_quantity
+      end
+
+      flash[:success] = "Item updated successfully"
       puts(@item.last_action)
       redirect_to @item
     else
@@ -143,7 +167,7 @@ class ItemsController < ApplicationController
     end
   end
 
- 
+
 	def update_quantity
 		@item.quantity = @item.quantity + params[:quantity_change].to_f
 		if !@item.save!

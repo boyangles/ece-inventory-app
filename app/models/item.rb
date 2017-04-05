@@ -132,6 +132,8 @@ class Item < ApplicationRecord
     if tag_filters.length == 0
       all
     else
+      puts "TAG FILTERS HERE"
+      puts tag_filters
       joins(:tags).where('tags.name IN (?)', tag_filters).group('items.id').having('count(*)=?', tag_filters.count)
     end
   end
@@ -154,7 +156,11 @@ class Item < ApplicationRecord
     else
       where(:model_number => search_input.strip)
     end
-	end
+  end
+
+  def self.minimum_stock
+    where("minimum_stock <= quantity")
+  end
 
 	def self.filter_active
 		where(status: 'active')
