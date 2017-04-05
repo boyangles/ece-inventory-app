@@ -18,14 +18,21 @@
 				<%= link_to "Related Request", request_path(request.id) %>
 			</div>
 
-			<% if is_manager_or_admin? %>
 			<div class="col-lg-5 pull-right">
-				<%= render 'loans/returnquantityform', request_item: loan %>
-				</br>
-				<%= render 'loans/disbursequantityform', request_item: loan %>
-				<br>
+				<% if is_manager_or_admin? %>
+					<%= render 'loans/returnquantityform', request_item: loan %>
+					</br>
+					<%= render 'loans/disbursequantityform', request_item: loan %>
+					<br>
+				<% end %>
+
+				<% if user == current_user %>
+					<%= render 'loans/backfillform', request_item: loan %>
+				<% end %>
+
 			</div>
-			<% end %>
+
+
 		</div>
 	</div>
 </div>

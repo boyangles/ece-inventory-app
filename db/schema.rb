@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170402163945) do
+ActiveRecord::Schema.define(version: 20170404193608) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20170402163945) do
     t.integer "request_item_id"
     t.integer "quantity"
     t.integer "bf_status"
+    t.integer "origin"
     t.index ["request_item_id"], name: "index_backfills_on_request_item_id", using: :btree
   end
 
@@ -83,6 +84,11 @@ ActiveRecord::Schema.define(version: 20170402163945) do
     t.integer  "user_id"
     t.integer  "log_type",   default: 0
     t.index ["user_id"], name: "index_logs_on_user_id", using: :btree
+  end
+
+  create_table "pdfs", force: :cascade do |t|
+    t.integer "backfill_id"
+    t.index ["backfill_id"], name: "index_pdfs_on_backfill_id", using: :btree
   end
 
   create_table "request_items", force: :cascade do |t|

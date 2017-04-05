@@ -76,7 +76,6 @@ class RequestItem < ApplicationRecord
   # Input: N/A
   # Output: @item upon success
   def fulfill_subrequest
-    
 		disbursement_quantity = (self[:quantity_disburse].nil?) ? 0 : self[:quantity_disburse]
     loan_quantity = (self[:quantity_loan].nil?) ? 0 : self[:quantity_loan]
 
@@ -84,12 +83,12 @@ class RequestItem < ApplicationRecord
 
     @item.update!(:quantity => item[:quantity] - disbursement_quantity - loan_quantity)
     @item.update!(:quantity_on_loan => item[:quantity_on_loan] + loan_quantity)
-  
-		self.backfills.each do |bf|
-			if (bf.outstanding?)
-				bf.update!(:status => "approved")
-			end
-		end
+		
+		#self.backfills.each do |bf|
+		#	if (bf.outstanding?)
+		#		bf.update!(:status => "approved")
+		#	end
+		#end
 	end
 
   ##
