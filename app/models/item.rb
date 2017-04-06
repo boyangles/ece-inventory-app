@@ -287,7 +287,7 @@ class Item < ApplicationRecord
   def check_stock_count
     if self.has_stocks && !self.new_record?
       errors.add(:quantity, "stocked item quantity must match number of corresponding assets. Cannot modify quantity directly for assets.") unless
-          self.quantity == Stock.where(:item_id => self.id).size
+          self.quantity == Stock.where(:item_id => self.id).where(available: true).size
     end
   end
 
@@ -300,6 +300,7 @@ class Item < ApplicationRecord
                               float_content: nil)
     end
   end
+
 
   def self.valid_json?(json)
     begin

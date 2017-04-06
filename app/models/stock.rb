@@ -1,4 +1,6 @@
 class Stock < ApplicationRecord
+  include Filterable
+
 
   SERIAL_TAG_LENGTH = 8
 
@@ -10,6 +12,10 @@ class Stock < ApplicationRecord
   has_many :custom_fields, -> { distinct }, :through => :stock_custom_fields
   has_many :stock_custom_fields, dependent: :destroy
   accepts_nested_attributes_for :stock_custom_fields
+
+  # Scope available for filterable
+  scope :available, -> (available) { where available: available }
+
 
   # Belongs to items
   belongs_to :item

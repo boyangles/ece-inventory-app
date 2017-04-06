@@ -2,14 +2,17 @@ class StocksController < ApplicationController
 
   before_action :set_stock, only: [:show, :edit, :update, :destroy]
   before_action :set_item, only: [:show, :edit, :update, :destroy, :create]
+  before_action :check_manager_or_admin, only: [:index, :show, :edit, :create, :update]
+  before_action :check_admin_user, only: [:destroy]
 
   def index
     @item = Item.find(params[:item_id])
-    @stocks = Stock.where(item_id: @item.id).paginate(page: params[:page], per_page: 10)
+    filter_params = params.slice(:available)
+    @stocks = Stock.where(item_id: @item.id).filter(filter_params).paginate(page: params[:page], per_page: 10)
   end
 
   def show
-
+    # create a view that shows the stocks Logs
   end
 
   def new
@@ -17,7 +20,6 @@ class StocksController < ApplicationController
   end
 
   def create
-    puts "FUCK"
     @stock = @item.stocks.new
     if @stock.save
       respond_to do |format|
@@ -32,11 +34,16 @@ class StocksController < ApplicationController
   end
 
   def edit
-
   end
 
   def update
-
+    if @stock.update_attributes(stock_params)
+      flash[:success] = "Stock updated"
+      redirect_to item_stocks_path @item
+    else
+      flash[:danger] = "Cannot update stock"
+      render :edit
+    end
   end
 
   def destroy
@@ -44,11 +51,13 @@ class StocksController < ApplicationController
     @stock = @item.stocks.find(params[:id])
     @stock.destroy!
 
+
     # Reduce the quantity of the item by 1 when a stock is destroyed
     @item.quantity = @item.quantity - 1
     @item.save!
 
     respond_to do |format|
+      flash[:success] = "Asset Deleted"
       format.html { redirect_to item_stocks_path(@item) }
       format.js
     end
