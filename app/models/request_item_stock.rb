@@ -1,0 +1,2 @@
+class RequestItemStock < ApplicationRecord
+end

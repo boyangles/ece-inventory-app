@@ -235,10 +235,11 @@ class Item < ApplicationRecord
     Stock.transaction do
       serial_tag_list.each do |st|
         tag = Stock.where(serial_tag: st)
-        if !tag.available
+        if tag.available
+          self.quantity -= 1
+        else
           self.quantity_on_loan -= 1
         end
-        self.quantity -= 1
       end
       # Stock.destroy_all(:serial_tag => serial_tag_list)
       # self.quantity -= serial_tag_list.size

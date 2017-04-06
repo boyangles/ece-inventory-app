@@ -40,8 +40,6 @@ class RequestItem < ApplicationRecord
   scope :quantity_return, -> (quantity_return) { where quantity_return: quantity_return }
 
   attr_accessor :curr_user
-  attr_accessor :serial_tags_disburse
-  attr_accessor :serial_tags_loan
   attr_readonly :request_id, :item_id
 
   before_validation {
@@ -209,13 +207,11 @@ class RequestItem < ApplicationRecord
   end
 
   # Validates that if a request if approved, the admin has set an appropriate amount of serial tags for each quanityt
-  # TODO: not sure about this
   def stock_item_serial_tags_set
     item = self.item
     request = self.request
     binding.pry
     if item.has_stocks && request.status == 'approved'
-      puts "SHOULDN'T BE HERE"
       self.serial_tags_disburse = [] if self.serial_tags_disburse.nil?
       self.serial_tags_loan = [] if self.serial_tags_loan.nil?
 
