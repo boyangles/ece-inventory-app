@@ -18,7 +18,11 @@
         <td class="text-right"><%= req_item.quantity_disburse %></td>
         <td class="text-right"><%= req_item.quantity_return %></td>
         <% if (req_item.quantity_loan > 0) %>
-            <td><%= render 'loans/returnquantityform', request_item: req_item %></td>
+            <% if Item.find(req_item.item_id).has_stocks %>
+                <td><%= render 'loans/returnquantityform', request_item: req_item %></td>
+            <% else %>
+                <td><%= render 'loans/return_global_items', request_item: req_item %></td>
+            <% end %>
             <td><%= render :partial => 'loans/disbursequantityform', locals: {request_item: req_item} %></td>
         <% else %>
             <td></td>

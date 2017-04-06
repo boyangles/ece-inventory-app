@@ -337,9 +337,12 @@ class User < ApplicationRecord
   def return_subrequest(request_item, list_to_return)
     raise Exception.new("fu") if self.privilege_student?
 
-    quantity_to_return = (list_to_return.nil?) ? 0 : list_to_return.size
-
     @item = request_item.item
+    if !@item.has_stocks
+      quantity_to_return = (list_to_return.nil?) ? 0 : list_to_return
+    else
+      quantity_to_return = (list_to_return.nil?) ? 0 : list_to_return.size
+    end
 
     ActiveRecord::Base.transaction do
       if @item.has_stocks
@@ -367,8 +370,8 @@ class User < ApplicationRecord
 
         request_item.update!(:quantity_loan => request_item[:quantity_loan] - quantity_to_return, :quantity_return => request_item[:quantity_return] + quantity_to_return)
 
-        @item.update!(:quantity => item[:quantity] + quantity_to_return)
-        @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_return)
+        @item.update!(:quantity => @item[:quantity] + quantity_to_return)
+        @item.update!(:quantity_on_loan => @item[:quantity_on_loan] - quantity_to_return)
       end
     end
   end
