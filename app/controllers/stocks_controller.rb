@@ -49,13 +49,11 @@ class StocksController < ApplicationController
   def destroy
 
     @stock = @item.stocks.find(params[:id])
-    Stock.transaction do
-      if !@stock.available
-        @item.quantity_on_loan = @item.quantity_on_loan - 1
-      end
-      @item.quantity = @item.quantity - 1
-      @stock.destroy!
-      @item.save!
+    begin
+      @item.delete_stock(@stock)
+    rescue Exception => e
+      flash[:danger] = e.message
+      redirect_to item_stocks_path @item
     end
 
     respond_to do |format|
