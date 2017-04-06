@@ -21,8 +21,10 @@
     </h1>
   </div>
 
-
-
+<div class="pull-right">
+  <%= link_to "Available", item_stocks_path(@item , available: true), class: "btn btn-lg btn-primary" %>
+  <%= link_to "Unavailable", item_stocks_path(@item, available: false), class: "btn btn-lg btn-primary" %>
+</div>
 
   <tr>
     <th>Serial Tag</th>
