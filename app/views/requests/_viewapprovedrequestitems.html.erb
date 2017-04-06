@@ -17,11 +17,20 @@
 				<td class="text-right"><%= req_item.quantity_loan %></td>
 				<td class="text-right"><%= req_item.quantity_disburse %></td>
 				<td class="text-right"><%= req_item.quantity_return %></td>
-				<% if (req_item.quantity_loan > 0) %>
+				<% if (req_item.quantity_loan > 0) && is_manager_or_admin? %>
 					<td><%= render :partial => 'loans/returnquantityform', locals: {request_item: req_item} %></td>
 					<td><%= render :partial => 'loans/disbursequantityform', locals: {request_item: req_item} %></td>
 				<% else %>
 					<td></td>
+					<td></td>
+				<% end %>
+
+				<!-- TODO: lots more display logic here!! This is currently super incomplete!! -->
+				<% if (req_item.quantity_loan > 0) && request.user_id == current_user.id && req_item.loan? %>
+					<td><%= render 'loans/backfillform', request_item: req_item %></td>
+
+
+				<% else %>
 					<td></td>
 				<% end %>
 			</tr>
