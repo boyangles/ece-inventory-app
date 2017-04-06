@@ -107,29 +107,6 @@ class RequestItem < ApplicationRecord
     @item.update!(:quantity_on_loan => item[:quantity_on_loan] - loan_quantity)
   end
 
-  ##
-  # REQ-ITEM-4: return_subrequest
-  def return_subrequest(to_return)
-    quantity_to_return = (to_return.nil?) ? 0 : to_return
-
-    @item = self.item
-
-    ActiveRecord::Base.transaction do
-      if @item.has_stocks
-
-
-      else
-        if quantity_to_return > 0
-          create_log("returned", quantity_to_return)
-        end
-
-        self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_return, :quantity_return => self[:quantity_return] + quantity_to_return)
-
-        @item.update!(:quantity => item[:quantity] + quantity_to_return)
-        @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_return)
-      end
-    end
-  end
 
   ##
   # REQ-ITEM-5: disburse_loaned_subrequest
