@@ -43,15 +43,12 @@
         <div class="form-group">
           <%= f.label "Above Minimum Stock?", class: "col-lg-4 control-label" %>
           <div class="col-lg-1">
-            <%= f.check_box :aff, "true", "false"%>
+            <%= check_box_tag :aff, params[:aff], "true" , {}%>
           </div>
         </div>
 
         <br><br>
       </div>
-
-
-
 
       <%= f.submit "Search", class: "btn btn-default col-lg-2 col-lg-offset-10", type: "submit" %>
       <% end %>

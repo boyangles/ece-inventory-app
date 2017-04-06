@@ -62,6 +62,7 @@ items = %w[Resistor Transistor Oscilloscope RED_LED Green_LED Capacitor Screw Wa
 
 items.each do |item|
   quantity = Faker::Number.number(3)
+  min_stock = Faker::Number.number(3)
   model_number = Faker::Number.hexadecimal(6)
   description = Faker::Lorem.paragraph(2, true, 1)
 
@@ -69,6 +70,7 @@ items.each do |item|
     unique_name: item,
     quantity: quantity,
     quantity_on_loan: 0,
+    minimum_stock: min_stock,
     model_number: model_number,
     description: description,
     last_action: "created")
