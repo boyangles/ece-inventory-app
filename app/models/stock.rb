@@ -39,6 +39,10 @@ class Stock < ApplicationRecord
 
 
   def generate_serial_tag!
+    if !self.class.exists?(serial_tag: serial_tag)
+      return
+    end
+
     begin
       self.serial_tag = generate_code(SERIAL_TAG_LENGTH)
     end while self.class.exists?(serial_tag: serial_tag)
