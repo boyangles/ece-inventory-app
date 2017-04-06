@@ -1,0 +1,5 @@
+<%= form_for (request_item) do |f| %>
+	<%= f.hidden_field :bf_status, :value => "bf_satisfied" %>
+	<%= f.submit "Mark as Satisfied", class: "btn btn-success" %>
+<% end %>			
+

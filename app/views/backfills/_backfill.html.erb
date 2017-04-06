@@ -33,7 +33,9 @@
 					<p class="label label-warning pull-right">in-transit</p>
 	
 					<% if is_manager_or_admin? %>
-						hoho satisfied/failed buttons
+						<%= render 'backfills/satisfybfform', request_item: backfill %>
+						<%= render 'backfills/failedbfform', request_item: backfill %>
+						<br>
 					<% end %>
 
 			<% elsif backfill.bf_satisfied? %>
