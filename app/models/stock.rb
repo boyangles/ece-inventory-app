@@ -39,7 +39,7 @@ class Stock < ApplicationRecord
 
 
   def generate_serial_tag!
-    if !self.class.exists?(serial_tag: serial_tag)
+    if !self.class.exists?(serial_tag: serial_tag) && !self.serial_tag.nil?
       return
     end
 
