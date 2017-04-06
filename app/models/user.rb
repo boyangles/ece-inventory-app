@@ -347,6 +347,29 @@ class User < ApplicationRecord
     end
   end
 
+
+  def make_request_decision(request, request_params)
+    #TODO: change message
+    status_change = request_params[:status]
+    raise Exception.new("Check your privilege") if self.privilege_student && (!status_change == 'cancelled')
+
+    raise Exception.new("Request must be outstanding") unless request.status == 'outstanding'
+
+    case status_change
+      when 'approved'
+        ActiveRecord::Base.transaction do
+          request.request_items.each do |ri|
+            ri.validates_stock_item_serial_tags_are_set!
+            request.update_attributes!(request_params)
+          end
+        end
+      when 'denied'
+        request.update_attributes!(request_params)
+      else # 'cancelled'
+        request.update_attributes!(request_params)
+    end
+  end
+
   ##
   # USER-3: deny_outstanding_request
   # Allows managers/admins to deny outstanding request

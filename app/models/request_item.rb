@@ -57,7 +57,6 @@ class RequestItem < ApplicationRecord
   #validate :request_type_quantity_validation
 
   validate  :validates_loan_and_disburse_not_zero
-  validate :validates_stock_item_serial_tags_are_set
 
   ##
   # REQ-ITEM-1: oversubscribed?
@@ -116,14 +115,19 @@ class RequestItem < ApplicationRecord
     @item = self.item
 
     ActiveRecord::Base.transaction do
-      if quantity_to_return > 0
-        create_log("returned", quantity_to_return)
+      if @item.has_stocks
+
+
+      else
+        if quantity_to_return > 0
+          create_log("returned", quantity_to_return)
+        end
+
+        self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_return, :quantity_return => self[:quantity_return] + quantity_to_return)
+
+        @item.update!(:quantity => item[:quantity] + quantity_to_return)
+        @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_return)
       end
-
-      self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_return, :quantity_return => self[:quantity_return] + quantity_to_return)
-
-      @item.update!(:quantity => item[:quantity] + quantity_to_return)
-      @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_return)
     end
   end
 
@@ -251,23 +255,16 @@ class RequestItem < ApplicationRecord
   end
 
   # Validates that if a request if approved, the admin has set an appropriate amount of serial tags for each quanityt
-  def validates_stock_item_serial_tags_are_set
-    # TODO: Change to use request item stock
+  def validates_stock_item_serial_tags_are_set!
     item = self.item
     request = self.request
 
     num_rq_item_stock_dis = RequestItemStock.where(request_item_id: self.id, status: 'disburse').count
     num_rq_item_stock_loan = RequestItemStock.where(request_item_id: self.id, status: 'loan').count
 
-    # if item.has_stocks && request.status = 'cart'
-    #   if quantity_disburse != num_rq_item_stock_dis || quantity_loan != num_rq_item_stock_loan
-    #     errors.add(:base, "Need #{quantity_disburse} serial tags for disburse and #{quantity_loan} serial tags for loan")
-    #   end
-    # end
-
-    if item.has_stocks && request.status == 'approved'
+    if item.has_stocks
       if quantity_disburse != num_rq_item_stock_dis || quantity_loan != num_rq_item_stock_loan
-        errors.add(:base, "Serial tags must be specified for requested item")
+        raise Exception.new("Serial tags must be specified for requested item")
       end
     end
   end
