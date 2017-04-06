@@ -1,0 +1,2 @@
+class RequestItemStocksController < ApplicationController
+end
