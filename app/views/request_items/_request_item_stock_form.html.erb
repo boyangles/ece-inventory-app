@@ -6,7 +6,7 @@
         <div class="form-group">
           <%= f.label "Serial Tags for Disbursement", class: 'col-lg-2 control-label' %>
           <div class="col-lg-12">
-            <%= select_tag :serial_tags_disburse, options_for_select(Stock.where(item_id: request_item.item_id).map { |u| [u.serial_tag, u.serial_tag] }, @disburse_tag_list),
+            <%= select_tag :serial_tags_disburse, options_for_select(Stock.where(item_id: request_item.item_id, available: true).map { |u| [u.serial_tag, u.serial_tag] }, @disburse_tag_list),
                            { include_blank: true, multiple: true, class: 'chosen-select' } %>
           </div>
         </div>
@@ -14,7 +14,7 @@
         <div class="form-group">
           <%= f.label "Serial Tags for Loan", class: 'col-lg-2 control-label' %>
           <div class="col-lg-12">
-            <%= select_tag :serial_tags_loan, options_for_select(Stock.where(item_id: request_item.item_id).map { |u| [u.serial_tag, u.serial_tag] }, @loan_tag_list),
+            <%= select_tag :serial_tags_loan, options_for_select(Stock.where(item_id: request_item.item_id, available: true).map { |u| [u.serial_tag, u.serial_tag] }, @loan_tag_list),
                            { include_blank: true, multiple: true, class: 'chosen-select' } %>
           </div>
         </div>
