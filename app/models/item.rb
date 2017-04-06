@@ -26,6 +26,8 @@ class Item < ApplicationRecord
   validates :description, length: { maximum: 255 }
 	validates :status, :inclusion => { :in => ITEM_STATUS_OPTIONS }
 	validates :last_action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }
+  validates :has_stocks, :inclusion => {:in => [true, false]}
+
   validate :check_stock_count
 
   # Relation with Tags
@@ -50,6 +52,8 @@ class Item < ApplicationRecord
   attr_accessor :curr_user
   attr_accessor :tag_list
   attr_accessor :tags_list
+
+  ### CALLBACKS ###
 
   after_create {
     initialize_stocks
@@ -172,6 +176,15 @@ class Item < ApplicationRecord
     rescue Exception => e
       return false
     end
+  end
+
+  # Converts stocked items back to singular global item
+  def convert_to_global
+    return false unless self.has_stocks
+
+    Stock.destroy_all(item_id: self.id)
+    self.has_stocks = false
+    self.save!
   end
 
   def convert_quantity_to_stocks(num_to_create)

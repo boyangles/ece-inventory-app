@@ -36,6 +36,7 @@ Rails.application.routes.draw do
     member do
       post :convert_to_stocks
       post :create_stocks
+      post :convert_to_global
     end
     resources :stocks
   end

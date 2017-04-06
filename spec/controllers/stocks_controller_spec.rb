@@ -101,9 +101,41 @@ feature "Stocks Controller Spec Test" do
 
   end
 
+  feature 'convert stock item back to global' do
+
+    before :each do
+      create_item_with_stocks(10)
+    end
+
+    scenario 'admin converts stocked item back to global' do
+      login(:user_admin)
+      convert_back_to_global
+    end
+
+    scenario 'manager converts stocked item back to global' do
+      login(:user_manager)
+      convert_back_to_global
+    end
+
+  end
+
 end
 
 private
+
+def convert_back_to_global
+  visit item_stocks_path(@item)
+  available_quantity = Stock.where(item_id: @item.id, available: true).count
+  unavailable_quantity = Stock.where(item_id: @item.id, available: false).count
+  expect(page).to have_selector(:link_or_button, 'Convert to Global')
+  click_on('Convert to Global')
+  expect(page).to have_current_path item_path @item
+  expect(page).to have_content('Item successfully converted to global')
+  expect(Stock.where(item_id: @item.id).count).to eq 0
+  @item.reload
+  expect(@item.quantity).to eq available_quantity
+  expect(@item.quantity_on_loan).to eq unavailable_quantity
+end
 
 def verify_index_UI(item)
   expect(page).to have_content item.unique_name
