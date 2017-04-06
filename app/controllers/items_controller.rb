@@ -2,6 +2,7 @@ class ItemsController < ApplicationController
   before_action :check_logged_in_user
   before_action :check_manager_or_admin, only: [:create, :new, :edit, :update]
   before_action :check_admin_user, only: [:destroy]
+  before_action :set_item,  only: [:edit, :edit_quantity, :update, :create_stocks, :convert_to_global, :convert_to_stocks]
 
   # GET /items
   # GET /items.json
@@ -55,12 +56,11 @@ class ItemsController < ApplicationController
 
   # GET /items/1/edit
   def edit
-    @item = Item.find(params[:id])
     @item_custom_fields = ItemCustomField.where(item_id: @item.id)
   end
 
   def edit_quantity
-    @item = Item.find(params[:id])
+
   end
 
   # DELETE /items/1
@@ -125,7 +125,6 @@ class ItemsController < ApplicationController
   end
 
   def update
-    @item = Item.find(params[:id])
     @item.curr_user = current_user
 
     @item.tags.delete_all
@@ -157,7 +156,6 @@ class ItemsController < ApplicationController
   end
 
   def convert_to_stocks
-    @item = Item.find(params[:id])
     if @item.convert_to_stocks
       flash[:success] = "Item successfully converted to Assets!"
       redirect_to item_stocks_path(@item)
@@ -167,8 +165,18 @@ class ItemsController < ApplicationController
     end
   end
 
+  def convert_to_global
+    if @item.convert_to_global
+      flash[:success] = "Item successfully converted to global"
+      redirect_to item_path(@item)
+    else
+      flash.now[:danger] = "Item already global"
+      render :show
+    end
+  end
+
+
   def create_stocks
-    @item = Item.find(params[:id])
     begin
       Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
       flash[:success] = "Assets successfully created!"
@@ -181,7 +189,12 @@ class ItemsController < ApplicationController
     end
   end
 
+
   private
+
+  def set_item
+    @item = Item.find(params[:id])
+  end
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params

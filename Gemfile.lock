@@ -127,6 +127,9 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
+    capybara-webkit (1.14.0)
+      capybara (>= 2.3.0, < 2.14.0)
+      json
     chosen-rails (1.5.2)
       coffee-rails (>= 3.2)
       railties (>= 3.0)
@@ -142,6 +145,7 @@ GEM
     coffee-script-source (1.12.2)
     concurrent-ruby (1.0.4)
     connection_pool (2.2.1)
+    database_cleaner (1.5.3)
     debug_inspector (0.0.2)
     devise (4.2.0)
       bcrypt (~> 3.0)
@@ -381,8 +385,10 @@ DEPENDENCIES
   bootstrap-x-editable-rails
   byebug
   capybara
+  capybara-webkit
   chosen-rails
   coffee-rails (~> 4.2)
+  database_cleaner
   devise
   factory_girl_rails
   faker (= 1.6.6)

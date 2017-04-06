@@ -1,31 +1,33 @@
 class Item < ApplicationRecord
-	include Loggable
-	
-	ITEM_STATUS_OPTIONS = %w(active deactive)
-	
-	enum status: {
-		active: 0,
-		deactive: 1
-	}
+  include Loggable
 
-	enum last_action: {
-		acquired_or_destroyed_quantity: 0,
-		administrative_correction: 1,
-		disbursed: 2,
-		created: 3,
-		deleted: 4,
-		description_updated: 5,
-		loaned: 6,
-		returned: 7,
-		disbursed_from_loan: 8
-	}
+  ITEM_STATUS_OPTIONS = %w(active deactive)
+
+  enum status: {
+      active: 0,
+      deactive: 1
+  }
+
+  enum last_action: {
+      acquired_or_destroyed_quantity: 0,
+      administrative_correction: 1,
+      disbursed: 2,
+      created: 3,
+      deleted: 4,
+      description_updated: 5,
+      loaned: 6,
+      returned: 7,
+      disbursed_from_loan: 8
+  }
 
   validates :unique_name, presence: true, length: { maximum: 50 },
             uniqueness: { case_sensitive: false }
   validates :quantity, presence: true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   validates :description, length: { maximum: 255 }
-	validates :status, :inclusion => { :in => ITEM_STATUS_OPTIONS }
-	validates :last_action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }
+  validates :status, :inclusion => { :in => ITEM_STATUS_OPTIONS }
+  validates :last_action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }
+  validates :has_stocks, :inclusion => {:in => [true, false]}
+
   validate :check_stock_count
 
   # Relation with Tags
@@ -51,19 +53,21 @@ class Item < ApplicationRecord
   attr_accessor :tag_list
   attr_accessor :tags_list
 
+  ### CALLBACKS ###
+
   after_create {
     initialize_stocks
     create_custom_fields_for_items(self.id)
-  	create_log("created", self.quantity)
-	}
+    create_log("created", self.quantity)
+  }
 
-	after_update {
-		create_log_on_quantity_change()
-		create_log_on_desc_update()
-		create_log_on_destruction()
-	}
+  after_update {
+    create_log_on_quantity_change()
+    create_log_on_desc_update()
+    create_log_on_destruction()
+  }
 
-	##
+  ##
   # ITEM-6: import_item
   # Importing a item and associated properties
   #
@@ -198,6 +202,15 @@ class Item < ApplicationRecord
     end
   end
 
+  # Converts stocked items back to singular global item
+  def convert_to_global
+    return false unless self.has_stocks
+
+    Stock.destroy_all(item_id: self.id)
+    self.has_stocks = false
+    self.save!
+  end
+
   def convert_quantity_to_stocks(num_to_create)
     return false unless self.has_stocks
 
@@ -207,6 +220,17 @@ class Item < ApplicationRecord
     puts " ALL STOCK WITH ITEM ID"
     puts Stock.where(item_id: self.id).count
     return true
+  end
+
+  def delete_stock(stock)
+    Stock.transaction do
+      if !stock.available
+        self.quantity_on_loan = self.quantity_on_loan - 1
+      end
+      self.quantity = self.quantity - 1
+      stock.destroy!
+      self.save!
+    end
   end
 
   def destroy_stocks_by_serial_tags!(serial_tag_list)
@@ -236,7 +260,7 @@ class Item < ApplicationRecord
   end
 
   def self.filter_by_search(search_input)
-    where("unique_name ILIKE ?", "%#{search_input}%") 
+    where("unique_name ILIKE ?", "%#{search_input}%")
   end
 
   def self.filter_by_model_search(search_input)
@@ -245,67 +269,67 @@ class Item < ApplicationRecord
     else
       where(:model_number => search_input.strip)
     end
-	end
+  end
 
-	def self.filter_active
-		where(status: 'active')
-	end
+  def self.filter_active
+    where(status: 'active')
+  end
 
-	def create_log_on_quantity_change()
-		if self.quantity_was.nil?
-			return
-		end
+  def create_log_on_quantity_change()
+    if self.quantity_was.nil?
+      return
+    end
 
-		quantity_increase = self.quantity - self.quantity_was
-		if (quantity_increase != 0 && (self.administrative_correction? || self.acquired_or_destroyed_quantity? ))
-			create_log(self.last_action, quantity_increase)
-		end
-	end
+    quantity_increase = self.quantity - self.quantity_was
+    if (quantity_increase != 0 && (self.administrative_correction? || self.acquired_or_destroyed_quantity? ))
+      create_log(self.last_action, quantity_increase)
+    end
+  end
 
-	def create_log_on_destruction()
+  def create_log_on_destruction()
 
-		if self.status == 'deactive' && self.status_was == 'active'
-			create_log("deleted", self.quantity)
-		end
-	end
-	
-	def create_log(action, quan_change)
-		if self.curr_user.nil?
-			curr = nil
-		else
-			curr = self.curr_user.id
-		end
-		old_name = ""
-		old_desc = ""
-		old_model = ""
+    if self.status == 'deactive' && self.status_was == 'active'
+      create_log("deleted", self.quantity)
+    end
+  end
 
-		if self.unique_name_was != self.unique_name
-			old_name = self.unique_name_was
-		end
-		if self.description_was != self.description
-			old_desc = self.description_was
-		end
-		if self.model_number_was != self.model_number
-			old_model = self.model_number_was
-		end
-		
-		log = Log.new(:user_id => curr, :log_type => 'item')
-		log.save!
-		itemlog = ItemLog.new(:log_id => log.id, :item_id => self.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => self.unique_name, :old_desc => old_desc, :new_desc => self.description, :old_model_num => old_model, :new_model_num => self.model_number, :curr_quantity => self.quantity)
-		itemlog.save!
-	end
+  def create_log(action, quan_change)
+    if self.curr_user.nil?
+      curr = nil
+    else
+      curr = self.curr_user.id
+    end
+    old_name = ""
+    old_desc = ""
+    old_model = ""
+
+    if self.unique_name_was != self.unique_name
+      old_name = self.unique_name_was
+    end
+    if self.description_was != self.description
+      old_desc = self.description_was
+    end
+    if self.model_number_was != self.model_number
+      old_model = self.model_number_was
+    end
+
+    log = Log.new(:user_id => curr, :log_type => 'item')
+    log.save!
+    itemlog = ItemLog.new(:log_id => log.id, :item_id => self.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => self.unique_name, :old_desc => old_desc, :new_desc => self.description, :old_model_num => old_model, :new_model_num => self.model_number, :curr_quantity => self.quantity)
+    itemlog.save!
+  end
 
 
-	def create_log_on_desc_update()
-		if (self.unique_name_was != self.unique_name || self.description_was != self.description || self.model_number_was != self.model_number)
-			create_log("description_updated", self.quantity)
-		end
-	end
+  def create_log_on_desc_update()
+    if (self.unique_name_was != self.unique_name || self.description_was != self.description || self.model_number_was != self.model_number)
+      create_log("description_updated", self.quantity)
+    end
+  end
 
-	def deactivate!
-		self.status = 'deactive'
-		self.save!
-	end
+  def deactivate!
+    self.status = 'deactive'
+    self.save!
+  end
 
   private
   def check_stock_count

@@ -49,12 +49,12 @@ class StocksController < ApplicationController
   def destroy
 
     @stock = @item.stocks.find(params[:id])
-    @stock.destroy!
-
-
-    # Reduce the quantity of the item by 1 when a stock is destroyed
-    @item.quantity = @item.quantity - 1
-    @item.save!
+    begin
+      @item.delete_stock(@stock)
+    rescue Exception => e
+      flash[:danger] = e.message
+      redirect_to item_stocks_path @item
+    end
 
     respond_to do |format|
       flash[:success] = "Asset Deleted"
