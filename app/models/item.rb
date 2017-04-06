@@ -249,8 +249,6 @@ class Item < ApplicationRecord
 
   def delete_stocks_through_request_by_list(request_item)
 
-    binding.pry
-
     # These are now RequestItemStock hashes
     serial_tags_loan = RequestItemStock.where(request_item_id: request_item.id, status: 'loan')
     serial_tags_disburse = RequestItemStock.where(request_item_id: request_item.id, status: 'disburse')
@@ -262,7 +260,6 @@ class Item < ApplicationRecord
 
     Stock.transaction do
       serial_tags_disburse.each do |st|
-        binding.pry
         stock = Stock.find(st.stock_id)
         raise Exception.new("Error in finding requested stock. Input serial tag is: #{st}") unless stock
         stock.destroy!
@@ -270,8 +267,6 @@ class Item < ApplicationRecord
       end
 
       serial_tags_loan.each do |st|
-        binding.pry
-
         stock = Stock.find(st.stock_id)
         raise Exception.new("Error in finding requested stock. Input serial tag is: #{st}") unless stock
         raise Exception.new("Stock requested for loan is not available: #{st}") unless stock.available
@@ -282,7 +277,6 @@ class Item < ApplicationRecord
         self.quantity = self.quantity - 1
         self.quantity_on_loan = self.quantity_on_loan + 1
       end
-      binding.pry
       raise Exception.new("Item cannot be saved. Item errors are: #{self.errors.full_messages}") unless self.save
     end
   end

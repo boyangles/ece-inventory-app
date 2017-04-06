@@ -51,7 +51,6 @@ Rails.application.routes.draw do
     member do
       put :return, as: :return
       put :disburse_loaned, as: :disburse_loaned
-      put :specify_serial_tags
     end
   end
 

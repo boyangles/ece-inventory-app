@@ -99,16 +99,6 @@ class RequestItemsController < ApplicationController
 		redirect_to request_path(reqit.request_id)
 	end
 
-	def specify_serial_tags
-		@request_item = RequestItem.find(params[:id])
-
-		@request_item.serial_tags_disburse = params[:serial_tags_disburse]
-		@request_item.serial_tags_loan = params[:serial_tags_loan]
-
-		@request_item.save!
-	end
-
-
 	private
 
 	# Never trust parameters from the scary internet, only allow the white list through.

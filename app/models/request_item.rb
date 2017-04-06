@@ -80,7 +80,6 @@ class RequestItem < ApplicationRecord
   # Output: @item upon success
   def fulfill_subrequest
 
-    binding.pry
     @item = self.item
 
     # item_requested = Item.find(self.item_id)
@@ -205,11 +204,10 @@ class RequestItem < ApplicationRecord
 
   def create_request_item_stocks(serial_tags_disburse, serial_tags_loan)
 
-    binding.pry
     serial_tags_disburse = [] unless serial_tags_disburse
     serial_tags_loan = [] unless serial_tags_loan
 
-    # Destroy all request item stocks in order to remove the previous tags
+    # Destroy all request item stocks associated with request item in order to remove the previous tags
     RequestItemStock.where(request_item_id: self.id).destroy_all
 
     RequestItem.transaction do
@@ -227,7 +225,6 @@ class RequestItem < ApplicationRecord
 
         rq_item_stock_loan = RequestItemStock.new(request_item_id: self.id, stock_id: stock.id, status: 'loan')
         rq_item_stock_loan.save!
-        binding.pry
       end
 
       raise Exception.new("Request Item cannot be saved. Errors are: #{self.errors.full_messages}") unless self.save
@@ -257,7 +254,6 @@ class RequestItem < ApplicationRecord
     # TODO: Change to use request item stock
     item = self.item
     request = self.request
-    binding.pry
 
     num_rq_item_stock_dis = RequestItemStock.where(request_item_id: self.id, status: 'disburse').count
     num_rq_item_stock_loan = RequestItemStock.where(request_item_id: self.id, status: 'loan').count

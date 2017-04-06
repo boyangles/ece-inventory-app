@@ -73,7 +73,6 @@ class Request < ApplicationRecord
   ## Callbacks
 
   def update_respective_items
-    binding.pry
     if self.status_was != 'approved' && self.status == 'approved'
 		  self.request_items.each do |req_item|
         begin

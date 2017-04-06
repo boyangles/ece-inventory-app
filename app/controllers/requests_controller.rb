@@ -35,7 +35,6 @@ class RequestsController < ApplicationController
 
   # PATCH/PUT /requests/1
   def update
-    binding.pry
     @request.curr_user = current_user
     if params[:user]
       @request.user_id = params[:user][:id]
