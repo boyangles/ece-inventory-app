@@ -1,0 +1,44 @@
+<div class="search">
+  <%= form_for request_item, :method => 'put' do |f| %>
+
+      <div class="form-group">
+
+        <div class="form-group">
+          <%= f.label "Serial Tags for Disbursement", class: 'col-lg-2 control-label' %>
+          <div class="col-lg-12">
+            <% @paramdis = Stock.where(id: RequestItemStock.select(:stock_id)
+                .where(request_item_id: request_item.id, status: 'disburse')) %>
+            <% if @paramdis %>
+                <% @list = [] %>
+                <% @paramdis.each do |f| %>
+                    <% @list.push(f.serial_tag) %>
+                <% end %>
+            <% end %>
+            <%= select_tag :serial_tags_disburse, options_for_select(Stock.where(item_id: request_item.item_id).map { |u| [u.serial_tag, u.serial_tag] }, @list),
+                           { include_blank: true, multiple: true, class: 'chosen-select' } %>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <%= f.label "Serial Tags for Loan", class: 'col-lg-2 control-label' %>
+          <div class="col-lg-12">
+            <% @paramloan = Stock.where(id: RequestItemStock.select(:stock_id)
+                .where(request_item_id: request_item.id, status: 'loan')) %>
+            <% if @paramloan %>
+                <% @listloan = [] %>
+                <% @paramloan.each do |f| %>
+                    <% @listloan.push(f.serial_tag) %>
+                <% end %>
+            <% end %>
+            <%= select_tag :serial_tags_loan, options_for_select(Stock.where(item_id: request_item.item_id).map { |u| [u.serial_tag, u.serial_tag] }, @listloan),
+                           { include_blank: true, multiple: true, class: 'chosen-select' } %>
+          </div>
+        </div>
+
+      </div>
+
+      <br><br>
+
+      <%= f.submit "Submit", class: "btn btn-default col-lg-2 col-lg-offset-10", type: "submit" %>
+  <% end %>
+</div>

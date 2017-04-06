@@ -42,7 +42,7 @@ Rails.application.routes.draw do
   end
 
   resources :tags
-
+  resources :request_item_stocks
   resources :item_custom_fields, :only => [:index, :show, :create, :update, :destroy]
   resources :custom_fields, :only => [:create, :destroy]
   resources :sessions

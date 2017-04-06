@@ -20,6 +20,10 @@ class RequestItemsController < ApplicationController
 
 	end
 
+	def edit
+		@request_item = RequestItem.find(params[:id])
+	end
+
 	def create
 		@request_item = RequestItem.new(request_item_params)
 		@request_item.curr_user = current_user
@@ -38,8 +42,8 @@ class RequestItemsController < ApplicationController
 	def update
 		@request_item = RequestItem.find(params[:id])
 		@request_item.curr_user = current_user
-		@request_item.serial_tags_disburse = params[:serial_tags_disburse]
-		@request_item.serial_tags_loan = params[:serial_tags_loan]
+
+		@request_item.create_request_item_stocks(params[:serial_tags_disburse], params[:serial_tags_loan])
 
 		respond_to do |format|
 			begin

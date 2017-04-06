@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170403233115) do
+ActiveRecord::Schema.define(version: 20170406143149) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -78,6 +78,16 @@ ActiveRecord::Schema.define(version: 20170403233115) do
     t.integer  "user_id"
     t.integer  "log_type",   default: 0
     t.index ["user_id"], name: "index_logs_on_user_id", using: :btree
+  end
+
+  create_table "request_item_stocks", force: :cascade do |t|
+    t.integer  "stock_id"
+    t.integer  "request_item_id"
+    t.integer  "status",          default: 0, null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.index ["request_item_id"], name: "index_request_item_stocks_on_request_item_id", using: :btree
+    t.index ["stock_id"], name: "index_request_item_stocks_on_stock_id", using: :btree
   end
 
   create_table "request_items", force: :cascade do |t|

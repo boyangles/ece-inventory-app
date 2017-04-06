@@ -38,6 +38,8 @@ class RequestItem < ApplicationRecord
   scope :quantity_loan, -> (quantity_loan) { where quantity_loan: quantity_loan }
   scope :quantity_disburse, -> (quantity_disburse) { where quantity_disburse: quantity_disburse }
   scope :quantity_return, -> (quantity_return) { where quantity_return: quantity_return }
+  # scope :serial_tags_loan, -> (serial_tags_loan) { where serial_tags_loan: serial_tags_loan }
+  # scope :serial_tags_disburse, -> (serial_tags_disburse) { where serial_tags_disburse: serial_tags_disburse }
 
   attr_accessor :curr_user
   attr_readonly :request_id, :item_id
@@ -55,7 +57,7 @@ class RequestItem < ApplicationRecord
   #validate :request_type_quantity_validation
 
   validate  :validates_loan_and_disburse_not_zero
-  validate :stock_item_serial_tags_set
+  validate :validates_stock_item_serial_tags_are_set
 
   ##
   # REQ-ITEM-1: oversubscribed?
@@ -78,11 +80,12 @@ class RequestItem < ApplicationRecord
   # Output: @item upon success
   def fulfill_subrequest
 
+    binding.pry
     @item = self.item
 
     # item_requested = Item.find(self.item_id)
     if @item.has_stocks
-      @item.delete_stocks_through_request_by_list(self, self.serial_tags_loan, self.serial_tags_disburse)
+      @item.delete_stocks_through_request_by_list(self)
     else
 
       disbursement_quantity = (self[:quantity_disburse].nil?) ? 0 : self[:quantity_disburse]
@@ -200,6 +203,38 @@ class RequestItem < ApplicationRecord
     end
   end
 
+  def create_request_item_stocks(serial_tags_disburse, serial_tags_loan)
+
+    binding.pry
+    serial_tags_disburse = [] unless serial_tags_disburse
+    serial_tags_loan = [] unless serial_tags_loan
+
+    # Destroy all request item stocks in order to remove the previous tags
+    RequestItemStock.where(request_item_id: self.id).destroy_all
+
+    RequestItem.transaction do
+      serial_tags_disburse.each do |st|
+        stock = Stock.find_by(serial_tag: st)
+        raise Exception.new("Error in finding requested stock. Input serial tag is: #{st}") unless stock
+        rq_item_stock_dis = RequestItemStock.new(request_item_id: self.id, stock_id: stock.id, status: 'disburse')
+        rq_item_stock_dis.save!
+      end
+
+      serial_tags_loan.each do |st|
+        stock = Stock.find_by(serial_tag: st)
+        raise Exception.new("Error in finding requested stock. Input serial tag is: #{st}") unless stock
+        raise Exception.new("Stock requested for loan is not available: #{st}") unless stock.available
+
+        rq_item_stock_loan = RequestItemStock.new(request_item_id: self.id, stock_id: stock.id, status: 'loan')
+        rq_item_stock_loan.save!
+        binding.pry
+      end
+
+      raise Exception.new("Request Item cannot be saved. Errors are: #{self.errors.full_messages}") unless self.save
+    end
+
+  end
+
   ## Validations
 
   def validates_loan_and_disburse_not_zero
@@ -207,15 +242,23 @@ class RequestItem < ApplicationRecord
   end
 
   # Validates that if a request if approved, the admin has set an appropriate amount of serial tags for each quanityt
-  def stock_item_serial_tags_set
+  def validates_stock_item_serial_tags_are_set
+    # TODO: Change to use request item stock
     item = self.item
     request = self.request
     binding.pry
-    if item.has_stocks && request.status == 'approved'
-      self.serial_tags_disburse = [] if self.serial_tags_disburse.nil?
-      self.serial_tags_loan = [] if self.serial_tags_loan.nil?
 
-      if quantity_disburse != self.serial_tags_disburse.size || quantity_loan != self.serial_tags_loan.size
+    num_rq_item_stock_dis = RequestItemStock.where(request_item_id: self.id, status: 'disburse').count
+    num_rq_item_stock_loan = RequestItemStock.where(request_item_id: self.id, status: 'loan').count
+
+    # if item.has_stocks && request.status = 'cart'
+    #   if quantity_disburse != num_rq_item_stock_dis || quantity_loan != num_rq_item_stock_loan
+    #     errors.add(:base, "Need #{quantity_disburse} serial tags for disburse and #{quantity_loan} serial tags for loan")
+    #   end
+    # end
+
+    if item.has_stocks && request.status == 'approved'
+      if quantity_disburse != num_rq_item_stock_dis || quantity_loan != num_rq_item_stock_loan
         errors.add(:base, "Serial tags must be specified for requested item")
       end
     end
