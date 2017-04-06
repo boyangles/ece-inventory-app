@@ -3,16 +3,22 @@ class RequestItem < ApplicationRecord
 
   belongs_to :request
   belongs_to :item
-	has_many :backfill
 
   ## Constants
-  REQUEST_TYPE_OPTIONS = %w(disbursement loan mixed)
 
-  enum request_type: {
-      disbursement: 0,
-      loan: 1,
-      mixed: 2
-  }
+	enum bf_status: {
+		loan: 0,
+		bf_request: 1,
+		bf_in_transit: 2,
+		bf_denied: 3,
+		bf_satisfied: 4,
+		bf_failed: 5
+	}
+
+	enum approved_as: {
+		loan: 0,
+		backfill: 1
+	}, _prefix: :approved_as
 
   # Scopes for filtering
   scope :request_id, -> (request_id) { where request_id: request_id }
@@ -62,10 +68,10 @@ class RequestItem < ApplicationRecord
   # Determines if a subrequest is valid or invalid
   #
   # Input: N/A
-  def oversubscribed
-    diff = item[:quantity] - (self[:quantity_disburse] + self[:quantity_loan] + get_total_backfill_quantity)
+  def oversubscribed?
+    diff = item[:quantity] - (self[:quantity_disburse] + self[:quantity_loan])
 
-    errors.add(:base, "Oversubscribed!") if (diff < 0)
+    return (diff < 0)
   end
 
   ##
@@ -84,11 +90,6 @@ class RequestItem < ApplicationRecord
     @item.update!(:quantity => item[:quantity] - disbursement_quantity - loan_quantity)
     @item.update!(:quantity_on_loan => item[:quantity_on_loan] + loan_quantity)
 		
-		#self.backfills.each do |bf|
-		#	if (bf.outstanding?)
-		#		bf.update!(:status => "approved")
-		#	end
-		#end
 	end
 
   ##

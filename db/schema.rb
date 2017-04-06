@@ -10,18 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170404193608) do
+ActiveRecord::Schema.define(version: 20170405143246) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "backfills", force: :cascade do |t|
-    t.integer "request_item_id"
-    t.integer "quantity"
-    t.integer "bf_status"
-    t.integer "origin"
-    t.index ["request_item_id"], name: "index_backfills_on_request_item_id", using: :btree
-  end
 
   create_table "custom_fields", force: :cascade do |t|
     t.string  "field_name",                        null: false
@@ -86,11 +78,6 @@ ActiveRecord::Schema.define(version: 20170404193608) do
     t.index ["user_id"], name: "index_logs_on_user_id", using: :btree
   end
 
-  create_table "pdfs", force: :cascade do |t|
-    t.integer "backfill_id"
-    t.index ["backfill_id"], name: "index_pdfs_on_backfill_id", using: :btree
-  end
-
   create_table "request_items", force: :cascade do |t|
     t.integer  "request_id"
     t.integer  "item_id"
@@ -101,6 +88,8 @@ ActiveRecord::Schema.define(version: 20170404193608) do
     t.integer  "quantity_return",   default: 0
     t.integer  "request_type",      default: 0
     t.datetime "due_date"
+    t.integer  "bf_status",         default: 0
+    t.integer  "approved_as"
     t.index ["item_id"], name: "index_request_items_on_item_id", using: :btree
     t.index ["request_id"], name: "index_request_items_on_request_id", using: :btree
   end

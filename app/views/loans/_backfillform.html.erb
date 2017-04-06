@@ -9,11 +9,14 @@
 			</div>
 
 		<div class="modal-body text-center">
-			george
+		Upload PDFs yoooooo
 		</div>
 
 		<div class="modal-footer">
-			berger	
+			<%= form_for (request_item) do |f| %>
+				<%= f.hidden_field :bf_status, :value => "bf_request" %>
+				<%= f.submit "Place Backfill Request", class: "btn btn-primary" %>
+			<% end %>			
 		</div>			
 
 	</div>
