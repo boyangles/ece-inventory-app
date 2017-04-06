@@ -74,6 +74,8 @@ class Item < ApplicationRecord
         item_hash['tags'] && item_hash['tags'].kind_of?(Array)
     raise Exception.new('Input Custom Fields must be in array form') unless
         item_hash['custom_fields'] && item_hash['custom_fields'].kind_of?(Array)
+    raise Exception.new('Input Asset Array must be in array form') unless
+        item_hash['assets'] && item_hash['assets'].kind_of?(Array)
 
     # Item creation paired with tag creation and custom_field creation as a single transaction
     # Executes belows as a single transaction
@@ -82,29 +84,51 @@ class Item < ApplicationRecord
                       quantity: item_hash['quantity'],
                       model_number: item_hash['model_number'],
                       description: item_hash['description'],
+                      has_stocks: false,
                       last_action: 0)
-      raise Exception.new("Item creation error. The errors hash is: #{item.errors.full_messages}. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless item.save
+      raise Exception.new("Item creation error. The errors hash is: #{item.errors.full_messages}. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless
+          item.save
 
       item_hash['tags'].each do |tag|
         if !Tag.exists?(name: tag)
           new_tag = Tag.new(name: tag)
-          raise Exception.new("Tag creation error. The invalid tag is: #{tag}. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless new_tag.save
+          raise Exception.new("Tag creation error. The invalid tag is: #{tag}. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless
+              new_tag.save
         end
 
         input_tag = Tag.find_by(name: tag)
-        raise Exception.new("Tag find error. Cannot find tag by name: #{tag}. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless input_tag
+        raise Exception.new("Tag find error. Cannot find tag by name: #{tag}. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless
+            input_tag
         item.tags << input_tag
       end
 
       item_hash['custom_fields'].each do |custom_field|
         cf = CustomField.find_by(field_name: custom_field['name'])
-        raise Exception.new("Custom Field named: #{custom_field['name']} -- cannot be found. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless cf
+        raise Exception.new("Custom Field named: #{custom_field['name']} -- cannot be found. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless
+            cf
 
         icf = ItemCustomField.find_by(item_id: item.id, custom_field_id: cf.id)
-        raise Exception.new("Custom Field named: #{cf[:field_name]} -- associated with Item named: #{item[:unique_name]} -- cannot be found. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless icf
+        raise Exception.new("Custom Field named: #{cf[:field_name]} -- associated with Item named: #{item[:unique_name]} -- cannot be found. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless
+            icf
 
         raise Exception.new("Custom Field named: #{cf[:field_name]} -- associated with Item named: #{item[:unique_name]} -- has trouble updating to the value: #{custom_field['value']}. Check the type! Item_Custom_Field error hash is: #{icf.errors.full_messages}. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless
             icf.update_attributes(CustomField.find_icf_field_column(cf.id) => custom_field['value'])
+      end
+
+      ## Exceptions related to stocks
+      # Number of stocks that are available must equal to the quantity if hash_stocks is true
+      raise Exception.new("The number of assets specified must equal the specified quantity of an item that is classified as an asset-item. Item quantity for item: #{item.unique_name} is: #{item.quantity}. Asset array length is #{item_hash['assets'].count}. Item hash is: #{JSON.pretty_generate(item_hash)}.") if
+          item_hash['has_stocks'] && item.quantity != item_hash['assets'].count
+
+      if item_hash['has_stocks']
+        item_hash['assets'].each do |stock_serial_tag|
+          new_stock = Stock.new(:item_id => item.id, :available => true, :serial_tag => stock_serial_tag)
+          raise Exception.new("Asset creation error. The asset hash is: #{new_stock.errors.full_messages}. The asset serial tag is: #{stock_serial_tag}. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless
+              new_stock.save
+        end
+
+        raise Exception.new("There are issues with specifying assets for an item. The item error is: #{item.errors.full_messages}. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless
+            item.update(:has_stocks => item_hash['has_stocks'])
       end
 
       item
