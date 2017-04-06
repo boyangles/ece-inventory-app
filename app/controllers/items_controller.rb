@@ -14,7 +14,7 @@ class ItemsController < ApplicationController
 
     15.times do|i|
       puts "THE VALUE OF PARAMS STOCKED IS"
-      puts params[:stocked]
+      puts params[:aff]
     end
 
     if params[:excluded_tag_names]
@@ -25,8 +25,8 @@ class ItemsController < ApplicationController
       @required_tag_filters = params[:required_tag_names]
       items_required = Item.tagged_with_all(@required_tag_filters).select(:id)
     end
-    if params[:stocked]
-      @stocked = params[:stocked]
+    if params[:aff]
+      @aff = params[:aff]
       items_stocked = Item.minimum_stock
       15.times do|i|
         puts "YES"
