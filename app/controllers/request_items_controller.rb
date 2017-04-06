@@ -22,7 +22,7 @@ class RequestItemsController < ApplicationController
 
 	def create
 		@request_item = RequestItem.new(request_item_params)
-	@request_item.curr_user = current_user 
+		@request_item.curr_user = current_user
 
 		begin
 			@request_item.save!
@@ -32,12 +32,14 @@ class RequestItemsController < ApplicationController
 			flash[:danger] = "You may not add this to the cart! Error: #{e}"
 			redirect_to item_path(Item.find(@request_item.item_id))
 		end
-    
+
 	end
 
 	def update
 		@request_item = RequestItem.find(params[:id])
-    		@request_item.curr_user = current_user
+		@request_item.curr_user = current_user
+		@request_item.serial_tags_disburse = params[:serial_tags_disburse]
+		@request_item.serial_tags_loan = params[:serial_tags_loan]
 
 		respond_to do |format|
 			begin
@@ -54,7 +56,7 @@ class RequestItemsController < ApplicationController
 	end
 
 	def show
-
+    @request_item = RequestItem.find(params[:id])
 	end
 
 	def destroy
@@ -89,6 +91,15 @@ class RequestItemsController < ApplicationController
 			flash[:success] = "Quantity successfully disbursed!"
 		end
 		redirect_to request_path(reqit.request_id)
+	end
+
+	def specify_serial_tags
+		@request_item = RequestItem.find(params[:id])
+
+		@request_item.serial_tags_disburse = params[:serial_tags_disburse]
+		@request_item.serial_tags_loan = params[:serial_tags_loan]
+
+		@request_item.save!
 	end
 
 

@@ -47,10 +47,11 @@ Rails.application.routes.draw do
   resources :custom_fields, :only => [:create, :destroy]
   resources :sessions
   resources :logs
-  resources :request_items, :except => [:index, :show] do
+  resources :request_items, :except => [:index] do
     member do
       put :return, as: :return
       put :disburse_loaned, as: :disburse_loaned
+      put :specify_serial_tags
     end
   end
 

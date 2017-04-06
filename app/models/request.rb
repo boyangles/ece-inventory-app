@@ -27,6 +27,8 @@ class Request < ApplicationRecord
   scope :status, -> (status) { where status: status }
 	attr_accessor :curr_user
 
+
+
   after_update {
 		check_items_still_valid
     update_respective_items
@@ -71,10 +73,12 @@ class Request < ApplicationRecord
   ## Callbacks
 
   def update_respective_items
+    binding.pry
     if self.status_was != 'approved' && self.status == 'approved'
 		  self.request_items.each do |req_item|
         begin
 	        req_item.fulfill_subrequest
+          # TODO: Fix logs for stock items
           if !req_item.quantity_disburse.nil? 
             if req_item.quantity_disburse. > 0
               create_item_log("disbursed", req_item, req_item.quantity_disburse)
@@ -90,6 +94,7 @@ class Request < ApplicationRecord
     elsif self.status_was == 'approved' && self.status != 'approved'
       self.request_items.each do |req_item|
         begin
+          # TODO: Rollback for stock items
           req_item.rollback_fulfill_subrequest
         rescue Exception => e
           raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity}")
