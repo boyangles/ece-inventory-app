@@ -14,7 +14,8 @@
 				<strong>Quantity Loaned </strong><%= loan.quantity_loan %>
 				<br>
 				<br>
-				<!--<strong>Due Date </strong> tbd-->
+				<strong>Status </strong> <%= loan.bf_status %>
+				<br>
 				<%= link_to "Related Request", request_path(request.id) %>
 			</div>
 
@@ -28,6 +29,7 @@
 
 				<% if user == current_user %>
 					<%= render 'loans/backfillform', request_item: loan %>
+					<br>
 				<% end %>
 
 			</div>

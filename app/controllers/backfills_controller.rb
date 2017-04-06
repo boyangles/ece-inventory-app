@@ -1,42 +1,20 @@
 class BackfillsController < ApplicationController
 
 	def index
-		@backfills = Backfill.all
-	end
+		waiting = RequestItem.where(bf_status: "bf_request").select(:id)
+		in_transit = RequestItem.where(bf_status: "bf_in_transit").select(:id)
+		satisfied = RequestItem.where(bf_status: "bf_satisfied").select(:id)
 
-	def new
-		@backfill = Backfill.new
-	end
+		backfills_active = RequestItem.where(id: waiting | in_transit | satisfied)
 
-	def create
-		@backfill = Backfill.new(backfill_params)
-
-		@backfill.save!
-		request = @backfill.request_item.request
-		redirect_to request_path(request.id)
-	end
-
-	def update
-		@backfill = Backfill.find(params[:id])
-
-		if @backfill.update!(backfill_params)
-
-		else
-		
+		if !is_manager_or_admin?
+			backfills_active = backfills_active.where(request_id: Request.where(user_id: current_user.id).select(:id))
 		end
-	end
 
-	def destroy
-		@backfill = Backfill.find(params[:id])
-		request = @backfill.request_item.request
-		@backfill.destroy
-
-		redirect_to request_path(request.id)
-	end	
-
-	private
-		def backfill_params
-			params.require(:backfill).permit(:quantity, :status)
+		if !backfills_active.nil? 
+			@backfills = backfills_active.paginate(page: params[:page], per_page: 10) 
 		end
+
+	end
 
 end

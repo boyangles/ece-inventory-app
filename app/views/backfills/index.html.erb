@@ -3,9 +3,17 @@
 <h2 class="page-header">Backfills</h2>
 
 <div class="pull-right">
-	<%= link_to "Backfill Requests", backfills_path(:bf_status => "outstanding"), class: "btn btn-primary btn-lg" %>
-	<%= link_to "Backfills-in-Transit", backfills_path(:bf_status => "in_transit"), class: "btn btn-primary btn-lg" %>
-	<%= link_to "Satisfied Backfills", backfills_path(:bf_status => "satisfied"), class: "btn btn-primary btn-lg" %>
-	<%= link_to "View All", backfills_path, class: "btn btn-primary btn-lg" %>
+</div>
 
+<div class="row">
+	<div class="col-md-9 col-md-offset-1">
+	
+		<% if !@backfills.nil? %>
+			<div class="text-center"><%= will_paginate @loans %></div>
+
+			<ol class="backfills">
+				<%= render partial: "backfill", collection: @backfills, as: :backfill %>			</ol>
+
+		<% end %>
+	</div>
 </div>

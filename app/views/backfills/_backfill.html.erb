@@ -1,13 +1,55 @@
 <br>
 <div class="panel panel-info">
-	<div id="backfill-<%= backfill.id %>">
-		
+	<div id="backfill-<%= backfill.id %>">	
+	
 		<div class="panel-body">
 
+			<% request = Request.find(backfill.request_id) %>
+			<% item = Item.find(backfill.item_id) %>
+			<% user = User.find(request.user_id) %>
+
+			<div class="col-lg-6">
+				<strong>User </strong><%= link_to user.username, user_path(user.id) %>
+				<br>
+				<strong>Item </strong><%= link_to item.unique_name, item_path(item.id) %>
+				<br>
+				<strong>Quantity </strong><%= backfill.quantity_loan %>
+				<br>
+				<br>
+				<%= link_to "Related Request", request_path(request.id) %>
+			</div>
+
+			<div class="col-lg-5 pull-right">
+				<% if backfill.bf_request? %>
+					<p class="label label-warning pull-right">requested</p>
+	
+					<p class="pull-right"><% if is_manager_or_admin? %>
+						<%= render 'backfills/approvebackfillform', request_item: backfill %>
+						<%= render 'backfills/denybackfillform', request_item: backfill %>
+						<br>
+					<% end %></p>
+
+				<% elsif backfill.bf_in_transit? %>
+					<p class="label label-warning pull-right">in-transit</p>
+	
+					<% if is_manager_or_admin? %>
+						hoho satisfied/failed buttons
+					<% end %>
+
+			<% elsif backfill.bf_satisfied? %>
+					<p class="label label-success pull-right">satisfied</p>
+				<% end %>
+
+
+				<% if user == current_user %>
+
+				<% end %>
+
+			</div>
+
+
+	
 		</div>
-
-		
-
 
 	</div>
 </div>
