@@ -22,6 +22,8 @@ class RequestItemsController < ApplicationController
 
 	def edit
 		@request_item = RequestItem.find(params[:id])
+		@loan_tag_list = @request_item.create_serial_tag_list('loan')
+		@disburse_tag_list = @request_item.create_serial_tag_list('disburse')
 	end
 
 	def create

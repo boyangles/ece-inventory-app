@@ -6,15 +6,7 @@
         <div class="form-group">
           <%= f.label "Serial Tags for Disbursement", class: 'col-lg-2 control-label' %>
           <div class="col-lg-12">
-            <% @paramdis = Stock.where(id: RequestItemStock.select(:stock_id)
-                .where(request_item_id: request_item.id, status: 'disburse')) %>
-            <% if @paramdis %>
-                <% @list = [] %>
-                <% @paramdis.each do |f| %>
-                    <% @list.push(f.serial_tag) %>
-                <% end %>
-            <% end %>
-            <%= select_tag :serial_tags_disburse, options_for_select(Stock.where(item_id: request_item.item_id).map { |u| [u.serial_tag, u.serial_tag] }, @list),
+            <%= select_tag :serial_tags_disburse, options_for_select(Stock.where(item_id: request_item.item_id).map { |u| [u.serial_tag, u.serial_tag] }, @disburse_tag_list),
                            { include_blank: true, multiple: true, class: 'chosen-select' } %>
           </div>
         </div>
@@ -22,15 +14,7 @@
         <div class="form-group">
           <%= f.label "Serial Tags for Loan", class: 'col-lg-2 control-label' %>
           <div class="col-lg-12">
-            <% @paramloan = Stock.where(id: RequestItemStock.select(:stock_id)
-                .where(request_item_id: request_item.id, status: 'loan')) %>
-            <% if @paramloan %>
-                <% @listloan = [] %>
-                <% @paramloan.each do |f| %>
-                    <% @listloan.push(f.serial_tag) %>
-                <% end %>
-            <% end %>
-            <%= select_tag :serial_tags_loan, options_for_select(Stock.where(item_id: request_item.item_id).map { |u| [u.serial_tag, u.serial_tag] }, @listloan),
+            <%= select_tag :serial_tags_loan, options_for_select(Stock.where(item_id: request_item.item_id).map { |u| [u.serial_tag, u.serial_tag] }, @loan_tag_list),
                            { include_blank: true, multiple: true, class: 'chosen-select' } %>
           </div>
         </div>

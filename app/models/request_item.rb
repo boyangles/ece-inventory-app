@@ -235,6 +235,17 @@ class RequestItem < ApplicationRecord
 
   end
 
+  def create_serial_tag_list(status_type)
+    tags = Stock.where(id: RequestItemStock.select(:stock_id)
+                                         .where(request_item_id: self.id, status: status_type))
+    list = []
+    tags.each do |f|
+      list.push(f.serial_tag)
+    end
+    return list
+  end
+
+
   ## Validations
 
   def validates_loan_and_disburse_not_zero
