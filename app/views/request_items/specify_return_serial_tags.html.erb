@@ -7,7 +7,7 @@
         <div class="form-group">
           <%= f.label "Returning Assets Serial Tags", class: 'col-lg-2 control-label' %>
           <div class="col-lg-12">
-            <%= select_tag :serial_tags_loan_return, options_for_select(Stock.where(item_id: @request_item.item_id, available: false).map { |u| [u.serial_tag, u.serial_tag] } ),
+            <%= select_tag :serial_tags_loan_return, options_for_select(RequestItemStock.filter({request_item_id: @request_item.id, unavailable: true}).map { |u| [u.stock.serial_tag, u.stock.serial_tag] } ),
                            { include_blank: true, multiple: true, class: 'chosen-select' } %>
           </div>
         </div>

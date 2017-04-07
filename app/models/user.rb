@@ -346,17 +346,18 @@ class User < ApplicationRecord
     ActiveRecord::Base.transaction do
       if @item.has_stocks
         list_to_return.each do |st_name|
-          binding.pry
+          # binding.pry
           stock = Stock.find_by(serial_tag: st_name)
-          raise Exception.new("fu") unless stock
+          raise Exception.new("fu1") unless stock
 
           # TODO: @AUSTIN : THIS IS FAILING FINDING REQUEST ITEM STOCK HERE
           request_item_stock = RequestItemStock.find_by(request_item_id: request_item.id, stock_id: stock.id)
-          raise Exception.new("fu") unless request_item_stock
+          raise Exception.new("fu2") unless request_item_stock
 
-          raise Exception.new("fu") if stock.available
+          raise Exception.new("fu3") if stock.available
 
           stock.available = true
+          stock.save!
           request_item.quantity_loan -= 1
           request_item.quantity_return += 1
           request_item.save!

@@ -87,7 +87,7 @@ class Request < ApplicationRecord
             create_item_log("loaned", req_item, req_item.quantity_loan)
           end
         rescue Exception => e
-          raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity}")
+          raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity}. The error message is #{e.message}")
         end
       end
     elsif self.status_was == 'approved' && self.status != 'approved'

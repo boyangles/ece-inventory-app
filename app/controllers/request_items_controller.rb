@@ -74,7 +74,7 @@ class RequestItemsController < ApplicationController
 	end
 
 	def return
-		binding.pry
+		# binding.pry
 		reqit = RequestItem.find(params[:id])
 		if (params[:quantity_to_return].to_f > reqit.quantity_loan)
 			flash[:danger] = "That's more than are loaned out!"
@@ -82,7 +82,7 @@ class RequestItemsController < ApplicationController
 			reqit.curr_user = current_user
 			# TODO: specify the list of serial tags to return
 			if Item.find(reqit.item_id).has_stocks
-				binding.pry
+				# binding.pry
 				current_user.return_subrequest(reqit, params[:serial_tags_loan_return])
 			else
 				current_user.return_subrequest(reqit, params[:quantity_to_return].to_f)
