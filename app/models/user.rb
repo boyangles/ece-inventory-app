@@ -350,7 +350,7 @@ class User < ApplicationRecord
           stock = Stock.find_by(serial_tag: st_name)
           raise Exception.new("fu1") unless stock
 
-          # TODO: @AUSTIN : THIS IS FAILING FINDING REQUEST ITEM STOCK HERE
+          # DONE
           request_item_stock = RequestItemStock.find_by(request_item_id: request_item.id, stock_id: stock.id)
           raise Exception.new("fu2") unless request_item_stock
 
