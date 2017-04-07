@@ -123,3 +123,6 @@ gem 'sendgrid'
 
 # #still use action mailer
 # gem 'sendgrid-actionmailer'
+
+# Paperclip for backfill attachments
+gem "paperclip", "~> 5.0.0"

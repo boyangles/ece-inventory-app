@@ -13,7 +13,14 @@
 				<br>
 				<strong>Item </strong><%= link_to item.unique_name, item_path(item.id) %>
 				<br>
-				<strong>Quantity </strong><%= backfill.quantity_loan %>
+				<strong>Quantity </strong>
+					
+				<% if backfill.bf_satisfied? %>
+					<%= backfill.quantity_return %>
+				<% else %>
+					<%= backfill.quantity_loan %>
+				<% end %>
+
 				<br>
 				<br>
 				<%= link_to "Related Request", request_path(request.id) %>

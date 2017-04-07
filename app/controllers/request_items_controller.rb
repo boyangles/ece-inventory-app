@@ -28,12 +28,7 @@ class RequestItemsController < ApplicationController
 			@request_item.save!
 			@request = grab_cart(current_user)
 
-#			if !params[:quantity_for_bf].nil?
-#				bf = Backfill.new(:request_item_id => req_item.id, :bf_status => "in-cart")
-#				bf.save!
-#			end
-
-			redirect_to request_path(@request.id)
+		redirect_to request_path(@request.id)
 		rescue Exception => e
 			flash[:danger] = "You may not add this to the cart! Error: #{e}"
 			redirect_to item_path(Item.find(@request_item.item_id))
@@ -78,6 +73,8 @@ class RequestItemsController < ApplicationController
 		else
 			reqit.curr_user = current_user
 			reqit.return_subrequest(params[:quantity_to_return].to_f)
+			reqit.update!(:bf_status => params[:bf_status])
+	
 			UserMailer.loan_return_email(reqit,params[:quantity_to_return]).deliver_now
 			flash[:success] = "Quantity successfully returned!"
 		end

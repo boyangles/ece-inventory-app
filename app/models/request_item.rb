@@ -3,6 +3,7 @@ class RequestItem < ApplicationRecord
 
   belongs_to :request
   belongs_to :item
+	has_many :attachment
 
   ## Constants
 
@@ -15,33 +16,11 @@ class RequestItem < ApplicationRecord
 		bf_failed: 5
 	}
 
-	enum approved_as: {
-		loan: 0,
-		backfill: 1
-	}, _prefix: :approved_as
-
   # Scopes for filtering
   scope :request_id, -> (request_id) { where request_id: request_id }
   scope :item_id, -> (item_id) { where item_id: item_id }
   scope :user_id, -> (user_id) { joins(:request).where(requests: { user_id: user_id }) }
   scope :status, -> (status) { joins(:request).where(requests: { status: status }) }
-  scope :request_type, -> (request_type) {
-    case request_type
-      when 'disbursement'
-        where("(quantity_loan <= 0 AND quantity_return <= 0 AND quantity_disburse > 0)")
-      when 'loan'
-        where("(quantity_loan <= 0 AND quantity_return > 0 AND quantity_disburse <= 0) OR
-               (quantity_loan > 0 AND quantity_return <= 0 AND quantity_disburse <= 0) OR
-               (quantity_loan > 0 AND quantity_return > 0 AND quantity_disburse <= 0)")
-      when 'mixed'
-        where("(quantity_loan <= 0 AND quantity_return <= 0 AND quantity_disburse <= 0) OR
-               (quantity_loan <= 0 AND quantity_return > 0 AND quantity_disburse > 0) OR
-               (quantity_loan > 0 AND quantity_return <= 0 AND quantity_disburse > 0) OR
-               (quantity_loan > 0 AND quantity_return > 0 AND quantity_disburse > 0)")
-      else
-        none
-    end
-  }
   scope :quantity_loan, -> (quantity_loan) { where quantity_loan: quantity_loan }
   scope :quantity_disburse, -> (quantity_disburse) { where quantity_disburse: quantity_disburse }
   scope :quantity_return, -> (quantity_return) { where quantity_return: quantity_return }

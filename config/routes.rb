@@ -47,6 +47,7 @@ Rails.application.routes.draw do
 		end
 	end
 
+	resources :attachments
   resources :subscribers
   resources :settings
 
