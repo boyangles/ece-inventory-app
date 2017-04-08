@@ -58,23 +58,23 @@ class RequestsController < ApplicationController
     if (old_status == 'outstanding' && request_params[:status] == 'approved')
       userMadeRequest = true
       # UserMailer.request_approved_email_all_subscribers(current_user, @request, userMadeRequest).deliver_now
-      UserMailer.request_approved_email(current_user, @request, @request.user,userMadeRequest).deliver_now
+      # UserMailer.request_approved_email(current_user, @request, @request.user,userMadeRequest).deliver_now
 
       #If request became approved through manager making request for him. Subscriber email required.
     elsif (old_status == 'cart' && request_params[:status] == 'approved')
       userMadeRequest = false
-      UserMailer.request_approved_email_all_subscribers(current_user, @request, userMadeRequest).deliver_now
+      # UserMailer.request_approved_email_all_subscribers(current_user, @request, userMadeRequest).deliver_now
 
       #If request was initiated through user checking out cart. Subscriber email required.
     elsif (old_status == 'cart' && request_params[:status] == 'outstanding')
-      UserMailer.request_initiated_email_all_subscribers(@request.user, @request).deliver_now
+      # UserMailer.request_initiated_email_all_subscribers(@request.user, @request).deliver_now
 
       #If request was denied by manager. No subscriber email required.
     elsif (old_status =='outstanding' && request_params[:status] == 'denied')
-      UserMailer.request_denied_email(current_user, @request, @request.user).deliver_now
+      # UserMailer.request_denied_email(current_user, @request, @request.user).deliver_now
 
     elsif (old_status =='outstanding' && request_params[:status] == 'cancelled')
-      UserMailer.request_cancelled_email(current_user, @request, @request.user).deliver_now
+      # UserMailer.request_cancelled_email(current_user, @request, @request.user).deliver_now
     end
   end
 
