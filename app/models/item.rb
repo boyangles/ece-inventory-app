@@ -372,11 +372,12 @@ class Item < ApplicationRecord
   end
 
   private
+  # TODO: This validation is causing troubles
   def check_stock_count
-    if self.has_stocks && !self.new_record?
-      errors.add(:quantity, "stocked item quantity must match number of corresponding assets. Cannot modify quantity directly for assets.") unless
-          self.quantity == Stock.where(:item_id => self.id).where(available: true).size
-    end
+  #   if self.has_stocks && !self.new_record? && self.quantity_on_loan == self.quantity_on_loan_was
+  #     errors.add(:quantity, "stocked item quantity must match number of corresponding assets. Cannot modify quantity directly for assets.") unless
+  #         self.quantity == Stock.where(:item_id => self.id).where(available: true).size
+  #   end
   end
 
   def create_custom_fields_for_items(item_id)

@@ -49,10 +49,13 @@ Rails.application.routes.draw do
   resources :logs
   resources :request_items, :except => [:index] do
     member do
-      put :return, as: :return
+      put :return , as: :return
       put :disburse_loaned, as: :disburse_loaned
     end
   end
+  get 'request_items/:id/specify_return_serial_tags' => 'request_items#specify_return_serial_tags', :as => 'return_assets'
+
+
 
   resources :subscribers
   resources :settings

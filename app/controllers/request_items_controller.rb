@@ -62,7 +62,7 @@ class RequestItemsController < ApplicationController
 	end
 
 	def show
-    @request_item = RequestItem.find(params[:id])
+		@request_item = RequestItem.find(params[:id])
 	end
 
 	def destroy
@@ -74,16 +74,27 @@ class RequestItemsController < ApplicationController
 	end
 
 	def return
+		# binding.pry
 		reqit = RequestItem.find(params[:id])
 		if (params[:quantity_to_return].to_f > reqit.quantity_loan)
 			flash[:danger] = "That's more than are loaned out!"
 		else
 			reqit.curr_user = current_user
-			reqit.return_subrequest(params[:quantity_to_return].to_f)
+			# TODO: specify the list of serial tags to return
+			if Item.find(reqit.item_id).has_stocks
+				# binding.pry
+				current_user.return_subrequest(reqit, params[:serial_tags_loan_return])
+			else
+				current_user.return_subrequest(reqit, params[:quantity_to_return].to_f)
+			end
 			UserMailer.loan_return_email(reqit,params[:quantity_to_return]).deliver_now
 			flash[:success] = "Quantity successfully returned!"
 		end
 		redirect_to request_path(reqit.request_id)
+	end
+
+	def specify_return_serial_tags
+		@request_item = RequestItem.find(params[:id])
 	end
 
 	def disburse_loaned

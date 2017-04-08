@@ -107,29 +107,6 @@ class RequestItem < ApplicationRecord
     @item.update!(:quantity_on_loan => item[:quantity_on_loan] - loan_quantity)
   end
 
-  ##
-  # REQ-ITEM-4: return_subrequest
-  def return_subrequest(to_return)
-    quantity_to_return = (to_return.nil?) ? 0 : to_return
-
-    @item = self.item
-
-    ActiveRecord::Base.transaction do
-      if @item.has_stocks
-
-
-      else
-        if quantity_to_return > 0
-          create_log("returned", quantity_to_return)
-        end
-
-        self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_return, :quantity_return => self[:quantity_return] + quantity_to_return)
-
-        @item.update!(:quantity => item[:quantity] + quantity_to_return)
-        @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_return)
-      end
-    end
-  end
 
   ##
   # REQ-ITEM-5: disburse_loaned_subrequest
@@ -211,7 +188,7 @@ class RequestItem < ApplicationRecord
     serial_tags_disburse = [] unless serial_tags_disburse
     serial_tags_loan = [] unless serial_tags_loan
 
-    binding.pry
+    # binding.pry
     # Destroy all request item stocks associated with request item in order to remove the previous tags
     RequestItemStock.where(request_item_id: self.id).destroy_all
 
@@ -231,7 +208,7 @@ class RequestItem < ApplicationRecord
         rq_item_stock_loan = RequestItemStock.new(request_item_id: self.id, stock_id: stock.id, status: 'loan')
         rq_item_stock_loan.save!
       end
-      binding.pry
+      # binding.pry
       raise Exception.new("Request Item cannot be saved. Errors are: #{self.errors.full_messages}") unless self.save
     end
 
