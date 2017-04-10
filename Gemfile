@@ -10,7 +10,7 @@ gem 'rails-controller-testing'
 gem 'pry-rails', :group => :development
 group :test do
   gem 'database_cleaner'
-  gem "capybara-webkit"
+#  gem "capybara-webkit"
 end
 
 # API Testing Swagger
