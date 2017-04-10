@@ -28,8 +28,6 @@ class Item < ApplicationRecord
   validates :last_action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }
   validates :has_stocks, :inclusion => {:in => [true, false]}
 
-  validate :check_stock_count
-
   # Relation with Tags
   has_many :tags, -> { distinct },  :through => :item_tags
   has_many :item_tags
@@ -372,13 +370,6 @@ class Item < ApplicationRecord
   end
 
   private
-  # TODO: This validation is causing troubles
-  def check_stock_count
-  #   if self.has_stocks && !self.new_record? && self.quantity_on_loan == self.quantity_on_loan_was
-  #     errors.add(:quantity, "stocked item quantity must match number of corresponding assets. Cannot modify quantity directly for assets.") unless
-  #         self.quantity == Stock.where(:item_id => self.id).where(available: true).size
-  #   end
-  end
 
   def create_custom_fields_for_items(item_id)
     CustomField.all.each do |cf|
