@@ -35,7 +35,7 @@
             <%= req_item.quantity_disburse %>
           </a>
         </td>
-        <% if Item.find(req_item.item_id).has_stocks %>
+        <% if Item.find(req_item.item_id).has_stocks && is_manager_or_admin? %>
             <td><%= link_to "Specify Serial Tags", edit_request_item_path(req_item), class: "btn btn-primary pull-right" %></td>
         <% else %>
             <td></td>
