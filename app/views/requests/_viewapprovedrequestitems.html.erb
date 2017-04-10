@@ -26,10 +26,20 @@
 				<% end %>
 
 				<!-- TODO: lots more display logic here!! This is currently super incomplete!! -->
-				<% if (req_item.quantity_loan > 0) && request.user_id == current_user.id && req_item.loan? %>
-					<td><%= render 'loans/backfillform', request_item: req_item %></td>
-
-
+				<% if (req_item.quantity_loan > 0) && request.user_id == current_user.id %>
+					<% if req_item.loan? %>		
+						<td><%= render 'loans/backfillform', request_item: req_item %></td>
+					<% elsif req_item.bf_request? %>
+						<td><p class="label label-warning">backfill requested</p></td>
+					<% elsif req_item.bf_in_transit? %>
+						<td><p class="label label-warning">backfill in transit</p></td>
+					<% elsif req_item.bf_denied? %>
+						<td><p class="label label-danger">backfill denied</p></td>
+					<% elsif req_item.bf_failed? %>
+						<td><p class="label label-danger">backfill failed</p></td>
+					<% elsif req_item.bf_satisfied? %>
+						<td><p class="label label-success">backfill satisfied</p></td>
+					<% end %>
 				<% else %>
 					<td></td>
 				<% end %>

@@ -125,4 +125,4 @@ gem 'sendgrid'
 # gem 'sendgrid-actionmailer'
 
 # Paperclip for backfill attachments
-gem "paperclip", "~> 5.0.0"
+gem "paperclip", :git => "http://github.com/thoughtbot/paperclip.git" 

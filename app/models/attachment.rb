@@ -5,4 +5,5 @@ class Attachment < ApplicationRecord
 	validates_attachment_content_type :doc, :content_type => ["application/pdf"]
 	validates_attachment_file_name :doc, matches: [/pdf\z/]
 
+	scope :request_item_id, -> (request_item_id) { where request_item_id: request_item_id }
 end

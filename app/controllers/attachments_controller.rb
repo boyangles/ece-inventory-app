@@ -11,18 +11,18 @@ class AttachmentsController < ApplicationController
 	def create
 		@attachment = Attachment.create( attachment_params )
 
-		if @attachment.save
+		if @attachment.save!
 			flash[:success] = "File uploaded!"
 			redirect_to request_path(@attachment.request_item.request.id) 
 		else
-			render 'new'
+			render loans_index_path
 		end
 	end
 
 	private
 	
 	def attachment_params
-		params.require(:attachment).permit(:doc)
+		params.require(:attachment).permit(:doc, :request_item_id)
 	end
 
 end

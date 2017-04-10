@@ -16,12 +16,12 @@ ActiveRecord::Schema.define(version: 20170406150625) do
   enable_extension "plpgsql"
 
   create_table "attachments", force: :cascade do |t|
-    t.integer  "request_items_id"
+    t.integer  "request_item_id"
     t.string   "doc_file_name"
     t.string   "doc_content_type"
     t.integer  "doc_file_size"
     t.datetime "doc_updated_at"
-    t.index ["request_items_id"], name: "index_attachments_on_request_items_id", using: :btree
+    t.index ["request_item_id"], name: "index_attachments_on_request_item_id", using: :btree
   end
 
   create_table "custom_fields", force: :cascade do |t|
