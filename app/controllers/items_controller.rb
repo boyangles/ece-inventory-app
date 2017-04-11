@@ -1,6 +1,6 @@
 class ItemsController < ApplicationController
   before_action :check_logged_in_user
-  before_action :check_manager_or_admin, only: [:create, :new, :edit, :update]
+  before_action :check_manager_or_admin, only: [:create, :new, :edit, :update, :set_all_minimum_stock]
   before_action :check_admin_user, only: [:destroy]
 
   # GET /items
@@ -12,10 +12,10 @@ class ItemsController < ApplicationController
     items_required = Item.all
     items_stocked = Item.all
 
-    15.times do|i|
-      puts "THE VALUE OF PARAMS STOCKED IS"
-      puts params[:aff]
-    end
+    # 15.times do|i|
+    #   puts "THE VALUE OF PARAMS STOCKED IS"
+    #   puts params[:stocked]
+    # end
 
     if params[:excluded_tag_names]
       @excluded_tag_filters = params[:excluded_tag_names]
@@ -25,31 +25,33 @@ class ItemsController < ApplicationController
       @required_tag_filters = params[:required_tag_names]
       items_required = Item.tagged_with_all(@required_tag_filters).select(:id)
     end
-    if params[:aff]
-      @aff = params[:aff]
+    if params[:stocked]
+      @stocked = params[:stocked]
       items_stocked = Item.minimum_stock
-      15.times do|i|
-        puts "YES"
-      end
+      # 15.times do|i|
+      #   puts "YES"
+      # end
     else
-      15.times do|i|
-        puts "NO"
-      end
+      # 15.times do|i|
+      #   puts "NO"
+      # end
     end
 
     items_active = Item.where(id: items_excluded & items_required & items_stocked).filter_active
 
-    10.times do|i|
-      puts "FUCK"
-      items_active.minimum_stock.each do |item|
-        puts item.unique_name
-      end
-    end
+    # 10.times do|i|
+    #   puts "FUCK"
+    #   items_active.minimum_stock.each do |item|
+    #     puts item.unique_name
+    #   end
+    # end
 
     @items = items_active.
         filter_by_search(params[:search]).
         filter_by_model_search(params[:model_search]).
         order('unique_name ASC').paginate(page: params[:page], per_page: 10)
+
+    # update_min_stock_of_certain_items(@items, 999)
   end
 
   # GET /items/1
@@ -60,6 +62,8 @@ class ItemsController < ApplicationController
     else
       @item = Item.filter_active.find(params[:id])
     end
+
+    # update_min_stock_of_certain_items(@item, 666)
 
     outstanding_filter_params = {
         :status => "outstanding"
@@ -178,17 +182,59 @@ class ItemsController < ApplicationController
 
   #probably needs to go in the model but testing here
   def set_all_minimum_stock
-    puts "FUCK"
-  end
 
-  def update_minimum_stock
-    10.times do |i|
-      puts "FUCK OFF"
+    # This code below is repeated but it is just used to search for stuff.
+    #TODO: Refactor later
+    @tags = Tag.all
+
+    items_excluded = Item.all
+    items_required = Item.all
+    items_stocked = Item.all
+    if params[:excluded_tag_names]
+      @excluded_tag_filters = params[:excluded_tag_names]
+      items_excluded = Item.tagged_with_none(@excluded_tag_filters).select(:id)
     end
-    Item.update_all(:minimum_stock => @stock_quantity)
-    puts Item.all
+    if params[:required_tag_names]
+      @required_tag_filters = params[:required_tag_names]
+      items_required = Item.tagged_with_all(@required_tag_filters).select(:id)
+    end
+    if params[:stocked]
+      @stocked = params[:stocked]
+      items_stocked = Item.minimum_stock
+    else
+    end
+    items_active = Item.where(id: items_excluded & items_required & items_stocked).filter_active
+    @items = items_active.
+        filter_by_search(params[:search]).
+        filter_by_model_search(params[:model_search]).
+        order('unique_name ASC').paginate(page: params[:page], per_page: 10)
+    # puts "FUCK: THE VALUE OF ALL THE ITEMS IS "
+    # puts @items
   end
 
+  def update_all_minimum_stock
+    #Putting this line below just to test! Need to verify that it works.
+    items = Item.all
+    # binding.pry
+    # 10000.times do |i|
+    #   puts "The value of items is "
+    #   puts items
+    #   puts "The value of params is "
+    #   puts params[:min_quantity]
+    # end
+    update_min_stock_of_certain_items(items, params[:min_quantity])
+    # Item.update_all(:minimum_stock => @stock_quantity)
+    # puts Item.all
+
+    redirect_to minimum_stock_path
+  end
+
+## helper method that will be used to update stocks and shit.
+  def update_min_stock_of_certain_items(items, stock_quantity)
+    Array(items).each do |i|
+      i.update(:minimum_stock => stock_quantity)
+    end
+  end
   private
 
   # Never trust parameters from the scary internet, only allow the white list through.

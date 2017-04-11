@@ -41,9 +41,9 @@
         </div>
 
         <div class="form-group">
-          <%= f.label "Above Minimum Stock?", class: "col-lg-4 control-label" %>
+          <%= f.label "Below Minimum Stock?", class: "col-lg-4 control-label" %>
           <div class="col-lg-1">
-            <%= check_box_tag :aff, params[:aff], "true" , {}%>
+            <%= check_box_tag :stocked , params[:stocked], "true" , {}%>
           </div>
         </div>
 

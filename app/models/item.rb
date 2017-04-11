@@ -159,7 +159,7 @@ class Item < ApplicationRecord
   end
 
   def self.minimum_stock
-    where("minimum_stock <= quantity")
+    where("minimum_stock > quantity")
   end
 
 	def self.filter_active
