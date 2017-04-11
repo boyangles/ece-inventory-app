@@ -45,9 +45,7 @@ class RequestsController < ApplicationController
       # UserMailer.request_edited_email(current_user, @request, @request.user).deliver_now
       flash[:success] = "Operation successful!"
       redirect_to request_path(@request)
-      puts "Exception NOT THROWN!!!!!"
     rescue Exception => e
-      puts "Exception thrown!!!!!!!!!!!!!!!!!!!!!!! #{e.message}"
       flash[:error] = "Request could not be successfully updated! #{e.message}"
       redirect_back(fallback_location: request_path(@request))
     end
