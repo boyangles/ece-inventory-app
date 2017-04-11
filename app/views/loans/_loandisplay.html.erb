@@ -28,7 +28,7 @@
 				<% end %>
 
 				<% if user == current_user && loan.loan? %>
-					<%= render 'loans/backfillform', request_item: loan %>
+					<%= render 'backfills/attachmentsform', request_item: loan %>
 					<br>
 				<% end %>
 
