@@ -46,7 +46,7 @@ class ItemsController < ApplicationController
     end
 
     @requests = @item.requests.filter(outstanding_filter_params).paginate(page: params[:page], per_page: 10)
-    @item_custom_fields = ItemCustomField.where(item_id: @item.id)
+    @item_custom_fields = ItemCustomField.filter({ item_id: @item.id, is_global: true })
   end
 
   # GET /items/new
