@@ -28,8 +28,6 @@ class Item < ApplicationRecord
   validates :last_action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }
   validates :has_stocks, :inclusion => {:in => [true, false]}
 
-  validate :check_stock_count
-
   # Relation with Tags
   has_many :tags, -> { distinct },  :through => :item_tags
   has_many :item_tags
@@ -217,8 +215,6 @@ class Item < ApplicationRecord
     for i in 1..num_to_create do
       Stock.create!(:item_id => self.id, :available => true)
     end
-    puts " ALL STOCK WITH ITEM ID"
-    puts Stock.where(item_id: self.id).count
     return true
   end
 
@@ -235,9 +231,51 @@ class Item < ApplicationRecord
 
   def destroy_stocks_by_serial_tags!(serial_tag_list)
     Stock.transaction do
-      Stock.destroy_all(:serial_tag => serial_tag_list)
-      self.quantity -= serial_tag_list.size
+      serial_tag_list.each do |st|
+        tag = Stock.where(serial_tag: st)
+        if tag.available
+          self.quantity -= 1
+        else
+          self.quantity_on_loan -= 1
+        end
+      end
+      # Stock.destroy_all(:serial_tag => serial_tag_list)
+      # self.quantity -= serial_tag_list.size
       self.save!
+    end
+  end
+
+  def delete_stocks_through_request_by_list(request_item)
+
+    # These are now RequestItemStock hashes
+    serial_tags_loan = RequestItemStock.where(request_item_id: request_item.id, status: 'loan')
+    serial_tags_disburse = RequestItemStock.where(request_item_id: request_item.id, status: 'disburse')
+
+    raise Exception.new("Serial Tags for loans size must equal to the specified loan size requested") unless request_item.quantity_loan == serial_tags_loan.size
+    raise Exception.new("Serial Tags for disburse size must equal to the specified disburse size requested ") unless request_item.quantity_disburse == serial_tags_disburse.size
+
+
+
+    Stock.transaction do
+      serial_tags_disburse.each do |st|
+        stock = Stock.find(st.stock_id)
+        raise Exception.new("Error in finding requested stock. Input serial tag is: #{st}") unless stock
+        stock.destroy!
+        self.quantity = self.quantity - 1
+      end
+
+      serial_tags_loan.each do |st|
+        stock = Stock.find(st.stock_id)
+        raise Exception.new("Error in finding requested stock. Input serial tag is: #{st}") unless stock
+        raise Exception.new("Stock requested for loan is not available: #{st}") unless stock.available
+
+        stock.available = false
+        raise Exception.new("Stock failed to save. #{stock.errors.full_messages}.") unless stock.save
+
+        self.quantity = self.quantity - 1
+        self.quantity_on_loan = self.quantity_on_loan + 1
+      end
+      raise Exception.new("Item cannot be saved. Item errors are: #{self.errors.full_messages}") unless self.save
     end
   end
 
@@ -332,12 +370,6 @@ class Item < ApplicationRecord
   end
 
   private
-  def check_stock_count
-    if self.has_stocks && !self.new_record?
-      errors.add(:quantity, "stocked item quantity must match number of corresponding assets. Cannot modify quantity directly for assets.") unless
-          self.quantity == Stock.where(:item_id => self.id).where(available: true).size
-    end
-  end
 
   def create_custom_fields_for_items(item_id)
     CustomField.all.each do |cf|

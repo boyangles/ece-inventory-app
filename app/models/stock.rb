@@ -4,6 +4,10 @@ class Stock < ApplicationRecord
 
   SERIAL_TAG_LENGTH = 8
 
+  # Relation with RequestItem
+  has_many :request_items, -> { distinct }, :through => :request_item_stocks
+  has_many :request_item_stocks, dependent: :destroy
+
   # Relation with Tags
   has_many :tags, -> { distinct },  :through => :item_tags
   has_many :item_tags
@@ -15,7 +19,7 @@ class Stock < ApplicationRecord
 
   # Scope available for filterable
   scope :available, -> (available) { where available: available }
-
+  scope :request_item_id, -> (request_item_id) { joins(:request_item_stock).where(request_item_stocks: { request_item_id: request_item_id }) }
 
   # Belongs to items
   belongs_to :item
@@ -39,7 +43,7 @@ class Stock < ApplicationRecord
 
 
   def generate_serial_tag!
-    if !self.class.exists?(serial_tag: serial_tag)
+    if !self.class.exists?(serial_tag: serial_tag) && !self.serial_tag.nil?
       return
     end
 
