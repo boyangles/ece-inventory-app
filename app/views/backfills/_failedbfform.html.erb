@@ -1,0 +1,5 @@
+<%= form_for (request_item) do |f| %>
+	<%= f.hidden_field :bf_status, :value => "bf_failed" %>
+	<%= f.submit "Mark as Failed", class: "btn btn-danger" %>
+<% end %>			
+
