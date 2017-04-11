@@ -42,7 +42,7 @@ class StocksController < ApplicationController
   def update
     if @stock.update_attributes(stock_params)
       flash[:success] = "Stock updated"
-      redirect_to item_stocks_path @item
+      redirect_to item_stock_path(@item, @stock)
     else
       flash[:danger] = "Cannot update stock"
       render :edit
