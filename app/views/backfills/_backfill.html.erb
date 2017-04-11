@@ -27,33 +27,7 @@
 			</div>
 
 			<div class="col-lg-5 pull-right">
-				<% if backfill.bf_request? %>
-					<p class="label label-warning pull-right">requested</p>
-	
-					<p class="pull-right"><% if is_manager_or_admin? %>
-						<%= render 'backfills/approvebackfillform', request_item: backfill %>
-						<%= render 'backfills/denybackfillform', request_item: backfill %>
-						<br>
-					<% end %></p>
-
-				<% elsif backfill.bf_in_transit? %>
-					<p class="label label-warning pull-right">in-transit</p>
-	
-					<% if is_manager_or_admin? %>
-						<%= render 'backfills/satisfybfform', request_item: backfill %>
-						<%= render 'backfills/failedbfform', request_item: backfill %>
-						<br>
-					<% end %>
-
-			<% elsif backfill.bf_satisfied? %>
-					<p class="label label-success pull-right">satisfied</p>
-				<% end %>
-
-
-				<% if user == current_user %>
-
-				<% end %>
-
+				<%= render 'backfills/attachmentsform', request_item: backfill %>
 			</div>
 
 
