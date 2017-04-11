@@ -4,9 +4,38 @@
         <%= render 'shared/error_messages', object: @form_obj %>
     <% end %>
     <fieldset>
-      <div class="text-center">
-        <%= f.text_field :serial_tag, label: true, autofocus: true %>
-        <%= f.submit "Submit", class: "btn btn-primary" %>
+      <div class="form-group">
+        <%= f.label :serial_tag, "Serial Tag", class: "col-lg-2 control-label" %>
+        <div class="col-lg-10">
+          <%= f.text_field :serial_tag, label: true, autofocus: true %>
+        </div>
+      </div>
+
+      <div class="page-header"><h4>Asset Custom Fields</h4></div>
+      <%= f.fields_for :stock_custom_fields do |ff| %>
+          <div class="form-group">
+            <% cf = CustomField.find(ff.object.custom_field_id) %>
+            <%= f.label cf.field_name.to_sym, cf.field_name, class: "col-lg-2 control-label" %>
+            <div class="col-lg-10">
+              <%= ff.hidden_field :custom_field_id, :value => (ff.object.custom_field_id) %>
+              <% if cf.short_text_type? %>
+                  <%= ff.text_field :short_text_content, class: "form-control" %>
+              <% elsif cf.long_text_type? %>
+                  <%= ff.text_area :long_text_content, class: "form-control" %>
+              <% elsif cf.integer_type? %>
+                  <%= ff.number_field :integer_content, class: "form-control" %>
+              <% else %>
+                  <%= ff.number_field :float_content, class: "form-control", step: :any %>
+              <% end %>
+
+            </div>
+          </div>
+      <% end %>
+
+      <div class="form-group">
+        <div class="col-lg-10 col-lg-offset-2">
+          <button type="submit" class="btn-default btn-lg btn-block", id="submit">Submit</button>
+        </div>
       </div>
     </fieldset>
 <% end %>
