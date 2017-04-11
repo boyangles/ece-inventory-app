@@ -91,11 +91,11 @@
           <div class="panel-heading">Asset Information</div>
           <div class="panel-body">
             <!-- Stock Custom Fields -->
-            <% @stock_custom_fields.each do |icf| %>
-                <% field_content = ( ItemCustomField.field_content(@item.id, icf.custom_field_id).blank? ?  'None' : ItemCustomField.field_content(@item.id, icf.custom_field_id) ) %>
-                <% if is_manager_or_admin? || !icf.custom_field.private_indicator %>
+            <% @stock_custom_fields.each do |scf| %>
+                <% field_content = ( StockCustomField.field_content(@stock.id, scf.custom_field_id).blank? ?  'None' : StockCustomField.field_content(@stock.id, scf.custom_field_id) ) %>
+                <% if is_manager_or_admin? || !scf.custom_field.private_indicator %>
                     <p>
-                      <strong><%= icf.custom_field.field_name %>: </strong>
+                      <strong><%= scf.custom_field.field_name %>: </strong>
                       <%= field_content %>
                     </p>
                 <% else %>
