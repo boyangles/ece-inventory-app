@@ -433,6 +433,14 @@ class User < ApplicationRecord
     end
   end
 
+  def update_stock_attributes(stock, stock_params)
+    # Raises exception if manager tries to update the serial tag
+    stock.serial_tag = stock_params[:serial_tag]
+    raise Exception.new('Cannot modify serial tag as manager') if self.privilege_manager? && stock.serial_tag_changed?
+
+    stock.update_attributes!(stock_params)
+  end
+
   ##
   # TODO
   # USER-4: borrowed_items
@@ -445,4 +453,6 @@ class User < ApplicationRecord
   def self.isDukeEmail?(email_address)
     return email_address.match(DUKE_EMAIL_REGEX)
   end
+
+
 end

@@ -4,12 +4,15 @@
         <%= render 'shared/error_messages', object: @form_obj %>
     <% end %>
     <fieldset>
-      <div class="form-group">
-        <%= f.label :serial_tag, "Serial Tag", class: "col-lg-2 control-label" %>
-        <div class="col-lg-10">
-          <%= f.text_field :serial_tag, label: true, autofocus: true %>
-        </div>
-      </div>
+      <% if is_admin? %>
+          <div class="form-group">
+            <%= f.label :serial_tag, "Serial Tag", class: "col-lg-2 control-label" %>
+            <div class="col-lg-10">
+              <%= f.text_field :serial_tag, label: true, autofocus: true %>
+            </div>
+          </div>
+      <% end %>
+
 
       <div class="page-header"><h4>Asset Custom Fields</h4></div>
       <%= f.fields_for :stock_custom_fields do |ff| %>

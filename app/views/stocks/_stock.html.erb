@@ -1,11 +1,15 @@
 <tr>
   <td><%= link_to stock.serial_tag, item_stock_path(@item.id, stock.id) %></td>
   <td><%= stock.available %></td>
-  <% if is_admin? %>
+  <% if is_manager_or_admin? %>
       <td><%= link_to "Edit", edit_item_stock_path(@item, stock), class: "btn btn-primary" %></td>
-      <td><%= link_to "Delete", item_stock_path(@item, stock), method: :delete, class: "btn btn-primary" %></td>
   <% else %>
       <td></td>
+  <% end %>
+
+  <% if is_admin? %>
+      <td><%= link_to "Delete", item_stock_path(@item, stock), method: :delete, class: "btn btn-primary" %></td>
+  <% else %>
       <td></td>
   <% end %>
 </tr>

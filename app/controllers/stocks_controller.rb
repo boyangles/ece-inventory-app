@@ -40,11 +40,13 @@ class StocksController < ApplicationController
   end
 
   def update
-    if @stock.update_attributes(stock_params)
+    begin
+      current_user.update_stock_attributes(@stock, stock_params)
       flash[:success] = "Stock updated"
       redirect_to item_stock_path(@item, @stock)
-    else
-      flash[:danger] = "Cannot update stock"
+    rescue Exception => e
+      flash.now[:danger] = e.message
+      @stock.reload
       render :edit
     end
   end

@@ -180,7 +180,7 @@ class ItemsController < ApplicationController
     begin
       throw Exception.new('Number must be greater than 0') if params[:num_stocks].to_i <= 0
       Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
-      flash[:success] = "Assets successfully created!"
+      flash[:success] = "(#{params[:num_stocks]}) Assets successfully created!"
       redirect_to item_stocks_path @item
       return true
     rescue Exception => e
