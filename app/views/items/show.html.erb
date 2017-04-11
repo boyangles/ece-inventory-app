@@ -113,9 +113,13 @@
               -- These requests cannot be approved as is --
             </blockquote>
         <% end %>
-
-        <%= render @requests %>
-        <%= will_paginate @requests %>
+        <% if @requests.count == 0 %>
+            <% text = (is_manager_or_admin?) ? "There are no requests on this item currently." : "You have no requests on this item currently" %>
+            <%= text %>
+        <% else %>
+            <%= render @requests %>
+            <%= will_paginate @requests %>
+        <% end %>
 
       </div>
 

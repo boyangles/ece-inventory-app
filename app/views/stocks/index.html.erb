@@ -8,6 +8,7 @@
       <%= link_to "Available", item_stocks_path(@item , available: true), class: "btn btn-primary" %>
       <%= link_to "Unavailable", item_stocks_path(@item, available: false), class: "btn btn-primary" %>
       <%= link_to 'Convert to Global Item', convert_to_global_item_path(@item), method: :post, data: {confirm: 'Are you sure you want convert back to global item? This will destroy all data relating to your individual assets' }, class: 'btn btn-primary btn-warning' %>
+      <%= render 'searchform' %>
     </div>
   </h2>
 </div>
