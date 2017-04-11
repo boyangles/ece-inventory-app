@@ -2,10 +2,7 @@
 <div class="center_jumbotron">
 
   <h2 class="page-header">
-    <% if !@stocks.first.nil? %>
-        <% @item = Item.where(id: @stocks.first.item_id).take %>
-        <%= link_to @item.unique_name, item_path(@item.id) %>
-    <% end %>
+    <%= link_to @item.unique_name, item_path(@item.id) %>
 
     <div class="pull-right">
       <%= link_to "Available", item_stocks_path(@item , available: true), class: "btn btn-primary" %>

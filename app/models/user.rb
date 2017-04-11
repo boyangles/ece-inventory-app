@@ -232,7 +232,7 @@ class User < ApplicationRecord
           begin
             new_req_item.fulfill_subrequest
           rescue Exception => e
-            raise Exception.new("The following request for item: #{new_req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{new_req_item.item.quantity_was}")
+            raise Exception.new("The following request for item: #{new_req_item.item.unique_name} cannot be fulfilled.")
           end
         end
       end
@@ -267,7 +267,7 @@ class User < ApplicationRecord
           begin
             subrequest.rollback_fulfill_subrequest
           rescue Exception => e
-            raise Exception.new("The following request for item: #{subrequest.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{subrequest.item.quantity_was}")
+            raise Exception.new("The following request for item: #{subrequest.item.unique_name} cannot be fulfilled.")
           end
         end
 
@@ -300,7 +300,7 @@ class User < ApplicationRecord
         begin
           subrequest.fulfill_subrequest if req.approved?
         rescue Exception => e
-          raise Exception.new("The following request for item: #{subrequest.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{subrequest.item.quantity_was}")
+          raise Exception.new("The following request for item: #{subrequest.item.unique_name} cannot be fulfilled.")
         end
       end
     end
