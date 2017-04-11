@@ -122,7 +122,6 @@ feature 'Requests Integration with Stocks Tests' do
     expect(page).to have_selector(:link_or_button, 'Clear Cart')
 
     expect(page).to have_content item.unique_name
-    binding.pry
     expect(page).to have_content request_item.quantity_loan
     expect(page).to have_content request_item.quantity_disburse
 
