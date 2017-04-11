@@ -12,7 +12,8 @@ class StocksController < ApplicationController
   end
 
   def show
-    # create a view that shows the stocks Logs
+    @item_custom_fields = ItemCustomField.where(item_id: @item.id)
+    @stock_custom_fields = StockCustomField.where(stock_id: @stock.id)
   end
 
   def new

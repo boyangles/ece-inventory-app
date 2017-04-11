@@ -360,6 +360,8 @@ class User < ApplicationRecord
           stock.save!
           request_item.quantity_loan -= 1
           request_item.quantity_return += 1
+          request_item.status = 'return'
+
           request_item.save!
           @item.quantity += 1
           @item.quantity_on_loan -= 1
