@@ -20,7 +20,7 @@
 			</div>
 
 			<div class="col-lg-5 pull-right">
-				<% if is_manager_or_admin? %>
+				<% if is_manager_or_admin? and user != current_user %>
 					<%= render 'loans/returnquantityform', request_item: loan %>
 					</br>
 					<%= render 'loans/disbursequantityform', request_item: loan %>

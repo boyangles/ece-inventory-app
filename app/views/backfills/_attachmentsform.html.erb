@@ -34,7 +34,8 @@
 							<tr>
 								<% att = Attachment.find(doc_id) %>
 								<td><%= link_to att.doc_file_name, att.doc.url, target: '_blank' %></td>
-								<td class="text-right"><%= link_to "x", Attachment.find(doc_id), method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-default" %></td>
+								<% if request_item.loan? or request_item.bf_request? %>														<td class="text-right"><%= link_to "x", Attachment.find(doc_id), method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-default" %></td>
+								<% end %>
 							</tr>
 						<% end %>
 					</tbody>
@@ -44,15 +45,15 @@
 			</div>
 
 			<div class="modal-footer">
-				<% if request_item.loan? %>
+				<% if request_item.loan? and current_user == User.find(request_item.request.user_id)%>
 					<%= form_for (request_item) do |f| %>
 						<%= f.hidden_field :bf_status, :value => "bf_request" %>
 						<%= f.submit "Place Backfill Request", class: "btn btn-primary" %>
 					<% end %>
-				<% elsif request_item.bf_request? %>
+				<% elsif request_item.bf_request? and is_manager_or_admin? %>
 					<%= render 'backfills/approvebackfillform', request_item: request_item %>
 					<%= render 'backfills/denybackfillform', request_item: request_item %>
-				<% elsif request_item.bf_in_transit? %>
+				<% elsif request_item.bf_in_transit? and is_manager_or_admin? %>
 					<%= render 'backfills/satisfybfform', request_item: request_item %>
 					<%= render 'backfills/failedbfform', request_item: request_item %>
 				<% end %>

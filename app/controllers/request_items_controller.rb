@@ -72,8 +72,12 @@ class RequestItemsController < ApplicationController
 			flash[:danger] = "That's more than are loaned out!"
 		else
 			reqit.curr_user = current_user
+			puts("ALOHO")
+			puts(request_item_params[:bf_status])
 			reqit.return_subrequest(params[:quantity_to_return].to_f)
-			reqit.update!(:bf_status => params[:bf_status])
+			if (!request_item_params[:bf_status].nil?)
+				reqit.update!(:bf_status => request_item_params[:bf_status])
+			end
 	
 			UserMailer.loan_return_email(reqit,params[:quantity_to_return]).deliver_now
 			flash[:success] = "Quantity successfully returned!"
