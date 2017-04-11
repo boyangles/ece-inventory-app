@@ -51,10 +51,20 @@
           { multiple: true, class: 'chosen-select form-control'}
           %>
         </div>
-
       </div> 
 
-			<!-- CUSTOM_FIELDS! -->
+
+      <div class="form-group"> 
+        <%= f.label :has_stocks, "Per Asset?", class: "col-lg-2 control-label" %>
+        <div class="col-lg-2">
+          <%= f.check_box :has_stocks, class: "form-control" %></td>
+        </div>
+      </div> 
+
+
+
+
+      <!-- CUSTOM_FIELDS! -->
 			<div class="page-header"><h4>Custom Fields</h4></div>
 			<% CustomField.all.each do |cf| %>
 				<% paren = (cf.private_indicator?) ? " (private)" : "" %>

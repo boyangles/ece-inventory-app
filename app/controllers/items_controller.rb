@@ -81,7 +81,6 @@ class ItemsController < ApplicationController
   # POST /items.json
   def create
     begin
-
       ActiveRecord::Base.transaction do
         @item = Item.new(item_params)
         @item.last_action = "created"
@@ -101,7 +100,6 @@ class ItemsController < ApplicationController
 
     rescue Exception => e
       flash.now[:danger] = e.message
-
       render 'new'
     end
 
@@ -210,6 +208,7 @@ class ItemsController < ApplicationController
                                      :model_search,
                                      :status,
                                      :last_action,
+                                     :has_stocks,
                                      :num_stocks,
                                      :tag_list=>[],
                                      item_custom_fields_attributes: [:short_text_content,
