@@ -1,0 +1,38 @@
+<button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#bfdocs-<%=request_item.id%>">Associated PDFs</button>
+
+<div id="bfdocs-<%=request_item.id%>" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				Backfill PDFs
+			</div>
+
+			<div class="modal-body">
+				<table class="table">
+					<tbody>
+						<% request_item.attachment_ids.each do |doc_id| %>
+							<tr>
+								<td>doc_id</td>
+								<td><%= link_to &times;, Attachment.find(doc_id), method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-default" %></td>
+							</tr>
+						<% end %>
+					</tbody>
+				</table>
+
+				<% render 'request_items/attachmentform', attachment: Attachment.new(request_item_id: request_item.id) %>
+			</div>
+
+			<div class="modal-footer">
+				~oooh buttons oooh~
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<%= form_for (request_item) do |f| %>
+
+
+
+<% end %>			
