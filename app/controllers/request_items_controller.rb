@@ -20,9 +20,15 @@ class RequestItemsController < ApplicationController
 
 	end
 
+	def edit
+		@request_item = RequestItem.find(params[:id])
+		@loan_tag_list = @request_item.create_serial_tag_list('loan')
+		@disburse_tag_list = @request_item.create_serial_tag_list('disburse')
+	end
+
 	def create
 		@request_item = RequestItem.new(request_item_params)
-	@request_item.curr_user = current_user 
+		@request_item.curr_user = current_user
 
 		begin
 			@request_item.save!
@@ -32,12 +38,14 @@ class RequestItemsController < ApplicationController
 			flash[:danger] = "You may not add this to the cart! Error: #{e}"
 			redirect_to item_path(Item.find(@request_item.item_id))
 		end
-    
+
 	end
 
 	def update
 		@request_item = RequestItem.find(params[:id])
-    		@request_item.curr_user = current_user
+		@request_item.curr_user = current_user
+
+		@request_item.create_request_item_stocks(params[:serial_tags_disburse], params[:serial_tags_loan])
 
 		respond_to do |format|
 			begin
@@ -54,7 +62,7 @@ class RequestItemsController < ApplicationController
 	end
 
 	def show
-
+		@request_item = RequestItem.find(params[:id])
 	end
 
 	def destroy
@@ -66,16 +74,27 @@ class RequestItemsController < ApplicationController
 	end
 
 	def return
+		# binding.pry
 		reqit = RequestItem.find(params[:id])
 		if (params[:quantity_to_return].to_f > reqit.quantity_loan)
 			flash[:danger] = "That's more than are loaned out!"
 		else
 			reqit.curr_user = current_user
-			reqit.return_subrequest(params[:quantity_to_return].to_f)
+			# TODO: specify the list of serial tags to return
+			if Item.find(reqit.item_id).has_stocks
+				# binding.pry
+				current_user.return_subrequest(reqit, params[:serial_tags_loan_return])
+			else
+				current_user.return_subrequest(reqit, params[:quantity_to_return].to_f)
+			end
 			UserMailer.loan_return_email(reqit,params[:quantity_to_return]).deliver_now
 			flash[:success] = "Quantity successfully returned!"
 		end
 		redirect_to request_path(reqit.request_id)
+	end
+
+	def specify_return_serial_tags
+		@request_item = RequestItem.find(params[:id])
 	end
 
 	def disburse_loaned
@@ -90,7 +109,6 @@ class RequestItemsController < ApplicationController
 		end
 		redirect_to request_path(reqit.request_id)
 	end
-
 
 	private
 

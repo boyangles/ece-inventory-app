@@ -1,10 +1,10 @@
 <p id="notice"><%= notice %></p>
 <% provide(:title, @item.unique_name) %>
 
-<% if !@item.active? %>
+<% if !@stock.active? %>
     <div class="panel panel-danger">
       <div class="panel-heading">
-        <h3 class="panel-title">Item has been deleted.</h3>
+        <h3 class="panel-title">Stock has been deleted.</h3>
       </div>
     </div>
 <% end %>
@@ -16,12 +16,12 @@
 
         <div class="pull-right">
           <table><tbody><tr>
+            <% if @item.has_stocks? %>
+                <td><%= link_to 'Show Assets', item_stocks_path(@item.id), class: 'btn btn-primary' %></td>
+            <% else %>
+                <td><%= link_to 'Convert to Assets', convert_to_stocks_item_path(@item), method: :post, class: 'btn btn-primary' %></td>
+            <% end %>
             <% if is_manager_or_admin? && @item.active? %>
-                <% if @item.has_stocks? %>
-                    <td><%= link_to 'Show Assets', item_stocks_path(@item.id), class: 'btn btn-primary' %></td>
-                <% else %>
-                    <td><%= link_to 'Convert to Assets', convert_to_stocks_item_path(@item.id), method: :post, class: 'btn btn-primary' %></td>
-                <% end %>
                 <td><%= link_to "Edit Item", edit_item_url(@item.id), :class => "btn btn-primary" %></td>
             <% end %>
 

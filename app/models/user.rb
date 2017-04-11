@@ -333,6 +333,52 @@ class User < ApplicationRecord
   end
 
   ##
+  # REQ-ITEM-4: return_subrequest
+  def return_subrequest(request_item, list_to_return)
+    raise Exception.new("fu") if self.privilege_student?
+
+    @item = request_item.item
+    if !@item.has_stocks
+      quantity_to_return = (list_to_return.nil?) ? 0 : list_to_return
+    else
+      quantity_to_return = (list_to_return.nil?) ? 0 : list_to_return.size
+    end
+    ActiveRecord::Base.transaction do
+      if @item.has_stocks
+        list_to_return.each do |st_name|
+          # binding.pry
+          stock = Stock.find_by(serial_tag: st_name)
+          raise Exception.new("fu1") unless stock
+
+          # DONE
+          request_item_stock = RequestItemStock.find_by(request_item_id: request_item.id, stock_id: stock.id)
+          raise Exception.new("fu2") unless request_item_stock
+
+          raise Exception.new("fu3") if stock.available
+
+          stock.available = true
+          stock.save!
+          request_item.quantity_loan -= 1
+          request_item.quantity_return += 1
+          request_item.save!
+          @item.quantity += 1
+          @item.quantity_on_loan -= 1
+          @item.save!
+        end
+      else
+        if quantity_to_return > 0
+          request_item.create_log("returned", quantity_to_return)
+        end
+
+        request_item.update!(:quantity_loan => request_item[:quantity_loan] - quantity_to_return, :quantity_return => request_item[:quantity_return] + quantity_to_return)
+
+        @item.update!(:quantity => @item[:quantity] + quantity_to_return)
+        @item.update!(:quantity_on_loan => @item[:quantity_on_loan] - quantity_to_return)
+      end
+    end
+  end
+
+  ##
   # USER-2: approve_outstanding_request
   # Allows managers/admins to approve outstanding request
   # Input: @request
@@ -344,6 +390,29 @@ class User < ApplicationRecord
       false
     else
       request.update(:status => 'approved')
+    end
+  end
+
+
+  def make_request_decision(request, request_params)
+    #TODO: change message
+    status_change = request_params[:status]
+    raise Exception.new("Check your privilege") if self.privilege_student && (!status_change == 'cancelled')
+
+    raise Exception.new("Request must be outstanding") unless request.status == 'outstanding'
+
+    case status_change
+      when 'approved'
+        ActiveRecord::Base.transaction do
+          request.request_items.each do |ri|
+            ri.validates_stock_item_serial_tags_are_set!
+            request.update_attributes!(request_params)
+          end
+        end
+      when 'denied'
+        request.update_attributes!(request_params)
+      else # 'cancelled'
+        request.update_attributes!(request_params)
     end
   end
 
