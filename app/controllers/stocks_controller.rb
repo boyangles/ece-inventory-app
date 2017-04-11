@@ -35,6 +35,7 @@ class StocksController < ApplicationController
   end
 
   def edit
+    @stock_custom_fields = StockCustomField.where(stock_id: @stock.id)
   end
 
   def update
@@ -68,7 +69,15 @@ class StocksController < ApplicationController
   private
 
   def stock_params
-    params.require(:stock).permit(:item_id, :available, :serial_tag)
+    params.fetch(:stock, {}).permit(:serial_tag,
+                                    :available,
+                                    :item_id,
+                                    stock_custom_fields_attributes: [:short_text_content,
+                                                                    :long_text_content,
+                                                                    :integer_content,
+                                                                    :float_content,
+                                                                    :stock_id, :custom_field_id, :id])
+    # params.require(:stock).permit(:item_id, :available, :serial_tag)
   end
 
   def set_stock
