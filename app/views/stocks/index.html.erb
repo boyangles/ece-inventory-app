@@ -1,31 +1,30 @@
 
-<div class="pull-right">
-  <%= form_tag( create_stocks_item_path(@item), method: :post, multipart: true) do |f| %>
-      <div class="form-group">
-        <div class="col-lg-12">
-          <%= number_field_tag :num_stocks, placeholder: 0, :class => "form-control" %>
-        </div>
-      </div>
-      <%= submit_tag "Create Asset", class: "btn btn-default", type: "submit" %>
-  <% end %>
+<div class="center_jumbotron">
+
+  <h2 class="page-header">
+    <% if !@stocks.first.nil? %>
+        <% @item = Item.where(id: @stocks.first.item_id).take %>
+        <%= link_to @item.unique_name, item_path(@item.id) %>
+    <% end %>
+
+    <div class="pull-right">
+      <%= link_to "Available", item_stocks_path(@item , available: true), class: "btn btn-primary" %>
+      <%= link_to "Unavailable", item_stocks_path(@item, available: false), class: "btn btn-primary" %>
+      <%= link_to 'Convert to Global Item', convert_to_global_item_path(@item), method: :post, data: {confirm: 'Are you sure you want convert back to global item? This will destroy all data relating to your individual assets' }, class: 'btn btn-primary btn-warning' %>
+    </div>
+  </h2>
 </div>
+
+<%= form_tag( create_stocks_item_path(@item), method: :post, multipart: true) do |f| %>
+    <div class="pull-right form-group">
+      <%= number_field_tag :num_stocks, '0', class: 'form-control col-lg-10' %>
+      <%= submit_tag "Create Assets", class: "form-control", type: "submit" %>
+    </div>
+<% end %>
+
 
 <table class="table table-striped table-hover">
   <thead>
-  <div class="text-center">
-    <h1>
-      <% if !@stocks.first.nil? %>
-          <% @item = Item.where(id: @stocks.first.item_id).take %>
-          <%= link_to @item.unique_name, item_path(@item.id) %>
-      <% end %>
-    </h1>
-  </div>
-
-<div class="pull-right">
-  <%= link_to "Available", item_stocks_path(@item , available: true), class: "btn btn-lg btn-primary" %>
-  <%= link_to "Unavailable", item_stocks_path(@item, available: false), class: "btn btn-lg btn-primary" %>
-  <%= link_to 'Convert to Global', convert_to_global_item_path(@item), method: :post, data: {confirm: 'Are you sure you want convert back to global item? This will destroy all data relating to your individual assets' }, class: 'btn btn-primary' %>
-</div>
 
   <tr>
     <th>Serial Tag</th>

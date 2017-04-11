@@ -1,7 +1,7 @@
 <p id="notice"><%= notice %></p>
 <% provide(:title, @item.unique_name) %>
 
-<% if !@stock.active? %>
+<% if @stock.nil? %>
     <div class="panel panel-danger">
       <div class="panel-heading">
         <h3 class="panel-title">Stock has been deleted.</h3>
@@ -12,11 +12,11 @@
 <% if @item.active? || is_manager_or_admin? %>
 
     <div class="center_jumbotron">
-      <h2 class="page-header"><%= @item.unique_name %>
+      <h2 class="page-header"><%= link_to @item.unique_name, item_stocks_path(@item) %>
 
         <div class="pull-right">
           <table><tbody><tr>
-            <td><%= link_to "Edit Asset", edit_item_stocks_path(@item.id, @stock.id), :class => "btn btn-primary" %></td>
+            <td><%= link_to "Edit Asset", edit_item_stock_path(@item.id, @stock.id), :class => "btn btn-primary" %></td>
 
           </tr></tbody></table>
         </div>
@@ -25,7 +25,6 @@
 
     <ul class="nav nav-tabs">
       <li class="active"><a href="#home" data-toggle="tab">Item Details</a></li>
-      <li><a href="#requests" data-toggle="tab"><%= (is_manager_or_admin?) ? "All Outstanding Requests" : "My Outstanding Requests" %></a></li>
       <li><a href="#loans" data-toggle="tab">Loans</a></li>
       <% if is_manager_or_admin? %><li><a href="#logs" data-toggle="tab">Logs</a></li><% end %>
     </ul>
@@ -44,7 +43,7 @@
             </p>
 
             <p>
-              <strong>Available?:</strong>
+              <strong>Available:</strong>
               <%= @stock.available? ? 'Available' : 'Not Available' %>
             </p>
 
@@ -72,12 +71,12 @@
         <div class="col-lg-0.5"></div>
 
         <div class="panel panel-info">
-          <div class="panel-heading">Additional Information</div>
+          <div class="panel-heading">Global Information</div>
           <div class="panel-body">
             <!-- Custom Fields -->
             <% @item_custom_fields.each do |icf| %>
                 <% field_content = ( ItemCustomField.field_content(@item.id, icf.custom_field_id).blank? ?  'None' : ItemCustomField.field_content(@item.id, icf.custom_field_id) ) %>
-                <% if is_manager_or_admin? || !icf.custom_field.private_indicator %>
+                <% if (is_manager_or_admin? || !icf.custom_field.private_indicator) && !icf.custom_field.is_stock %>
                     <p>
                       <strong><%= icf.custom_field.field_name %>: </strong>
                       <%= field_content %>
@@ -89,7 +88,7 @@
         </div>
 
         <div class="panel panel-info">
-          <div class="panel-heading">Additional Information</div>
+          <div class="panel-heading">Asset Information</div>
           <div class="panel-body">
             <!-- Stock Custom Fields -->
             <% @stock_custom_fields.each do |icf| %>
@@ -111,12 +110,10 @@
       <div class="tab-pane fade" id="loans">
         <br>
 
-
-        <% request_item_stock = RequestItemStock.find_by(status: 'loan') %>
-        <% if request_item_stock.nil? %>
-            <h1>Not yet loaned out!</h1>
+        <% if @request_item_stock.nil? %>
+            <h2>Not yet loaned out!</h2>
         <% else %>
-            <% request = request_item_stock.request_item.request %>
+            <% request = @request_item_stock.request_item.request %>
             <%= link_to 'View loan details', request_path(request) %>
         <% end %>
       </div>

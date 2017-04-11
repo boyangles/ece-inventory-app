@@ -14,6 +14,7 @@ class StocksController < ApplicationController
   def show
     @item_custom_fields = ItemCustomField.where(item_id: @item.id)
     @stock_custom_fields = StockCustomField.where(stock_id: @stock.id)
+    @request_item_stock = RequestItemStock.find_by(stock_id: @stock.id, status: 'loan')
   end
 
   def new
