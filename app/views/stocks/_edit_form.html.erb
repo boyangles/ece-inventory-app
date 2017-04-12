@@ -1,0 +1,12 @@
+<%= form_for [item, stock], :html => {:class => "form-horizontal"} do |f| %>
+    <% @form_obj = stock %>
+    <% if @form_obj %>
+        <%= render 'shared/error_messages', object: @form_obj %>
+    <% end %>
+    <fieldset>
+      <div class="text-center">
+        <%= f.text_field :serial_tag, label: true, autofocus: true %>
+        <%= f.submit "Submit", class: "btn btn-primary" %>
+      </div>
+    </fieldset>
+<% end %>

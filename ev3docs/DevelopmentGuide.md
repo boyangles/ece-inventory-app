@@ -27,6 +27,7 @@ The database consists of tables with the model classes as the primary (lookup) k
 | Request_Log | log_id, request_id, action |
 | Stack_Exchange | created_at, updated_at |
 | Subscriber | user_id |
+| Setting | var, value|
 
 The User, Item, Custom_Field, Tag, Request, and Log refer to items explicitly mentioned in the requirements. The additional fields are to improve and enhance associations and navigation between the classes. They will all be discussed in detail below.
 
@@ -191,7 +192,7 @@ Stack Exchanges is a class provided by OAuth in order to allow for NetID login f
 A manager can add or take himself off the subscriber list. If a manager is subscribed, he/she will receive an email every time a request is made.
 
 ##### FIELDS
-* **user_id** - This references the entry in the users table which this subscriber belongs to. In this way, we can query the user in order to find the specific details of any user.
+* **user_id** - This references the entry in the users table which this subscriber belongs to. In this way, we can query the user in order to find the specific details of any user who is subscribed.
 
 ### Settings
 Settings are currently used to log all the settings regarding emails. Currently in Evolution 3, there are 3 main settings: the email subject tag, email body, and dates that the email will be sent out. 

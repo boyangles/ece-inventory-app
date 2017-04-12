@@ -27,6 +27,8 @@ class Request < ApplicationRecord
   scope :status, -> (status) { where status: status }
 	attr_accessor :curr_user
 
+
+
   after_update {
 		check_items_still_valid
     update_respective_items
@@ -75,6 +77,7 @@ class Request < ApplicationRecord
 		  self.request_items.each do |req_item|
         begin
 	        req_item.fulfill_subrequest
+          # TODO: Fix logs for stock items
           if !req_item.quantity_disburse.nil? 
             if req_item.quantity_disburse. > 0
               create_item_log("disbursed", req_item, req_item.quantity_disburse)
@@ -84,12 +87,13 @@ class Request < ApplicationRecord
             create_item_log("loaned", req_item, req_item.quantity_loan)
           end
         rescue Exception => e
-          raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity}")
+          raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity}. The error message is #{e.message}")
         end
       end
     elsif self.status_was == 'approved' && self.status != 'approved'
       self.request_items.each do |req_item|
         begin
+          # TODO: Rollback for stock items
           req_item.rollback_fulfill_subrequest
         rescue Exception => e
           raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity}")
@@ -179,5 +183,6 @@ class Request < ApplicationRecord
     itemlog = ItemLog.new(:log_id => log.id, :item_id => itemo.id, :action => action, :quantity_change => quantity_change, :old_name => old_name, :new_name => itemo.unique_name, :old_desc => old_desc, :new_desc => itemo.description, :old_model_num => old_model, :new_model_num => itemo.model_number, :curr_quantity => itemo.quantity, :affected_request => self.id)
     itemlog.save!
   end
+
 
 end

@@ -1,30 +1,34 @@
 <table class="table table-striped table-hover">
-	<thead>
-		<tr>
-			<th>Item Name</th>
-			<th class="text-center">Quantity Loaned</th>
-			<th class="text-center">Quantity Disbursed</th>
-			<th class="text-center">Quantity Returned</th>
-			<th></th>
-			<th></th>
-		</tr>
-	</thead>
+  <thead>
+  <tr>
+    <th>Item Name</th>
+    <th class="text-center">Quantity Loaned</th>
+    <th class="text-center">Quantity Disbursed</th>
+    <th class="text-center">Quantity Returned</th>
+    <th></th>
+    <th></th>
+  </tr>
+  </thead>
 
-        <tbody>
-		<% request.request_items.each do |req_item| %> 
-			<tr>
-				<td><%= link_to req_item.item.unique_name, item_path(req_item.item_id) %></td>
-				<td class="text-right"><%= req_item.quantity_loan %></td>
-				<td class="text-right"><%= req_item.quantity_disburse %></td>
-				<td class="text-right"><%= req_item.quantity_return %></td>
-				<% if (req_item.quantity_loan > 0) %>
-					<td><%= render :partial => 'loans/returnquantityform', locals: {request_item: req_item} %></td>
-					<td><%= render :partial => 'loans/disbursequantityform', locals: {request_item: req_item} %></td>
-				<% else %>
-					<td></td>
-					<td></td>
-				<% end %>
-			</tr>
-		<% end %>	
-	</tbody>
+  <tbody>
+  <% request.request_items.each do |req_item| %>
+      <tr>
+        <td><%= link_to req_item.item.unique_name, item_path(req_item.item_id) %></td>
+        <td class="text-right"><%= req_item.quantity_loan %></td>
+        <td class="text-right"><%= req_item.quantity_disburse %></td>
+        <td class="text-right"><%= req_item.quantity_return %></td>
+        <% if (req_item.quantity_loan > 0) %>
+            <% if Item.find(req_item.item_id).has_stocks %>
+                <td><%= render 'loans/returnquantityform', request_item: req_item %></td>
+            <% else %>
+                <td><%= render 'loans/return_global_items', request_item: req_item %></td>
+            <% end %>
+            <td><%= render :partial => 'loans/disbursequantityform', locals: {request_item: req_item} %></td>
+        <% else %>
+            <td></td>
+            <td></td>
+        <% end %>
+      </tr>
+  <% end %>
+  </tbody>
 </table>

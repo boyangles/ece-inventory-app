@@ -2,6 +2,7 @@ class ItemsController < ApplicationController
   before_action :check_logged_in_user
   before_action :check_manager_or_admin, only: [:create, :new, :edit, :update]
   before_action :check_admin_user, only: [:destroy]
+  before_action :set_item,  only: [:edit, :edit_quantity, :update, :create_stocks, :convert_to_global, :convert_to_stocks]
 
   # GET /items
   # GET /items.json
@@ -55,16 +56,18 @@ class ItemsController < ApplicationController
 
   # GET /items/1/edit
   def edit
-    @item = Item.find(params[:id])
     @item_custom_fields = ItemCustomField.where(item_id: @item.id)
   end
 
   def edit_quantity
-    @item = Item.find(params[:id])
+
   end
 
   # DELETE /items/1
   def destroy
+
+    # Delete stocks with destroy_stocks_by_serial_tags! - surround with try catch
+
     item = Item.find(params[:id]).status = 'deactive'
     item.save!
     flash[:success] = "Item deleted!"
@@ -122,7 +125,6 @@ class ItemsController < ApplicationController
   end
 
   def update
-    @item = Item.find(params[:id])
     @item.curr_user = current_user
 
     @item.tags.delete_all
@@ -141,18 +143,58 @@ class ItemsController < ApplicationController
       render 'edit'
     end
   end
-
+ 
+ 
 
   def update_quantity
     @item.quantity = @item.quantity + params[:quantity_change].to_f
-    if !@item.save!
+    if !@item.save
       flash.now[:danger] = "Quantity unable to be changed"
       render 'edit'
+    end
+
+  end
+
+  def convert_to_stocks
+    if @item.convert_to_stocks
+      flash[:success] = "Item successfully converted to Assets!"
+      redirect_to item_stocks_path(@item)
+    else
+      flash.now[:danger] = "Item already converted to Assets"
+      render :show
+    end
+  end
+
+  def convert_to_global
+    if @item.convert_to_global
+      flash[:success] = "Item successfully converted to global"
+      redirect_to item_path(@item)
+    else
+      flash.now[:danger] = "Item already global"
+      render :show
+    end
+  end
+
+
+  def create_stocks
+    begin
+      Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
+      flash[:success] = "Assets successfully created!"
+      redirect_to item_stocks_path @item
+      return true
+    rescue Exception => e
+      flash.now[:danger] = e.message
+      redirect_to users_path
+      return false
     end
   end
 
 
   private
+
+  def set_item
+    @item = Item.find(params[:id])
+  end
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params
@@ -161,8 +203,12 @@ class ItemsController < ApplicationController
                                      :quantity,
                                      :model_number,
                                      :description,
+                                     :search,
+                                     :model_search,
                                      :status,
                                      :last_action,
+                                     :num_stocks,
+                                     :tag_list=>[],
                                      item_custom_fields_attributes: [:short_text_content,
                                                                      :long_text_content,
                                                                      :integer_content,
