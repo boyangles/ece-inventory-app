@@ -178,15 +178,6 @@ class RequestItem < ApplicationRecord
     end
   end
 
-	def get_total_backfill_quantity
-		bf_quantity = 0
-		self.backfills.each do |bf|
-			bf_quantity = bf_quantity + bf.quantity
-		end
-
-		return bf_quantity
-	end
-
   ## Validations
 
   def validates_loan_and_disburse_not_zero

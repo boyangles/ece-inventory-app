@@ -32,7 +32,6 @@ class Request < ApplicationRecord
 	  update_respective_items
 		create_cart_on_status_change_from_cart(self.user_id)
 		log_on_status_change()
-		deny_bf_on_status_change_to_deny
   }
 
   # Validations
@@ -123,32 +122,12 @@ class Request < ApplicationRecord
     end
   end
 
-	def deny_bf_on_status_change_to_deny
-		if self.status_was != "denied" && self.status == "denied" 
-			self.request_items.each do |req_item|
-				req_item.backfills.each do |bf|
-					if (bf.outstanding?)
-						bf.update!(:status => "denied")
-					end
-				end
-			end
-		end
-	end
-
 	def log_on_status_change()
 		old_status = self.status_was
 		new_status = self.status
 
 		if old_status == 'cart' && new_status == 'outstanding' 
 			create_log("placed")
-			self.request_items.each do |req_item|
-				req_item.backfills.each do |bf|
-					if (bf.in_cart?)
-						bf.update!(:status => "outstanding")
-					end
-				end
-			end
-
 		elsif old_status != new_status
 			create_log(new_status)
 		end
