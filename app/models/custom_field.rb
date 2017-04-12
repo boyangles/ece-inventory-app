@@ -27,6 +27,7 @@ class CustomField < ApplicationRecord
             presence: true, uniqueness: true
   validates :private_indicator, :inclusion => { in: [ true, false ] }
   validates :field_type, :inclusion => { :in => FIELD_TYPE_OPTIONS }
+  validates :is_stock, :inclusion => { in: [true, false] }
 
   after_update :clear_associated_field_entries, if: :field_type_changed?
   after_create {

@@ -188,6 +188,8 @@ class RequestItem < ApplicationRecord
     serial_tags_disburse = [] unless serial_tags_disburse
     serial_tags_loan = [] unless serial_tags_loan
 
+    raise Exception.new("Cannot specify asset for both disbuse and loan") unless serial_tags_are_unique(serial_tags_disburse, serial_tags_loan)
+
     # binding.pry
     # Destroy all request item stocks associated with request item in order to remove the previous tags
     RequestItemStock.where(request_item_id: self.id).destroy_all
@@ -258,5 +260,11 @@ class RequestItem < ApplicationRecord
         errors.add(:quantity_loan, "cannot be negative") unless quantity_loan > -1
         errors.add(:quantity_return, "cannot be negative") unless quantity_return > -1
     end
+  end
+
+  private
+
+  def serial_tags_are_unique(serial_tags_disburse, serial_tags_loan)
+    !((serial_tags_disburse & serial_tags_loan).size > 0)
   end
 end

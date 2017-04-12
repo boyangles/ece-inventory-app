@@ -45,12 +45,17 @@ class RequestItemsController < ApplicationController
 		@request_item = RequestItem.find(params[:id])
 		@request_item.curr_user = current_user
 
-		@request_item.create_request_item_stocks(params[:serial_tags_disburse], params[:serial_tags_loan])
+		begin
+			@request_item.create_request_item_stocks(params[:serial_tags_disburse], params[:serial_tags_loan])
+		rescue Exception => e
+			flash[:danger] = e.message
+			redirect_to request_path(@request_item.request) and return
+		end
 
 		respond_to do |format|
 			begin
 				@request_item.update_attributes!(request_item_params)
-				format.html { redirect_to @request_item.request, notice: "Item quantity updated successfully." }
+				format.html { redirect_to @request_item.request, notice: "Item updated successfully." }
 				format.json { head :no_content }
 			rescue Exception => e
 				flash[:danger] = e.message

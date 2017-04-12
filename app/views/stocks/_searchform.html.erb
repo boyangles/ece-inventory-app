@@ -1,0 +1,12 @@
+<%= form_tag '#', :method => 'get' do |f| %>
+    <%= link_to "Search", '#', id: 'search-link', class: 'btn btn-primary' %>
+    <div class="advanced-search">
+      <div class="form-group">
+        <%= label_tag :search, "Search by Serial Tag", :class=>"col-lg-12 control-label" %>
+        <div class="col-lg-12">
+          <%= text_field_tag :search, params[:search], :placeholder => "Serial Tag",  :class => "form-control" %>
+          <%= submit_tag "Search", class: "btn btn-default", type: "submit" %>
+        </div>
+      </div>
+    </div>
+<% end %>

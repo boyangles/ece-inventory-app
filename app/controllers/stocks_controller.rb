@@ -8,11 +8,13 @@ class StocksController < ApplicationController
   def index
     @item = Item.find(params[:item_id])
     filter_params = params.slice(:available)
-    @stocks = Stock.where(item_id: @item.id).filter(filter_params).paginate(page: params[:page], per_page: 10)
+    @stocks = Stock.where(item_id: @item.id).filter(filter_params).filter_by_search(params[:search]).paginate(page: params[:page], per_page: 10)
   end
 
   def show
-    # create a view that shows the stocks Logs
+    @item_custom_fields = ItemCustomField.where(item_id: @item.id)
+    @stock_custom_fields = StockCustomField.where(stock_id: @stock.id)
+    @request_item_stock = RequestItemStock.find_by(stock_id: @stock.id, status: 'loan')
   end
 
   def new
@@ -34,14 +36,17 @@ class StocksController < ApplicationController
   end
 
   def edit
+    @stock_custom_fields = StockCustomField.where(stock_id: @stock.id)
   end
 
   def update
-    if @stock.update_attributes(stock_params)
+    begin
+      current_user.update_stock_attributes(@stock, stock_params)
       flash[:success] = "Stock updated"
-      redirect_to item_stocks_path @item
-    else
-      flash[:danger] = "Cannot update stock"
+      redirect_to item_stock_path(@item, @stock)
+    rescue Exception => e
+      flash.now[:danger] = e.message
+      @stock.reload
       render :edit
     end
   end
@@ -67,7 +72,15 @@ class StocksController < ApplicationController
   private
 
   def stock_params
-    params.require(:stock).permit(:item_id, :available, :serial_tag)
+    params.fetch(:stock, {}).permit(:serial_tag,
+                                    :available,
+                                    :item_id,
+                                    stock_custom_fields_attributes: [:short_text_content,
+                                                                    :long_text_content,
+                                                                    :integer_content,
+                                                                    :float_content,
+                                                                    :stock_id, :custom_field_id, :id])
+    # params.require(:stock).permit(:item_id, :available, :serial_tag)
   end
 
   def set_stock

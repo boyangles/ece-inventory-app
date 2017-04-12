@@ -60,6 +60,10 @@ class Stock < ApplicationRecord
     end
   end
 
+  def self.filter_by_search(search_input)
+    where("serial_tag ILIKE ?", "%#{search_input}%")
+  end
+
   ## Private variables
   private
   def generate_code(number)

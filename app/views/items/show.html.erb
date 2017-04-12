@@ -87,7 +87,7 @@
         <div class="col-lg-0.5"></div>
 
         <div class="panel panel-info">
-          <div class="panel-heading">Additional Information</div>
+          <div class="panel-heading">Global Information</div>
           <div class="panel-body">
             <!-- Custom Fields -->
             <% @item_custom_fields.each do |icf| %>
@@ -113,9 +113,13 @@
               -- These requests cannot be approved as is --
             </blockquote>
         <% end %>
-
-        <%= render @requests %>
-        <%= will_paginate @requests %>
+        <% if @requests.count == 0 %>
+            <% text = (is_manager_or_admin?) ? "There are no requests on this item currently." : "You have no requests on this item currently" %>
+            <%= text %>
+        <% else %>
+            <%= render @requests %>
+            <%= will_paginate @requests %>
+        <% end %>
 
       </div>
 

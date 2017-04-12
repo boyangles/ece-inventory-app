@@ -232,7 +232,7 @@ class User < ApplicationRecord
           begin
             new_req_item.fulfill_subrequest
           rescue Exception => e
-            raise Exception.new("The following request for item: #{new_req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{new_req_item.item.quantity_was}")
+            raise Exception.new("The following request for item: #{new_req_item.item.unique_name} cannot be fulfilled.")
           end
         end
       end
@@ -267,7 +267,7 @@ class User < ApplicationRecord
           begin
             subrequest.rollback_fulfill_subrequest
           rescue Exception => e
-            raise Exception.new("The following request for item: #{subrequest.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{subrequest.item.quantity_was}")
+            raise Exception.new("The following request for item: #{subrequest.item.unique_name} cannot be fulfilled.")
           end
         end
 
@@ -300,7 +300,7 @@ class User < ApplicationRecord
         begin
           subrequest.fulfill_subrequest if req.approved?
         rescue Exception => e
-          raise Exception.new("The following request for item: #{subrequest.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{subrequest.item.quantity_was}")
+          raise Exception.new("The following request for item: #{subrequest.item.unique_name} cannot be fulfilled.")
         end
       end
     end
@@ -360,6 +360,8 @@ class User < ApplicationRecord
           stock.save!
           request_item.quantity_loan -= 1
           request_item.quantity_return += 1
+          request_item.status = 'return'
+
           request_item.save!
           @item.quantity += 1
           @item.quantity_on_loan -= 1
@@ -431,6 +433,14 @@ class User < ApplicationRecord
     end
   end
 
+  def update_stock_attributes(stock, stock_params)
+    # Raises exception if manager tries to update the serial tag
+    stock.serial_tag = stock_params[:serial_tag]
+    raise Exception.new('Cannot modify serial tag as manager') if self.privilege_manager? && stock.serial_tag_changed?
+
+    stock.update_attributes!(stock_params)
+  end
+
   ##
   # TODO
   # USER-4: borrowed_items
@@ -443,4 +453,6 @@ class User < ApplicationRecord
   def self.isDukeEmail?(email_address)
     return email_address.match(DUKE_EMAIL_REGEX)
   end
+
+
 end

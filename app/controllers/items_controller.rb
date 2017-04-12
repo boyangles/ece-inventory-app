@@ -46,7 +46,9 @@ class ItemsController < ApplicationController
     end
 
     @requests = @item.requests.filter(outstanding_filter_params).paginate(page: params[:page], per_page: 10)
-    @item_custom_fields = ItemCustomField.where(item_id: @item.id)
+    @item_custom_fields = (@item.has_stocks) ?
+        ItemCustomField.filter({ item_id: @item.id, is_global: true }) :
+        ItemCustomField.filter({item_id: @item.id})
   end
 
   # GET /items/new
@@ -79,7 +81,6 @@ class ItemsController < ApplicationController
   # POST /items.json
   def create
     begin
-
       ActiveRecord::Base.transaction do
         @item = Item.new(item_params)
         @item.last_action = "created"
@@ -99,7 +100,6 @@ class ItemsController < ApplicationController
 
     rescue Exception => e
       flash.now[:danger] = e.message
-
       render 'new'
     end
 
@@ -178,13 +178,14 @@ class ItemsController < ApplicationController
 
   def create_stocks
     begin
+      throw Exception.new('Number must be greater than 0') if params[:num_stocks].to_i <= 0
       Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
-      flash[:success] = "Assets successfully created!"
+      flash[:success] = "(#{params[:num_stocks]}) Assets successfully created!"
       redirect_to item_stocks_path @item
       return true
     rescue Exception => e
-      flash.now[:danger] = e.message
-      redirect_to users_path
+      flash[:danger] = e.message
+      redirect_to item_stocks_path @item
       return false
     end
   end
@@ -207,6 +208,7 @@ class ItemsController < ApplicationController
                                      :model_search,
                                      :status,
                                      :last_action,
+                                     :has_stocks,
                                      :num_stocks,
                                      :tag_list=>[],
                                      item_custom_fields_attributes: [:short_text_content,
