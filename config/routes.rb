@@ -11,8 +11,10 @@ Rails.application.routes.draw do
   # Loans
   get 'loans/index'
   root 'loans#index'
-
-  # All resources
+	get 'backfills/index'
+	root 'backfills#index'
+  
+	# All resources
   resources :users do
     member do
       get :auth_token
@@ -57,6 +59,7 @@ Rails.application.routes.draw do
 
 
 
+	resources :attachments
   resources :subscribers
   resources :settings
 

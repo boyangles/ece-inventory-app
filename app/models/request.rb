@@ -31,8 +31,8 @@ class Request < ApplicationRecord
 
   after_update {
 		check_items_still_valid
-    update_respective_items
-    create_cart_on_status_change_from_cart(self.user_id)
+	  update_respective_items
+		create_cart_on_status_change_from_cart(self.user_id)
 		log_on_status_change()
   }
 
@@ -76,6 +76,7 @@ class Request < ApplicationRecord
     if self.status_was != 'approved' && self.status == 'approved'
 		  self.request_items.each do |req_item|
         begin
+					#req_item.oversubscribed
 	        req_item.fulfill_subrequest
           # TODO: Fix logs for stock items
           if !req_item.quantity_disburse.nil? 

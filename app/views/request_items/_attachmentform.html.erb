@@ -1,0 +1,9 @@
+<%= form_for (attachment) do |f| %>
+	<div class="form-group">
+		<%= f.hidden_field :request_item_id %>
+
+		<%= f.file_field :doc, class: "form-control" %>
+
+		<%= f.submit "Upload PDF", class: "btn btn-default" %>
+	</div>
+<% end %>

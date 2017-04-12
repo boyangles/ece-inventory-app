@@ -3,38 +3,24 @@ class RequestItem < ApplicationRecord
 
   belongs_to :request
   belongs_to :item
+	has_many :attachment
 
   ## Constants
-  REQUEST_TYPE_OPTIONS = %w(disbursement loan mixed)
 
-  enum request_type: {
-      disbursement: 0,
-      loan: 1,
-      mixed: 2
-  }
+	enum bf_status: {
+		loan: 0,
+		bf_request: 1,
+		bf_in_transit: 2,
+		bf_denied: 3,
+		bf_satisfied: 4,
+		bf_failed: 5
+	}
 
   # Scopes for filtering
   scope :request_id, -> (request_id) { where request_id: request_id }
   scope :item_id, -> (item_id) { where item_id: item_id }
   scope :user_id, -> (user_id) { joins(:request).where(requests: { user_id: user_id }) }
   scope :status, -> (status) { joins(:request).where(requests: { status: status }) }
-  scope :request_type, -> (request_type) {
-    case request_type
-      when 'disbursement'
-        where("(quantity_loan <= 0 AND quantity_return <= 0 AND quantity_disburse > 0)")
-      when 'loan'
-        where("(quantity_loan <= 0 AND quantity_return > 0 AND quantity_disburse <= 0) OR
-               (quantity_loan > 0 AND quantity_return <= 0 AND quantity_disburse <= 0) OR
-               (quantity_loan > 0 AND quantity_return > 0 AND quantity_disburse <= 0)")
-      when 'mixed'
-        where("(quantity_loan <= 0 AND quantity_return <= 0 AND quantity_disburse <= 0) OR
-               (quantity_loan <= 0 AND quantity_return > 0 AND quantity_disburse > 0) OR
-               (quantity_loan > 0 AND quantity_return <= 0 AND quantity_disburse > 0) OR
-               (quantity_loan > 0 AND quantity_return > 0 AND quantity_disburse > 0)")
-      else
-        none
-    end
-  }
   scope :quantity_loan, -> (quantity_loan) { where quantity_loan: quantity_loan }
   scope :quantity_disburse, -> (quantity_disburse) { where quantity_disburse: quantity_disburse }
   scope :quantity_return, -> (quantity_return) { where quantity_return: quantity_return }
@@ -63,11 +49,10 @@ class RequestItem < ApplicationRecord
   # Determines if a subrequest is valid or invalid
   #
   # Input: N/A
-  # Output: true/false
   def oversubscribed?
     diff = item[:quantity] - (self[:quantity_disburse] + self[:quantity_loan])
 
-    return diff < 0
+    return (diff < 0)
   end
 
   ##
@@ -78,6 +63,7 @@ class RequestItem < ApplicationRecord
   # Input: N/A
   # Output: @item upon success
   def fulfill_subrequest
+    
 
     @item = self.item
 
@@ -91,6 +77,7 @@ class RequestItem < ApplicationRecord
 
       @item.update!(:quantity => item[:quantity] - disbursement_quantity - loan_quantity)
       @item.update!(:quantity_on_loan => item[:quantity_on_loan] + loan_quantity)
+		
     end
   end
 
