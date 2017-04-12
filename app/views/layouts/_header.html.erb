@@ -33,6 +33,8 @@
                 <li><%= link_to request_label, requests_path %></li>
                 <% loans_label = (is_manager_or_admin?) ? "Loans" : "My Loans" %>
                 <li><%= link_to loans_label, loans_index_path %></li>
+                <% bf_label = (is_manager_or_admin?) ? "Backfills" : "My Backfills" %>
+                <li><%= link_to bf_label, backfills_index_path %></li>
               </ul>
             </li>
 

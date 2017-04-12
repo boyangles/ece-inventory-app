@@ -14,18 +14,27 @@
 				<strong>Quantity Loaned </strong><%= loan.quantity_loan %>
 				<br>
 				<br>
-				<!--<strong>Due Date </strong> tbd-->
+				<strong>Status </strong> <%= loan.bf_status %>
+				<br>
 				<%= link_to "Related Request", request_path(request.id) %>
 			</div>
 
-			<% if is_manager_or_admin? %>
 			<div class="col-lg-5 pull-right">
-				<%= render 'loans/returnquantityform', request_item: loan %>
-				</br>
-				<%= render 'loans/disbursequantityform', request_item: loan %>
-				<br>
+				<% if is_manager_or_admin? and user != current_user %>
+					<%= render 'loans/returnquantityform', request_item: loan %>
+					</br>
+					<%= render 'loans/disbursequantityform', request_item: loan %>
+					<br>
+				<% end %>
+
+				<% if user == current_user && loan.loan? or loan.bf_denied? or loan.bf_failed? %>
+					<%= render 'backfills/attachmentsform', request_item: loan %>
+					<br>
+				<% end %>
+
 			</div>
-			<% end %>
+
+
 		</div>
 	</div>
 </div>

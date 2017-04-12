@@ -99,8 +99,7 @@ CustomField.create!(field_name: 'restock_info', private_indicator: true, field_t
                        item_id: item.id,
                        quantity_loan: rand(1...50),
                        quantity_disburse: rand(1...50),
-                       quantity_return: rand(1...50),
-                       request_type: 'disbursement')
+              		)
  end
 end
 

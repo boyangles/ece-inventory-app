@@ -22,12 +22,13 @@ class RequestItemsController < ApplicationController
 
 	def create
 		@request_item = RequestItem.new(request_item_params)
-	@request_item.curr_user = current_user 
+		@request_item.curr_user = current_user 
 
 		begin
 			@request_item.save!
 			@request = grab_cart(current_user)
-			redirect_to request_path(@request.id)
+
+		redirect_to request_path(@request.id)
 		rescue Exception => e
 			flash[:danger] = "You may not add this to the cart! Error: #{e}"
 			redirect_to item_path(Item.find(@request_item.item_id))
@@ -71,7 +72,13 @@ class RequestItemsController < ApplicationController
 			flash[:danger] = "That's more than are loaned out!"
 		else
 			reqit.curr_user = current_user
+			puts("ALOHO")
+			puts(request_item_params[:bf_status])
 			reqit.return_subrequest(params[:quantity_to_return].to_f)
+			if (!request_item_params[:bf_status].nil?)
+				reqit.update!(:bf_status => request_item_params[:bf_status])
+			end
+	
 			UserMailer.loan_return_email(reqit,params[:quantity_to_return]).deliver_now
 			flash[:success] = "Quantity successfully returned!"
 		end
@@ -97,7 +104,7 @@ class RequestItemsController < ApplicationController
 	# Never trust parameters from the scary internet, only allow the white list through.
 	def request_item_params
 		# Rails 4+ requires you to whitelist attributes in the controller.
-		params.fetch(:request_item, {}).permit(:id, :quantity_loan, :quantity_disburse, :quantity_return, :item_id, :request_id, :quantity_to_return, :quantity_to_disburse)
+		params.fetch(:request_item, {}).permit(:id, :quantity_loan, :quantity_disburse, :quantity_return, :item_id, :request_id, :quantity_to_return, :quantity_to_disburse, :bf_status)
 	end
 
 	def set_new_quantity
