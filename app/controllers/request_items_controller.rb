@@ -86,15 +86,11 @@ class RequestItemsController < ApplicationController
 			flash[:danger] = "That's more than are loaned out!"
 		else
 			reqit.curr_user = current_user
-			# TODO: specify the list of serial tags to return
 			if Item.find(reqit.item_id).has_stocks
 				# binding.pry
-				current_user.return_subrequest(reqit, params[:serial_tags_loan_return])
+				current_user.return_subrequest(reqit, params[:serial_tags_loan_return], request_item_params[:bf_status])
 			else
-				current_user.return_subrequest(reqit, params[:quantity_to_return].to_f)
-			end
-			if (!request_item_params[:bf_status].nil?)
-				reqit.update!(:bf_status => request_item_params[:bf_status])
+				current_user.return_subrequest(reqit, params[:quantity_to_return].to_f, request_item_params[:bf_status])
 			end
 	
 			UserMailer.loan_return_email(reqit,params[:quantity_to_return]).deliver_now
