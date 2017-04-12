@@ -35,7 +35,7 @@
             <td><%= f.minimum_stock %></td>
             <td>
               <div class="col-lg-1">
-                <%= check_box_tag :item_stocked , f, "goddammit" , {}%>
+                <%= check_box_tag :item_stocked , true, false , {}%>
               </div>
               </div>
             </td>
@@ -47,6 +47,8 @@
       </tbody>
     </table>
 
+    <%= will_paginate @items %>
+
     <div class="form-group">
       <%= f.label :min_quantity, "Wanted Quantity", class: "col-lg-2 control-label" %>
       <div class="col-lg-10">
@@ -54,5 +56,5 @@
       </div>
     </div>
 
-    <%= f.submit "Search", class: "btn btn-default col-lg-2 col-lg-offset-10", type: "submit" %>
+    <%= f.submit "Modify minimum stock", class: "btn btn-default col-lg-2 col-lg-offset-10", type: "submit" %>
 <% end %>
