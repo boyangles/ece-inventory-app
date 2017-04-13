@@ -2,6 +2,7 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
+
 $ ->
 # enable chosen js
   $('.chosen-select').chosen
@@ -38,3 +39,4 @@ $(document).on "page:change", ->
 			r = confirm("Are you sure you want to edit the quantity?")
 			if (r == false)
 				event.preventDefault()
+

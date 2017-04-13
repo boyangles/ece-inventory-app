@@ -204,12 +204,19 @@ class ItemsController < ApplicationController
     else
     end
     items_active = Item.where(id: items_excluded & items_required & items_stocked).filter_active
+
+    # do we really wanna paginate?
     @items = items_active.
         filter_by_search(params[:search]).
         filter_by_model_search(params[:model_search]).
         order('unique_name ASC').paginate(page: params[:page], per_page: 10)
-    # puts "FUCK: THE VALUE OF ALL THE ITEMS IS "
-    # puts @items
+
+
+    @items = items_active.
+        filter_by_search(params[:search]).
+        filter_by_model_search(params[:model_search]).
+        order('unique_name ASC')
+
   end
 
   def update_all_minimum_stock
@@ -222,17 +229,21 @@ class ItemsController < ApplicationController
     #   puts "The value of params is "
     #   puts params[:min_quantity]
     # end
-    update_min_stock_of_certain_items(items, params[:min_quantity])
+
+    if !params[:item_ids].nil? && !params[:min_quantity].empty?
+      update_min_stock_of_certain_items(params[:item_ids], params[:min_quantity])
+    end
     # Item.update_all(:minimum_stock => @stock_quantity)
     # puts Item.all
 
     redirect_to minimum_stock_path
   end
 
-## helper method that will be used to update stocks and shit.
+  ## helper method that will be used to update stocks and shit.
   def update_min_stock_of_certain_items(items, stock_quantity)
-    Array(items).each do |i|
-      i.update(:minimum_stock => stock_quantity)
+    # binding.pry
+    items.each do |i|
+      Item.find(i).update!(:minimum_stock => stock_quantity)
     end
   end
   private
