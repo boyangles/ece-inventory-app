@@ -128,6 +128,9 @@ class Request < ApplicationRecord
 			self.request_items.each do |req_item|
 				req_item.backfills.each do |bf|
 					if (bf.outstanding?)
+            100.times do |i|
+              puts "BACKFILL DENIED"
+            end
 						bf.update!(:status => "denied")
 					end
 				end
@@ -144,6 +147,9 @@ class Request < ApplicationRecord
 			self.request_items.each do |req_item|
 				req_item.backfills.each do |bf|
 					if (bf.in_cart?)
+            100.times do |i|
+              puts "BACKFILL OUTSTANDINDG NOW"
+            end
 						bf.update!(:status => "outstanding")
 					end
 				end
