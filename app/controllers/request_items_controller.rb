@@ -28,13 +28,13 @@ class RequestItemsController < ApplicationController
 
 	def create
 		@request_item = RequestItem.new(request_item_params)
-		@request_item.curr_user = current_user 
+		@request_item.curr_user = current_user
 
 		begin
 			@request_item.save!
 			@request = grab_cart(current_user)
 
-		redirect_to request_path(@request.id)
+			redirect_to request_path(@request.id)
 		rescue Exception => e
 			flash[:danger] = "You may not add this to the cart! Error: #{e}"
 			redirect_to item_path(Item.find(@request_item.item_id))
@@ -42,10 +42,24 @@ class RequestItemsController < ApplicationController
 
 	end
 
+
+	def update_backfill
+		require 'pry'
+		@request_item = RequestItem.find(params[:id])
+		begin
+			binding.pry
+			@request_item.update_attributes!(bf_status: request_item_params[:bf_status])
+			redirect_to request_path(@request_item.request) and return
+		rescue Exception => e
+			flash[:danger] = e.message
+			redirect_to request_path(@request_item.request) and return
+		end
+	end
+
 	def update
 		@request_item = RequestItem.find(params[:id])
 		@request_item.curr_user = current_user
-
+		binding.pry
 		begin
 			@request_item.create_request_item_stocks(params[:serial_tags_disburse], params[:serial_tags_loan])
 		rescue Exception => e
@@ -80,7 +94,6 @@ class RequestItemsController < ApplicationController
 	end
 
 	def return
-		# binding.pry
 		reqit = RequestItem.find(params[:id])
 		if (params[:quantity_to_return].to_f > reqit.quantity_loan)
 			flash[:danger] = "That's more than are loaned out!"
@@ -92,7 +105,7 @@ class RequestItemsController < ApplicationController
 			else
 				current_user.return_subrequest(reqit, params[:quantity_to_return].to_f, request_item_params[:bf_status])
 			end
-	
+
 			UserMailer.loan_return_email(reqit,params[:quantity_to_return]).deliver_now
 			flash[:success] = "Quantity successfully returned!"
 		end
@@ -105,19 +118,28 @@ class RequestItemsController < ApplicationController
 
 	def disburse_loaned
 		reqit = RequestItem.find(params[:id])
-		if (params[:quantity_to_disburse].to_f > reqit.quantity_loan)
-			flash[:danger] = "That's more than are loaned out!"
-		else
-			reqit.curr_user = current_user
-			if Item.find(reqit.item_id).has_stocks
-				reqit.disburse_loaned_subrequest(params[:quantity_to_disburse].to_f)
-			else
-				reqit.disburse_loaned_subrequest(params[:quantity_to_disburse].to_f)
-			end
+		binding.pry
 
-			UserMailer.loan_convert_email(reqit, params[:quantity_to_disburse]).deliver_now
-			flash[:success] = "Quantity successfully disbursed!"
+		binding.pry
+		reqit.curr_user = current_user
+		if Item.find(reqit.item_id).has_stocks
+			if (params[:quantity_to_disburse].size > reqit.quantity_loan)
+				flash[:danger] = "That's more than are loaned out!"
+				redirect_to request_path(reqit.request_id) and return
+			else
+				reqit.disburse_loaned_subrequest(params[:quantity_to_disburse])
+			end
+		else
+			if (params[:quantity_to_disburse].to_f > reqit.quantity_loan)
+				flash[:danger] = "That's more than are loaned out!"
+				redirect_to request_path(reqit.request_id) and return
+			else
+				reqit.disburse_loaned_subrequest(params[:quantity_to_disburse])
+			end
 		end
+
+		UserMailer.loan_convert_email(reqit, params[:quantity_to_disburse]).deliver_now
+		flash[:success] = "Quantity successfully disbursed!"
 		redirect_to request_path(reqit.request_id)
 	end
 
@@ -125,7 +147,7 @@ class RequestItemsController < ApplicationController
 
 	private
 
-	# Never trust parameters from the scary internet, only allow the white list through.
+# Never trust parameters from the scary internet, only allow the white list through.
 	def request_item_params
 		# Rails 4+ requires you to whitelist attributes in the controller.
 		params.fetch(:request_item, {}).permit(:id, :quantity_loan, :quantity_disburse, :quantity_return, :item_id, :request_id, :quantity_to_return, :quantity_to_disburse, :bf_status)

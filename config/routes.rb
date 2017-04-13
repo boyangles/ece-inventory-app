@@ -51,6 +51,8 @@ Rails.application.routes.draw do
   resources :logs
   resources :request_items, :except => [:index] do
     member do
+      put :update_backfill, as: :update_backfill
+      patch :update_backfill
       put :return , as: :return
       put :disburse_loaned, as: :disburse_loaned
     end

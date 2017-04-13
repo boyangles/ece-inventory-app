@@ -46,7 +46,7 @@
 
 			<div class="modal-footer">
 				<% if request_item.loan? and current_user == User.find(request_item.request.user_id)%>
-					<%= form_for (request_item) do |f| %>
+      <%= form_for request_item, :url => update_backfill_request_item_path(request_item), :html => { method: :put} do |f| %>
 						<%= f.hidden_field :bf_status, :value => "bf_request" %>
 						<%= f.submit "Place Backfill Request", class: "btn btn-primary" %>
 					<% end %>

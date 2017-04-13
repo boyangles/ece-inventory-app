@@ -1,4 +1,4 @@
-<%= form_for (request_item) do |f| %>
-	<%= f.hidden_field :bf_status, :value => "bf_denied" %>
+<%= form_for request_item, :url => update_backfill_request_item_path(request_item), :html => { method: :put} do |f| %>
+    <%= f.hidden_field :bf_status, :value => "bf_denied" %>
 	<%= f.submit "Deny", class: "btn btn-danger" %>
 <% end %>			

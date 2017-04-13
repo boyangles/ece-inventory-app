@@ -4,6 +4,7 @@ class RequestItem < ApplicationRecord
   belongs_to :request
   belongs_to :item
   has_many :attachment
+  has_many :request_item_stocks
 
   ## Constants
 
@@ -98,12 +99,12 @@ class RequestItem < ApplicationRecord
   ##
   # REQ-ITEM-5: disburse_loaned_subrequest
   def disburse_loaned_subrequest(serial_tags_list)
-    ]
+
     @item = self.item
     if @item.has_stocks
       quantity_to_disburse = (serial_tags_list.nil?) ? 0 : serial_tags_list.size
     else
-      quantity_to_disburse = (serial_tags_list.nil?) ? 0 : serial_tags_list
+      quantity_to_disburse = (serial_tags_list.nil?) ? 0 : serial_tags_list.to_f
     end
 
 
@@ -123,9 +124,9 @@ class RequestItem < ApplicationRecord
 
           self.quantity_loan -= 1;
           self.quantity_disburse +=1 ;
+          self.save!
         end
       else
-
         if quantity_to_disburse > 0
           create_log("disbursed_from_loan", quantity_to_disburse)
         end

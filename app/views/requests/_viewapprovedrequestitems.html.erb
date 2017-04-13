@@ -20,10 +20,11 @@
         <% if (req_item.quantity_loan > 0) && is_manager_or_admin? && current_user != User.find(request.user_id) && !req_item.bf_request? && !req_item.bf_in_transit? %>
             <% if Item.find(req_item.item_id).has_stocks %>
                 <td><%= render 'loans/returnquantityform', request_item: req_item %></td>
+                <td><%= render 'loans/disbursestocksform', request_item: req_item %></td>
             <% else %>
+                <td><%= render :partial => 'loans/disbursequantityform', locals: {request_item: req_item} %></td>
                 <td><%= render 'loans/return_global_items', request_item: req_item %></td>
             <% end %>
-            <td><%= render :partial => 'loans/disbursequantityform', locals: {request_item: req_item} %></td>
         <% else %>
             <td></td>
             <td></td>
