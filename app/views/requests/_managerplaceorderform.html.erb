@@ -4,7 +4,7 @@
 	<div class="form-group col-lg-4 pull-right">
 		<%= f.label :user_id, "User to Disburse to", class: "control-label" %>
 		<div class="col-lg-8">
-			<%= collection_select(:user, :id, User.where(:status=>1), :id, :username, {:selected => current_user.id, class: "form-control"}) %>
+      <%= f.collection_select(:username, User.where(:status=>1), :id, :username, {:selected => current_user.id, class: "form-control"}) %>
 		</div>
 	</div>
 
