@@ -5,5 +5,6 @@ class CreateNotes < ActiveRecord::Migration[5.0]
       t.string  :description
       t.belongs_to :request_item
       t.timestamps
+    end
   end
 end
