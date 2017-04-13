@@ -1,8 +1,13 @@
-<li>
-  <%= gravatar_for user, size: 50 %>
-  <%= link_to user.username, user %>
-
+<tr>
+  <td><%= gravatar_for user, size: 50 %></td>
+  <td><%= link_to user.username, user_path(user.id) %></td>
+	<td><%= user.email %></td>
+  <td><%= user.privilege %></td>
   <% if is_admin? && !current_user?(user) %>
-			<div><%= render 'deactivateuserform', user: user%> </div>
+    <td class="text-right"><%= link_to "Edit", edit_user_path(user.id), class: "btn btn-primary" %></td>
+    <td><%= render 'deactivateuserform', user: user %></td>
+	<% else %>
+		<td></td>
+		<td></td>
   <% end %>
-</li>
+</tr>

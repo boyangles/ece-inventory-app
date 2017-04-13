@@ -1,47 +1,159 @@
-
 <p id="notice"><%= notice %></p>
 
-<% provide(:title, @user.username) %>
-<div class="row">
-  <aside class="col-md-4">
-    <section class="user_info">
-      <h1>
-        <%= gravatar_for @user %>
-        <%= @user.username %>
-      </h1>
-    </section>
-  </aside>
+<% if @user.status_deactivated? %>
+    <div class="panel panel-danger">
+      <div class="panel-heading">
+        <h3 class="panel-title">User has been deleted.</h3>
+      </div>
+    </div>
+<% end %>
 
-  <div class="col-md-8">
-    <% if @user.requests.any? %>
-      <h3>Requests (<%= @requests.count %>)</h3>
-      <ol class="requests">
-        <%= render @requests %>
-      </ol>
-
-      <%= will_paginate @requests %>
+<div class="center_jumbotron">
+  <h2 class="page-header"><strong><%= @user.username%></strong><%= " " + @user.privilege %>
+    <% if is_admin? && !current_user?(@user) %>
+        <%= link_to "Edit User", edit_user_url(@user.id), :class => "btn btn-primary pull-right" %>
     <% end %>
-  </div>
+		<% if current_user?(@user) %>
+			<%= link_to 'Authentication Token', auth_token_user_path, class: "btn btn-primary pull-right" %>
+		<% end %>
+  </h2>
 </div>
 
-<p>
-  <strong>Username:</strong>
-  <%= @user.username %>
-</p>
+<ul class="nav nav-tabs">
+	<li class="active"><a href="#home" data-toggle="tab">Loans and Disbursements</a></li>
+	<li><a href="#requests" data-toggle="tab">Requests</a></li>
+	<% if is_manager_or_admin? %><li><a href="#logs" data-toggle="tab">Logs</a></li><% end %>
+</ul>
 
-<p>
-  <strong>Privilege:</strong>
-  <%= @user.privilege %>
-</p>
+<div id="myTabContent" class="tab-content">
+  <div class="tab-pane fade active in" id="home">
+    <br>
+    <div class="panel panel-primary">
+      <div class="panel-heading users-items-display-link">
+        <h3 class="panel-title">Loans
+          <%= link_to "[click to toggle]", '#', class: "pull-right" %></h3>
+      </div>
+      <div class="panel-body users-items-display">
+        <% request_items = RequestItem.where("quantity_loan > ?", 0).where(request_id: Request.select(:id).where(user_id: @user.id, status: "approved")) %>
+        <% if !request_items.empty? %>
+          <ol class="loans">
+            <%= render partial: 'loans/loandisplay', collection: request_items, as: :loan %>
+          </ol>
+        <% else %>
+          This user currently has no active loans.
+        <% end %>
+      </div>
+    </div>
 
-<% if @user.status_deactivated? %>
-	<p><strong>Status: </strong>
-	<%= @user.status %></p>
-<% elsif is_admin? && @user != current_user%>
-	<%= render 'deactivateuserform', user: @user %>
+    <div class="panel panel-info">
+      <div class="panel-heading users-items-display-link">
+        <h3 class="panel-title">Disbursements
+          <%= link_to "[click to toggle]", '#', class: "pull-right" %></h3>
+      </div>
+      <div class="panel-body users-items-display">
+        <% request_items = RequestItem.where("quantity_disburse > ?", 0).where(request_id: Request.select(:id).where(user_id: @user.id, status: "approved")) %>
+        <% if !request_items.empty? %>
+          <ol class="disbursements">
+            <%= render partial: 'request_items/disbursementdisplay', collection: request_items, as: :disburse %>
+          </ol>
+        <% else %>
+          This user currently has no disbursements.
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane fade " id="requests"> 
+    <br>   
+    <div class="panel panel-success">
+      <div class="panel-heading users-request-display-link">
+        <h3 class="panel-title">Approved Requests
+          <% approved_req = Request.where(user_id: @user.id, status: "approved") %>
+ 					 (<%= approved_req.count %>)
+           <%= link_to "[click to toggle]", '#', class: "pull-right" %>
+        </h3>
+      </div>
+      <div class="panel-body users-request-display">
+        <% if !approved_req.empty? %>
+          <%= render approved_req %>
+        <% else %>
+          This user has no approved requests.
+        <% end %>
+      </div>
+    </div>
+
+    <div class="panel panel-warning">
+      <div class="panel-heading users-request-display-link">
+        <h3 class="panel-title">Outstanding Requests
+          <% outstanding_req = Request.where(user_id: @user.id, status: "outstanding") %>
+  				 (<%= outstanding_req.count %>)
+          <%= link_to "[click to toggle]", '#', class: "pull-right" %>
+        </h3>
+      </div>
+      <div class="panel-body users-request-display">
+        <% if !outstanding_req.empty? %>
+          <%= render outstanding_req %>
+        <% else %>
+          This user has no outstanding requests.
+        <% end %>
+      </div>
+    </div>
+
+    <div class="panel panel-danger">
+      <div class="panel-heading users-request-display-link">
+        <h3 class="panel-title">Denied Requests
+          <% denied_req = Request.where(user_id: @user.id, status: "denied") %>
+					 (<%= denied_req.count %>)
+          <%= link_to "[click to toggle]", '#', class: "pull-right" %>
+        </h3>
+      </div>
+      <div class="panel-body users-request-display">
+        <% if !denied_req.empty? %>
+          <%= render denied_req %>
+        <% else %>
+          This user has no denied requests.
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <% if is_manager_or_admin? %>
+    <div class="tab-pane fade " id="logs"> 
+      <br>   
+        <% userl = Log.where(user_id: @user.id) %>
+        <% userLogs = Log.where(id: UserLog.select(:log_id).where(user_id: @user.id)) %>
+        <% userInReqLogs = Log.where(id: RequestLog.select(:log_id).where(request_id: Request.select(:id).where(user_id: @user.id))) %>
+
+        <% logss = Log.where(id: userl | userLogs | userInReqLogs) %>
+
+		    <% if logss.any? %>
+
+					<table class="table table-striped table-hover">
+						<thead>
+							<tr>
+								<th>Time</th>
+								<th>Initiator</th>
+								<th>Object Affected</th>
+								<th>Action</th>
+								<th>Affected User</th>
+								<th></th>
+							</tr>	
+						</thead>
+						<tbody>
+        	  	<%= render logss %>
+						</tbody>
+					</table>
+
+    		<% end %>
+
+    </div>
+  <% end %>
+
+</div>
+
+
+<% if !@user.status_deactivated? && is_admin? && @user != current_user%>
+    <%= render 'deactivateuserform', user: @user %>
 <% end %>
 
 
-<%= link_to 'Edit', edit_user_path(@user) if (is_admin? || current_user?(@user)) %> |
-<%= link_to 'Back', url_for(:back) %> |
-<%= link_to 'Authentication Token', auth_token_path %>

@@ -32,26 +32,25 @@ class Api::V1::LogsController < ApplicationController
 
   def index
     if params[:user_search].blank? && params[:item_search].blank? && params[:start_date].blank? && params[:end_date].blank?
-      respond_with Log.all
+      @logs = Log.all
     else
       userLogs = Log.where(user_id: User.select(:id).where("username ILIKE ?", "%#{params[:user_search]}%"))
+      userInReqLogs = Log.where(id: RequestLog.select(:log_id).where(request_id: Request.select(:id).where(user_id: User.select(:id).where("username ILIKE ?", "%#{"trev"}%"))))
       users = Log.where(id: UserLog.select(:log_id).where(user_id: User.select(:id).where("username ILIKE ?", "%#{params[:user_search]}%")))
       itemLogs = Log.where(id: ItemLog.select(:log_id).where(item_id: Item.select(:id).where("unique_name ILIKE ?", "%#{params[:item_search]}%")))
+      itemInReqLogs = Log.where(id: RequestLog.select(:log_id).where(request_id: RequestItem.select(:request_id).where(item_id: Item.select(:id).where("unique_name ILIKE ?", "%#{params[:item_search]}%"))))
       startLogs = Log.where("created_at >= :date", date: params[:start_date])
       endLogs = Log.where("created_at <= :date", date: params[:end_date])
-      betweenDatesLogs = nil
-      if params[:start_date] && params[:end_date]
-        betweenDatesLogs = Log.where(created_at: params[:start_date]..params[:end_date])
-      end
+      betweenDatesLogs = Log.where(created_at: params[:start_date]..params[:end_date])
 
       if !params[:user_search].blank?
-        firstLayer = Log.where(id: userLogs | users)
+        firstLayer = Log.where(id: userLogs | users | userInReqLogs)
       end
 
       if !params[:item_search].blank? && !firstLayer.blank?
-        secondLayer = Log.where(id: firstLayer & itemLogs)
+        secondLayer = Log.where(id: firstLayer & (itemLogs | itemInReqLogs))
       elsif !params[:item_search].blank?
-        secondLayer = itemLogs
+        secondLayer = (itemLogs | itemInReqLogs)
       else
         secondLayer = firstLayer
       end
@@ -72,9 +71,8 @@ class Api::V1::LogsController < ApplicationController
         fourthLayer = thirdLayer
       end
 
-      respond_with Log.where(id: fourthLayer)
+      @logs = Log.where(id: fourthLayer)
     end
-
   end
 
   def show

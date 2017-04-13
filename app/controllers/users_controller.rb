@@ -15,12 +15,15 @@ class UsersController < ApplicationController
 
   # GET /users
   def index
-    @users = User.where(status: 'approved').paginate(page: params[:page], per_page: 10)
+    users = User.where(status: 'approved').paginate(page: params[:page], per_page: 10)
+    @users = users.filter_by_search(params[:search])
   end
 
   # GET /users/1
   def show
     @user = User.find(params[:id])
+    #put here for now to test
+    # UserMailer.loan_reminder_emails_all.deliver_now
     @requests = @user.requests.where.not(status: "cart").paginate(page: params[:page], per_page: 10)
   end
 
@@ -60,6 +63,8 @@ class UsersController < ApplicationController
 
     if @user.save
       flash[:success] = "#{@user.username} created"
+      ## Take care: This is when a user is created!!
+      # UserMailer.welcome_email(@user).deliver_now
       redirect_to users_path
     else
       flash.now[:danger] = "Unable to create user! Try again?"
@@ -71,6 +76,8 @@ class UsersController < ApplicationController
   def update
     @user = User.find(params[:id])
 		@user.curr_user = current_user
+
+    # old_status = @user.status
 
     if user_params[:password].blank? && !current_user?(@user)
       user_params.delete(:password)
@@ -84,11 +91,16 @@ class UsersController < ApplicationController
       flash[:danger] = "Unable to edit user"
       render 'edit'
     end
+
+    #Future code to deactivate subscriber.
+    # if (old_status == 'approved' && user_params[:status] == 'deactivated')
+    #   flash[:success] = "User has been deactivated"
+    # end
   end
 
   # DELETE /users/1
   def destroy
-    User.find(params[:id]).destroy
+    User.find(params[:id]).destroy!
     flash[:success] = "User account deleted!"
     redirect_to users_url
   end

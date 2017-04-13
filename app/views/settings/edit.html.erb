@@ -1,0 +1,13 @@
+<%= form_for(@setting, url: setting_path(@setting.var), method: 'patch') do |f| %>
+
+    <h2 class="page-header">Editing the <strong><%= @setting.var %></strong></h2>
+
+    <div class="form-group">
+	<div class="col-lg-12">
+    		<%= f.text_area :value, rows: 10, class: "form-control" %>
+	</div>
+    </div>
+    <br>
+    <%= f.submit "Update Setting", class: "pull-right" %>
+    <br>
+<% end %>

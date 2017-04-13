@@ -6,28 +6,47 @@ Rails.application.routes.draw do
   root 'welcome#index'
 
   # User auth token
-  get "users/:id/auth_token", to: 'users#auth_token', :as => 'auth_token'
+  #get "users/:id/auth_token", to: 'users#auth_token', :as => 'auth_token'
+
+  # Loans
+  get 'loans/index'
+  root 'loans#index'
 
   # All resources
-  resources :users
+  resources :users do
+    member do
+      get :auth_token
+    end
+  end
+
   resources :requests
-    put 'requests/:id/clear' => 'requests#clear', :as => 'clear_request'    # Clears items from requests
-    patch 'requests/:id/clear', to: 'requests#clear'
-	#	get 'requests/:id/placeorder' => 'requests#place', :as => 'place_order'
-  resources :items do
-		member do
-			get :edit_quantity
-			put :update_quantity
-			patch :update_quantity	# in order to create separate form to specify quantity change - javascript?
-		end
-	end
+  put 'requests/:id/clear' => 'requests#clear', :as => 'clear_request'    # Clears items from requests
+  patch 'requests/:id/clear', to: 'requests#clear'
+  #	get 'requests/:id/placeorder' => 'requests#place', :as => 'place_order'
+
+  get  'items/import' => 'items#import_upload', :as => 'import_upload'
+  post 'items/import' => 'items#bulk_import', :as => 'bulk_import'
+
+  get  'settings/dates' => 'settings#dates', :as => 'date_selection'
+  put'settings/dates' => 'settings#update_dates', :as => 'update_dates'
+  patch 'settings/dates', to: 'settings#update_dates'
+
+  resources :items
   resources :tags
-  
+
   resources :item_custom_fields, :only => [:index, :show, :create, :update, :destroy]
   resources :custom_fields, :only => [:create, :destroy]
   resources :sessions
   resources :logs
-  resources :request_items, :except => [:index, :show]
+  resources :request_items, :except => [:index, :show] do
+		member do
+			put :return, as: :return
+			put :disburse_loaned, as: :disburse_loaned
+		end
+	end
+
+  resources :subscribers
+  resources :settings
 
   #Login and Sessions routes
   get   '/login',   to: 'sessions#new'      #Describes the login screen
@@ -85,10 +104,16 @@ Rails.application.routes.draw do
 
           put :update_field_entry
           patch :update_field_entry
+
+          post :bulk_import
+
+          get :self_outstanding_requests
+
+          get :self_loans
         end
       end
 
-      resources :requests, :only => [:index, :show, :create, :update, :destroy] do
+      resources :requests, :only => [:index, :show, :create] do
         member do
           put :decision
           patch :decision
@@ -96,13 +121,35 @@ Rails.application.routes.draw do
           post :create_req_items
           delete :destroy_req_items
 
+          put :update_general
+          patch :update_general
+
           put :update_req_items
           patch :update_req_items
+
+          put :return_req_items
+          patch :return_req_items
+
+          get :index_subrequests
         end
       end
+
       resources :tags, :only => [:index, :show, :create, :update, :destroy]
       resources :logs, :only => [:index, :show, :create, :update, :destroy]
       resources :sessions, :only => [:create, :destroy]
+      resources :subscribers, :only => [:index, :create, :destroy]
+      resources :settings, :only => [:index] do
+        member do
+          put :modify_email_subject
+          patch :modify_email_subject
+
+          put :modify_email_body
+          patch :modify_email_body
+
+          put :modify_email_dates
+          patch :modify_email_dates
+        end
+      end
     end
   end
 

@@ -1,0 +1,18 @@
+<h2 class="page-header">
+  <strong> Email Settings </strong> (click to edit)
+  <td><%= link_to "Subscribers", subscribers_path, class: "btn btn-primary pull-right" %></td>
+</h2>
+
+
+<p>
+  <strong> <td><%= link_to "Email Subject: " + @settings['email_subject'], edit_setting_path('email_subject') %></td> </strong>
+</p>
+
+  <p>
+    <strong> <td><%= link_to "Email Body: " + @settings['email_body'], edit_setting_path('email_body') %></td> </strong>
+  </p>
+
+
+<p>
+  <strong> <td><%= link_to "Email Dates: " + @settings['email_dates'], date_selection_path('email_dates') %></td> </strong>
+</p>

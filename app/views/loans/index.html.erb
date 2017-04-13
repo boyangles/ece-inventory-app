@@ -1,0 +1,28 @@
+<% provide(:title, 'All Loans') %>
+
+<div class="center_jumbotron">
+  <h4 class="pull-right">
+	<%= link_to "Search Loans", '#', id: 'search-loan-link' %><br>
+  </h4>
+  <h2 class="page-header">Loans
+  </h2>
+</div>
+
+<%= render 'searchloanform' %>
+
+<div class="row">
+	<div class="col-md-9 col-md-offset-1">
+
+		<% if !@loans.nil? %>
+
+			<div class="text-center"><%= will_paginate @loans %></div>
+
+			<ol class="loans">
+				<%= render partial: "loandisplay", collection: @loans, as: :loan %>
+			</ol>
+
+			<div class="text-center"><%= will_paginate @loans %></div>
+
+		<% end %>
+	</div>
+</div>

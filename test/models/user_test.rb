@@ -106,12 +106,12 @@ class UserTest < ActiveSupport::TestCase
     Request.create!(
       reason: 'For test',
       status: 'outstanding',
-      request_type: 'disbursement',
-      user_id: @admin.id)
+      user_id: @admin.id,
+      request_initiator: @admin.id)
 
     # One for cart, one for normal request
     assert_difference ['Request.count'], -2 do
-      @admin.deactivate
+      @admin.deactivate!
     end
   end
 

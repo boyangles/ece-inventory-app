@@ -22,7 +22,7 @@ class Api::V1::TagsController < BaseController
   swagger_api :show do
     summary "Fetches a single tag"
     param :path, :id, :integer, :required, "id"
-    response :ok, "Success", :tag
+    response :ok
     response :unauthorized
     response :not_found
   end

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+
+<% if @request.user == @recipient %>
+  <p>
+    Your request has been denied by <strong> <%= @user.username %> </strong> . Here are the following items of the denied request.
+  </p>
+<% else %>
+    <p>
+      <strong> <%= @request.user.username %> </strong> has had his request denied by <strong> <%= @user.username %> </strong> . Here are the following items of the denied request.
+    </p>
+<%end%>
+
+
+<%= render 'request_info' %>
+
+<p>
+  <strong>Reason:</strong>
+  <%= @request.response %>
+</p>
+
+<%= render 'ending' %>
+
+</body>
+</html>

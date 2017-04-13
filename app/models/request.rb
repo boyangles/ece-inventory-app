@@ -1,5 +1,5 @@
 class Request < ApplicationRecord
-  include Filterable, Subscribable
+  include Filterable
 
   #relationship with items
   has_many :items,  -> {uniq}, :through => :request_items
@@ -15,12 +15,6 @@ class Request < ApplicationRecord
   # Data Options:
   STATUS_OPTIONS = %w(outstanding approved denied cart cancelled)
 
-  enum request_type: {
-      disbursement: 0,
-      acquisition: 1,
-      destruction: 2
-  }
-
   enum status: {
     outstanding: 0,
     approved: 1,
@@ -34,60 +28,83 @@ class Request < ApplicationRecord
 	attr_accessor :curr_user
 
   after_update {
+		check_items_still_valid
+    update_respective_items
     create_cart_on_status_change_from_cart(self.user_id)
 		log_on_status_change()
   }
 
   # Validations
-  validates :request_type, :inclusion => { :in => REQUEST_TYPE_OPTIONS }
   validates :status, :inclusion => { :in => STATUS_OPTIONS }
   validates :user_id, presence: true
+  validates :request_initiator, presence: true
+	validate :cart_cannot_be_duplicated
 
-  def has_status_change_to_approved?(request_params)
-    self.outstanding? && request_params[:status] == 'approved' || self.cart? && request_params[:status] == 'approved'
-  end
-
-	def has_status_change_to_outstanding?(request_params)
-		self.cart? && request_params[:status] == 'outstanding'
-	end
-
-	def are_request_details_valid?
-    self.request_items.each do |sub_request|
-      @item = Item.find(sub_request.item_id)
-
-      if @item.deactive?
-        return false, @item.unique_name  + " doesn't exist anymore! Cannot be disbursed."
-      elsif Request.component_oversubscribed?(@item, self, sub_request)
-        return false, "Item named #{@item.unique_name} is oversubscribed. Requested #{sub_request.quantity}, but only has #{@item.quantity}."
-	    end
+  def determine_request_type
+    current_request_type = 'indeterminate'
+    self.request_items.each do |request_item|
+      subrequest_type = request_item.determine_subrequest_type
+      case subrequest_type
+        when 'disbursement'
+          return 'mixed' if current_request_type == 'loan'
+          current_request_type = 'disbursement'
+        when 'loan'
+          return 'mixed' if current_request_type == 'disbursement'
+          current_request_type = 'loan'
+        else # mixed
+          return 'mixed'
+      end
     end
 
-    return true, ""
+    current_request_type
   end
-
-	def are_items_valid?
-    self.request_items.each do |sub_request|
-      @item = Item.find(sub_request.item_id)
-
-      if @item.deactive?
-        return false, @item.unique_name  + " doesn't exist anymore! Please remove from cart."
-	    end
-    end
-
-    return true, ""
-  end
-
-
 
   private
-
   def cart_cannot_be_duplicated
     if self.cart? &&
-        Request.where(:user_id => self.user_id).where(:status => :cart).exists? &&
+        Request.where(:request_initiator => self.user_id).where(:status => :cart).exists? &&
         self.status_was != self.status
       errors.add(:user_id, 'There cannot be two cart requests for a single user')
     end
   end
+
+  ## Callbacks
+
+  def update_respective_items
+    if self.status_was != 'approved' && self.status == 'approved'
+		  self.request_items.each do |req_item|
+        begin
+	        req_item.fulfill_subrequest
+          if !req_item.quantity_disburse.nil? 
+            if req_item.quantity_disburse. > 0
+              create_item_log("disbursed", req_item, req_item.quantity_disburse)
+            end
+          end
+          if !req_item.quantity_loan.nil? && req_item.quantity_loan > 0
+            create_item_log("loaned", req_item, req_item.quantity_loan)
+          end
+        rescue Exception => e
+          raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity}")
+        end
+      end
+    elsif self.status_was == 'approved' && self.status != 'approved'
+      self.request_items.each do |req_item|
+        begin
+          req_item.rollback_fulfill_subrequest
+        rescue Exception => e
+          raise Exception.new("The following request for item: #{req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{req_item.item.quantity}")
+        end
+      end
+    end
+  end
+
+	def check_items_still_valid
+    if (self.status_was != 'approved' && self.status == 'approved') or (self.status_was != 'outstanding' && self.status == 'outstanding')
+			self.request_items.each do |req_item| # checking to see that none of the items in the request are deactive 
+				raise Exception.new(req_item.item.unique_name + " is deactive. Please remove from the request and try again." ) if req_item.item.deactive?
+			end
+		end
+	end
 
   def create_cart_on_status_change_from_cart(id)
     old_status = self.status_was
@@ -96,10 +113,10 @@ class Request < ApplicationRecord
 		cond1 = self.user_id_was != self.user_id
 
     if cond1
-      @cart = Request.new(:status => :cart, :user_id => self.user_id_was, :reason => 'TBD')
+      @cart = Request.new(:status => :cart, :user_id => self.user_id_was, :request_initiator => self.user_id_was)
       @cart.save!
 		elsif cond2
-			@cart = Request.new(:status => :cart, :user_id => self.user_id, :reason=> 'TBD')
+			@cart = Request.new(:status => :cart, :user_id => self.user_id, :request_initiator => self.user_id)
 			@cart.save!
     end
   end
@@ -112,10 +129,6 @@ class Request < ApplicationRecord
 			create_log("placed")
 		elsif old_status != new_status
 			create_log(new_status)
-#		elsif old_status == 'cart' && new_status == 'approved' #admin direct
-#		create_log(new_status)
-#		elsif old_status == 'outstanding' && new_status != old_status
-#			create_log(new_status)
 		end
 
 	end
@@ -136,5 +149,35 @@ class Request < ApplicationRecord
 		reqlog = RequestLog.new(:log_id => log.id, :request_id => self.id, :action => action)
 		reqlog.save!
 	end 
+
+  def create_item_log(action, req_item, quantity_change)
+    itemo = req_item.item
+    itemo.update!(:last_action => action)
+
+    if self.curr_user.nil?
+      curr = nil
+    else
+      curr = self.curr_user.id
+    end
+
+    old_name = ""
+    old_desc = ""
+    old_model = ""
+
+    if itemo.unique_name_was != itemo.unique_name
+      old_name = itemo.unique_name_was
+    end
+    if itemo.description_was != itemo.description
+      old_desc = itemo.description_was
+    end
+    if itemo.model_number_was != itemo.model_number
+      old_model = itemo.model_number_was
+    end
+    
+    log = Log.new(:user_id => curr, :log_type => 'item')
+    log.save!
+    itemlog = ItemLog.new(:log_id => log.id, :item_id => itemo.id, :action => action, :quantity_change => quantity_change, :old_name => old_name, :new_name => itemo.unique_name, :old_desc => old_desc, :new_desc => itemo.description, :old_model_num => old_model, :new_model_num => itemo.model_number, :curr_quantity => itemo.quantity, :affected_request => self.id)
+    itemlog.save!
+  end
 
 end

@@ -1,0 +1,49 @@
+<div class="search">
+  <%= form_for items_path, :method => 'get' do |f| %>
+
+      <div class="form-group">
+        <%= f.label "Search Items", :class=>"col-lg-3 control-label" %><br>
+        <div class="col-lg-12">
+          <%= text_field_tag :search, params[:search], :placeholder => "Item", :class => "form-control" %>
+        </div></div>
+
+      <h5 class="pull-right col-lg-2">
+        <%= link_to "Advanced Search", '#', id: 'search-link' %></br>
+      </h5><br>
+
+      <div class="advanced-search">
+
+        <div class="form-group">
+          <%= f.label "Search by Model Number", :class=>"col-lg-3 control-label" %>
+          <div class="col-lg-12">
+            <%= text_field_tag :model_search, params[:model_search], :placeholder => "Model Number",  :class => "form-control" %>
+          </div></div>
+        <br>
+        <br>
+
+        <div class="form-group"> 
+          <%= f.label "Required Tags", :class=>"col-lg-2 control-label" %><br>
+          <div class="col-lg-12">
+            <%= select_tag :required_tag_names, options_for_select(Tag.all.map { |u| [u.name, u.name] }, params[:required_tag_names]),
+                   { include_blank: true, multiple: true, class: 'chosen-select', id: 'fuck_you'}
+            %>
+          </div>
+        </div>
+				<br>
+
+        <div class="form-group"> 
+          <%= f.label "Excluded Tags", :class=>"col-lg-2 control-label" %><br>
+          <div class="col-lg-12">
+            <%= select_tag :excluded_tag_names, options_for_select(Tag.all.map { |u| [u.name, u.name] }, params[:excluded_tag_names]),
+             { include_blank: true , multiple: true, class: 'chosen-select form-control', selected: params[:excluded_tag_names]}
+            %>
+          </div>
+        </div>
+
+			<br><br>
+      </div>
+
+
+      <%= f.submit "Search", class: "btn btn-default col-lg-2 col-lg-offset-10", type: "submit" %>
+      <% end %>
+      </div>

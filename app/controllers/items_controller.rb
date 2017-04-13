@@ -8,22 +8,24 @@ class ItemsController < ApplicationController
   def index
     @tags = Tag.all
 
-    @required_tag_filters = (params[:required_tag_names]) ?
-        params[:required_tag_names] : []
-    @excluded_tag_filters = (params[:excluded_tag_names]) ?
-        params[:excluded_tag_names] : []
+    items_excluded = Item.all
+    items_required = Item.all
+    if params[:excluded_tag_names]
+      @excluded_tag_filters = params[:excluded_tag_names]
+      items_excluded = Item.tagged_with_none(@excluded_tag_filters).select(:id)
+    end
+    if params[:required_tag_names]
+      @required_tag_filters = params[:required_tag_names]
+      items_required = Item.tagged_with_all(@required_tag_filters).select(:id)
+    end
 
-    items_req = Item.tagged_with_all(@required_tag_filters).select("id")
-    items_exc = Item.tagged_with_none(@excluded_tag_filters).select("id")
-    items_req_and_exc = Item.where(:id => items_req & items_exc)
-    items_active = items_req_and_exc.filter_active
+    items_active = Item.where(id: items_excluded & items_required).filter_active
 
     @items = items_active.
         filter_by_search(params[:search]).
         filter_by_model_search(params[:model_search]).
         order('unique_name ASC').paginate(page: params[:page], per_page: 10)
   end
-
 
   # GET /items/1
   # GET /items/1.json
@@ -54,6 +56,7 @@ class ItemsController < ApplicationController
   # GET /items/1/edit
   def edit
     @item = Item.find(params[:id])
+    @item_custom_fields = ItemCustomField.where(item_id: @item.id)
   end
 
   def edit_quantity
@@ -68,21 +71,53 @@ class ItemsController < ApplicationController
     redirect_to items_url
   end
 
+
   # POST /items
   # POST /items.json
   def create
-    @item = Item.new(item_params)
-    @item.last_action = "created"
-    @item.curr_user = current_user
+    begin
 
-    add_tags_to_item(@item, params[:tag][:tag_id]) if params[:tag]
-    remove_tags_from_item(@item, params[:tag_to_remove][:tag_id_remove]) if params[:tag_to_remove]
+      ActiveRecord::Base.transaction do
+        @item = Item.new(item_params)
+        @item.last_action = "created"
+        @item.curr_user = current_user
 
-    if @item.save
-      redirect_to item_url(@item)
-    else
-      flash.now[:danger] = "Unable to save!"
+        add_tags_to_item(@item, item_params)
+        @item.save!
+
+        CustomField.all.each do |cf|
+          cf_name = cf.field_name
+          icf = ItemCustomField.find_by(:item_id => @item.id, :custom_field_id => cf.id)
+          icf.update_attributes!(CustomField.find_icf_field_column(cf.id) => params[cf_name])
+        end
+      end
+
+      redirect_to item_url(@item.id)
+
+    rescue Exception => e
+      flash.now[:danger] = e.message
+
       render 'new'
+    end
+
+  end
+
+
+  def import_upload
+
+  end
+
+  def bulk_import
+    begin
+      Item.bulk_import(params[:items_as_json].read)
+      flash[:success] = "Bulk Import Successful"
+      redirect_to items_path
+    rescue NoMethodError => nme
+      @imported_error_msg = "Must input a file"
+      render 'import_upload'
+    rescue Exception => e
+      @imported_error_msg = e.message
+      render 'import_upload'
     end
   end
 
@@ -90,13 +125,14 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
     @item.curr_user = current_user
 
-    # this isn't how it's going to work
-    # alert_if_quantity_changes(params[:quantity])
-
-    add_tags_to_item(@item, params[:tag][:tag_id]) if params[:tag]
-    remove_tags_from_item(@item, params[:tag_to_remove][:tag_id_remove]) if params[:tag_to_remove]
+    @item.tags.delete_all
+    add_tags_to_item(@item, item_params)
 
     if @item.update_attributes(item_params)
+      if !params[:quantity_change].nil?
+        update_quantity
+      end
+
       flash[:success] = "Item updated successfully"
       puts(@item.last_action)
       redirect_to @item
@@ -106,26 +142,32 @@ class ItemsController < ApplicationController
     end
   end
 
+
   def update_quantity
-    @item = Item.find(params[:id])
-
-    # add action to last_action
-
-    if @item.update_attributes(item_params)
-      flash[:success] = "Item updated successfully"
-      redirect_to @item
-    else
-      flash.now[:danger] = "Unable to edit!"
-      render 'edit_quantity'
+    @item.quantity = @item.quantity + params[:quantity_change].to_f
+    if !@item.save!
+      flash.now[:danger] = "Quantity unable to be changed"
+      render 'edit'
     end
   end
+
 
   private
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
-    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :search, :model_search, :status, :last_action)
+    params.fetch(:item, {}).permit(	:unique_name,
+                                     :quantity,
+                                     :model_number,
+                                     :description,
+                                     :status,
+                                     :last_action,
+                                     item_custom_fields_attributes: [:short_text_content,
+                                                                     :long_text_content,
+                                                                     :integer_content,
+                                                                     :float_content,
+                                                                     :item_id, :custom_field_id, :id])
   end
 
 end

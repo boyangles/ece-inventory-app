@@ -1,49 +1,39 @@
 <%# app/views/logs/index.html.erb %>
 <% provide(:title, 'Logs') %>
 
-
-<div class="search">
-  <%= form_for logs_path, :method => 'get' do |f| %>
-      <p class="submit_bar">
-        <%= f.label "Search by User Name" %><br>
-        <%= text_field_tag :user_search, params[:user_search], :placeholder => "User" %>
-      </p>
-
-      <p>
-        <%= f.label "Search by Item Name" %>
-        <%= text_field_tag :item_search, params[:item_search], :placeholder => "Item"  %>
-      </p>
-
-      <%= f.label "From Date:" %>
-      <%= text_field_tag :start_date, params[:start_date], 'data-behaviour' => 'datepicker' %>
-      <script type="text/javascript">
-          $('[data-behaviour~=datepicker]').datepicker();
-      </script>
-
-      <%= f.label "To Date:" %>
-      <%= text_field_tag :end_date, params[:end_date], 'data-behaviour' => 'datepicker' %>
-      <script type="text/javascript">
-          $('[data-behaviour~=datepicker]').datepicker();
-      </script>
-
-      <%= submit_tag "Search", class: "btn btn-primary" %>
-  <% end %>
+<div class="center_jumbotron">
+	<h4 class="pull-right">
+		<%= link_to "Search Logs", '#', id: 'search-log-link' %><br>
+	</h4>
+	<h2 class="page-header">Logs</h2>
 </div>
 
+<%= render 'searchlogform' %>
+
 <div class="row">
-  <div class="col-md-8 col-md-offset-2">
-    <h1>Logs</h1>
 
     <% if @logs.any? %>
-        <h3>No. Logs (<%= @logs.count %>)</h3>
-        <ol class="logs">
-          <%= render @logs %>
-        </ol>
 
-        <%= will_paginate @logs %>
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>
+						<th>Time</th>
+						<th>Initiator</th>
+						<th>Object Affected</th>
+						<th>Action</th>
+						<th>Affected User</th>
+						<th></th>
+					</tr>	
+				</thead>
+				<tbody>
+          <%= render @logs %>
+				</tbody>
+			</table>
+
+      <div class="text-center"><%= will_paginate @logs %></div>
+
     <% end %>
 
     <br>
 
-  </div>
 </div>

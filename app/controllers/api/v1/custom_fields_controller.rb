@@ -18,7 +18,7 @@ class Api::V1::CustomFieldsController < BaseController
   swagger_controller :custom_fields, 'CustomFields'
 
   swagger_api :index do
-    summary 'Returns specified CustomFields'
+    summary 'Returns specified Custom Fields'
     notes 'Specify query params'
     param :query, :field_name, :string, :optional, "Field Name"
     param :query, :private_indicator, :boolean, :optional, "Private?"
@@ -31,9 +31,9 @@ class Api::V1::CustomFieldsController < BaseController
   end
 
   swagger_api :show do
-    summary "Fetches a specific custom field"
+    summary "Fetches a specific Custom Field"
     param :path, :id, :integer, :required, "Custom Field ID"
-    response :ok, "Success", :custom_field
+    response :ok
     response :unauthorized
     response :not_found
   end

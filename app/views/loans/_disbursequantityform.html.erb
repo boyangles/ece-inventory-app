@@ -1,0 +1,28 @@
+<button type="button" class="btn btn-info btn-block" data-toggle="modal" data-target="#DisburseModal-<%= request_item.id %>">Convert to Disbursement</button>
+
+<div id="DisburseModal-<%= request_item.id %>" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				Convert <%= request_item.item.unique_name %> to Disbursement
+			</div>
+
+			<%= form_for (request_item), :url => disburse_loaned_request_item_path(request_item.id), :html => {:method => "put"} do |f| %>
+
+				<div class="modal-body text-center">
+					<h4>Quantity to Convert to Disbursement</h4>
+					<%= number_field_tag :quantity_to_disburse, params[:quantity_to_disburse], id: "quantity_disburse_id" %>
+				</div>
+		
+				<div class="modal-footer">
+					<%= f.submit "Submit", class: "btn btn-primary" %>
+				</div>
+	
+			<% end %>
+		</div>
+	</div>
+</div>
+
+
+

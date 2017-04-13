@@ -1,4 +1,49 @@
-<div>
-  <h1>HOME PAGE</h1>
+<% provide(:title, 'Login Homepage') %>
+
+<div class="center_jumbotron">
+  <h2 class="page-header text-center">Welcome to Our Barn</h2>
 </div>
-<%= image_tag("cleandatabase.jpg", :alt => "rss feed") %>
+
+<% if !logged_in? %>
+<div class='row'>
+	<%= render '../views/sessions/loginform' %>
+</div>
+<% else %>
+	<div class="text-center">
+		<%= image_tag("austin.jpg", :alt => "rss feed", :size => "180x180") %>
+		<%= image_tag("jordan.jpg", :alt => "rss feed", :size => "180x180") %>
+		<%= image_tag("josh.jpg", :alt => "rss feed", :size => "180x180") %>
+		<%= image_tag("bridget.jpg", :alt => "rss feed", :size => "180x180") %>
+	</div>
+<% end %>
+
+<div class="center_jumbotron">
+  <h3 class="page-header">Testimonials</h3>
+</div>
+
+<blockquote>
+	<p>This is my favorite place to get LEDs and Arduinos!</p>
+	<small>Beyonce Knowles</small>
+</blockquote>
+
+<blockquote class="blockquote-reverse">
+	<p>This website satisfies all my domestic needs ;)</p>
+	<small>Andrew Sun</small>
+</blockquote>
+
+<blockquote>
+	<p>this website saved my marriage with andrew sun, even though he forgot to buy our eball tickets.</p>
+	<small>Michael Shih</small>
+</blockquote>
+
+<blockquote class="blockquote-reverse">
+	<p>I don't think Andrew Sun appreciates me. Maybe I should use this website.</p>
+	<small>Austin Liu</small>
+</blockquote>
+
+<blockquote>
+	<p>It doesn't matter where you start. Only that you begin.</p>
+	<small>Robin Sharma</small>
+</blockquote>
+
+

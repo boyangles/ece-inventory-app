@@ -1,0 +1,31 @@
+<br>
+<div class="panel panel-info">
+	<div id="loan">
+		<div class="panel-body">
+			<% request = Request.find(loan.request_id) %>
+			<% item = Item.find(loan.item_id) %>
+			<% user = User.find(request.user_id) %>
+
+			<div class="col-lg-6">
+				<strong>User </strong><%= link_to user.username, user_path(user.id) %>
+				<br>
+				<strong>Item </strong><%= link_to item.unique_name, item_path(item.id) %>
+				<br>
+				<strong>Quantity Loaned </strong><%= loan.quantity_loan %>
+				<br>
+				<br>
+				<!--<strong>Due Date </strong> tbd-->
+				<%= link_to "Related Request", request_path(request.id) %>
+			</div>
+
+			<% if is_manager_or_admin? %>
+			<div class="col-lg-5 pull-right">
+				<%= render 'loans/returnquantityform', request_item: loan %>
+				</br>
+				<%= render 'loans/disbursequantityform', request_item: loan %>
+				<br>
+			</div>
+			<% end %>
+		</div>
+	</div>
+</div>
