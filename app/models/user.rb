@@ -7,6 +7,7 @@ class User < ApplicationRecord
 
   # Relation with Requests
   has_many :requests, dependent: :destroy
+  has_many :request_item_comments, dependent: :destroy
 
   # Relation with Logs - not necessarily one-to-many
   # has_many :logs

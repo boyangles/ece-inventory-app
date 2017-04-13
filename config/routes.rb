@@ -50,6 +50,7 @@ Rails.application.routes.draw do
   resources :sessions
   resources :logs
   resources :request_items, :except => [:index] do
+    resources :request_item_comments
     member do
       put :update_backfill, as: :update_backfill
       patch :update_backfill
