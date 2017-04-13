@@ -1,15 +1,15 @@
 class Api::V1::ItemsController < BaseController
   before_action :authenticate_with_token!
   before_action :auth_by_approved_status!
-  before_action :auth_by_manager_privilege!, only: [:create, :create_tag_associations, :destroy_tag_associations, :update_general, :bulk_import]
+  before_action :auth_by_manager_privilege!, only: [:create, :create_tag_associations, :destroy_tag_associations, :update_general, :bulk_import, :convert_to_stocks]
   before_action :auth_by_admin_privilege!, only: [:destroy, :fix_quantity, :clear_field_entries, :update_field_entry]
-  before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans]
-  before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans]
+  before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks]
+  before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks]
 
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import, :self_outstanding_requests, :self_loans].each do |api_action|
+  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import, :self_outstanding_requests, :self_loans, :convert_to_stocks].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -212,6 +212,18 @@ class Api::V1::ItemsController < BaseController
     response :ok
     response :unauthorized
     response :not_found
+  end
+
+  swagger_api :convert_to_stocks do
+    summary "Converts all the quantities for a particular item to assets"
+    notes "
+    Converts an item and all its associated quantities to be tracked as assets. Dependent on the following criteria
+    - has_stocks for specified Items must be false
+    "
+  end
+
+  def convert_to_stocks
+    
   end
 
   def self_outstanding_requests

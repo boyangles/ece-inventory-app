@@ -101,6 +101,8 @@ Rails.application.routes.draw do
 
       resources :items, :only => [:index, :show, :create, :destroy] do
         member do
+          post :convert_to_stocks
+
           post :create_tag_associations
 
           delete :destroy_tag_associations
