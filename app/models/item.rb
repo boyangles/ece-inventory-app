@@ -248,7 +248,6 @@ class Item < ApplicationRecord
   def delete_stocks_through_request_by_list(request_item)
 
     # These are now RequestItemStock hashes
-    binding.pry
     serial_tags_loan = RequestItemStock.where(request_item_id: request_item.id, status: 'loan')
     serial_tags_disburse = RequestItemStock.where(request_item_id: request_item.id, status: 'disburse')
 

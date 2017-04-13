@@ -348,8 +348,6 @@ class User < ApplicationRecord
     ActiveRecord::Base.transaction do
       if @item.has_stocks
         if bf_status == 'bf_satisfied'
-          binding.pry
-          # request item stocks is empty??
           req_stocks = request_item.request_item_stocks.filter({status: 'loan'})
           # Set all req_item_stocks to disbursed (user takes items, then backfills by creating new ones)
           # Check that req_stocks.size is equal to quantity_to_return
@@ -379,9 +377,6 @@ class User < ApplicationRecord
           list_to_return.each do |st_name|
             stock = Stock.find_by(serial_tag: st_name)
             raise Exception.new("fu1") unless stock
-
-            # DONE
-            binding.pry
 
             request_item_stock = RequestItemStock.find_by(request_item_id: request_item.id, stock_id: stock.id)
             raise Exception.new("fu2") unless request_item_stock

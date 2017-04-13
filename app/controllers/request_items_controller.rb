@@ -47,7 +47,6 @@ class RequestItemsController < ApplicationController
 		require 'pry'
 		@request_item = RequestItem.find(params[:id])
 		begin
-			binding.pry
 			@request_item.update_attributes!(bf_status: request_item_params[:bf_status])
 			redirect_to request_path(@request_item.request) and return
 		rescue Exception => e
@@ -59,7 +58,6 @@ class RequestItemsController < ApplicationController
 	def update
 		@request_item = RequestItem.find(params[:id])
 		@request_item.curr_user = current_user
-		binding.pry
 		begin
 			@request_item.create_request_item_stocks(params[:serial_tags_disburse], params[:serial_tags_loan])
 		rescue Exception => e
@@ -100,7 +98,6 @@ class RequestItemsController < ApplicationController
 		else
 			reqit.curr_user = current_user
 			if Item.find(reqit.item_id).has_stocks
-				# binding.pry
 				current_user.return_subrequest(reqit, params[:serial_tags_loan_return], request_item_params[:bf_status])
 			else
 				current_user.return_subrequest(reqit, params[:quantity_to_return].to_f, request_item_params[:bf_status])
@@ -118,9 +115,6 @@ class RequestItemsController < ApplicationController
 
 	def disburse_loaned
 		reqit = RequestItem.find(params[:id])
-		binding.pry
-
-		binding.pry
 		reqit.curr_user = current_user
 		if Item.find(reqit.item_id).has_stocks
 			if (params[:quantity_to_disburse].size > reqit.quantity_loan)
