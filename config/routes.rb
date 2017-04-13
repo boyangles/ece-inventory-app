@@ -128,6 +128,12 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :stocks, :only => [:index] do
+        member do
+
+        end
+      end
+
       resources :requests, :only => [:index, :show, :create] do
         member do
           put :decision
