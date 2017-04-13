@@ -109,8 +109,13 @@ class RequestItemsController < ApplicationController
 			flash[:danger] = "That's more than are loaned out!"
 		else
 			reqit.curr_user = current_user
-			reqit.disburse_loaned_subrequest(params[:quantity_to_disburse].to_f)
-			UserMailer.loan_convert_email(reqit,params[:quantity_to_disburse]).deliver_now
+			if Item.find(reqit.item_id).has_stocks
+				reqit.disburse_loaned_subrequest(params[:quantity_to_disburse].to_f)
+			else
+				reqit.disburse_loaned_subrequest(params[:quantity_to_disburse].to_f)
+			end
+
+			UserMailer.loan_convert_email(reqit, params[:quantity_to_disburse]).deliver_now
 			flash[:success] = "Quantity successfully disbursed!"
 		end
 		redirect_to request_path(reqit.request_id)

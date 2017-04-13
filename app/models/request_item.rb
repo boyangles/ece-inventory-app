@@ -3,18 +3,18 @@ class RequestItem < ApplicationRecord
 
   belongs_to :request
   belongs_to :item
-	has_many :attachment
+  has_many :attachment
 
   ## Constants
 
-	enum bf_status: {
-		loan: 0,
-		bf_request: 1,
-		bf_in_transit: 2,
-		bf_denied: 3,
-		bf_satisfied: 4,
-		bf_failed: 5
-	}
+  enum bf_status: {
+      loan: 0,
+      bf_request: 1,
+      bf_in_transit: 2,
+      bf_denied: 3,
+      bf_satisfied: 4,
+      bf_failed: 5
+  }
 
   # Scopes for filtering
   scope :request_id, -> (request_id) { where request_id: request_id }
@@ -63,7 +63,7 @@ class RequestItem < ApplicationRecord
   # Input: N/A
   # Output: @item upon success
   def fulfill_subrequest
-    
+
 
     @item = self.item
 
@@ -77,7 +77,7 @@ class RequestItem < ApplicationRecord
 
       @item.update!(:quantity => item[:quantity] - disbursement_quantity - loan_quantity)
       @item.update!(:quantity_on_loan => item[:quantity_on_loan] + loan_quantity)
-		
+
     end
   end
 
@@ -97,18 +97,42 @@ class RequestItem < ApplicationRecord
 
   ##
   # REQ-ITEM-5: disburse_loaned_subrequest
-  def disburse_loaned_subrequest(to_disburse)
-    quantity_to_disburse = (to_disburse.nil?) ? 0 : to_disburse
-
+  def disburse_loaned_subrequest(serial_tags_list)
+    ]
     @item = self.item
+    if @item.has_stocks
+      quantity_to_disburse = (serial_tags_list.nil?) ? 0 : serial_tags_list.size
+    else
+      quantity_to_disburse = (serial_tags_list.nil?) ? 0 : serial_tags_list
+    end
+
 
     ActiveRecord::Base.transaction do
-      if quantity_to_disburse > 0
-        create_log("disbursed_from_loan", quantity_to_disburse)
-      end
+      if @item.has_stocks
+        serial_tags_list.each do |serial_tag|
+          # mark req item stock as disbursed, delete stock, change quantity for items and req item quantity
+          stock = Stock.find_by(serial_tag: serial_tag)
+          req_item_stock = RequestItemStock.find_by(request_item_id: self.id, stock_id: stock.id)
 
-      self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_disburse, :quantity_disburse => self[:quantity_disburse] + quantity_to_disburse)
-      @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_disburse)
+          req_item_stock.status = 'disburse'
+          req_item_stock.save!
+          stock.destroy
+
+          @item.quantity_on_loan -= 1;
+          @item.save!
+
+          self.quantity_loan -= 1;
+          self.quantity_disburse +=1 ;
+        end
+      else
+
+        if quantity_to_disburse > 0
+          create_log("disbursed_from_loan", quantity_to_disburse)
+        end
+
+        self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_disburse, :quantity_disburse => self[:quantity_disburse] + quantity_to_disburse)
+        @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_disburse)
+      end
     end
   end
 
@@ -205,7 +229,7 @@ class RequestItem < ApplicationRecord
 
   def create_serial_tag_list(status_type)
     tags = Stock.where(id: RequestItemStock.select(:stock_id)
-                                         .where(request_item_id: self.id, status: status_type))
+                               .where(request_item_id: self.id, status: status_type))
     list = []
     tags.each do |f|
       list.push(f.serial_tag)
