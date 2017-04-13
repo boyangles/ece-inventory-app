@@ -32,7 +32,7 @@ Rails.application.routes.draw do
   patch 'settings/dates', to: 'settings#update_dates'
 
   #TODO: change minimum stock to just stock or just minimum
-  get  'items/stock' => 'items#set_all_minimum_stock', :as => 'minimum_stock'
+  get  'items/minimums' => 'items#set_all_minimum_stock', :as => 'minimum_stock'
   put 'items/update_all_minimum_stock' => 'items#update_all_minimum_stock', :as => 'update_all_minimum_stock'
   patch 'items/update_all_minimum_stock', to: 'items#update_all_minimum_stock'
 

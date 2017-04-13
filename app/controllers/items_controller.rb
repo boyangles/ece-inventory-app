@@ -221,7 +221,6 @@ class ItemsController < ApplicationController
 
   def update_all_minimum_stock
     #Putting this line below just to test! Need to verify that it works.
-    items = Item.all
     # binding.pry
     # 10000.times do |i|
     #   puts "The value of items is "
