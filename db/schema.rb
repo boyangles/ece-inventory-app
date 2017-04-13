@@ -91,8 +91,10 @@ ActiveRecord::Schema.define(version: 20170413172102) do
 
   create_table "request_item_comments", force: :cascade do |t|
     t.integer "request_item_id"
-    t.string  "comment"
+    t.integer "user_id"
+    t.text    "comment"
     t.index ["request_item_id"], name: "index_request_item_comments_on_request_item_id", using: :btree
+    t.index ["user_id"], name: "index_request_item_comments_on_user_id", using: :btree
   end
 
   create_table "request_item_stocks", force: :cascade do |t|

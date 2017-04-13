@@ -5,6 +5,7 @@ class RequestItem < ApplicationRecord
   belongs_to :item
   has_many :attachment
   has_many :request_item_stocks
+  has_many :request_item_comments, dependent: :destroy
 
   ## Constants
 
