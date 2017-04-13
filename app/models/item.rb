@@ -156,6 +156,27 @@ class Item < ApplicationRecord
     end
   end
 
+  def convert_to_stocks!
+    raise Exception.new("Cannot convert to assets if this item is already specified as having assets!") if self.has_stocks
+
+    begin
+      ActiveRecord::Base.transaction do
+        (1..self.quantity).each do
+          Stock.create!(:item_id => self.id, :available => true)
+        end
+
+        (1..self.quantity_on_loan).each do
+          Stock.create!(:item_id => self.id, :available => false)
+        end
+
+        self.has_stocks = true
+        self.save!
+      end
+    end
+
+    Stock.where(item_id: self.id)
+  end
+
   def convert_to_stocks
     return false if self.has_stocks
 
@@ -169,7 +190,7 @@ class Item < ApplicationRecord
           Stock.create!(:item_id => self.id, :available => false)
         end
 
-        self.has_stocks = "true"
+        self.has_stocks = true
         self.save!
       end
 

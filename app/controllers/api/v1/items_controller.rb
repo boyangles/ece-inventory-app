@@ -220,10 +220,19 @@ class Api::V1::ItemsController < BaseController
     Converts an item and all its associated quantities to be tracked as assets. Dependent on the following criteria
     - has_stocks for specified Items must be false
     "
+    param :path, :id, :integer, :required, "Item ID"
+    response :ok
+    response :unauthorized
+    response :not_found
   end
 
   def convert_to_stocks
-    
+    begin
+      created_stocks = @item.convert_to_stocks!
+      render_multiple_stocks(created_stocks)
+    rescue Exception => e
+      render_client_error(e.message, 422)
+    end
   end
 
   def self_outstanding_requests
@@ -460,5 +469,17 @@ class Api::V1::ItemsController < BaseController
       }
       }
     }, status: 200
+  end
+
+  def render_multiple_stocks(stocks)
+    render :json => stocks.map {
+        |stock| {
+          item_id: stock.item.id,
+          stock_id: stock.id,
+          item_name: stock.item.unique_name,
+          serial_tag: stock.serial_tag,
+          available: stock.available
+      }
+    }
   end
 end
