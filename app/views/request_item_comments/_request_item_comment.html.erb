@@ -1,2 +1,12 @@
-<h1>Username: <%= request_item_comment.user.username %></h1>
-<h2><%= request_item_comment.comment %></h2>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-2">
+      <b><%= request_item_comment.user.username %>: </b>
+    </div>
+    <div class="col-sm-10">
+      <%= request_item_comment.comment %>
+    </div>
+
+  </div>
+</div>
+

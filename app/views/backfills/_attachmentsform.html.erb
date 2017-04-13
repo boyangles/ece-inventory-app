@@ -30,19 +30,13 @@
 			<div class="modal-body">
         <div id="request_item_comments_<%= request_item.id %>">
           <% if request_item.request_item_comments %>
+
             <%= render request_item.request_item_comments, request_item: request_item %>
           <% end %>
         </div>
+        <%= render 'request_item_comments/request_item_comment_form', request_item: request_item %>
 
       <table class="table">
-          <tbody>
-            <%request_item.request_item_comments.each do |req_item_comment| %>
-              <tr>
-                <td><%= req_item_comment.comment %></td>
-              </tr>
-            <% end %>
-          </tbody>
-
 					<tbody>
 						<% request_item.attachment_ids.each do |doc_id| %>
 							<tr>

@@ -1,18 +1,20 @@
 class RequestItemCommentsController < ApplicationController
   before_action :set_comment, :only => []
   def create
+
+    @request_item = RequestItem.find(params[:request_item_id])
     @request_item_comment = RequestItemComment.new(request_item_comment_params)
     @request_item_comment.user_id = current_user.id
-    @request_item_comment.request_id = params[:id]
+    @request_item_comment.request_item_id = params[:request_item_id]
 
     if @request_item_comment.save
       respond_to do |format|
-        format.html {redirect_to request_path(RequestItem.find(params[:id]).request)}
+        format.html {redirect_to request_path(RequestItem.find(params[:request_item_id]).request)}
         format.js
       end
     else
       flash.now[:danger] = "Comment could not be saved"
-      redirect_to request_path(RequestItem.find(params[:id]).request)
+      redirect_to request_path(RequestItem.find(params[:request_item_id]).request)
     end
   end
 
