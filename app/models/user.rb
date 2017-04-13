@@ -334,6 +334,7 @@ class User < ApplicationRecord
 
   ##
   # REQ-ITEM-4: return_subrequest
+  # List to return, if stocked and backfilled, is the quantity to create. (not allowing them to specify serial tags when backfill)
   def return_subrequest(request_item, list_to_return, bf_status)
     raise Exception.new("fu") if self.privilege_student?
 
@@ -346,13 +347,30 @@ class User < ApplicationRecord
     ActiveRecord::Base.transaction do
       if @item.has_stocks
         if bf_status == 'bf_satisfied'
-          # TODO: something
-          require 'pry'
-          binding.pry
           req_stocks = request_item.request_item_stocks.where(status: 'loan')
-          req_stocks.each do |f|
-
+          # Set all req_item_stocks to disbursed (user takes items, then backfills by creating new ones)
+          # Check that req_stocks.size is equal to quantity_to_return
+          binding.pry
+          req_stocks.each do |req_stock|
+            req_stock.status = 'disburse'
+            stock = req_stock.stock
+            stock.destroy
+            req_stock.save!
           end
+
+          # Creates new stocks to replace disbursed ones from backfill
+          for i in 1..quantity_to_return
+            Stock.create!(item_id:   request_item.item.id, available: true)
+          end
+
+          request_item.quantity_loan = 0
+          request_item.quantity_return = quantity_to_return
+          request_item.save!
+
+          @item.quantity += quantity_to_return
+          @item.quantity_on_loan -= quantity_to_return
+          @item.save!
+
 
         else
           list_to_return.each do |st_name|
@@ -365,14 +383,17 @@ class User < ApplicationRecord
             raise Exception.new("fu2") unless request_item_stock
 
             raise Exception.new("fu3") if stock.available
-
             stock.available = true
             stock.save!
+
             request_item.quantity_loan -= 1
             request_item.quantity_return += 1
-            request_item.status = 'return'
-
             request_item.save!
+
+            # request item vs req item stock for return?
+            request_item_stock.status = 'return'
+            request_item_stock.save!
+
             @item.quantity += 1
             @item.quantity_on_loan -= 1
             @item.save!
