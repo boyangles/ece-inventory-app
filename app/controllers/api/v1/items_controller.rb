@@ -1,15 +1,15 @@
 class Api::V1::ItemsController < BaseController
   before_action :authenticate_with_token!
   before_action :auth_by_approved_status!
-  before_action :auth_by_manager_privilege!, only: [:create, :create_tag_associations, :destroy_tag_associations, :update_general, :bulk_import, :convert_to_stocks]
+  before_action :auth_by_manager_privilege!, only: [:create, :create_tag_associations, :destroy_tag_associations, :update_general, :bulk_import, :convert_to_stocks, :convert_to_global]
   before_action :auth_by_admin_privilege!, only: [:destroy, :fix_quantity, :clear_field_entries, :update_field_entry]
-  before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks]
-  before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks]
+  before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global]
+  before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global]
 
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import, :self_outstanding_requests, :self_loans, :convert_to_stocks].each do |api_action|
+  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -218,12 +218,33 @@ class Api::V1::ItemsController < BaseController
     summary "Converts all the quantities for a particular item to assets"
     notes "
     Converts an item and all its associated quantities to be tracked as assets. Dependent on the following criteria
-    - has_stocks for specified Items must be false
+    - has_stocks for specified Item must be false
     "
     param :path, :id, :integer, :required, "Item ID"
     response :ok
     response :unauthorized
     response :not_found
+  end
+
+  swagger_api :convert_to_global do
+    summary "Converts all the associated assets for a particular item to quantity and quantity_on_loan"
+    notes "
+    Converts all stocks for an item to quantity. Equivalent to deleting these entries from the Stocks table. Dependent on the following criteria:
+    - has_stocks is for specified Item must be true
+    "
+    param :path, :id, :integer, :required, "Item ID"
+    response :ok
+    response :unauthorized
+    response :not_found
+  end
+
+  def convert_to_global
+    begin
+      updated_item = @item.convert_to_global!
+      render_item_instance_with_tags_and_requests_and_custom_fields(updated_item)
+    rescue Exception => e
+      render_client_error(e.message, 422)
+    end
   end
 
   def convert_to_stocks
@@ -440,6 +461,7 @@ class Api::V1::ItemsController < BaseController
           :quantity => item.quantity,
           :description => item.description,
           :model_number => item.model_number,
+          :has_stocks => item.has_stocks,
           :tags => item.tags
       }
     }, status: 200
@@ -452,6 +474,7 @@ class Api::V1::ItemsController < BaseController
           :quantity => item.quantity,
           :description => item.description,
           :model_number => item.model_number,
+          :has_stocks => item.has_stocks,
           :tags => item.tags,
           :requests => item.requests.map {
               |req| {

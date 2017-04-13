@@ -230,6 +230,16 @@ class Item < ApplicationRecord
     self.save!
   end
 
+  def convert_to_global!
+    raise Exception.new("Cannot convert back assets for an item if that item is already specified as not having assets!") unless self.has_stocks
+
+    Stock.destroy_all(item_id: self.id)
+    self.has_stocks = false
+    self.save!
+
+    self
+  end
+
   def convert_quantity_to_stocks(num_to_create)
     return false unless self.has_stocks
 
