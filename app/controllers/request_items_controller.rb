@@ -46,8 +46,16 @@ class RequestItemsController < ApplicationController
 	def update_backfill
 		require 'pry'
 		@request_item = RequestItem.find(params[:id])
+		100.times do |i|
+			puts "FUCKsdkjfladfkalksdf"
+		end
+		old_status = @request_item.bf_status
 		begin
+			100.times do |i|
+				puts "asdfasdfsdkjfladfkalksdf"
+			end
 			@request_item.update_attributes!(bf_status: request_item_params[:bf_status])
+			UserMailer.backfill_approved_email(@request_item,old_status).deliver_now
 			redirect_to request_path(@request_item.request) and return
 		rescue Exception => e
 			flash[:danger] = e.message

@@ -115,6 +115,15 @@ class UserMailer < ApplicationMailer
     end
   end
 
+  def backfill_approved_email(requestItem,old_status)
+    @request_item = requestItem
+    @old_status = old_status
+    @user = requestItem.request.user
+    @comments = RequestItemComment.where(:request_item_id => requestItem)
+    email_params
+    mail(to: @user.email, subject: "Backfill Information Attached")
+  end
+
   private
 
   def loan_email_template(reqItem, user)
