@@ -26,7 +26,7 @@
                   <%= link_to Stock.find(req_item_stock.stock_id).serial_tag + ((index == req_item.request_item_stocks.filter(status: 'loan').size-1) ? '' : ', '), item_stock_path(Stock.find(req_item_stock.stock_id).id) %>
               <% end %>
           <% else %>
-              None
+              <%= req_item.item.has_stocks? ? 'None' : 'N/A' %>
           <% end %>
         </td>
 
@@ -43,7 +43,7 @@
             <td></td>
         <% end %>
 
-        <% if current_user == User.find(request.user_id) or (!req_item.loan?) %>
+        <% if req_item.quantity_loan != 0 and (current_user == User.find(request.user_id) or (!req_item.loan?)) %>
             <td><%= render 'backfills/attachmentsform', request_item: req_item %></td>
         <% else %>
             <td></td>
