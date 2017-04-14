@@ -1,11 +1,12 @@
 <table class="table table-striped table-hover">
   <thead>
   <tr>
-    <th>Item Name</th>
+    <th class="text-center">Item Name</th>
     <th class="text-center">Quantity Loaned</th>
     <th class="text-center">Quantity Disbursed</th>
     <th class="text-center">Quantity Returned</th>
     <th class="text-center">Serial Tags</th>
+    <th></th>
     <th></th>
     <th></th>
   </tr>
@@ -15,15 +16,17 @@
   <% request.request_items.each do |req_item| %>
       <tr>
         <td><%= link_to req_item.item.unique_name, item_path(req_item.item_id) %></td>
-        <td class="text-right"><%= req_item.quantity_loan %></td>
-        <td class="text-right"><%= req_item.quantity_disburse %></td>
-        <td class="text-right"><%= req_item.quantity_return %></td>
+        <td class="text-center"><%= req_item.quantity_loan %></td>
+        <td class="text-center"><%= req_item.quantity_disburse %></td>
+        <td class="text-center"><%= req_item.quantity_return %></td>
 
-        <td class="text-right">
-          <% req_item.request_item_stocks.each_with_index do |req_item_stock, index| %>
-              <% if req_item_stock.status == 'loan' %>
-                  <%= Stock.find(req_item_stock.stock_id).serial_tag + ((index == req_item.request_item_stocks.size-1) ? '' : ', ') %>
+        <td class="text-center">
+          <% if req_item.request_item_stocks.filter(status: 'loan').size > 0 %>
+              <% req_item.request_item_stocks.filter(status: 'loan').each_with_index do |req_item_stock, index| %>
+                  <%= Stock.find(req_item_stock.stock_id).serial_tag + ((index == req_item.request_item_stocks.filter(status: 'loan').size-1) ? '' : ', ') %>
               <% end %>
+          <% else %>
+              None
           <% end %>
         </td>
 

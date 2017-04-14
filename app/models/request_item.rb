@@ -65,8 +65,6 @@ class RequestItem < ApplicationRecord
   # Input: N/A
   # Output: @item upon success
   def fulfill_subrequest
-
-
     @item = self.item
 
     # item_requested = Item.find(self.item_id)
@@ -254,6 +252,7 @@ class RequestItem < ApplicationRecord
     num_rq_item_stock_dis = RequestItemStock.where(request_item_id: self.id, status: 'disburse').count
     num_rq_item_stock_loan = RequestItemStock.where(request_item_id: self.id, status: 'loan').count
 
+    binding.pry
     if item.has_stocks
       if quantity_disburse != num_rq_item_stock_dis || quantity_loan != num_rq_item_stock_loan
         raise Exception.new("Serial tags must be specified for requested item")
