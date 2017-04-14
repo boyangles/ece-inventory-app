@@ -4,6 +4,7 @@ class StocksController < ApplicationController
   before_action :set_item, only: [:show, :edit, :update, :destroy, :create]
   before_action :check_manager_or_admin, only: [:index, :show, :edit, :create, :update]
   before_action :check_admin_user, only: [:destroy]
+  before_action :verify_item_is_stocked
 
   def index
     @item = Item.find(params[:item_id])
@@ -89,6 +90,14 @@ class StocksController < ApplicationController
 
   def set_item
     @item = Item.find(params[:item_id])
+  end
+
+  def verify_item_is_stocked
+    set_item
+    unless @item.has_stocks
+      flash[:danger] = "Item has not been converted to assets"
+      redirect_to item_path @item
+    end
   end
 end
 

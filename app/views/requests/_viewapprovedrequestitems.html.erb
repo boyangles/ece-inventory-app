@@ -23,7 +23,7 @@
         <td class="text-center">
           <% if req_item.request_item_stocks.filter(status: 'loan').size > 0 %>
               <% req_item.request_item_stocks.filter(status: 'loan').each_with_index do |req_item_stock, index| %>
-                  <%= Stock.find(req_item_stock.stock_id).serial_tag + ((index == req_item.request_item_stocks.filter(status: 'loan').size-1) ? '' : ', ') %>
+                  <%= link_to Stock.find(req_item_stock.stock_id).serial_tag + ((index == req_item.request_item_stocks.filter(status: 'loan').size-1) ? '' : ', '), item_stock_path(Stock.find(req_item_stock.stock_id).id) %>
               <% end %>
           <% else %>
               None
