@@ -11,14 +11,25 @@ class AttachmentsController < ApplicationController
 	end
 
 	def create
+		@request = RequestItem.find(attachment_params[:request_item_id]).request
+
 		begin
 			@attachment = Attachment.new(attachment_params)
-			@attachment.save!
-			flash[:success] = "File uploaded!"
-			redirect_to request_path(@attachment.request_item.request.id)
+
+			if @attachment.valid?
+				@attachment.save
+				flash[:success] = "File uploaded!"
+				redirect_to request_path(@attachment.request_item.request.id)
+			else
+				flash[:danger] = "Upload file not saved: #{e.message}"
+				redirect_to request_path(@request.id)
+			end
+		rescue ActiveRecord::RecordInvalid => invalid
+			flash[:danger] = invalid.record.errors
+			redirect_to request_path(@request.id)
 		rescue Exception => e
-			flash.now[:danger] = "Upload file not saved: #{e.message}"
-			render request_path(@request.id)
+			flash[:danger] = "Upload file not saved: #{e.message}"
+			redirect_to request_path(@request.id)
 		end
 	end
 
