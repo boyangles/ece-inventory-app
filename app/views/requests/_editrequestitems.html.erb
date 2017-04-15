@@ -40,7 +40,7 @@
         <% else %>
             <td></td>
         <% end %>
-        <td><%= link_to "Remove Item", req_item, method: :delete, data: {confirm: "Are you sure you want to remove " + item.unique_name + " from your cart?"}, class: "btn btn-primary" %></td>
+        <td><%= link_to glyph(:remove), req_item, method: :delete, data: {confirm: "Are you sure you want to remove " + item.unique_name + " from your cart?"}, class: "btn btn-default" %></td>
       </tr>
   <% end %>
   </tbody>
