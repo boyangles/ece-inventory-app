@@ -142,6 +142,8 @@ class User < ApplicationRecord
 
   end
 
+
+
   ##
   # USER-1: make_request
   # Allows individuals to request items from the inventory
