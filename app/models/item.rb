@@ -413,6 +413,10 @@ class Item < ApplicationRecord
     self.save!
   end
 
+  def self.is_valid_integer(input)
+    input.to_i.to_s == input
+  end
+
   private
 
   def create_custom_fields_for_items(item_id)

@@ -66,6 +66,11 @@ class Stock < ApplicationRecord
     end
   end
 
+  def self.create_stock!(serial_tag, item_id)
+    Stock.create!(serial_tag: serial_tag, item_id: item_id)
+    Item.find(item_id).update_item_quantity_on_stock_creation
+  end
+
   def self.filter_by_search(search_input)
     where("serial_tag ILIKE ?", "%#{search_input}%")
   end
