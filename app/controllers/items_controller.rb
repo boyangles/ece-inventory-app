@@ -199,10 +199,11 @@ class ItemsController < ApplicationController
 
   def delete_multiple_stocks
     begin
+      tags = Stock.get_tags_from_ids(params[:stock_ids])
       params[:stock_ids].each do |id|
         @item.delete_stock(Stock.find(id))
       end
-      flash[:success] = "Deleted #{params[:stock_ids]} assets"
+      flash[:success] = "Deleted #{tags} assets"
       redirect_to item_stocks_path @item
     rescue Exception => e
       flash[:danger] = "Could not delete all stocks. #{e.message}"
