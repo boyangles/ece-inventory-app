@@ -1,6 +1,14 @@
 
 <div class="center_jumbotron">
 
+  <% if !@item.active? %>
+      <div class="panel panel-danger">
+        <div class="panel-heading">
+          <h3 class="panel-title">Item has been deleted.</h3>
+        </div>
+      </div>
+  <% end %>
+
   <h2 class="page-header">
     <%= link_to @item.unique_name, item_path(@item.id) %>
 
@@ -20,23 +28,27 @@
     </div>
 <% end %>
 
+<%= form_tag ( delete_multiple_stocks_item_path @item, method: :delete) do |f| %>
 
-<table class="table table-striped table-hover">
-  <thead>
+    <table class="table table-striped table-hover">
+      <thead>
 
-  <tr>
-    <th class="text-center">Serial Tag</th>
-    <th class="text-center">Available</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-  </thead>
+      <tr>
+        <th class="text-center">Serial Tag</th>
+        <th class="text-center">Available</th>
+        <th></th>
+        <th class="text-center">Select</th>
+      </tr>
+      </thead>
 
-  <tbody>
-  <%= render @stocks %>
-  </tbody>
-</table>
+      <tbody>
+      <%= render @stocks %>
+      </tbody>
+    </table>
+
+    <%= submit_tag "Delete Selected", class: 'pull-right btn btn-danger', type: 'submit', data: {confirm: 'Are you sure you want to delete the selected assets?'} %>
+
+<% end %>
 
 <div class="text-center">
   <%= will_paginate(@stocks) %>

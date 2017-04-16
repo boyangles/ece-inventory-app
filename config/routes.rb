@@ -33,15 +33,25 @@ Rails.application.routes.draw do
   put'settings/dates' => 'settings#update_dates', :as => 'update_dates'
   patch 'settings/dates', to: 'settings#update_dates'
 
+  #TODO: change minimum stock to just stock or just minimum
+  get  'items/minimums' => 'items#set_all_minimum_stock', :as => 'minimum_stock'
+  put 'items/update_all_minimum_stock' => 'items#update_all_minimum_stock', :as => 'update_all_minimum_stock'
+  patch 'items/update_all_minimum_stock', to: 'items#update_all_minimum_stock'
+
+  resources :items
+  resources :tags
+
 
   resources :items do
     member do
       post :convert_to_stocks
       post :create_stocks
       post :convert_to_global
+      post :delete_multiple_stocks
     end
     resources :stocks
   end
+  # post 'items/:id/delete_multiple_stocks' => 'stocks#delete_multiple_stocks', as: 'delete_multiple_stocks'
 
   resources :tags
   resources :request_item_stocks
@@ -59,7 +69,6 @@ Rails.application.routes.draw do
     end
   end
   get 'request_items/:id/specify_return_serial_tags' => 'request_items#specify_return_serial_tags', :as => 'return_assets'
-
 
 
 	resources :attachments
@@ -109,12 +118,22 @@ Rails.application.routes.draw do
 
       resources :items, :only => [:index, :show, :create, :destroy] do
         member do
+          post :create_single_stock
+
+          post :create_stocks
+
+          post :convert_to_stocks
+          delete :convert_to_global
+
           post :create_tag_associations
 
           delete :destroy_tag_associations
 
           put :update_general
           patch :update_general
+
+          put :bulk_minimum_stock
+          patch :bulk_minimum_stock
 
           put :fix_quantity
           patch :fix_quantity
@@ -130,6 +149,13 @@ Rails.application.routes.draw do
           get :self_outstanding_requests
 
           get :self_loans
+        end
+      end
+
+      resources :stocks, :only => [:index, :show] do
+        member do
+          put :update_serial_tag
+          patch :update_serial_tag
         end
       end
 

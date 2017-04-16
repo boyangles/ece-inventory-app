@@ -32,9 +32,9 @@ class RequestItem < ApplicationRecord
   attr_accessor :curr_user
   attr_readonly :request_id, :item_id
 
-	after_update {
-		log_on_backfill_change
-	}
+  after_update {
+    log_on_backfill_change
+  }
 
   before_validation {
     self.quantity_disburse = (self.quantity_disburse.blank?) ?  0 : self.quantity_disburse
@@ -70,7 +70,6 @@ class RequestItem < ApplicationRecord
   # Output: @item upon success
   def fulfill_subrequest
     @item = self.item
-
     # item_requested = Item.find(self.item_id)
     if @item.has_stocks
       @item.delete_stocks_through_request_by_list(self)
@@ -79,7 +78,12 @@ class RequestItem < ApplicationRecord
       disbursement_quantity = (self[:quantity_disburse].nil?) ? 0 : self[:quantity_disburse]
       loan_quantity = (self[:quantity_loan].nil?) ? 0 : self[:quantity_loan]
 
-      @item.update!(:quantity => item[:quantity] - disbursement_quantity - loan_quantity)
+      # Need to send out minimum stock email if applicable!!
+
+      newItemQuant = @item[:quantity] - disbursement_quantity - loan_quantity
+      minimum_stock_email(@item.quantity,newItemQuant, @item)
+
+      @item.update!(:quantity => newItemQuant)
       @item.update!(:quantity_on_loan => item[:quantity_on_loan] + loan_quantity)
 
     end
@@ -101,8 +105,7 @@ class RequestItem < ApplicationRecord
 
   ##
   # REQ-ITEM-5: disburse_loaned_subrequest
-  def disburse_loaned_subrequest(serial_tags_list)
-
+  def disburse_loaned_subrequest!(serial_tags_list)
     @item = self.item
     if @item.has_stocks
       quantity_to_disburse = (serial_tags_list.nil?) ? 0 : serial_tags_list.size
@@ -110,8 +113,7 @@ class RequestItem < ApplicationRecord
       quantity_to_disburse = (serial_tags_list.nil?) ? 0 : serial_tags_list.to_f
     end
 
-
-    ActiveRecord::Base.transaction do
+    RequestItem.transaction do
       if @item.has_stocks
         serial_tags_list.each do |serial_tag|
           # mark req item stock as disbursed, delete stock, change quantity for items and req item quantity
@@ -130,10 +132,8 @@ class RequestItem < ApplicationRecord
           self.save!
         end
       else
-        if quantity_to_disburse > 0
-          create_log("disbursed_from_loan", quantity_to_disburse)
-        end
-
+        raise Exception.new("Quantity to convert must be greater than 0") if quantity_to_disburse <= 0
+        create_log("disbursed_from_loan", quantity_to_disburse)
         self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_disburse, :quantity_disburse => self[:quantity_disburse] + quantity_to_disburse)
         @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_disburse)
       end
@@ -172,22 +172,22 @@ class RequestItem < ApplicationRecord
     itemlog.save!
   end
 
-	def log_on_backfill_change
-		bf_old = bf_status_was
-		bf_new = bf_status
+  def log_on_backfill_change
+    bf_old = bf_status_was
+    bf_new = bf_status
 
-		if bf_old == "loan" and bf_new == "bf_request"
-			create_log("backfill_requested", self.quantity_loan)
-		elsif bf_old == "bf_request" and bf_new == "bf_in_transit"
-			create_log("backfill_request_approved", self.quantity_loan)
-		elsif bf_old == "bf_request" and bf_new == "bf_denied"
-			create_log("backfill_request_denied", self.quantity_loan)
-		elsif bf_old == "bf_in_transit" and bf_new == "bf_satisfied"
-			create_log("backfill_request_satisfied", self.quantity_loan)
-		elsif bf_old == "bf_in_transit" and bf_new == "bf_failed"
-			create_log("backfill_request_failed", self.quantity_loan)
-		end
-	end
+    if bf_old == "loan" and bf_new == "bf_request"
+      create_log("backfill_requested", self.quantity_loan)
+    elsif bf_old == "bf_request" and bf_new == "bf_in_transit"
+      create_log("backfill_request_approved", self.quantity_loan)
+    elsif bf_old == "bf_request" and bf_new == "bf_denied"
+      create_log("backfill_request_denied", self.quantity_loan)
+    elsif bf_old == "bf_in_transit" and bf_new == "bf_satisfied"
+      create_log("backfill_request_satisfied", self.quantity_loan)
+    elsif bf_old == "bf_in_transit" and bf_new == "bf_failed"
+      create_log("backfill_request_failed", self.quantity_loan)
+    end
+  end
 
   def determine_subrequest_type
     loan_quantity = (self[:quantity_loan].nil?) ? 0 : self[:quantity_loan]
@@ -265,6 +265,25 @@ class RequestItem < ApplicationRecord
     errors.add(:base, "Loan and Disburse cannot both be 0") if (quantity_disburse == 0 && quantity_loan == 0 && quantity_return == 0)
   end
 
+  def minimum_stock_email(q_before, q_after, item)
+    10.times do |i|
+      puts "The quantity before is:"
+      puts q_before
+      puts "The quantity after is:"
+      puts q_after
+      puts "The item is:"
+      puts item.unique_name
+      puts "The minimum stock is:"
+      puts Setting.email_min_stock.to_i
+    end
+    if q_before >= item.minimum_stock && q_after < item.minimum_stock
+      10.times do |i|
+        puts "The email should deliver now!!!!"
+      end
+      UserMailer.minimum_stock(q_before, q_after, item).deliver_now
+
+    end
+  end
   # Validates that if a request if approved, the admin has set an appropriate amount of serial tags for each quanityt
   def validates_stock_item_serial_tags_are_set!
     item = self.item

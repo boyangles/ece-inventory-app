@@ -31,6 +31,7 @@ class Item < ApplicationRecord
   validates :description, length: { maximum: 255 }
   validates :status, :inclusion => { :in => ITEM_STATUS_OPTIONS }
   validates :last_action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }
+  validates :minimum_stock,:numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   validates :has_stocks, :inclusion => {:in => [true, false]}
 
   # Relation with Tags
@@ -77,6 +78,10 @@ class Item < ApplicationRecord
   # Input: item in JSON format
   # Output: Outputted Item
   def self.import_item(item_hash)
+    item_hash['tags'] = [] if item_hash['tags'].blank?
+    item_hash['custom_fields'] = [] if item_hash['custom_fields'].blank?
+    item_hash['assets'] = [] if item_hash['assets'].blank?
+
     raise Exception.new('Input Tags must be in array form') unless
         item_hash['tags'] && item_hash['tags'].kind_of?(Array)
     raise Exception.new('Input Custom Fields must be in array form') unless
@@ -161,6 +166,27 @@ class Item < ApplicationRecord
     end
   end
 
+  def convert_to_stocks!
+    raise Exception.new("Cannot convert to assets if this item is already specified as having assets!") if self.has_stocks
+
+    begin
+      ActiveRecord::Base.transaction do
+        (1..self.quantity).each do
+          Stock.create!(:item_id => self.id, :available => true)
+        end
+
+        (1..self.quantity_on_loan).each do
+          Stock.create!(:item_id => self.id, :available => false)
+        end
+
+        self.has_stocks = true
+        self.save!
+      end
+    end
+
+    Stock.where(item_id: self.id)
+  end
+
   def convert_to_stocks
     return false if self.has_stocks
 
@@ -174,7 +200,7 @@ class Item < ApplicationRecord
           Stock.create!(:item_id => self.id, :available => false)
         end
 
-        self.has_stocks = "true"
+        self.has_stocks = true
         self.save!
       end
 
@@ -212,6 +238,16 @@ class Item < ApplicationRecord
     Stock.destroy_all(item_id: self.id)
     self.has_stocks = false
     self.save!
+  end
+
+  def convert_to_global!
+    raise Exception.new("Cannot convert back assets for an item if that item is already specified as not having assets!") unless self.has_stocks
+
+    Stock.destroy_all(item_id: self.id)
+    self.has_stocks = false
+    self.save!
+
+    self
   end
 
   def convert_quantity_to_stocks(num_to_create)
@@ -314,6 +350,10 @@ class Item < ApplicationRecord
     end
   end
 
+  def self.minimum_stock
+    where("minimum_stock > quantity")
+  end
+
   def self.filter_active
     where(status: 'active')
   end
@@ -376,8 +416,9 @@ class Item < ApplicationRecord
 
   def create_stock!(serial_tag)
     Item.transaction do
-      Stock.create!(serial_tag: serial_tag, item_id: self.id)
+      stock = Stock.create!(serial_tag: serial_tag, item_id: self.id)
       self.update_item_quantity_on_stock_creation
+      stock
     end
   end
 

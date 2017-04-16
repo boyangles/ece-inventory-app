@@ -1,8 +1,8 @@
 class ItemsController < ApplicationController
   before_action :check_logged_in_user
-  before_action :check_manager_or_admin, only: [:create, :new, :edit, :update]
+  before_action :check_manager_or_admin, only: [:create, :new, :edit, :update, :set_all_minimum_stock]
   before_action :check_admin_user, only: [:destroy]
-  before_action :set_item,  only: [:edit, :edit_quantity, :update, :create_stocks, :convert_to_global, :convert_to_stocks]
+  before_action :set_item,  only: [:edit, :edit_quantity, :update, :create_stocks, :convert_to_global, :convert_to_stocks, :delete_multiple_stocks]
 
   # GET /items
   # GET /items.json
@@ -11,6 +11,13 @@ class ItemsController < ApplicationController
 
     items_excluded = Item.all
     items_required = Item.all
+    items_stocked = Item.all
+
+    # 15.times do|i|
+    #   puts "THE VALUE OF PARAMS STOCKED IS"
+    #   puts params[:stocked]
+    # end
+
     if params[:excluded_tag_names]
       @excluded_tag_filters = params[:excluded_tag_names]
       items_excluded = Item.tagged_with_none(@excluded_tag_filters).select(:id)
@@ -19,13 +26,20 @@ class ItemsController < ApplicationController
       @required_tag_filters = params[:required_tag_names]
       items_required = Item.tagged_with_all(@required_tag_filters).select(:id)
     end
+    if params[:stocked]
+      @stocked = params[:stocked]
+      items_stocked = Item.minimum_stock
+    else
+    end
 
-    items_active = Item.where(id: items_excluded & items_required).filter_active
+    items_active = Item.where(id: items_excluded & items_required & items_stocked).filter_active
 
     @items = items_active.
         filter_by_search(params[:search]).
         filter_by_model_search(params[:model_search]).
         order('unique_name ASC').paginate(page: params[:page], per_page: 10)
+
+    # update_min_stock_of_certain_items(@items, 999)
   end
 
   # GET /items/1
@@ -36,6 +50,8 @@ class ItemsController < ApplicationController
     else
       @item = Item.filter_active.find(params[:id])
     end
+
+    # update_min_stock_of_certain_items(@item, 666)
 
     outstanding_filter_params = {
         :status => "outstanding"
@@ -143,7 +159,41 @@ class ItemsController < ApplicationController
       render 'edit'
     end
   end
+  #probably needs to go in the model but testing here
+  def set_all_minimum_stock
 
+    # This code below is repeated but it is just used to search for stuff.
+    #TODO: Refactor later
+    @tags = Tag.all
+
+    items_excluded = Item.all
+    items_required = Item.all
+    items_stocked = Item.all
+    if params[:excluded_tag_names]
+      @excluded_tag_filters = params[:excluded_tag_names]
+      items_excluded = Item.tagged_with_none(@excluded_tag_filters).select(:id)
+    end
+    if params[:required_tag_names]
+      @required_tag_filters = params[:required_tag_names]
+      items_required = Item.tagged_with_all(@required_tag_filters).select(:id)
+    end
+    if params[:stocked]
+      @stocked = params[:stocked]
+      items_stocked = Item.minimum_stock
+    else
+    end
+    items_active = Item.where(id: items_excluded & items_required & items_stocked).filter_active
+
+    # do we really wanna paginate?
+    @items = items_active.
+        filter_by_search(params[:search]).
+        filter_by_model_search(params[:model_search]).
+        order('unique_name ASC').paginate(page: params[:page], per_page: 10)
+    # @items = items_active.
+    #     filter_by_search(params[:search]).
+    #     filter_by_model_search(params[:model_search]).
+    #     order('unique_name ASC')
+  end
 
 
   def update_quantity
@@ -152,7 +202,6 @@ class ItemsController < ApplicationController
       flash.now[:danger] = "Quantity unable to be changed"
       render 'edit'
     end
-
   end
 
   def convert_to_stocks
@@ -188,12 +237,57 @@ class ItemsController < ApplicationController
     else
       begin
         Stock.create_stock!(params[:num_stocks], params[:id])
-        flash[:success] = "(#{params[:num_stocks]}) Assets successfully created!"
+        flash[:success] = "(#{params[:num_stocks]}) Asset successfully created!"
         redirect_to item_stocks_path @item and return
       rescue Exception => e
         flash[:danger] = e.message
         redirect_to item_stocks_path @item and return
       end
+    end
+  end
+
+  def update_all_minimum_stock
+    #Putting this line below just to test! Need to verify that it works.
+    # binding.pry
+
+    if !params[:item_ids].nil? && !params[:min_quantity].empty?
+      update_min_stock_of_certain_items(params[:item_ids], params[:min_quantity])
+      flash[:success] = "Minimum stock updated successfully"
+    elsif  params[:item_ids].nil?
+      flash[:warning] = "You must select at least one item"
+    elsif  params[:min_quantity].empty?
+      flash[:warning] = "You must specify the quantity"
+    end
+    redirect_to minimum_stock_path
+  end
+
+  ## helper method that will be used to update stocks and shit.
+  def update_min_stock_of_certain_items(items, stock_quantity)
+    # binding.pry
+    items.each do |i|
+      Item.find(i).update!(:minimum_stock => stock_quantity)
+    end
+  end
+
+  def delete_multiple_stocks
+    begin
+      tags = Stock.get_tags_from_ids(params[:stock_ids])
+      params[:stock_ids].each do |id|
+        stock = Stock.find(id)
+        if stock.available
+          @item.delete_stock(stock)
+        else
+          req_item_stock = RequestItemStock.filter({status: 'loan', stock_id: id}).first
+          tag_list = []
+          tag_list << stock.serial_tag
+          req_item_stock.request_item.disburse_loaned_subrequest!(tag_list)
+        end
+      end
+      flash[:success] = "Deleted #{tags} assets"
+      redirect_to item_stocks_path @item
+    rescue Exception => e
+      flash[:danger] = "Could not delete all stocks. #{e.message}"
+      redirect_to item_stocks_path @item
     end
   end
 
@@ -210,6 +304,7 @@ class ItemsController < ApplicationController
                                      :quantity,
                                      :model_number,
                                      :description,
+                                     :minimum_stock,
                                      :search,
                                      :model_search,
                                      :status,
@@ -225,3 +320,6 @@ class ItemsController < ApplicationController
   end
 
 end
+
+
+
