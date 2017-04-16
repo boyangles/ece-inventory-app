@@ -1,5 +1,8 @@
 class RequestItemCommentsController < ApplicationController
+
   before_action :set_comment, :only => []
+  before_action :check_manager_or_admin, only: [:create]
+
   def create
 
     @request_item = RequestItem.find(params[:request_item_id])

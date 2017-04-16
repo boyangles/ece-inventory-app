@@ -169,10 +169,10 @@ ActiveRecord::Schema.define(version: 20170413172102) do
 
   create_table "stocks", force: :cascade do |t|
     t.integer  "item_id"
-    t.boolean  "available"
+    t.boolean  "available",  default: true
     t.string   "serial_tag"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
     t.index ["item_id"], name: "index_stocks_on_item_id", using: :btree
   end
 

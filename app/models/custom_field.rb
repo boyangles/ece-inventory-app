@@ -32,7 +32,7 @@ class CustomField < ApplicationRecord
   after_update :clear_associated_field_entries, if: :field_type_changed?
   after_create {
     create_items_for_custom_fields(self.id)
-    create_stocks_for_custom_fields(self.id)
+    create_stocks_for_custom_fields(self.id) if self.is_stock
   }
 
   ## Class Methods:

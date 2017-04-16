@@ -1,5 +1,13 @@
+
 <%= form_for (request_item) do |f| %>
 	<table>
+		<thead>
+			<tr>
+				<th class="text-center">Loan</th>
+				<th class="text-center">Disbursement</th>
+			</tr>
+		</thead>
+	
 		<tbody>
 			<%= f.hidden_field :item_id, :value => request_item.item_id %>
 			<%= f.hidden_field :request_id, :value => request_item.request_id %>
@@ -15,7 +23,7 @@
 			</td>
 
 			<td>
-				<%= button_tag "", type: "submit", class: "btn btn-default glyphicon glyphicon-shopping-cart" %>
+					<%= button_tag "", type: "submit", class: "btn btn-default glyphicon glyphicon-shopping-cart" %>
 			</td>
 			</tr>
 		</tbody>

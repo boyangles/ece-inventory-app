@@ -65,8 +65,6 @@ class RequestItem < ApplicationRecord
   # Input: N/A
   # Output: @item upon success
   def fulfill_subrequest
-
-
     @item = self.item
 
     # item_requested = Item.find(self.item_id)
