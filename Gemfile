@@ -52,6 +52,7 @@ gem 'jquery-turbolinks'
 gem 'best_in_place'
 gem 'bootstrap-x-editable-rails'
 gem 'bootstrap-tagsinput-rails'
+gem 'twitter-bootstrap-rails'
 # React-Rails
 gem 'react-rails'
 # Use postgresql as the database for Active Record
@@ -127,3 +128,6 @@ gem 'sendgrid'
 
 # #still use action mailer
 # gem 'sendgrid-actionmailer'
+
+# Paperclip for backfill attachments
+gem "paperclip", :git => "http://github.com/thoughtbot/paperclip.git" 

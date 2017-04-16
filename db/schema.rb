@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170406143149) do
+ActiveRecord::Schema.define(version: 20170413172102) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "attachments", force: :cascade do |t|
+    t.integer  "request_item_id"
+    t.string   "doc_file_name"
+    t.string   "doc_content_type"
+    t.integer  "doc_file_size"
+    t.datetime "doc_updated_at"
+    t.index ["request_item_id"], name: "index_attachments_on_request_item_id", using: :btree
+  end
 
   create_table "custom_fields", force: :cascade do |t|
     t.string  "field_name",                        null: false
@@ -80,6 +89,14 @@ ActiveRecord::Schema.define(version: 20170406143149) do
     t.index ["user_id"], name: "index_logs_on_user_id", using: :btree
   end
 
+  create_table "request_item_comments", force: :cascade do |t|
+    t.integer "request_item_id"
+    t.integer "user_id"
+    t.text    "comment"
+    t.index ["request_item_id"], name: "index_request_item_comments_on_request_item_id", using: :btree
+    t.index ["user_id"], name: "index_request_item_comments_on_user_id", using: :btree
+  end
+
   create_table "request_item_stocks", force: :cascade do |t|
     t.integer  "stock_id"
     t.integer  "request_item_id"
@@ -98,8 +115,7 @@ ActiveRecord::Schema.define(version: 20170406143149) do
     t.integer  "quantity_loan",     default: 0
     t.integer  "quantity_disburse", default: 0
     t.integer  "quantity_return",   default: 0
-    t.integer  "request_type",      default: 0
-    t.datetime "due_date"
+    t.integer  "bf_status",         default: 0
     t.index ["item_id"], name: "index_request_items_on_item_id", using: :btree
     t.index ["request_id"], name: "index_request_items_on_request_id", using: :btree
   end
@@ -153,10 +169,10 @@ ActiveRecord::Schema.define(version: 20170406143149) do
 
   create_table "stocks", force: :cascade do |t|
     t.integer  "item_id"
-    t.boolean  "available"
+    t.boolean  "available",  default: true
     t.string   "serial_tag"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
     t.index ["item_id"], name: "index_stocks_on_item_id", using: :btree
   end
 

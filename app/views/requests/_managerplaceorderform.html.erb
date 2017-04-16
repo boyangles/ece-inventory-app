@@ -1,10 +1,17 @@
 <%= form_for(request) do |f| %>
-	<%= f.hidden_field :status, :value => "approved" %>
+	<!--<%= f.hidden_field :status, :value => "approved" %>-->
 
-	<div class="form-group pull-right">
-		<%= f.label :user_id, "User to Make Request For", class: "col-lg-4 control-label" %>
+	<div class="form-group col-lg-4 pull-right">
+		<%= f.label :user_id, "User to Disburse to", class: "control-label" %>
 		<div class="col-lg-8">
 			<%= collection_select(:user, :id, User.where(:status=>1), :id, :username, {:selected => current_user.id, class: "form-control"}) %>
+		</div>
+	</div>
+
+	<div class="form-group col-lg-2 pull-right">
+		<%= f.label :status, "Direct Disbursement?", class: "col-lg-4 control-label" %>
+		<div class="col-lg-1">
+			<%= f.check_box :status, {:id => "dd-check"}, "approved", "outstanding" %>
 		</div>
 	</div>
 
@@ -19,10 +26,16 @@
 				</div>
 
 
-				<div class="modal-body">
-					<%= f.label :response, "Reason for request?", class: "control-label" %>
+				<div class="modal-body reason">
+					<%= f.label :reason, "Reason for request? (Required)", class: "control-label"%>
+					<%= f.text_area :reason, {class: "form-control", id: "reason-field", required: true} %>
+				</div>
+
+				<div class="modal-body response" style="display: none">
+					<%= f.label :response, "Response? (Optional)", class: "control-label" %>
 					<%= f.text_area :response, class: "form-control" %>
 				</div>
+
 
 				<div class="modal-footer">
 					<%= f.submit "Place Order", class: "btn btn-primary" %>

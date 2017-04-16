@@ -11,8 +11,10 @@ Rails.application.routes.draw do
   # Loans
   get 'loans/index'
   root 'loans#index'
-
-  # All resources
+	get 'backfills/index'
+	root 'backfills#index'
+  
+	# All resources
   resources :users do
     member do
       get :auth_token
@@ -48,7 +50,10 @@ Rails.application.routes.draw do
   resources :sessions
   resources :logs
   resources :request_items, :except => [:index] do
+    resources :request_item_comments
     member do
+      put :update_backfill, as: :update_backfill
+      patch :update_backfill
       put :return , as: :return
       put :disburse_loaned, as: :disburse_loaned
     end
@@ -57,6 +62,7 @@ Rails.application.routes.draw do
 
 
 
+	resources :attachments
   resources :subscribers
   resources :settings
 
@@ -85,6 +91,8 @@ Rails.application.routes.draw do
           patch :update_privilege
         end
       end
+
+      resources :backfills, :only => [:index, :create]
 
       resources :custom_fields, :only => [:index, :show, :create, :destroy] do
         member do

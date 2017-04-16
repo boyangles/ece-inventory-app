@@ -2,7 +2,7 @@ class CreateStocks < ActiveRecord::Migration[5.0]
   def change
     create_table :stocks do |t|
       t.belongs_to :item
-      t.boolean :available
+      t.boolean :available, default: true
       t.string :serial_tag, unique: true
 
       t.timestamps

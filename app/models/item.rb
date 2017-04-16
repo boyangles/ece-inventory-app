@@ -290,15 +290,15 @@ class Item < ApplicationRecord
     Stock.transaction do
       serial_tags_disburse.each do |st|
         stock = Stock.find(st.stock_id)
-        raise Exception.new("Error in finding requested stock. Input serial tag is: #{st}") unless stock
+        raise Exception.new("Error in finding requested stock. Input serial tag is: #{st.stock.serial_tag}") unless stock
         stock.destroy!
         self.quantity = self.quantity - 1
       end
 
       serial_tags_loan.each do |st|
         stock = Stock.find(st.stock_id)
-        raise Exception.new("Error in finding requested stock. Input serial tag is: #{st}") unless stock
-        raise Exception.new("Stock requested for loan is not available: #{st}") unless stock.available
+        raise Exception.new("Error in finding requested stock. Input serial tag is: #{st.stock.serial_tag}") unless stock
+        raise Exception.new("Stock requested for loan is not available: #{st.stock.serial_tag}") unless stock.available
 
         stock.available = false
         raise Exception.new("Stock failed to save. #{stock.errors.full_messages}.") unless stock.save
