@@ -92,6 +92,26 @@ class Api::V1::BackfillsController < BaseController
     end
   end
 
+  def change_status
+    old_status = @request_item.bf_status
+    locked_status = backfill_status_locked?(@request_item)
+    100.times do |i|
+      puts "Fuck me in the ass"
+      puts locked_status
+    end
+    if locked_status
+      render json: { errors: 'Request Item status is now locked' } and return
+    end
+    begin
+      @request_item.update_attributes!(bf_status: request_item_params[:bf_status])
+      render :json => @request_item
+      UserMailer.backfill_approved_email(@request_item,old_status).deliver_now
+    rescue Exception => e
+      render_client_error(e.message, 422) and return
+    end
+  end
+
+
   def index
     waiting = RequestItem.where(bf_status: "bf_request").select(:id)
     in_transit = RequestItem.where(bf_status: "bf_in_transit").select(:id)
@@ -136,6 +156,16 @@ class Api::V1::BackfillsController < BaseController
 
   end
 
+  private
+
+  def backfill_status_locked?(request_item)
+    100.times do |i|
+      puts "the status of this request item is "
+      puts request_item.bf_status
+    end
+    return request_item.bf_status == "bf_denied" || request_item.bf_status == "bf_satisfied" || request_item.bf_status == "bf_failed"
+  end
+
   def render_404_if_request_item_unknown
     render json: { errors: 'Request Item not found!' }, status: 404 unless
         RequestItem.exists?(params[:request_item_id])
@@ -151,10 +181,9 @@ class Api::V1::BackfillsController < BaseController
   end
 
   def request_item_params
-    params.fetch(:request_item, {}).permit()
+    params.fetch(:request_item, {}).permit(:bf_status)
   end
 
-  # private
   # def render_multiple_backfills(backfill_requestItems)
   #   render :json => backfill_requestItems.where(:name => params[:name]), status: 200
   # end
