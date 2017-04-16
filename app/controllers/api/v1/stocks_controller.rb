@@ -29,7 +29,7 @@ class Api::V1::StocksController < BaseController
 
   def index
     begin
-      output_stocks = Stock.all
+      output_stocks = (params[:serial_tag_search].blank?) ? Stock.all : Stock.filter({serial_tag: params[:serial_tag_search]})
       render :json => output_stocks.map {
           |stock| {
             item_id: stock.item_id,
