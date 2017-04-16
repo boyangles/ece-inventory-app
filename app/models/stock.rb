@@ -75,6 +75,14 @@ class Stock < ApplicationRecord
     where("serial_tag ILIKE ?", "%#{search_input}%")
   end
 
+  def self.get_tags_from_ids(ids)
+    tags = []
+    ids.each do |id|
+      tags << Stock.find(id).serial_tag
+    end
+    tags
+  end
+
   ## Private variables
   private
   def generate_code(number)
