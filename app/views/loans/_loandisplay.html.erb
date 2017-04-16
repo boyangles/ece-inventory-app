@@ -29,12 +29,14 @@
                 <td><%= render 'loans/return_global_items', request_item: loan %></td>
             <% end %>
         <% end %>
-      </div>
-
-      <% if user == current_user && loan.loan? or loan.bf_denied? or loan.bf_failed? %>
+	      <% if user == current_user && loan.loan? or loan.bf_denied? or loan.bf_failed? %>
           <%= render 'backfills/attachmentsform', request_item: loan %>
           <br>
       <% end %>
+
+
+
+      </div>
 
     </div>
 

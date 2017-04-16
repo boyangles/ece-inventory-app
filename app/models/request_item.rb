@@ -32,6 +32,10 @@ class RequestItem < ApplicationRecord
   attr_accessor :curr_user
   attr_readonly :request_id, :item_id
 
+	after_update {
+		log_on_backfill_change
+	}
+
   before_validation {
     self.quantity_disburse = (self.quantity_disburse.blank?) ?  0 : self.quantity_disburse
     self.quantity_return = (self.quantity_return.blank?) ? 0 : self.quantity_return
@@ -167,6 +171,23 @@ class RequestItem < ApplicationRecord
     itemlog = ItemLog.new(:log_id => log.id, :item_id => itemo.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => itemo.unique_name, :old_desc => old_desc, :new_desc => itemo.description, :old_model_num => old_model, :new_model_num => itemo.model_number, :curr_quantity => itemo.quantity, :affected_request => self.request.id)
     itemlog.save!
   end
+
+	def log_on_backfill_change
+		bf_old = bf_status_was
+		bf_new = bf_status
+
+		if bf_old == "loan" and bf_new == "bf_request"
+			create_log("backfill_requested", self.quantity_loan)
+		elsif bf_old == "bf_request" and bf_new == "bf_in_transit"
+			create_log("backfill_request_approved", self.quantity_loan)
+		elsif bf_old == "bf_request" and bf_new == "bf_denied"
+			create_log("backfill_request_denied", self.quantity_loan)
+		elsif bf_old == "bf_in_transit" and bf_new == "bf_satisfied"
+			create_log("backfill_request_satisfied", self.quantity_loan)
+		elsif bf_old == "bf_in_transit" and bf_new == "bf_failed"
+			create_log("backfill_request_failed", self.quantity_loan)
+		end
+	end
 
   def determine_subrequest_type
     loan_quantity = (self[:quantity_loan].nil?) ? 0 : self[:quantity_loan]

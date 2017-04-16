@@ -10,8 +10,11 @@
 
 <div class="center_jumbotron">
   <h2 class="page-header"><strong><%= @user.username%></strong><%= " " + @user.privilege %>
+		<% if !@user.status_deactivated? && is_admin? && @user != current_user%>
+    	<%= render 'deactivateuserform', user: @user %>
+		<% end %>
     <% if is_admin? && !current_user?(@user) %>
-        <%= link_to "Edit User", edit_user_url(@user.id), :class => "btn btn-primary pull-right" %>
+        <%= link_to glyph(:pencil), edit_user_url(@user.id), :class => "btn btn-primary pull-right" %>
     <% end %>
 		<% if current_user?(@user) %>
 			<%= link_to 'Authentication Token', auth_token_user_path, class: "btn btn-primary pull-right" %>
@@ -151,9 +154,5 @@
 
 </div>
 
-
-<% if !@user.status_deactivated? && is_admin? && @user != current_user%>
-    <%= render 'deactivateuserform', user: @user %>
-<% end %>
 
 

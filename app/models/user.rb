@@ -399,7 +399,7 @@ class User < ApplicationRecord
           end
         end
       else
-        if quantity_to_return > 0
+        if quantity_to_return > 0 and bf_status != "bf_satisfied"
           request_item.create_log("returned", quantity_to_return)
         end
 
