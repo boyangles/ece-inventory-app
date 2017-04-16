@@ -209,6 +209,8 @@ class ItemsController < ApplicationController
         filter_by_search(params[:search]).
         filter_by_model_search(params[:model_search]).
         order('unique_name ASC')
+  end
+
 
   def update_quantity
     @item.quantity = @item.quantity + params[:quantity_change].to_f
@@ -216,7 +218,6 @@ class ItemsController < ApplicationController
       flash.now[:danger] = "Quantity unable to be changed"
       render 'edit'
     end
-
   end
 
   def convert_to_stocks
@@ -280,7 +281,9 @@ class ItemsController < ApplicationController
       Item.find(i).update!(:minimum_stock => stock_quantity)
     end
   end
-  private
+
+private
+
 
   def set_item
     @item = Item.find(params[:id])
@@ -309,3 +312,6 @@ class ItemsController < ApplicationController
   end
 
 end
+
+
+

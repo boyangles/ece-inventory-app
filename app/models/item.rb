@@ -24,15 +24,10 @@ class Item < ApplicationRecord
             uniqueness: { case_sensitive: false }
   validates :quantity, presence: true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   validates :description, length: { maximum: 255 }
-<<<<<<< HEAD
-	validates :status, :inclusion => { :in => ITEM_STATUS_OPTIONS }
-	validates :last_action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }
-  validates :minimum_stock,:numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
-=======
   validates :status, :inclusion => { :in => ITEM_STATUS_OPTIONS }
   validates :last_action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }
+  validates :minimum_stock,:numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   validates :has_stocks, :inclusion => {:in => [true, false]}
->>>>>>> ev4_stocks_backfill_integration
 
   # Relation with Tags
   has_many :tags, -> { distinct },  :through => :item_tags
@@ -315,7 +310,6 @@ class Item < ApplicationRecord
     end
   end
 
-<<<<<<< HEAD
   def self.minimum_stock
     where("minimum_stock > quantity")
   end
@@ -378,66 +372,6 @@ class Item < ApplicationRecord
 	def deactivate!
 		self.status = 'deactive'
 		self.save!
-=======
-  def self.filter_active
-    where(status: 'active')
-  end
-
-  def create_log_on_quantity_change()
-    if self.quantity_was.nil?
-      return
-    end
-
-    quantity_increase = self.quantity - self.quantity_was
-    if (quantity_increase != 0 && (self.administrative_correction? || self.acquired_or_destroyed_quantity? ))
-      create_log(self.last_action, quantity_increase)
-    end
-  end
-
-  def create_log_on_destruction()
-
-    if self.status == 'deactive' && self.status_was == 'active'
-      create_log("deleted", self.quantity)
-    end
-  end
-
-  def create_log(action, quan_change)
-    if self.curr_user.nil?
-      curr = nil
-    else
-      curr = self.curr_user.id
-    end
-    old_name = ""
-    old_desc = ""
-    old_model = ""
-
-    if self.unique_name_was != self.unique_name
-      old_name = self.unique_name_was
-    end
-    if self.description_was != self.description
-      old_desc = self.description_was
-    end
-    if self.model_number_was != self.model_number
-      old_model = self.model_number_was
-    end
-
-    log = Log.new(:user_id => curr, :log_type => 'item')
-    log.save!
-    itemlog = ItemLog.new(:log_id => log.id, :item_id => self.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => self.unique_name, :old_desc => old_desc, :new_desc => self.description, :old_model_num => old_model, :new_model_num => self.model_number, :curr_quantity => self.quantity)
-    itemlog.save!
-  end
-
-
-  def create_log_on_desc_update()
-    if (self.unique_name_was != self.unique_name || self.description_was != self.description || self.model_number_was != self.model_number)
-      create_log("description_updated", self.quantity)
-    end
-  end
-
-  def deactivate!
-    self.status = 'deactive'
-    self.save!
->>>>>>> ev4_stocks_backfill_integration
   end
 
   private
