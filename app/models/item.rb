@@ -78,6 +78,10 @@ class Item < ApplicationRecord
   # Input: item in JSON format
   # Output: Outputted Item
   def self.import_item(item_hash)
+    item_hash['tags'] = [] if item_hash['tags'].blank?
+    item_hash['custom_fields'] = [] if item_hash['custom_fields'].blank?
+    item_hash['assets'] = [] if item_hash['assets'].blank?
+
     raise Exception.new('Input Tags must be in array form') unless
         item_hash['tags'] && item_hash['tags'].kind_of?(Array)
     raise Exception.new('Input Custom Fields must be in array form') unless
