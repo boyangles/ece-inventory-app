@@ -22,7 +22,7 @@
                 <% else %>
                     <td><%= link_to 'Convert to Assets', convert_to_stocks_item_path(@item.id), method: :post, class: 'btn btn-primary' %></td>
                 <% end %>
-                <td><%= link_to "Edit Item", edit_item_url(@item.id), :class => "btn btn-primary" %></td>
+                <td><%= link_to glyph(:pencil), edit_item_url(@item.id), :class => "btn btn-primary" %></td>
             <% end %>
 
             <% if is_admin?  && @item.active? %>
@@ -37,10 +37,10 @@
       <% if @item.active? %>
           <% ri = RequestItem.where(item_id: @item.id).where(request_id: grab_cart(current_user).id).take %>
           <% if ri.nil? %>
-              <%= render 'indexform', request_item: RequestItem.new(item_id: @item.id,
+              <%= render 'showform', request_item: RequestItem.new(item_id: @item.id,
                                                                     request_id: grab_cart(current_user).id) %>
           <% else %>
-              <%= render 'indexform', request_item: ri %>
+              <%= render 'showform', request_item: ri %>
           <% end %>
       <% end %>
     </div><br><br><br>

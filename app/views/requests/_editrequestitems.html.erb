@@ -13,7 +13,7 @@
       <% item = Item.find(req_item.item_id) %>
       <tr>
         <td><%= link_to item.unique_name, item_path(item.id) %></td>
-        <td class="text-right">
+        <td class="text-center">
           <a href="#" data-xeditable="true"
              data-pk="<%= req_item.id %>"
              data-model="request_item"
@@ -24,7 +24,7 @@
             <%= req_item.quantity_loan %>
           </a>
         </td>
-        <td class="text-right">
+        <td class="text-center">
           <a href="#" data-xeditable="true"
              data-pk="<%= req_item.id %>"
              data-model="request_item"
@@ -36,11 +36,11 @@
           </a>
         </td>
         <% if Item.find(req_item.item_id).has_stocks && is_manager_or_admin? %>
-            <td><%= link_to "Specify Serial Tags", edit_request_item_path(req_item), class: "btn btn-primary pull-right" %></td>
+            <td><%= link_to "Specify Serial Tags", edit_request_item_path(req_item), class: "btn btn-primary" %></td>
         <% else %>
             <td></td>
         <% end %>
-        <td><%= link_to "Remove Item", req_item, method: :delete, data: {confirm: "Are you sure you want to remove " + item.unique_name + " from your cart?"}, class: "btn btn-primary pull-right" %></td>
+        <td><%= link_to glyph(:remove), req_item, method: :delete, data: {confirm: "Are you sure you want to remove " + item.unique_name + " from your cart?"}, class: "btn btn-default" %></td>
       </tr>
   <% end %>
   </tbody>

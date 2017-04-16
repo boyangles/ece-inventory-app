@@ -3,17 +3,17 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 $(document).on "page:change", ->
-	$('.response').hide()
 	$('#user_id').attr('disabled', true)
-	$('#request_response').attr('required', 'required')
+	usr = $('#user_id').val()
 	$('#dd-check').click ->
 		if ($('#dd-check').is(':checked')) # direct disbursement
 			$('#user_id').prop('disabled', false)
 			$('.response').show()
 			$('.reason').hide()
-			$('#request_response').removeAttr('required')
+			$('#reason-field').removeAttr('required')
 		else
 			$('#user_id').prop('disabled', true)
 			$('.response').hide()
 			$('.reason').show()
-			$('#request_response').attr('required', 'required')
+			$('#user_id').val(usr)
+			$('#request-field').attr('required', 'required')

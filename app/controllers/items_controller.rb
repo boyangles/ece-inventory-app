@@ -159,7 +159,6 @@ class ItemsController < ApplicationController
       render 'edit'
     end
   end
-
   #probably needs to go in the model but testing here
   def set_all_minimum_stock
 
@@ -225,18 +224,25 @@ class ItemsController < ApplicationController
     end
   end
 
-
-  def create_stocks
-    begin
-      throw Exception.new('Number must be greater than 0') if params[:num_stocks].to_i <= 0
-      Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
-      flash[:success] = "(#{params[:num_stocks]}) Assets successfully created!"
-      redirect_to item_stocks_path @item
-      return true
-    rescue Exception => e
-      flash[:danger] = e.message
-      redirect_to item_stocks_path @item
-      return false
+  def create_stocks 
+    if Item.is_valid_integer(params[:num_stocks])
+      begin
+        Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
+        flash[:success] = "(#{params[:num_stocks]}) Assets successfully created!"
+        redirect_to item_stocks_path @item and return
+      rescue Exception => e
+        flash[:danger] = e.message
+        redirect_to item_stocks_path @item and return
+      end
+    else
+      begin
+        Stock.create_stock!(params[:num_stocks], params[:id])
+        flash[:success] = "(#{params[:num_stocks]}) Asset successfully created!"
+        redirect_to item_stocks_path @item and return
+      rescue Exception => e
+        flash[:danger] = e.message
+        redirect_to item_stocks_path @item and return
+      end
     end
   end
 
@@ -264,7 +270,6 @@ class ItemsController < ApplicationController
   end
 
 private
-
 
   def set_item
     @item = Item.find(params[:id])
