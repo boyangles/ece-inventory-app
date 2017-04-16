@@ -54,6 +54,10 @@ class Stock < ApplicationRecord
   end
 
   def self.create_stocks!(num, item_id)
+    raise Exception.new('Inputted Item does not exist') unless Item.exists?(item_id)
+    item = Item.find(item_id)
+    raise Exception.new('Inputted Item is not per-asset!') unless item.has_stocks
+
     Stock.transaction do
       for i in 1..num do
         Stock.create!(item_id: item_id, available: true)

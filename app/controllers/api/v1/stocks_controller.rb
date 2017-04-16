@@ -1,8 +1,8 @@
 class Api::V1::StocksController < BaseController
   before_action :authenticate_with_token!
   before_action :auth_by_approved_status!
-  before_action :auth_by_manager_privilege!, only: [:update_serial_tag]
-  before_action :auth_by_admin_privilege!, only: []
+  before_action :auth_by_manager_privilege!, only: []
+  before_action :auth_by_admin_privilege!, only: [:update_serial_tag]
   before_action :render_404_if_stock_unknown, only: [:show, :update_serial_tag]
   before_action :set_stock, only: [:show, :update_serial_tag]
 
@@ -66,14 +66,7 @@ class Api::V1::StocksController < BaseController
   def index
     begin
       output_stocks = (params[:serial_tag_search].blank?) ? Stock.all : Stock.filter({serial_tag: params[:serial_tag_search]})
-      render :json => output_stocks.map {
-          |stock| {
-            item_id: stock.item_id,
-            item_name: stock.item.unique_name,
-            available: stock.available,
-            serial_tag: stock.serial_tag
-        }
-      }, status: 200
+      render_multiple_stocks(output_stocks)
     rescue Exception => e
       render_client_error(e.message, 422)
     end
@@ -96,6 +89,18 @@ class Api::V1::StocksController < BaseController
 
   def render_single_stock(input_stock)
     render :json => input_stock.instance_eval {
+        |stock| {
+          stock_id: stock.id,
+          serial_tag: stock.serial_tag,
+          item_id: stock.item_id,
+          item_name: stock.item.unique_name,
+          available: stock.available
+      }
+    }, status: 200
+  end
+
+  def render_multiple_stocks(stocks)
+    render :json => stocks.map {
         |stock| {
           stock_id: stock.id,
           serial_tag: stock.serial_tag,

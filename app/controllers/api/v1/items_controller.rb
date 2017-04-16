@@ -2,14 +2,14 @@ class Api::V1::ItemsController < BaseController
   before_action :authenticate_with_token!
   before_action :auth_by_approved_status!
   before_action :auth_by_manager_privilege!, only: [:create, :create_tag_associations, :destroy_tag_associations, :update_general, :bulk_import, :convert_to_stocks, :convert_to_global]
-  before_action :auth_by_admin_privilege!, only: [:destroy, :fix_quantity, :clear_field_entries, :update_field_entry]
-  before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global]
-  before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global]
+  before_action :auth_by_admin_privilege!, only: [:destroy, :fix_quantity, :clear_field_entries, :update_field_entry, :create_stocks]
+  before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks]
+  before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks]
 
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global].each do |api_action|
+  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -236,6 +236,26 @@ class Api::V1::ItemsController < BaseController
     response :ok
     response :unauthorized
     response :not_found
+  end
+
+  swagger_api :create_stocks do
+    summary "Creates stocks for a specified Item"
+    notes ""
+    param :path, :id, :integer, :required, "Item ID"
+    param :query, :stock_quantity, :string, :required, "Quantity of stocks to create"
+    response :ok
+    response :unauthorized
+    response :not_found
+  end
+
+  def create_stocks
+    begin
+      raise Exception.new('Inputted stock quantity must be greater than 0') if params[:stock_quantity].to_i <= 0
+      Stock.create_stocks!(params[:stock_quantity].to_i, @item.id)
+      render_multiple_stocks(@item.stocks)
+    rescue Exception => e
+      render_client_error(e, 422)
+    end
   end
 
   def convert_to_global
