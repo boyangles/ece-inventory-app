@@ -20,23 +20,27 @@
     </div>
 <% end %>
 
+<%= form_tag ( delete_multiple_stocks_item_path @item, method: :delete) do |f| %>
 
-<table class="table table-striped table-hover">
-  <thead>
+    <table class="table table-striped table-hover">
+      <thead>
 
-  <tr>
-    <th class="text-center">Serial Tag</th>
-    <th class="text-center">Available</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-  </thead>
+      <tr>
+        <th class="text-center">Serial Tag</th>
+        <th class="text-center">Available</th>
+        <th></th>
+        <th class="text-center">Select</th>
+      </tr>
+      </thead>
 
-  <tbody>
-  <%= render @stocks %>
-  </tbody>
-</table>
+      <tbody>
+      <%= render @stocks %>
+      </tbody>
+    </table>
+
+    <%= submit_tag "Delete Selected", class: 'form-control', type: 'submit' %>
+
+<% end %>
 
 <div class="text-center">
   <%= will_paginate(@stocks) %>

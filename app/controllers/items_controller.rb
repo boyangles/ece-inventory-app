@@ -2,7 +2,7 @@ class ItemsController < ApplicationController
   before_action :check_logged_in_user
   before_action :check_manager_or_admin, only: [:create, :new, :edit, :update]
   before_action :check_admin_user, only: [:destroy]
-  before_action :set_item,  only: [:edit, :edit_quantity, :update, :create_stocks, :convert_to_global, :convert_to_stocks]
+  before_action :set_item,  only: [:edit, :edit_quantity, :update, :create_stocks, :convert_to_global, :convert_to_stocks, :delete_multiple_stocks]
 
   # GET /items
   # GET /items.json
@@ -194,6 +194,19 @@ class ItemsController < ApplicationController
         flash[:danger] = e.message
         redirect_to item_stocks_path @item and return
       end
+    end
+  end
+
+  def delete_multiple_stocks
+    begin
+      params[:stock_ids].each do |id|
+        @item.delete_stock(Stock.find(id))
+      end
+      flash[:success] = "Deleted #{params[:stock_ids]} assets"
+      redirect_to item_stocks_path @item
+    rescue Exception => e
+      flash[:danger] = "Could not delete all stocks. #{e.message}"
+      redirect_to item_stocks_path @item
     end
   end
 
