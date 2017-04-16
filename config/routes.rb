@@ -124,6 +124,9 @@ Rails.application.routes.draw do
           put :update_general
           patch :update_general
 
+          put :bulk_minimum_stock
+          patch :bulk_minimum_stock
+
           put :fix_quantity
           patch :fix_quantity
 

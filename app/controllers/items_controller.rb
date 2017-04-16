@@ -29,23 +29,10 @@ class ItemsController < ApplicationController
     if params[:stocked]
       @stocked = params[:stocked]
       items_stocked = Item.minimum_stock
-      # 15.times do|i|
-      #   puts "YES"
-      # end
     else
-      # 15.times do|i|
-      #   puts "NO"
-      # end
     end
 
     items_active = Item.where(id: items_excluded & items_required & items_stocked).filter_active
-
-    # 10.times do|i|
-    #   puts "FUCK"
-    #   items_active.minimum_stock.each do |item|
-    #     puts item.unique_name
-    #   end
-    # end
 
     @items = items_active.
         filter_by_search(params[:search]).
