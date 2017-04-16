@@ -81,4 +81,5 @@ class Stock < ApplicationRecord
                                float_content: nil)
     end
   end
+
 end
