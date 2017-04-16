@@ -175,7 +175,7 @@ class ItemsController < ApplicationController
     end
   end
 
-  def create_stocks 
+  def create_stocks
     if Item.is_valid_integer(params[:num_stocks])
       begin
         Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
@@ -201,7 +201,15 @@ class ItemsController < ApplicationController
     begin
       tags = Stock.get_tags_from_ids(params[:stock_ids])
       params[:stock_ids].each do |id|
-        @item.delete_stock(Stock.find(id))
+        stock = Stock.find(id)
+        if stock.available
+          @item.delete_stock(stock)
+        else
+          req_item_stock = RequestItemStock.filter({status: 'loan', stock_id: id}).first
+          tag_list = []
+          tag_list << stock.serial_tag
+          req_item_stock.request_item.disburse_loaned_subrequest(tag_list)
+        end
       end
       flash[:success] = "Deleted #{tags} assets"
       redirect_to item_stocks_path @item
