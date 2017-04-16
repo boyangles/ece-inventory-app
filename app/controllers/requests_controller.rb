@@ -74,8 +74,6 @@ class RequestsController < ApplicationController
     elsif (old_status =='outstanding' && request_params[:status] == 'cancelled')
       UserMailer.request_cancelled_email(current_user, @request, @request.user).deliver_now
     end
-
-
   end
 
   def clear

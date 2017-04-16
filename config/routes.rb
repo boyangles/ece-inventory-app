@@ -11,8 +11,10 @@ Rails.application.routes.draw do
   # Loans
   get 'loans/index'
   root 'loans#index'
-
-  # All resources
+	get 'backfills/index'
+	root 'backfills#index'
+  
+	# All resources
   resources :users do
     member do
       get :auth_token
@@ -31,20 +33,45 @@ Rails.application.routes.draw do
   put'settings/dates' => 'settings#update_dates', :as => 'update_dates'
   patch 'settings/dates', to: 'settings#update_dates'
 
+  #TODO: change minimum stock to just stock or just minimum
+  get  'items/minimums' => 'items#set_all_minimum_stock', :as => 'minimum_stock'
+  put 'items/update_all_minimum_stock' => 'items#update_all_minimum_stock', :as => 'update_all_minimum_stock'
+  patch 'items/update_all_minimum_stock', to: 'items#update_all_minimum_stock'
+
   resources :items
   resources :tags
 
+
+  resources :items do
+    member do
+      post :convert_to_stocks
+      post :create_stocks
+      post :convert_to_global
+      post :delete_multiple_stocks
+    end
+    resources :stocks
+  end
+  # post 'items/:id/delete_multiple_stocks' => 'stocks#delete_multiple_stocks', as: 'delete_multiple_stocks'
+
+  resources :tags
+  resources :request_item_stocks
   resources :item_custom_fields, :only => [:index, :show, :create, :update, :destroy]
   resources :custom_fields, :only => [:create, :destroy]
   resources :sessions
   resources :logs
-  resources :request_items, :except => [:index, :show] do
-		member do
-			put :return, as: :return
-			put :disburse_loaned, as: :disburse_loaned
-		end
-	end
+  resources :request_items, :except => [:index] do
+    resources :request_item_comments
+    member do
+      put :update_backfill, as: :update_backfill
+      patch :update_backfill
+      put :return , as: :return
+      put :disburse_loaned, as: :disburse_loaned
+    end
+  end
+  get 'request_items/:id/specify_return_serial_tags' => 'request_items#specify_return_serial_tags', :as => 'return_assets'
 
+
+	resources :attachments
   resources :subscribers
   resources :settings
 
@@ -74,6 +101,8 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :backfills, :only => [:index, :create]
+
       resources :custom_fields, :only => [:index, :show, :create, :destroy] do
         member do
           put :update_name
@@ -89,12 +118,22 @@ Rails.application.routes.draw do
 
       resources :items, :only => [:index, :show, :create, :destroy] do
         member do
+          post :create_single_stock
+
+          post :create_stocks
+
+          post :convert_to_stocks
+          delete :convert_to_global
+
           post :create_tag_associations
 
           delete :destroy_tag_associations
 
           put :update_general
           patch :update_general
+
+          put :bulk_minimum_stock
+          patch :bulk_minimum_stock
 
           put :fix_quantity
           patch :fix_quantity
@@ -110,6 +149,13 @@ Rails.application.routes.draw do
           get :self_outstanding_requests
 
           get :self_loans
+        end
+      end
+
+      resources :stocks, :only => [:index, :show] do
+        member do
+          put :update_serial_tag
+          patch :update_serial_tag
         end
       end
 

@@ -2,16 +2,13 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
+
 $ ->
 # enable chosen js
   $('.chosen-select').chosen
     allow_single_deselect: true
     no_results_text: 'No results matched'
     width: '100%'
-
-
-$(document).getElementById('fuck_you').value
-$('#fuck_you').trigger('chosen:updated');
 
 $(document).on "page:change", ->
 	heyy = $('#quantity_change')
@@ -38,3 +35,4 @@ $(document).on "page:change", ->
 			r = confirm("Are you sure you want to edit the quantity?")
 			if (r == false)
 				event.preventDefault()
+

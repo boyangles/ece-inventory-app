@@ -39,6 +39,13 @@ class BaseController < ApplicationController
     return true
   end
 
+  def stocked_filter_correct_reponses?(stocked_response)
+    if stocked_response == "true" || stocked_response == "false"
+      return true
+    end
+    return false
+  end
+
   def all_custom_field_names_exist?(custom_field_filters)
     custom_field_filters.each do |cf|
       return false unless CustomField.exists?(:field_name => cf)

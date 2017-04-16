@@ -1,0 +1,26 @@
+
+<html>
+
+<%= render 'preamble' %>
+
+The backfill status of your loan has changed! Here is information about your backfill request.
+
+<p>
+  <strong>
+    Your loan consisted of <%=@request_item.quantity_loan %> <%=@request_item.item.unique_name %>.
+
+    The backfill status went from <%=@old_status %> to <%=@request_item.bf_status%>.
+
+    Here are the following comments of the loan:
+
+    <% @comments.each do |com| %>
+        <p>
+         <%= com.user.username %> : <%= com.comment %>
+        </p>
+    <% end%>
+
+  </strong>
+</p>
+
+    <%= render 'ending'%>
+</html>
