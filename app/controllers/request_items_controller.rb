@@ -32,19 +32,17 @@ class RequestItemsController < ApplicationController
 
 		begin
 			@request_item.save!
-			@request = grab_cart(current_user)
-
-			redirect_to request_path(@request.id)
+			flash[:success] = "Item #{@request_item.item.unique_name} (Loan: #{@request_item.quantity_loan}, Disburse: #{@request_item.quantity_disburse}) added to the cart"
+			redirect_to item_path(@request_item.item.id) and return if params[:from_show] == 'true'; redirect_to items_path
 		rescue Exception => e
 			flash[:danger] = "You may not add this to the cart! Error: #{e}"
-			redirect_to item_path(Item.find(@request_item.item_id))
+			redirect_to item_path(@request_item.item.id) and return if params[:from_show] == 'true'; redirect_to items_path
 		end
 
 	end
 
 
 	def update_backfill
-		# require 'pry'
 		@request_item = RequestItem.find(params[:id])
 		@request_item.curr_user = current_user
 		old_status = @request_item.bf_status
@@ -67,15 +65,15 @@ class RequestItemsController < ApplicationController
 			flash[:danger] = e.message
 			redirect_to request_path(@request_item.request) and return
 		end
-
 		respond_to do |format|
 			begin
 				@request_item.update_attributes!(request_item_params)
-				format.html { redirect_to @request_item.request, notice: "Item updated successfully." }
+				flash[:success] = "Item #{@request_item.item.unique_name} (Loan: #{@request_item.quantity_loan}, Disburse: #{@request_item.quantity_disburse}) updated in the cart"
+				format.html { redirect_to item_path(@request_item.item.id) and return if params[:from_show] == 'true'; redirect_to items_path }
 				format.json { head :no_content }
 			rescue Exception => e
 				flash[:danger] = e.message
-				format.html { redirect_to item_path(Item.find(@request_item.item_id)) }
+				format.html { redirect_to item_path(@request_item.item.id) and return if params[:from_show] == 'true'; redirect_to items_path }
 				format.json { render json: @request_item.errors, status: :unprocessable_entity }
 			end
 		end
