@@ -1,15 +1,16 @@
 class Api::V1::ItemsController < BaseController
   before_action :authenticate_with_token!
   before_action :auth_by_approved_status!
-  before_action :auth_by_manager_privilege!, only: [:create, :create_tag_associations, :destroy_tag_associations, :update_general, :bulk_import, :convert_to_stocks, :convert_to_global]
+  before_action :auth_by_manager_privilege!, only: [:create, :create_tag_associations, :destroy_tag_associations, :update_general, :bulk_minimum_stock, :bulk_import, :convert_to_stocks, :convert_to_global]
   before_action :auth_by_admin_privilege!, only: [:destroy, :fix_quantity, :clear_field_entries, :update_field_entry, :create_stocks, :create_single_stock]
   before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock]
   before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock]
 
 
+
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock].each do |api_action|
+  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import, :bulk_minimum_stock, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -38,6 +39,7 @@ class Api::V1::ItemsController < BaseController
     param :query, :model_search, :string, :optional, "Search by Model Number"
     param :query, :required_tag_names, :string, :optional, "Comma Deliminated list of Required Tag Names"
     param :query, :excluded_tag_names, :string, :optional, "Comma Deliminated list of Excluded Tag Names"
+    param :query, :stocked, :string, :optional, "Include only items below Minimum Stock"
     response :ok
     response :unauthorized
     response :unprocessable_entity
@@ -57,6 +59,7 @@ class Api::V1::ItemsController < BaseController
     param :form, 'item[unique_name]', :string, :required, "Item Name"
     param :form, 'item[quantity]', :integer, :required, "Item Quantity"
     param :form, 'item[description]', :string, :optional, "Item Description"
+    param :form, 'item[minimum_stock]', :integer, :optional, "Minimum Stock"
     param :form, 'item[model_number]', :string, :optional, "Optional Model Number"
     response :unauthorized
     response :created
@@ -112,6 +115,7 @@ class Api::V1::ItemsController < BaseController
     param :path, :id, :integer, :required, "Item ID"
     param :form, 'item[unique_name]', :string, :optional, "Item Name"
     param :form, 'item[description]', :string, :optional, "Item Description"
+    param :form, 'item[minimum_stock]', :integer, :optional, "Minimum Stock"
     param :form, 'item[model_number]', :string, :optional, "Model Number"
     response :ok
     response :unauthorized
@@ -123,6 +127,14 @@ class Api::V1::ItemsController < BaseController
     summary "Administrator Item Quantity fixes"
     param :path, :id, :integer, :required, "Item ID"
     param :form, 'item[quantity]', :integer, :required, "Updated Quantity"
+    response :ok
+    response :unauthorized
+    response :not_found
+    response :unprocessable_entity
+  end
+
+  swagger_api :bulk_minimum_stock do
+    summary "Set minimum stock of many items at once"
     response :ok
     response :unauthorized
     response :not_found
@@ -336,16 +348,26 @@ class Api::V1::ItemsController < BaseController
     excluded_tag_filters = (filter_params[:excluded_tag_names].blank?) ?
         [] : filter_params[:excluded_tag_names].split(",").map(&:strip)
 
+    stocked_response = params[:stocked]
+
     render_client_error("Inputted 'Required Tags' has a tag that doesn't exist", 422) and
         return unless all_tag_names_exist?(required_tag_filters)
     render_client_error("Inputted 'Excluded Tags' has a tag that doesn't exist", 422) and
         return unless all_tag_names_exist?(excluded_tag_filters)
 
+    render_client_error("You must answer either true or false for the minimum stock filter", 422) and
+        return unless stocked_filter_correct_reponses?(stocked_response)
+
     items_req = Item.tagged_with_all(required_tag_filters).select("id")
     items_exc = Item.tagged_with_none(excluded_tag_filters).select("id")
-    items_req_and_exc = Item.where(:id => items_req & items_exc)
+    items_unstocked = Item.all
+    if stocked_response == "true"
+      items_unstocked = Item.minimum_stock
+    end
 
-    items = items_req_and_exc.
+    items_req_and_exc_and_unstocked= Item.where(:id => items_req & items_exc & items_unstocked)
+
+    items = items_req_and_exc_and_unstocked.
         filter_by_search(filter_params[:search]).
         filter_by_model_search(filter_params[:model_search]).
         order('unique_name ASC')
@@ -355,6 +377,7 @@ class Api::V1::ItemsController < BaseController
           :name => item.unique_name,
           :quantity => item.quantity,
           :description => item.description,
+          :minimum_stock => item.minimum_stock,
           :model_number => item.model_number,
           :tags => item.tags
       }
@@ -413,7 +436,7 @@ class Api::V1::ItemsController < BaseController
   end
 
   def update_general
-    general_params = item_params.slice(:unique_name, :description, :model_number)
+    general_params = item_params.slice(:unique_name, :description, :model_number, :minimum_stock)
     if @item.update(general_params)
       render_item_instance_with_tags_and_requests_and_custom_fields(@item)
     else
@@ -446,6 +469,10 @@ class Api::V1::ItemsController < BaseController
     end
 
     head 204
+  end
+
+  def bulk_minimum_stock
+
   end
 
   def update_field_entry
@@ -489,7 +516,7 @@ class Api::V1::ItemsController < BaseController
 
   private
   def item_params
-    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description)
+    params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :minimum_stock)
   end
 
   private
@@ -499,6 +526,7 @@ class Api::V1::ItemsController < BaseController
           :name => item.unique_name,
           :quantity => item.quantity,
           :description => item.description,
+          :minimum_stock => item.minimum_stock,
           :model_number => item.model_number,
           :has_stocks => item.has_stocks,
           :tags => item.tags
@@ -513,6 +541,7 @@ class Api::V1::ItemsController < BaseController
           :quantity => item.quantity,
           :description => item.description,
           :model_number => item.model_number,
+          :minimum_stock => item.minimum_stock,
           :has_stocks => item.has_stocks,
           :tags => item.tags,
           :requests => item.requests.map {

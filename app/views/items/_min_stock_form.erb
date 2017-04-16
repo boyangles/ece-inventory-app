@@ -1,0 +1,51 @@
+<%= form_tag update_all_minimum_stock_path, method: :put do |f| %>
+
+    <table class="table table-striped table-hover ">
+      <thead>
+      <tr>
+        <th>Item Name</th>
+        <th>Quantity in Stock</th>
+        <th>Minimum Stock</th>
+        <th>Selected</th>
+      </tr>
+      </thead>
+
+
+      <% item.each do |fe| %>
+          <tr>
+            <td><%= link_to fe.unique_name, item_path(fe.id) %></td>
+            <td><%= fe.quantity %></td>
+            <td><%= fe.minimum_stock %>
+            <td><%= check_box_tag 'item_ids[]', fe.id, false, {multiple: true} %></td>
+          </tr>
+
+      <% end %>
+
+
+      </p>
+      <%= will_paginate @items %>
+
+    </table>
+
+    <tbody>
+    <button type="button" id="check_all" class="btw"><%="Check all/Uncheck all"%></button>
+
+    </tbody>
+
+    <div class="form-group">
+      <%= label_tag :min_quantity, "Wanted Quantity", class: "col-lg-2 control-label" %>
+      <div class="col-lg-10">
+        <%= text_field_tag :min_quantity, params[:min_quantity], :placeholder => "Minimum Stock",  :class => "form-control" %>
+      </div>
+    </div>
+
+
+    <script type='text/javascript'>
+        $('#check_all').on("click", function(){
+            var cbxs = $('input[type="checkbox"]');
+            cbxs.prop("checked", !cbxs.prop("checked"));
+        });
+    </script>
+
+    <%= submit_tag "Modify minimum stock", class: "btn btn-default col-lg-2 col-lg-offset-10", type: "submit" %>
+<% end %>

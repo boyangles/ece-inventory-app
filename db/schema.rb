@@ -78,6 +78,7 @@ ActiveRecord::Schema.define(version: 20170413172102) do
     t.integer "status",           default: 0
     t.integer "last_action",      default: 3
     t.integer "quantity_on_loan", default: 0
+    t.integer "minimum_stock",    default: 0
     t.boolean "has_stocks",       default: false
   end
 

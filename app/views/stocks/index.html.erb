@@ -1,6 +1,14 @@
 
 <div class="center_jumbotron">
 
+  <% if !@item.active? %>
+      <div class="panel panel-danger">
+        <div class="panel-heading">
+          <h3 class="panel-title">Item has been deleted.</h3>
+        </div>
+      </div>
+  <% end %>
+
   <h2 class="page-header">
     <%= link_to @item.unique_name, item_path(@item.id) %>
 

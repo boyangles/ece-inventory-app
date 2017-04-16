@@ -31,6 +31,7 @@ class Item < ApplicationRecord
   validates :description, length: { maximum: 255 }
   validates :status, :inclusion => { :in => ITEM_STATUS_OPTIONS }
   validates :last_action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }
+  validates :minimum_stock,:numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   validates :has_stocks, :inclusion => {:in => [true, false]}
 
   # Relation with Tags
@@ -343,6 +344,10 @@ class Item < ApplicationRecord
     else
       where(:model_number => search_input.strip)
     end
+  end
+
+  def self.minimum_stock
+    where("minimum_stock > quantity")
   end
 
   def self.filter_active

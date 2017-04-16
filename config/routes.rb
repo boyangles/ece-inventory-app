@@ -33,6 +33,14 @@ Rails.application.routes.draw do
   put'settings/dates' => 'settings#update_dates', :as => 'update_dates'
   patch 'settings/dates', to: 'settings#update_dates'
 
+  #TODO: change minimum stock to just stock or just minimum
+  get  'items/minimums' => 'items#set_all_minimum_stock', :as => 'minimum_stock'
+  put 'items/update_all_minimum_stock' => 'items#update_all_minimum_stock', :as => 'update_all_minimum_stock'
+  patch 'items/update_all_minimum_stock', to: 'items#update_all_minimum_stock'
+
+  resources :items
+  resources :tags
+
 
   resources :items do
     member do
@@ -123,6 +131,9 @@ Rails.application.routes.draw do
 
           put :update_general
           patch :update_general
+
+          put :bulk_minimum_stock
+          patch :bulk_minimum_stock
 
           put :fix_quantity
           patch :fix_quantity

@@ -70,7 +70,6 @@ class RequestItem < ApplicationRecord
   # Output: @item upon success
   def fulfill_subrequest
     @item = self.item
-
     # item_requested = Item.find(self.item_id)
     if @item.has_stocks
       @item.delete_stocks_through_request_by_list(self)
@@ -79,7 +78,12 @@ class RequestItem < ApplicationRecord
       disbursement_quantity = (self[:quantity_disburse].nil?) ? 0 : self[:quantity_disburse]
       loan_quantity = (self[:quantity_loan].nil?) ? 0 : self[:quantity_loan]
 
-      @item.update!(:quantity => item[:quantity] - disbursement_quantity - loan_quantity)
+      # Need to send out minimum stock email if applicable!!
+
+      newItemQuant = @item[:quantity] - disbursement_quantity - loan_quantity
+      minimum_stock_email(@item.quantity,newItemQuant, @item)
+
+      @item.update!(:quantity => newItemQuant)
       @item.update!(:quantity_on_loan => item[:quantity_on_loan] + loan_quantity)
 
     end
@@ -265,6 +269,25 @@ class RequestItem < ApplicationRecord
     errors.add(:base, "Loan and Disburse cannot both be 0") if (quantity_disburse == 0 && quantity_loan == 0 && quantity_return == 0)
   end
 
+  def minimum_stock_email(q_before, q_after, item)
+    10.times do |i|
+      puts "The quantity before is:"
+      puts q_before
+      puts "The quantity after is:"
+      puts q_after
+      puts "The item is:"
+      puts item.unique_name
+      puts "The minimum stock is:"
+      puts Setting.email_min_stock.to_i
+    end
+    if q_before >= item.minimum_stock && q_after < item.minimum_stock
+      10.times do |i|
+        puts "The email should deliver now!!!!"
+      end
+      UserMailer.minimum_stock(q_before, q_after, item).deliver_now
+
+    end
+  end
   # Validates that if a request if approved, the admin has set an appropriate amount of serial tags for each quanityt
   def validates_stock_item_serial_tags_are_set!
     item = self.item
