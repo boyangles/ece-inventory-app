@@ -109,6 +109,13 @@ Rails.application.routes.draw do
 
       resources :items, :only => [:index, :show, :create, :destroy] do
         member do
+          post :create_single_stock
+
+          post :create_stocks
+
+          post :convert_to_stocks
+          delete :convert_to_global
+
           post :create_tag_associations
 
           delete :destroy_tag_associations
@@ -130,6 +137,13 @@ Rails.application.routes.draw do
           get :self_outstanding_requests
 
           get :self_loans
+        end
+      end
+
+      resources :stocks, :only => [:index, :show] do
+        member do
+          put :update_serial_tag
+          patch :update_serial_tag
         end
       end
 

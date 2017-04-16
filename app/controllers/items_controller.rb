@@ -175,7 +175,7 @@ class ItemsController < ApplicationController
     end
   end
 
-  def create_stocks
+  def create_stocks 
     if Item.is_valid_integer(params[:num_stocks])
       begin
         Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
@@ -188,7 +188,7 @@ class ItemsController < ApplicationController
     else
       begin
         Stock.create_stock!(params[:num_stocks], params[:id])
-        flash[:success] = "(#{params[:num_stocks]}) Assets successfully created!"
+        flash[:success] = "(#{params[:num_stocks]}) Asset successfully created!"
         redirect_to item_stocks_path @item and return
       rescue Exception => e
         flash[:danger] = e.message
