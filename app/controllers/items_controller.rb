@@ -205,6 +205,7 @@ class ItemsController < ApplicationController
   end
 
   def convert_to_stocks
+		@item.curr_user = current_user
     if @item.convert_to_stocks
       flash[:success] = "Item successfully converted to Assets!"
       redirect_to item_stocks_path(@item)
@@ -215,6 +216,7 @@ class ItemsController < ApplicationController
   end
 
   def convert_to_global
+		@item.curr_user = current_user
     if @item.convert_to_global
       flash[:success] = "Item successfully converted to global"
       redirect_to item_path(@item)

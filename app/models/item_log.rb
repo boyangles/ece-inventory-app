@@ -15,7 +15,9 @@ class ItemLog < ApplicationRecord
 		backfill_request_approved: 10,
 		backfill_request_denied: 11,
 		backfill_request_satisfied: 12,
-		backfill_request_failed: 13
+		backfill_request_failed: 13,
+		convert_to_assets: 14,
+		convert_to_global: 15
 	}
 
 	validates :action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }

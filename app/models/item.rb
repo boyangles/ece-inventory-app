@@ -22,7 +22,9 @@ class Item < ApplicationRecord
       backfill_request_approved: 10,
       backfill_request_denied: 11,
       backfill_request_satisfied: 12,
-      backfill_request_failed: 13
+      backfill_request_failed: 13,
+      convert_to_assets: 14,
+      convert_to_global: 15
   }
 
   validates :unique_name, presence: true, length: { maximum: 50 },
@@ -69,7 +71,8 @@ class Item < ApplicationRecord
     create_log_on_quantity_change()
     create_log_on_desc_update()
     create_log_on_destruction()
-  }
+  	create_log_on_stocks_status_change
+	}
 
   ##
   # ITEM-6: import_item
@@ -178,7 +181,7 @@ class Item < ApplicationRecord
         (1..self.quantity_on_loan).each do
           Stock.create!(:item_id => self.id, :available => false)
         end
-
+				
         self.has_stocks = true
         self.save!
       end
@@ -238,6 +241,7 @@ class Item < ApplicationRecord
     Stock.destroy_all(item_id: self.id)
     self.has_stocks = false
     self.save!
+
   end
 
   def convert_to_global!
@@ -375,6 +379,16 @@ class Item < ApplicationRecord
       create_log("deleted", self.quantity)
     end
   end
+
+	def create_log_on_stocks_status_change
+		if has_stocks_was != has_stocks && has_stocks_was != nil
+			if has_stocks
+				create_log("convert_to_assets", 0)
+			else
+				create_log("convert_to_global", 0)
+			end
+		end
+	end
 
   def create_log(action, quan_change)
     if self.curr_user.nil?

@@ -8,7 +8,8 @@ module Loggable
 		acquired_or_destroyed_quantity administrative_correction 
 		disbursed loaned returned disbursed_from_loan
 		backfill_requested backfill_request_approved backfill_request_denied
-		backfill_request_satisfied backfill_request_failed)
+		backfill_request_satisfied backfill_request_failed
+		convert_to_assets convert_to_global)
 	REQUEST_LOGGED_ACTIONS = %w(placed cancelled approved denied)
 	
 
