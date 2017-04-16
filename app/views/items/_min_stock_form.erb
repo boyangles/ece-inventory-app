@@ -21,13 +21,16 @@
 
       <% end %>
 
-      </p>
-      <tbody>
-      <button type="button" id="check_all" class="btw"><%="Check all/Uncheck all"%></button>
 
-      </tbody>
+      </p>
+      <%= will_paginate @items %>
+
     </table>
 
+    <tbody>
+    <button type="button" id="check_all" class="btw"><%="Check all/Uncheck all"%></button>
+
+    </tbody>
 
     <div class="form-group">
       <%= label_tag :min_quantity, "Wanted Quantity", class: "col-lg-2 control-label" %>

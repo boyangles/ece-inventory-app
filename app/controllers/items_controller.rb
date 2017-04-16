@@ -203,12 +203,10 @@ class ItemsController < ApplicationController
         filter_by_search(params[:search]).
         filter_by_model_search(params[:model_search]).
         order('unique_name ASC').paginate(page: params[:page], per_page: 10)
-
-
-    @items = items_active.
-        filter_by_search(params[:search]).
-        filter_by_model_search(params[:model_search]).
-        order('unique_name ASC')
+    # @items = items_active.
+    #     filter_by_search(params[:search]).
+    #     filter_by_model_search(params[:model_search]).
+    #     order('unique_name ASC')
   end
 
 
@@ -258,19 +256,15 @@ class ItemsController < ApplicationController
   def update_all_minimum_stock
     #Putting this line below just to test! Need to verify that it works.
     # binding.pry
-    # 10000.times do |i|
-    #   puts "The value of items is "
-    #   puts items
-    #   puts "The value of params is "
-    #   puts params[:min_quantity]
-    # end
 
     if !params[:item_ids].nil? && !params[:min_quantity].empty?
       update_min_stock_of_certain_items(params[:item_ids], params[:min_quantity])
+      flash[:success] = "Minimum stock updated successfully"
+    elsif  params[:item_ids].nil?
+      flash[:warning] = "You must select at least one item"
+    elsif  params[:min_quantity].empty?
+      flash[:warning] = "You must specify the quantity"
     end
-    # Item.update_all(:minimum_stock => @stock_quantity)
-    # puts Item.all
-
     redirect_to minimum_stock_path
   end
 
