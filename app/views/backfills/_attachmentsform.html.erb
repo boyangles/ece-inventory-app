@@ -1,0 +1,77 @@
+<% if request_item.loan? %>
+	<% stat = "default" %>
+	<% button_title = "Request Backfill" %>
+<% elsif request_item.bf_request? %>
+	<% stat = "warning" %>
+	<% button_title = "Backfill Requested" %>
+<% elsif request_item.bf_in_transit? %>
+	<% stat = "warning" %>
+	<% button_title = "Backfill in Transit" %>
+<% elsif request_item.bf_denied? %>
+	<% stat = "danger" %>
+	<% button_title = "Backfill Denied" %>
+<% elsif request_item.bf_satisfied? %>
+	<% stat = "success" %>
+	<% button_title = "Backfill Satisfied" %>
+<% elsif request_item.bf_failed? %>
+	<% stat = "danger" %>
+	<% button_title = "Backfill Failed" %>
+<% end %>
+
+<button type="button" class="btn btn-<%=stat%> btn-block" data-toggle="modal" data-target="#bfdocs-<%=request_item.id%>"><%=button_title%></button>
+
+<div id="bfdocs-<%=request_item.id%>" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+
+			<div class="modal-body">
+        <div id="request_item_comments_<%= request_item.id %>">
+          <% if request_item.request_item_comments %>
+
+            <%= render request_item.request_item_comments, request_item: request_item %>
+          <% end %>
+        </div>
+        <%= render 'request_item_comments/request_item_comment_form', request_item: request_item %>
+
+      <table class="table">
+					<tbody>
+						<% request_item.attachment_ids.each do |doc_id| %>
+							<tr>
+								<% att = Attachment.find(doc_id) %>
+								<td><%= link_to att.doc_file_name, att.doc.url, target: '_blank' %></td>
+								<% if request_item.loan? or request_item.bf_request? %>														<td class="text-right"><%= link_to "x", Attachment.find(doc_id), method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-default" %></td>
+								<% end %>
+							</tr>
+						<% end %>
+					</tbody>
+				</table>
+
+				<%= render 'request_items/attachmentform', attachment: Attachment.new(request_item_id: request_item.id) %>
+			</div>
+
+			<div class="modal-footer">
+				<% if request_item.loan? and current_user == User.find(request_item.request.user_id)%>
+      <%= form_for request_item, :url => update_backfill_request_item_path(request_item), :html => { method: :put} do |f| %>
+						<%= f.hidden_field :bf_status, :value => "bf_request" %>
+						<%= f.submit "Place Backfill Request", class: "btn btn-primary" %>
+					<% end %>
+				<% elsif request_item.bf_request? and is_manager_or_admin? %>
+					<%= render 'backfills/approvebackfillform', request_item: request_item %>
+					<%= render 'backfills/denybackfillform', request_item: request_item %>
+				<% elsif request_item.bf_in_transit? and is_manager_or_admin? %>
+					<%= render 'backfills/satisfybfform', request_item: request_item %>
+					<%= render 'backfills/failedbfform', request_item: request_item %>
+				<% end %>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+
+
+

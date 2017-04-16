@@ -27,5 +27,8 @@ module EceInventoryApp
     end
 
     config.autoload_paths += %W(#{config.root}/lib)
+
+		# For paperclip
+		Paperclip::Railtie.insert
   end
 end

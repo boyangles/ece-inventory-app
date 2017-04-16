@@ -32,5 +32,5 @@ sendgrid.env
 /config/environments/test.rb
 
 
-## Make sure pdfs don't add to the repo.
-public/system/attachments/docs/*
+# Ignore uploaded PDFs
+/public/system/*

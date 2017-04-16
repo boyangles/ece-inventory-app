@@ -1,0 +1,5 @@
+<%= form_for request_item, :url => update_backfill_request_item_path(request_item), :html => { method: :put} do |f| %>
+    <%= f.hidden_field :bf_status, :value => "bf_in_transit" %>
+	<%= f.submit "Approve", class: "btn btn-success" %>
+<% end %>			
+

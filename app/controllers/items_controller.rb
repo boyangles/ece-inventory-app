@@ -2,6 +2,7 @@ class ItemsController < ApplicationController
   before_action :check_logged_in_user
   before_action :check_manager_or_admin, only: [:create, :new, :edit, :update, :set_all_minimum_stock]
   before_action :check_admin_user, only: [:destroy]
+  before_action :set_item,  only: [:edit, :edit_quantity, :update, :create_stocks, :convert_to_global, :convert_to_stocks]
 
   # GET /items
   # GET /items.json
@@ -74,7 +75,9 @@ class ItemsController < ApplicationController
     end
 
     @requests = @item.requests.filter(outstanding_filter_params).paginate(page: params[:page], per_page: 10)
-    @item_custom_fields = ItemCustomField.where(item_id: @item.id)
+    @item_custom_fields = (@item.has_stocks) ?
+        ItemCustomField.filter({ item_id: @item.id, is_global: true }) :
+        ItemCustomField.filter({item_id: @item.id})
   end
 
   # GET /items/new
@@ -84,16 +87,18 @@ class ItemsController < ApplicationController
 
   # GET /items/1/edit
   def edit
-    @item = Item.find(params[:id])
     @item_custom_fields = ItemCustomField.where(item_id: @item.id)
   end
 
   def edit_quantity
-    @item = Item.find(params[:id])
+
   end
 
   # DELETE /items/1
   def destroy
+
+    # Delete stocks with destroy_stocks_by_serial_tags! - surround with try catch
+
     item = Item.find(params[:id]).status = 'deactive'
     item.save!
     flash[:success] = "Item deleted!"
@@ -105,7 +110,6 @@ class ItemsController < ApplicationController
   # POST /items.json
   def create
     begin
-
       ActiveRecord::Base.transaction do
         @item = Item.new(item_params)
         @item.last_action = "created"
@@ -125,7 +129,6 @@ class ItemsController < ApplicationController
 
     rescue Exception => e
       flash.now[:danger] = e.message
-
       render 'new'
     end
 
@@ -151,7 +154,6 @@ class ItemsController < ApplicationController
   end
 
   def update
-    @item = Item.find(params[:id])
     @item.curr_user = current_user
 
     @item.tags.delete_all
@@ -169,15 +171,6 @@ class ItemsController < ApplicationController
       flash.now[:danger] = "Unable to edit!"
       render 'edit'
     end
-  end
-
-
-	def update_quantity
-		@item.quantity = @item.quantity + params[:quantity_change].to_f
-		if !@item.save!
-			flash.now[:danger] = "Quantity unable to be changed"
-			render 'edit'
-		end
   end
 
   #probably needs to go in the model but testing here
@@ -217,6 +210,48 @@ class ItemsController < ApplicationController
         filter_by_model_search(params[:model_search]).
         order('unique_name ASC')
 
+  def update_quantity
+    @item.quantity = @item.quantity + params[:quantity_change].to_f
+    if !@item.save
+      flash.now[:danger] = "Quantity unable to be changed"
+      render 'edit'
+    end
+
+  end
+
+  def convert_to_stocks
+    if @item.convert_to_stocks
+      flash[:success] = "Item successfully converted to Assets!"
+      redirect_to item_stocks_path(@item)
+    else
+      flash.now[:danger] = "Item already converted to Assets"
+      render :show
+    end
+  end
+
+  def convert_to_global
+    if @item.convert_to_global
+      flash[:success] = "Item successfully converted to global"
+      redirect_to item_path(@item)
+    else
+      flash.now[:danger] = "Item already global"
+      render :show
+    end
+  end
+
+
+  def create_stocks
+    begin
+      throw Exception.new('Number must be greater than 0') if params[:num_stocks].to_i <= 0
+      Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
+      flash[:success] = "(#{params[:num_stocks]}) Assets successfully created!"
+      redirect_to item_stocks_path @item
+      return true
+    rescue Exception => e
+      flash[:danger] = e.message
+      redirect_to item_stocks_path @item
+      return false
+    end
   end
 
   def update_all_minimum_stock
@@ -247,24 +282,30 @@ class ItemsController < ApplicationController
   end
   private
 
+  def set_item
+    @item = Item.find(params[:id])
+  end
+
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
     params.fetch(:item, {}).permit(	:unique_name,
-																	  :quantity,
-																		:model_number, 
-																		:description,
-                                     :minimum_stock,
-																		:search, 
-																		:model_search, 
-																		:status, 
-																		:last_action,
-																		:tag_list=>[],
-																		item_custom_fields_attributes: [:short_text_content,
-																																		 :long_text_content,
-																																		 :integer_content,
-																																		 :float_content,
-																																		 :item_id, :custom_field_id, :id])
+                                     :quantity,
+                                     :model_number,
+                                     :description,
+                                      :minimum_stock,
+                                     :search,
+                                     :model_search,
+                                     :status,
+                                     :last_action,
+                                     :has_stocks,
+                                     :num_stocks,
+                                     :tag_list=>[],
+                                     item_custom_fields_attributes: [:short_text_content,
+                                                                     :long_text_content,
+                                                                     :integer_content,
+                                                                     :float_content,
+                                                                     :item_id, :custom_field_id, :id])
   end
 
 end

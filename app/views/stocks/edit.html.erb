@@ -1,0 +1,6 @@
+<div class="text-center">
+  <h1>Edit Asset for <%= @item.unique_name %></h1>
+  <h2>Stock Serial Number is: <%= @stock.serial_tag %></h2>
+</div>
+
+<%= render 'edit_form', item: @item, stock: @stock %>

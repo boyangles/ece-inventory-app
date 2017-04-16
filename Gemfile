@@ -8,6 +8,10 @@ end
 #Integration testing gem
 gem 'rails-controller-testing'
 gem 'pry-rails', :group => :development
+group :test do
+  gem 'database_cleaner'
+#  gem "capybara-webkit"
+end
 
 # API Testing Swagger
 gem 'swagger-docs'
@@ -123,3 +127,6 @@ gem 'sendgrid'
 
 # #still use action mailer
 # gem 'sendgrid-actionmailer'
+
+# Paperclip for backfill attachments
+gem "paperclip", :git => "http://github.com/thoughtbot/paperclip.git" 

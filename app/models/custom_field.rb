@@ -3,6 +3,7 @@ class CustomField < ApplicationRecord
 
   has_many :items, -> { uniq }, :through => :item_custom_fields
   has_many :item_custom_fields, dependent: :destroy
+  has_many :stock_custom_fields, dependent: :destroy
 
   # Data Options;
   FIELD_TYPE_OPTIONS = %w(short_text_type long_text_type integer_type float_type)
@@ -19,16 +20,19 @@ class CustomField < ApplicationRecord
   scope :field_name, -> (field_name) { where field_name: field_name }
   scope :private_indicator, -> (private_indicator) { where private_indicator: private_indicator }
   scope :field_type, -> (field_type) { where field_type: field_type }
+  scope :is_stock, -> (is_stock) { where is_stock: is_stock }
 
   ## Validations
   validates :field_name, :exclusion => { :in => INTRINSIC_FIELD_NAMES },
             presence: true, uniqueness: true
   validates :private_indicator, :inclusion => { in: [ true, false ] }
   validates :field_type, :inclusion => { :in => FIELD_TYPE_OPTIONS }
+  validates :is_stock, :inclusion => { in: [true, false] }
 
   after_update :clear_associated_field_entries, if: :field_type_changed?
   after_create {
     create_items_for_custom_fields(self.id)
+    create_stocks_for_custom_fields(self.id)
   }
 
   ## Class Methods:
@@ -89,6 +93,17 @@ class CustomField < ApplicationRecord
                               long_text_content: nil,
                               integer_content: nil,
                               float_content: nil)
+    end
+  end
+
+  private
+  def create_stocks_for_custom_fields(custom_field_id)
+    Stock.all.each do |stock|
+      StockCustomField.create!(stock_id: stock.id, custom_field_id: custom_field_id,
+                               short_text_content: nil,
+                               long_text_content: nil,
+                               integer_content: nil,
+                               float_content: nil)
     end
   end
 end
