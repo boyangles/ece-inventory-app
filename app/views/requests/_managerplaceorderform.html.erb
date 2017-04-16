@@ -27,12 +27,12 @@
 
 
 				<div class="modal-body reason">
-					<%= f.label :reason, "Reason for request?", class: "control-label" %>
-					<%= f.text_area :reason, {class: "form-control", id: "reason-field"} %>
+					<%= f.label :reason, "Reason for request? (Required)", class: "control-label"%>
+					<%= f.text_area :reason, {class: "form-control", id: "reason-field", required: true} %>
 				</div>
 
-				<div class="modal-body response">
-					<%= f.label :response, "Reason for request? (Optional)", class: "control-label" %>
+				<div class="modal-body response" style="display: none">
+					<%= f.label :response, "Response? (Optional)", class: "control-label" %>
 					<%= f.text_area :response, class: "form-control" %>
 				</div>
 

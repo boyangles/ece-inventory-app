@@ -22,9 +22,9 @@
 </div>
 
 <%= form_tag( create_stocks_item_path(@item), method: :post, multipart: true) do |f| %>
-    <div class="pull-right form-group">
-      <%= number_field_tag :num_stocks, '0', class: 'form-control col-lg-10' %>
-      <%= submit_tag "Create Assets", class: "form-control", type: "submit" %>
+    <div class="pull-left form-group">
+      <%= text_field_tag :num_stocks, params[:num_stocks], class: 'form-control col-lg-10', placeholder: "Serial Tag (8 Characters)" %>
+      <%= submit_tag "Create Asset", class: "form-control", type: "submit" %>
     </div>
 <% end %>
 
@@ -33,8 +33,8 @@
   <thead>
 
   <tr>
-    <th>Serial Tag</th>
-    <th>Available</th>
+    <th class="text-center">Serial Tag</th>
+    <th class="text-center">Available</th>
     <th></th>
     <th></th>
     <th></th>

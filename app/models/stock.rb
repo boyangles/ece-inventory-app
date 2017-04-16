@@ -20,6 +20,7 @@ class Stock < ApplicationRecord
   # Scope available for filterable
   scope :available, -> (available) { where available: available }
   scope :request_item_id, -> (request_item_id) { joins(:request_item_stock).where(request_item_stocks: { request_item_id: request_item_id }) }
+  scope :serial_tag, -> (serial_tag) { where serial_tag: serial_tag }
 
   # Belongs to items
   belongs_to :item
@@ -53,11 +54,21 @@ class Stock < ApplicationRecord
   end
 
   def self.create_stocks!(num, item_id)
+    raise Exception.new('Inputted Item does not exist') unless Item.exists?(item_id)
+    item = Item.find(item_id)
+    raise Exception.new('Inputted Item is not per-asset!') unless item.has_stocks
+
     Stock.transaction do
       for i in 1..num do
         Stock.create!(item_id: item_id, available: true)
+        item.update_item_quantity_on_stock_creation
       end
     end
+  end
+
+  def self.create_stock!(serial_tag, item_id)
+    Stock.create!(serial_tag: serial_tag, item_id: item_id)
+    Item.find(item_id).update_item_quantity_on_stock_creation
   end
 
   def self.filter_by_search(search_input)
@@ -81,4 +92,5 @@ class Stock < ApplicationRecord
                                float_content: nil)
     end
   end
+
 end

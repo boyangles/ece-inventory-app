@@ -17,7 +17,12 @@ class Item < ApplicationRecord
       description_updated: 5,
       loaned: 6,
       returned: 7,
-      disbursed_from_loan: 8
+      disbursed_from_loan: 8,
+      backfill_requested: 9,
+      backfill_request_approved: 10,
+      backfill_request_denied: 11,
+      backfill_request_satisfied: 12,
+      backfill_request_failed: 13
   }
 
   validates :unique_name, presence: true, length: { maximum: 50 },
@@ -157,6 +162,27 @@ class Item < ApplicationRecord
     end
   end
 
+  def convert_to_stocks!
+    raise Exception.new("Cannot convert to assets if this item is already specified as having assets!") if self.has_stocks
+
+    begin
+      ActiveRecord::Base.transaction do
+        (1..self.quantity).each do
+          Stock.create!(:item_id => self.id, :available => true)
+        end
+
+        (1..self.quantity_on_loan).each do
+          Stock.create!(:item_id => self.id, :available => false)
+        end
+
+        self.has_stocks = true
+        self.save!
+      end
+    end
+
+    Stock.where(item_id: self.id)
+  end
+
   def convert_to_stocks
     return false if self.has_stocks
 
@@ -170,7 +196,7 @@ class Item < ApplicationRecord
           Stock.create!(:item_id => self.id, :available => false)
         end
 
-        self.has_stocks = "true"
+        self.has_stocks = true
         self.save!
       end
 
@@ -208,6 +234,16 @@ class Item < ApplicationRecord
     Stock.destroy_all(item_id: self.id)
     self.has_stocks = false
     self.save!
+  end
+
+  def convert_to_global!
+    raise Exception.new("Cannot convert back assets for an item if that item is already specified as not having assets!") unless self.has_stocks
+
+    Stock.destroy_all(item_id: self.id)
+    self.has_stocks = false
+    self.save!
+
+    self
   end
 
   def convert_quantity_to_stocks(num_to_create)
@@ -260,15 +296,15 @@ class Item < ApplicationRecord
     Stock.transaction do
       serial_tags_disburse.each do |st|
         stock = Stock.find(st.stock_id)
-        raise Exception.new("Error in finding requested stock. Input serial tag is: #{st}") unless stock
+        raise Exception.new("Error in finding requested stock. Input serial tag is: #{st.stock.serial_tag}") unless stock
         stock.destroy!
         self.quantity = self.quantity - 1
       end
 
       serial_tags_loan.each do |st|
         stock = Stock.find(st.stock_id)
-        raise Exception.new("Error in finding requested stock. Input serial tag is: #{st}") unless stock
-        raise Exception.new("Stock requested for loan is not available: #{st}") unless stock.available
+        raise Exception.new("Error in finding requested stock. Input serial tag is: #{st.stock.serial_tag}") unless stock
+        raise Exception.new("Stock requested for loan is not available: #{st.stock.serial_tag}") unless stock.available
 
         stock.available = false
         raise Exception.new("Stock failed to save. #{stock.errors.full_messages}.") unless stock.save
@@ -374,6 +410,23 @@ class Item < ApplicationRecord
     self.save!
   end
 
+  def create_stock!(serial_tag)
+    Item.transaction do
+      stock = Stock.create!(serial_tag: serial_tag, item_id: self.id)
+      self.update_item_quantity_on_stock_creation
+      stock
+    end
+  end
+
+  def update_item_quantity_on_stock_creation
+    self.quantity += 1
+    self.save!
+  end
+
+  def self.is_valid_integer(input)
+    input.to_i.to_s == input
+  end
+
   private
 
   def create_custom_fields_for_items(item_id)
@@ -395,4 +448,6 @@ class Item < ApplicationRecord
       return false
     end
   end
+
+
 end

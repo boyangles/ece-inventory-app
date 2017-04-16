@@ -1,15 +1,15 @@
 class Api::V1::ItemsController < BaseController
   before_action :authenticate_with_token!
   before_action :auth_by_approved_status!
-  before_action :auth_by_manager_privilege!, only: [:create, :create_tag_associations, :destroy_tag_associations, :update_general, :bulk_import]
-  before_action :auth_by_admin_privilege!, only: [:destroy, :fix_quantity, :clear_field_entries, :update_field_entry]
-  before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans]
-  before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans]
+  before_action :auth_by_manager_privilege!, only: [:create, :create_tag_associations, :destroy_tag_associations, :update_general, :bulk_import, :convert_to_stocks, :convert_to_global]
+  before_action :auth_by_admin_privilege!, only: [:destroy, :fix_quantity, :clear_field_entries, :update_field_entry, :create_stocks, :create_single_stock]
+  before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock]
+  before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock]
 
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import, :self_outstanding_requests, :self_loans].each do |api_action|
+  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -212,6 +212,87 @@ class Api::V1::ItemsController < BaseController
     response :ok
     response :unauthorized
     response :not_found
+  end
+
+  swagger_api :convert_to_stocks do
+    summary "Converts all the quantities for a particular item to assets"
+    notes "
+    Converts an item and all its associated quantities to be tracked as assets. Dependent on the following criteria
+    - has_stocks for specified Item must be false
+    "
+    param :path, :id, :integer, :required, "Item ID"
+    response :ok
+    response :unauthorized
+    response :not_found
+  end
+
+  swagger_api :convert_to_global do
+    summary "Converts all the associated assets for a particular item to quantity and quantity_on_loan"
+    notes "
+    Converts all stocks for an item to quantity. Equivalent to deleting these entries from the Stocks table. Dependent on the following criteria:
+    - has_stocks is for specified Item must be true
+    "
+    param :path, :id, :integer, :required, "Item ID"
+    response :ok
+    response :unauthorized
+    response :not_found
+  end
+
+  swagger_api :create_stocks do
+    summary "Creates stocks for a specified Item"
+    notes ""
+    param :path, :id, :integer, :required, "Item ID"
+    param :query, :stock_quantity, :string, :required, "Quantity of stocks to create"
+    response :ok
+    response :unauthorized
+    response :not_found
+  end
+
+  swagger_api :create_single_stock do
+    summary "Creates a single stock for a specified Item"
+    notes ""
+    param :path, :id, :integer, :required, "Item ID"
+    param :query, :stock_serial_tag, :string, :required, "Serial Tag of stock to be created"
+    response :ok
+    response :unauthorized
+    response :not_found
+  end
+
+  def create_single_stock
+    begin
+      stock = @item.create_stock!(params[:stock_serial_tag])
+      render_single_stock(stock)
+    rescue Exception => e
+      render_client_error(e, 422)
+    end
+  end
+
+  def create_stocks
+    begin
+      raise Exception.new('Inputted stock quantity must be greater than 0') if params[:stock_quantity].to_i <= 0
+      Stock.create_stocks!(params[:stock_quantity].to_i, @item.id)
+      render_multiple_stocks(@item.stocks)
+    rescue Exception => e
+      render_client_error(e, 422)
+    end
+  end
+
+  def convert_to_global
+    begin
+      updated_item = @item.convert_to_global!
+      render_item_instance_with_tags_and_requests_and_custom_fields(updated_item)
+    rescue Exception => e
+      render_client_error(e.message, 422)
+    end
+  end
+
+  def convert_to_stocks
+    begin
+      created_stocks = @item.convert_to_stocks!
+      render_multiple_stocks(created_stocks)
+    rescue Exception => e
+      render_client_error(e.message, 422)
+    end
   end
 
   def self_outstanding_requests
@@ -419,6 +500,7 @@ class Api::V1::ItemsController < BaseController
           :quantity => item.quantity,
           :description => item.description,
           :model_number => item.model_number,
+          :has_stocks => item.has_stocks,
           :tags => item.tags
       }
     }, status: 200
@@ -431,6 +513,7 @@ class Api::V1::ItemsController < BaseController
           :quantity => item.quantity,
           :description => item.description,
           :model_number => item.model_number,
+          :has_stocks => item.has_stocks,
           :tags => item.tags,
           :requests => item.requests.map {
               |req| {
@@ -448,5 +531,29 @@ class Api::V1::ItemsController < BaseController
       }
       }
     }, status: 200
+  end
+
+  def render_single_stock(input_stock)
+    render :json => input_stock.instance_eval {
+        |stock| {
+          stock_id: stock.id,
+          serial_tag: stock.serial_tag,
+          item_id: stock.item_id,
+          item_name: stock.item.unique_name,
+          available: stock.available
+      }
+    }, status: 200
+  end
+
+  def render_multiple_stocks(stocks)
+    render :json => stocks.map {
+        |stock| {
+          item_id: stock.item.id,
+          stock_id: stock.id,
+          item_name: stock.item.unique_name,
+          serial_tag: stock.serial_tag,
+          available: stock.available
+      }
+    }
   end
 end
