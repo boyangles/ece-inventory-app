@@ -92,6 +92,8 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :backfills, :only => [:index, :create]
+
       resources :custom_fields, :only => [:index, :show, :create, :destroy] do
         member do
           put :update_name

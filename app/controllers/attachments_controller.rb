@@ -21,7 +21,7 @@ class AttachmentsController < ApplicationController
 				flash[:success] = "File uploaded!"
 				redirect_to request_path(@attachment.request_item.request.id)
 			else
-				flash[:danger] = "Upload file not saved: Invalid File!"
+				flash[:danger] = "Upload file not saved: Invalid File (Valid format is .jpg, .jpeg, .pdf)."
 				redirect_to request_path(@request.id)
 			end
 		rescue ActiveRecord::RecordInvalid => invalid

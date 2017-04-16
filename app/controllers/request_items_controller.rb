@@ -47,8 +47,10 @@ class RequestItemsController < ApplicationController
 		# require 'pry'
 		@request_item = RequestItem.find(params[:id])
 		@request_item.curr_user = current_user
+		old_status = @request_item.bf_status
 		begin
 			@request_item.update_attributes!(bf_status: request_item_params[:bf_status])
+			UserMailer.backfill_approved_email(@request_item,old_status).deliver_now
 			redirect_to request_path(@request_item.request) and return
 		rescue Exception => e
 			flash[:danger] = e.message

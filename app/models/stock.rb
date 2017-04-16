@@ -56,6 +56,7 @@ class Stock < ApplicationRecord
     Stock.transaction do
       for i in 1..num do
         Stock.create!(item_id: item_id, available: true)
+        Item.find(item_id).update_item_quantity_on_stock_creation
       end
     end
   end
@@ -81,4 +82,5 @@ class Stock < ApplicationRecord
                                float_content: nil)
     end
   end
+
 end

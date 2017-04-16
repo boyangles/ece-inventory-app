@@ -194,10 +194,9 @@ class ItemsController < ApplicationController
   # The method for creating a single stock by user specifying the serial_tag as params[:num_stocks] (confusing bc changed and didn't want to alter the entire params if we want to change back)
   def create_stocks
     begin
-      raise Exception.new('Serial Tag must be exactly 8 characters') if params[:num_stocks].to_s.size != 8
-      Stock.create!(serial_tag: params[:num_stocks], item_id: params[:id])
+      @item.create_stock(params[:num_stocks])
       flash[:success] = "(#{params[:num_stocks]}) Asset successfully created!"
-      redirect_to item_stocks_path @item
+      redirect_to item_stocks_path @item.id
       return true
     rescue Exception => e
       flash[:danger] = e.message

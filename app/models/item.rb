@@ -374,6 +374,18 @@ class Item < ApplicationRecord
     self.save!
   end
 
+  def create_stock!(serial_tag)
+    Item.transaction do
+      Stock.create!(serial_tag: serial_tag, item_id: self.id)
+      self.update_item_quantity_on_stock_creation
+    end
+  end
+
+  def update_item_quantity_on_stock_creation
+    self.quantity += 1
+    self.save!
+  end
+
   private
 
   def create_custom_fields_for_items(item_id)
@@ -395,4 +407,6 @@ class Item < ApplicationRecord
       return false
     end
   end
+
+
 end
