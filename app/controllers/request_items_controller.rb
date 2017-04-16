@@ -124,14 +124,24 @@ class RequestItemsController < ApplicationController
 				flash[:danger] = "That's more than are loaned out!"
 				redirect_to request_path(reqit.request_id) and return
 			else
-				reqit.disburse_loaned_subrequest(params[:quantity_to_disburse])
+				begin
+					reqit.disburse_loaned_subrequest!(params[:quantity_to_disburse])
+				rescue Exception => e
+					flash[:danger] = "Cannot convert to disbursement. #{e.message}"
+					redirect_to request_path(reqit.request_id) and return
+				end
 			end
 		else
 			if (params[:quantity_to_disburse].to_f > reqit.quantity_loan)
 				flash[:danger] = "That's more than are loaned out!"
 				redirect_to request_path(reqit.request_id) and return
 			else
-				reqit.disburse_loaned_subrequest(params[:quantity_to_disburse])
+				begin
+					reqit.disburse_loaned_subrequest!(params[:quantity_to_disburse])
+				rescue Exception => e
+					flash[:danger] = "Cannot convert to disbursement. #{e.message}"
+					redirect_to request_path(reqit.request_id) and return
+				end
 			end
 		end
 

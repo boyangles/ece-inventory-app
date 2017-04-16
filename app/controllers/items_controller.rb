@@ -280,7 +280,7 @@ class ItemsController < ApplicationController
           req_item_stock = RequestItemStock.filter({status: 'loan', stock_id: id}).first
           tag_list = []
           tag_list << stock.serial_tag
-          req_item_stock.request_item.disburse_loaned_subrequest(tag_list)
+          req_item_stock.request_item.disburse_loaned_subrequest!(tag_list)
         end
       end
       flash[:success] = "Deleted #{tags} assets"
@@ -304,7 +304,7 @@ class ItemsController < ApplicationController
                                      :quantity,
                                      :model_number,
                                      :description,
-                                      :minimum_stock,
+                                     :minimum_stock,
                                      :search,
                                      :model_search,
                                      :status,
