@@ -17,7 +17,12 @@ class Item < ApplicationRecord
       description_updated: 5,
       loaned: 6,
       returned: 7,
-      disbursed_from_loan: 8
+      disbursed_from_loan: 8,
+      backfill_requested: 9,
+      backfill_request_approved: 10,
+      backfill_request_denied: 11,
+      backfill_request_satisfied: 12,
+      backfill_request_failed: 13
   }
 
   validates :unique_name, presence: true, length: { maximum: 50 },

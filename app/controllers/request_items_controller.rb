@@ -44,8 +44,9 @@ class RequestItemsController < ApplicationController
 
 
 	def update_backfill
-		require 'pry'
+		# require 'pry'
 		@request_item = RequestItem.find(params[:id])
+		@request_item.curr_user = current_user
 		begin
 			@request_item.update_attributes!(bf_status: request_item_params[:bf_status])
 			redirect_to request_path(@request_item.request) and return
