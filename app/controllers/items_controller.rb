@@ -143,8 +143,8 @@ class ItemsController < ApplicationController
       render 'edit'
     end
   end
- 
- 
+
+
 
   def update_quantity
     @item.quantity = @item.quantity + params[:quantity_change].to_f
@@ -175,36 +175,27 @@ class ItemsController < ApplicationController
     end
   end
 
-  # changed in accordance to https://piazza.com/class/ixtuwsa7f0d3d9?cid=118
-  # change back to create_stocks, and alter stocks/index.html.erb to use number_field_tag, and all should be back if necessary
-  def create_stocks_deprecated
-    begin
-      throw Exception.new('Number must be greater than 0') if params[:num_stocks].to_i <= 0
-      Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
-      flash[:success] = "(#{params[:num_stocks]}) Assets successfully created!"
-      redirect_to item_stocks_path @item
-      return true
-    rescue Exception => e
-      flash[:danger] = e.message
-      redirect_to item_stocks_path @item
-      return false
-    end
-  end
-
-  # The method for creating a single stock by user specifying the serial_tag as params[:num_stocks] (confusing bc changed and didn't want to alter the entire params if we want to change back)
   def create_stocks
-    begin
-      @item.create_stock(params[:num_stocks])
-      flash[:success] = "(#{params[:num_stocks]}) Asset successfully created!"
-      redirect_to item_stocks_path @item.id
-      return true
-    rescue Exception => e
-      flash[:danger] = e.message
-      redirect_to item_stocks_path @item
-      return false
+    if Item.is_valid_integer(params[:num_stocks])
+      begin
+        Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
+        flash[:success] = "(#{params[:num_stocks]}) Assets successfully created!"
+        redirect_to item_stocks_path @item and return
+      rescue Exception => e
+        flash[:danger] = e.message
+        redirect_to item_stocks_path @item and return
+      end
+    else
+      begin
+        Stock.create_stock!(params[:num_stocks], params[:id])
+        flash[:success] = "(#{params[:num_stocks]}) Assets successfully created!"
+        redirect_to item_stocks_path @item and return
+      rescue Exception => e
+        flash[:danger] = e.message
+        redirect_to item_stocks_path @item and return
+      end
     end
   end
-
 
   private
 
