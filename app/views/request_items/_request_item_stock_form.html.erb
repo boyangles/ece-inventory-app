@@ -1,0 +1,31 @@
+<div class="search">
+  <%= form_for request_item, :method => 'put' do |f| %>
+
+      <div class="form-group">
+
+
+        <div class="form-group">
+          <%= f.label "Serial Tags for Loan (Quantity: #{request_item.quantity_loan})", class: 'col-lg-4 control-label' %>
+          <div class="col-lg-10">
+            <%= select_tag :serial_tags_loan, options_for_select(Stock.where(item_id: request_item.item_id, available: true).map { |u| [u.serial_tag, u.serial_tag] }, @loan_tag_list),
+                           { include_blank: true, multiple: true, class: 'chosen-select' } %>
+          </div>
+        </div>
+        <br><br></br></br>
+
+        <div class="form-group">
+          <%= f.label "Serial Tags for Disbursement (Quantity: #{request_item.quantity_disburse})", class: 'col-lg-4 control-label' %>
+          <div class="col-lg-10">
+            <%= select_tag :serial_tags_disburse, options_for_select(Stock.where(item_id: request_item.item_id, available: true).map { |u| [u.serial_tag, u.serial_tag] }, @disburse_tag_list),
+                           { include_blank: true, multiple: true, class: 'chosen-select' } %>
+          </div>
+        </div>
+
+
+      </div>
+
+      <br><br></br></br>
+
+      <%= f.submit "Submit", class: "btn btn-success col-sm-1", type: "submit" %>
+  <% end %>
+</div>

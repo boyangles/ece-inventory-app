@@ -12,7 +12,7 @@
 				<%= f.hidden_field :status, :value => "outstanding" %>
 
 				<div class="modal-body">
-					<%= f.label :reason, "Reason for request?", class: "control-label" %>
+					<%= f.label :reason, "Reason for request? (Required)", class: "control-label" %>
 					<%= f.text_area :reason, class: "form-control", :required => true %>
 				</div>
 

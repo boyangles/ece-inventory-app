@@ -1,6 +1,12 @@
 class ItemCustomField < ApplicationRecord
+  include Filterable
+
   belongs_to :item
   belongs_to :custom_field
+
+  # Filterable params
+  scope :is_global, -> (is_global) { joins(:custom_field).where(custom_fields: { is_stock: !is_global }) }
+  scope :item_id, -> (item_id) { where item_id: item_id }
 
   ## Validations
   validates :short_text_content, length: { maximum: 100 }, allow_nil: true

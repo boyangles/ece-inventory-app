@@ -3,10 +3,12 @@
 <div class="center_jumbotron">
   <h2 class="page-header">Items
     <% if is_manager_or_admin? %>
+			<%= link_to "Bulk Import", import_upload_path, :class => "btn btn-primary pull-right" %> 
       <%= link_to "Create New Item", new_item_url, :class => "btn btn-primary pull-right" %>
     <% end %>
   </h2>
 </div>
+
 
 <%= render 'searchform' %>
 
@@ -28,8 +30,8 @@
 	  			<th>In Stock</th>
 	  			<th>Model Number</th>
 					<th>Description</th>
-	  			<!--<th>Request for Loan</th>-->
-	  			<!--<th>Request for Disbursement</th>-->
+	  			<th>Request for Loan</th>
+	  			<th>Request for Disbursement</th>
 				</tr>
       </thead>
 
@@ -50,6 +52,7 @@
                 <tr>
                   <td><b><%= cf.field_name %></b></td>
                   <td><%= cf.private_indicator ? 'private' : 'public' %></td>
+                  <td><%= cf.is_stock ? 'asset' : 'global'%></td>
                   <td><%= CustomField.pretty_field_type(cf.id) %></td>
                   <td>
                     <%= link_to cf, method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-default" do %>
@@ -62,6 +65,7 @@
 						<tr>
             <td><%= cff.text_field :field_name, class: "form-control" %></td>
             <td>Private? <%= cff.check_box :private_indicator, class: "form-control" %></td>
+              <td>Asset? <%= cff.check_box :is_stock, class: "form-control" %></td>
             <td><%= cff.select :field_type, [['Short Text', 'short_text_type'],
                                              ['Long Text', 'long_text_type'],
                                              ['Integer', 'integer_type'],
