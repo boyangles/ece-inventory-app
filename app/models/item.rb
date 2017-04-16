@@ -402,8 +402,9 @@ class Item < ApplicationRecord
 
   def create_stock!(serial_tag)
     Item.transaction do
-      Stock.create!(serial_tag: serial_tag, item_id: self.id)
+      stock = Stock.create!(serial_tag: serial_tag, item_id: self.id)
       self.update_item_quantity_on_stock_creation
+      stock
     end
   end
 

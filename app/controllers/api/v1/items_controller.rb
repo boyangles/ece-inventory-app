@@ -2,14 +2,14 @@ class Api::V1::ItemsController < BaseController
   before_action :authenticate_with_token!
   before_action :auth_by_approved_status!
   before_action :auth_by_manager_privilege!, only: [:create, :create_tag_associations, :destroy_tag_associations, :update_general, :bulk_import, :convert_to_stocks, :convert_to_global]
-  before_action :auth_by_admin_privilege!, only: [:destroy, :fix_quantity, :clear_field_entries, :update_field_entry, :create_stocks]
-  before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks]
-  before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks]
+  before_action :auth_by_admin_privilege!, only: [:destroy, :fix_quantity, :clear_field_entries, :update_field_entry, :create_stocks, :create_single_stock]
+  before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock]
+  before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock]
 
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks].each do |api_action|
+  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -246,6 +246,25 @@ class Api::V1::ItemsController < BaseController
     response :ok
     response :unauthorized
     response :not_found
+  end
+
+  swagger_api :create_single_stock do
+    summary "Creates a single stock for a specified Item"
+    notes ""
+    param :path, :id, :integer, :required, "Item ID"
+    param :query, :stock_serial_tag, :string, :required, "Serial Tag of stock to be created"
+    response :ok
+    response :unauthorized
+    response :not_found
+  end
+
+  def create_single_stock
+    begin
+      stock = @item.create_stock!(params[:stock_serial_tag])
+      render_single_stock(stock)
+    rescue Exception => e
+      render_client_error(e, 422)
+    end
   end
 
   def create_stocks
@@ -510,6 +529,18 @@ class Api::V1::ItemsController < BaseController
                 :type => cf.field_type
           }
       }
+      }
+    }, status: 200
+  end
+
+  def render_single_stock(input_stock)
+    render :json => input_stock.instance_eval {
+        |stock| {
+          stock_id: stock.id,
+          serial_tag: stock.serial_tag,
+          item_id: stock.item_id,
+          item_name: stock.item.unique_name,
+          available: stock.available
       }
     }, status: 200
   end

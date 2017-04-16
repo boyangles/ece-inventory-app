@@ -109,6 +109,8 @@ Rails.application.routes.draw do
 
       resources :items, :only => [:index, :show, :create, :destroy] do
         member do
+          post :create_single_stock
+
           post :create_stocks
 
           post :convert_to_stocks
