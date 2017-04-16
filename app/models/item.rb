@@ -369,9 +369,8 @@ class Item < ApplicationRecord
     self.save!
   end
 
-  def create_stock(serial_tag)
+  def create_stock!(serial_tag)
     Item.transaction do
-      raise Exception.new('Serial Tag must be exactly 8 characters') if serial_tag.to_s.size != 8
       Stock.create!(serial_tag: serial_tag, item_id: self.id)
       self.update_item_quantity_on_stock_creation
     end
