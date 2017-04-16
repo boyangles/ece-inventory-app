@@ -235,7 +235,7 @@ RSpec.describe "Item Controller Tests", :type => :feature do
     expect(page).to have_content 'Model Number'
     expect(page).to have_content 'Description'
     expect(page).to have_content 'Tags'
-    expect(page).to have_content 'Additional Information'
+    expect(page).to have_content 'Global Information'
     expect(page).to have_content (!user.privilege_student? ? 'All Outstanding Requests' : 'My Outstanding Requests')
     expect(page).to have_content 'Loans'
     expect(page).to have_content 'Loan'

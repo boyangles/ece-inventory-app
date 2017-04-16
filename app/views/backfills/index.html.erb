@@ -1,0 +1,19 @@
+<% provide(:title, 'Backfills') %>
+
+<h2 class="page-header">Backfills</h2>
+
+<div class="pull-right">
+</div>
+
+<div class="row">
+	<div class="col-md-9 col-md-offset-1">
+	
+		<% if !@backfills.nil? %>
+			<div class="text-center"><%= will_paginate @loans %></div>
+
+			<ol class="backfills">
+				<%= render partial: "backfill", collection: @backfills, as: :backfill %>			</ol>
+
+		<% end %>
+	</div>
+</div>

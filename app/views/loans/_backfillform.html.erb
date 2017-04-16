@@ -1,0 +1,23 @@
+<button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#BackfillModal-<%=request_item.id %>">Backfill Request</button>
+
+<div id="BackfillModal-<%=request_item.id %>" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				Backfill Request
+			</div>
+
+			<div class="modal-body text-center">
+				<%= render 'request_items/attachmentform', attachment: Attachment.new(request_item_id: request_item.id) %>			
+			</div>
+
+			<div class="modal-footer">
+				<%= form_for (request_item) do |f| %>
+					<%= f.hidden_field :bf_status, :value => "bf_request" %>
+					<%= f.submit "Place Backfill Request", class: "btn btn-primary text-right" %>
+				<% end %>			
+			</div>			
+		</div>
+	</div>
+</div

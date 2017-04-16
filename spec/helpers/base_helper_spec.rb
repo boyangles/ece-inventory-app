@@ -11,3 +11,7 @@ def login_user(user)
   fill_in 'Password', :with => user.password
   click_button 'Log in'
 end
+
+def check_user_is_manager_or_admin(user)
+  user.privilege_admin? || user.privilege_manager?
+end

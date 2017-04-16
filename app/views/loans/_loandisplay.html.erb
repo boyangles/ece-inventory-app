@@ -1,31 +1,45 @@
 <br>
 <div class="panel panel-info">
-	<div id="loan">
-		<div class="panel-body">
-			<% request = Request.find(loan.request_id) %>
-			<% item = Item.find(loan.item_id) %>
-			<% user = User.find(request.user_id) %>
+  <div id="loan">
+    <div class="panel-body">
+      <% request = Request.find(loan.request_id) %>
+      <% item = Item.find(loan.item_id) %>
+      <% user = User.find(request.user_id) %>
 
-			<div class="col-lg-6">
-				<strong>User </strong><%= link_to user.username, user_path(user.id) %>
-				<br>
-				<strong>Item </strong><%= link_to item.unique_name, item_path(item.id) %>
-				<br>
-				<strong>Quantity Loaned </strong><%= loan.quantity_loan %>
-				<br>
-				<br>
-				<!--<strong>Due Date </strong> tbd-->
-				<%= link_to "Related Request", request_path(request.id) %>
-			</div>
+      <div class="col-lg-6">
+        <strong>User </strong><%= link_to user.username, user_path(user.id) %>
+        <br>
+        <strong>Item </strong><%= link_to item.unique_name, item_path(item.id) %>
+        <br>
+        <strong>Quantity Loaned </strong><%= loan.quantity_loan %>
+        <br>
+        <br>
+        <strong>Status </strong> <%= loan.bf_status %>
+        <br>
+        <%= link_to "Related Request", request_path(request.id) %>
+      </div>
 
-			<% if is_manager_or_admin? %>
-			<div class="col-lg-5 pull-right">
-				<%= render 'loans/returnquantityform', request_item: loan %>
-				</br>
-				<%= render 'loans/disbursequantityform', request_item: loan %>
-				<br>
-			</div>
-			<% end %>
-		</div>
-	</div>
+      <div class="col-lg-5 pull-right">
+        <% if is_manager_or_admin? %>
+            <% if item.has_stocks %>
+                <td><%= render 'loans/returnquantityform', request_item: loan %></td>
+                <td><%= render 'loans/disbursestocksform', request_item: loan %></td>
+            <% else %>
+                <td><%= render :partial => 'loans/disbursequantityform', locals: {request_item: loan} %></td>
+                <td><%= render 'loans/return_global_items', request_item: loan %></td>
+            <% end %>
+        <% end %>
+	      <% if user == current_user && loan.loan? or loan.bf_denied? or loan.bf_failed? %>
+          <%= render 'backfills/attachmentsform', request_item: loan %>
+          <br>
+      <% end %>
+
+
+
+      </div>
+
+    </div>
+
+
+  </div>
 </div>

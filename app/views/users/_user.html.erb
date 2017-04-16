@@ -4,7 +4,7 @@
 	<td><%= user.email %></td>
   <td><%= user.privilege %></td>
   <% if is_admin? && !current_user?(user) %>
-    <td class="text-right"><%= link_to "Edit", edit_user_path(user.id), class: "btn btn-primary" %></td>
+    <td class="text-right"><%= link_to glyph(:pencil), edit_user_path(user.id), class: "btn btn-primary" %></td>
     <td><%= render 'deactivateuserform', user: user %></td>
 	<% else %>
 		<td></td>
