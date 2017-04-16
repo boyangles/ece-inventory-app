@@ -130,7 +130,8 @@ Rails.application.routes.draw do
 
       resources :stocks, :only => [:index, :show] do
         member do
-
+          put :update_serial_tag
+          patch :update_serial_tag
         end
       end
 
