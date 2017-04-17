@@ -22,6 +22,7 @@ class Api::V1::StocksController < BaseController
     summary 'Shows all Assets'
     notes ""
     param :query, :serial_tag_search, :string, :optional, "Search by Serial Tag"
+    param :query, :item_id_search, :integer, :optional, "Search by Item ID"
     response :ok
     response :unauthorized
     response :unprocessable_entity
@@ -65,7 +66,11 @@ class Api::V1::StocksController < BaseController
 
   def index
     begin
-      output_stocks = (params[:serial_tag_search].blank?) ? Stock.all : Stock.filter({serial_tag: params[:serial_tag_search]})
+      filter_hash = {}
+      filter_hash[:serial_tag] = params[:serial_tag_search] unless params[:serial_tag_search].blank?
+      filter_hash[:item_id] = params[:item_id_search] unless params[:item_id_search].blank?
+
+      output_stocks = Stock.filter(filter_hash)
       render_multiple_stocks(output_stocks)
     rescue Exception => e
       render_client_error(e.message, 422)
