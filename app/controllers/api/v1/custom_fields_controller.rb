@@ -22,6 +22,7 @@ class Api::V1::CustomFieldsController < BaseController
     notes 'Specify query params'
     param :query, :field_name, :string, :optional, "Field Name"
     param :query, :private_indicator, :boolean, :optional, "Private?"
+    param :query, :is_stock, :boolean, :optional, "Has Assets?"
     param_list :query, :field_type, :string, :optional,
                "Field Type; must be short_text_type/long_text_type/integer_type/float_type",
                [:short_text_type, :long_text_type, :integer_type, :float_type]
@@ -88,7 +89,7 @@ class Api::V1::CustomFieldsController < BaseController
   end
 
   def index
-    filter_params = params.slice(:field_name, :private_indicator, :field_type)
+    filter_params = params.slice(:field_name, :private_indicator, :field_type, :is_stock)
 
     render_client_error("Inputted Field Type is not short_text_type/long_text_type/integer_type/float_type!", 422) and
         return unless enum_processable?(filter_params[:field_type], CustomField::FIELD_TYPE_OPTIONS)
