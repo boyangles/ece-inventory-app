@@ -67,13 +67,13 @@ items.each do |item|
   description = Faker::Lorem.paragraph(2, true, 1)
 
   Item.create!(
-    unique_name: item,
-    quantity: quantity,
-    quantity_on_loan: 0,
-    minimum_stock: min_stock,
-    model_number: model_number,
-    description: description,
-    last_action: "created")
+      unique_name: item,
+      quantity: quantity,
+      quantity_on_loan: 0,
+      minimum_stock: min_stock,
+      model_number: model_number,
+      description: description,
+      last_action: "created")
 end
 
 ## Default Custom Fields

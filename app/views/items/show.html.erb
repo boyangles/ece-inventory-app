@@ -76,6 +76,10 @@
               <%= @item.minimum_stock %>
             </p>
             <p>
+              <strong>Email Tracking for Low Stock:</strong>
+              <%= @item.stock_threshold_tracked %>
+            </p>
+            <p>
               <strong>Tags:</strong>
               <% if @item.tags.first != NIL %>
                   <% @item.tags.each_with_index do |tag, index| %>

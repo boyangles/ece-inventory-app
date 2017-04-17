@@ -113,7 +113,7 @@ class Api::V1::ItemsController < BaseController
   swagger_api :update_general do
     summary "Updates general attributes (non-quantity) of an item"
     notes "
-    Updates general attributes associated with an item (item name, description, and model number).
+    Updates general attributes associated with an item (item name, description, model number, and minimum stock).
     These updates are all optional. If none are filled out, then the item simply doesn't update.
     "
     param :path, :id, :integer, :required, "Item ID"
