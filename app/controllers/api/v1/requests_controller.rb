@@ -224,6 +224,7 @@ class Api::V1::RequestsController < BaseController
     render_request_with_sub_requests(@request, @request.user)
   end
 
+  #TODO test this
   def create
     user = User.find_by(:email => request_params[:email])
     query_params = params.slice(:request_items)
