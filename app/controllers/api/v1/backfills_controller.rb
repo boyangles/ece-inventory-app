@@ -3,13 +3,13 @@ class Api::V1::BackfillsController < BaseController
   before_action :authenticate_with_token!
   before_action :auth_by_approved_status!
   before_action :auth_by_sole_user!, only: [:create]
-  before_action :auth_by_manager_privilege!, only: [:change_status, :create_comment]
-  before_action :render_404_if_request_item_unknown, only: [:create, :create_comment, :change_status]
-  before_action :set_request_item, only: [:create, :create_comment, :change_status]
+  before_action :auth_by_manager_privilege!, only: [:change_status, :create_comment, :view_comments]
+  before_action :render_404_if_request_item_unknown, only: [:create, :create_comment, :change_status,:view_comments]
+  before_action :set_request_item, only: [:create, :create_comment, :change_status,:view_comments]
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:change_status, :create_comment].each do |api_action|
+  [:change_status, :create_comment, :view_comments].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -73,7 +73,7 @@ class Api::V1::BackfillsController < BaseController
 
   swagger_api :view_comments do
     summary "View all commments associated with a certain backfill"
-    param :form, 'request_item[id]', :string, :required, "Request Item ID"
+    param :form, 'request_item_id', :string, :required, "Request Item ID"
     response :ok
     response :unauthorized
     response :unprocessable_entity
@@ -193,7 +193,7 @@ class Api::V1::BackfillsController < BaseController
 
 
   def view_comments
-
+    render json: @request_item.request_item_comments
   end
 
 
