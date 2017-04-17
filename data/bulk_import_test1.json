@@ -1,7 +1,6 @@
 [{
   "unique_name": "test9", 
   "quantity": 4, 
-  "tags": ["test_tag0", "ECE110"], 
   "custom_fields": [
     {"name": "location", "value": 35}, 
     {"name": "restock_info", "value": 36}
@@ -17,6 +16,5 @@
     {"name": "location", "value": 35}, 
     {"name": "restock_info", "value": 36}
   ],
-  "has_stocks": false,
-  "assets": [55555555]
+  "has_stocks": false
 }]
