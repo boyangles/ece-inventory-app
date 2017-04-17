@@ -54,6 +54,7 @@ class Api::V1::RequestsController < BaseController
     param :path, :id, :integer, :required, "Request ID"
     param_list :form, 'request[status]', :string, :required, "Status to update to (approved/denied)"
     param :form, 'request[response]', :string, :optional, "Response"
+    param :query, :asset_instances, :string, :required, 'Example --> [{"request_item_id": 151, "assets_to_loan": ["sz63FMW5", "40FIhjhP"], "assets_to_disburse": []}, ...]'
     response :ok
     response :unauthorized
     response :unprocessable_entity
@@ -223,6 +224,7 @@ class Api::V1::RequestsController < BaseController
     render_request_with_sub_requests(@request, @request.user)
   end
 
+  #TODO test this
   def create
     user = User.find_by(:email => request_params[:email])
     query_params = params.slice(:request_items)
@@ -239,12 +241,73 @@ class Api::V1::RequestsController < BaseController
   end
 
   def decision
-    begin
-      @request.update!(request_params)
-      render_request_with_sub_requests(@request, @request.user)
-    rescue Exception => e
-      render_client_error(e.message, 422) and return
+    render_client_error("Can only make decision on outstanding requests", 422) and return unless @request.outstanding?
+    old_status = @request.status
+
+    if request_params[:status] == 'approved'
+      query_params = params.slice(:asset_instances)
+      render_client_error("Invalid JSON format", 422) and return unless valid_json?(query_params[:asset_instances])
+      asset_instances = JSON.parse(query_params[:asset_instances])
+      render_client_error("JSON format must be array", 422) and return unless asset_instances.kind_of?(Array)
+
+      begin
+        ActiveRecord::Base.transaction do
+          @request.request_items.each do |request_item|
+            if request_item.item.has_stocks
+              request_item_accounted_for = false
+
+              asset_instances.each do |asset_instance|
+                if request_item.id == asset_instance['request_item_id']
+                  request_item_accounted_for = true
+                  request_item.curr_user = current_user_by_auth
+                  request_item.create_request_item_stocks(asset_instance['assets_to_disburse'], asset_instance['assets_to_loan'])
+                end
+              end
+
+              raise Exception.new("Subrequest specified not accounted for request_item ID: #{request_item.id}") unless request_item_accounted_for
+            end
+          end
+
+          @request.curr_user = current_user_by_auth
+          @request.update_attributes!(request_params)
+        end
+      rescue Exception => e
+        render_client_error(e.message, 422) and return
+      end
+    else
+      begin
+        @request.update!(request_params)
+      rescue Exception => e
+        render_client_error(e.message, 422) and return
+      end
     end
+
+    #Two separate emails, one if user made own request, or if manager made request for him.
+
+    #If request became approved through manager approving request. No subscriber email required.
+    if old_status == 'outstanding' && request_params[:status] == 'approved'
+      userMadeRequest = true
+      # UserMailer.request_approved_email_all_subscribers(current_user, @request, userMadeRequest).deliver_now
+      UserMailer.request_approved_email(current_user_by_auth, @request, @request.user,userMadeRequest).deliver_now
+
+      #If request became approved through manager making request for him. Subscriber email required.
+    elsif old_status == 'cart' && request_params[:status] == 'approved'
+      userMadeRequest = false
+      UserMailer.request_approved_email_all_subscribers(current_user_by_auth, @request, userMadeRequest).deliver_now
+
+      #If request was initiated through user checking out cart. Subscriber email required.
+    elsif old_status == 'cart' && request_params[:status] == 'outstanding'
+      UserMailer.request_initiated_email_all_subscribers(@request.user, @request).deliver_now
+
+      #If request was denied by manager. No subscriber email required.
+    elsif old_status =='outstanding' && request_params[:status] == 'denied'
+      UserMailer.request_denied_email(current_user, @request, @request.user).deliver_now
+
+    elsif old_status =='outstanding' && request_params[:status] == 'cancelled'
+      UserMailer.request_cancelled_email(current_user_by_auth, @request, @request.user).deliver_now
+    end
+
+    render_request_with_sub_requests(@request, @request.user)
   end
 
   def update_general

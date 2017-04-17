@@ -166,6 +166,9 @@ Rails.application.routes.draw do
         member do
           put :update_serial_tag
           patch :update_serial_tag
+
+          put :update_field_entry
+          patch :update_field_entry
         end
       end
 
