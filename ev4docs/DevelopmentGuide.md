@@ -223,6 +223,9 @@ and see the local copy of the project, with all local changes.
 
 For information about deploying our project onto a remote server, please refer to the our [deployment guide](DeploymentGuide.md). 
 
+## Install System from Scratch using Backed Up Data
+To install the system from scratch using backed up data, first refer to the Deployment guide for setting up your environment.
+Then, once everything is ready, locate your database backup file, and follow the steps in the Backup guide under "To Restore Database"
 
 ## Testing
 There are two separate test suites, a Rails test suite and an Rspec/Capybara suite. </br>
