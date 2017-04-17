@@ -6,5 +6,8 @@ class CreateStockItemLogs < ActiveRecord::Migration[5.0]
 			t.string :old_serial_tag
 			t.string :curr_serial_tag
     end
+
+		add_column :item_logs, :has_stocks, :boolean, default: false
+
   end
 end

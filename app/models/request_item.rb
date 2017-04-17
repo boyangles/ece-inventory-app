@@ -115,11 +115,13 @@ class RequestItem < ApplicationRecord
 
     RequestItem.transaction do
       if @item.has_stocks
+				stocks_list = {}
         serial_tags_list.each do |serial_tag|
           # mark req item stock as disbursed, delete stock, change quantity for items and req item quantity
           stock = Stock.find_by(serial_tag: serial_tag)
+					stocks_list[stock.id] = serial_tag
           req_item_stock = RequestItemStock.find_by(request_item_id: self.id, stock_id: stock.id)
-
+					
           req_item_stock.status = 'disburse'
           req_item_stock.save!
           stock.destroy
@@ -131,6 +133,8 @@ class RequestItem < ApplicationRecord
           self.quantity_disburse +=1 ;
           self.save!
         end
+				logid = create_log("disbursed_from_loan", quantity_to_disburse)
+				create_stock_logs(logid, stocks_list)				
       else
         raise Exception.new("Quantity to convert must be greater than 0") if quantity_to_disburse <= 0
         create_log("disbursed_from_loan", quantity_to_disburse)
@@ -168,26 +172,50 @@ class RequestItem < ApplicationRecord
 
     log = Log.new(:user_id => curr, :log_type => 'item')
     log.save!
-    itemlog = ItemLog.new(:log_id => log.id, :item_id => itemo.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => itemo.unique_name, :old_desc => old_desc, :new_desc => itemo.description, :old_model_num => old_model, :new_model_num => itemo.model_number, :curr_quantity => itemo.quantity, :affected_request => self.request.id)
+    itemlog = ItemLog.new(:log_id => log.id, :item_id => itemo.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => itemo.unique_name, :old_desc => old_desc, :new_desc => itemo.description, :old_model_num => old_model, :new_model_num => itemo.model_number, :curr_quantity => itemo.quantity, :affected_request => self.request.id, :has_stocks => itemo.has_stocks)
     itemlog.save!
+		return itemlog.id
   end
+
+	def create_stock_logs(itemlog_id, stocks)
+		stocks.keys.each do |s_id|
+			sil = StockItemLog.new(:item_log_id => itemlog_id, :stock_id => s_id, :curr_serial_tag => stocks[s_id])
+			sil.save!
+		end
+	end
 
   def log_on_backfill_change
     bf_old = bf_status_was
     bf_new = bf_status
+		status = ""
 
     if bf_old == "loan" and bf_new == "bf_request"
-      create_log("backfill_requested", self.quantity_loan)
+      status = "backfill_requested"			
     elsif bf_old == "bf_request" and bf_new == "bf_in_transit"
-      create_log("backfill_request_approved", self.quantity_loan)
+			status = "backfill_request_approved"
     elsif bf_old == "bf_request" and bf_new == "bf_denied"
-      create_log("backfill_request_denied", self.quantity_loan)
-    elsif bf_old == "bf_in_transit" and bf_new == "bf_satisfied"
-      create_log("backfill_request_satisfied", self.quantity_loan)
+			status = "backfill_request_denied"
     elsif bf_old == "bf_in_transit" and bf_new == "bf_failed"
-      create_log("backfill_request_failed", self.quantity_loan)
+			status = "backfill_request_failed"
     end
+	
+		if status != ""
+			itemlog = create_log(status, self.quantity_loan)
+			if self.item.has_stocks?
+				sl = self.create_hash_of_stock_on_loan
+				create_stock_logs(itemlog, sl)
+			end
+		end
   end
+
+	def create_hash_of_stock_on_loan
+		req_stocks = self.request_item_stocks.filter({status: 'loan'})
+		stocks_list = {}
+		req_stocks.each do |req_stock|
+			stocks_list[req_stock.stock.id] = req_stock.stock.serial_tag
+		end
+		return stocks_list
+	end
 
   def determine_subrequest_type
     loan_quantity = (self[:quantity_loan].nil?) ? 0 : self[:quantity_loan]
