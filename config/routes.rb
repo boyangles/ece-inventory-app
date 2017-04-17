@@ -47,9 +47,11 @@ Rails.application.routes.draw do
       post :convert_to_stocks
       post :create_stocks
       post :convert_to_global
+      post :delete_multiple_stocks
     end
     resources :stocks
   end
+  # post 'items/:id/delete_multiple_stocks' => 'stocks#delete_multiple_stocks', as: 'delete_multiple_stocks'
 
   resources :tags
   resources :request_item_stocks
@@ -67,7 +69,6 @@ Rails.application.routes.draw do
     end
   end
   get 'request_items/:id/specify_return_serial_tags' => 'request_items#specify_return_serial_tags', :as => 'return_assets'
-
 
 
 	resources :attachments

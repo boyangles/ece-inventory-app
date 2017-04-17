@@ -2,7 +2,7 @@ class ItemsController < ApplicationController
   before_action :check_logged_in_user
   before_action :check_manager_or_admin, only: [:create, :new, :edit, :update, :set_all_minimum_stock]
   before_action :check_admin_user, only: [:destroy]
-  before_action :set_item,  only: [:edit, :edit_quantity, :update, :create_stocks, :convert_to_global, :convert_to_stocks]
+  before_action :set_item,  only: [:edit, :edit_quantity, :update, :create_stocks, :convert_to_global, :convert_to_stocks, :delete_multiple_stocks]
 
   # GET /items
   # GET /items.json
@@ -224,7 +224,7 @@ class ItemsController < ApplicationController
     end
   end
 
-  def create_stocks 
+  def create_stocks
     if Item.is_valid_integer(params[:num_stocks])
       begin
         Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
@@ -269,7 +269,29 @@ class ItemsController < ApplicationController
     end
   end
 
-private
+  def delete_multiple_stocks
+    begin
+      tags = Stock.get_tags_from_ids(params[:stock_ids])
+      params[:stock_ids].each do |id|
+        stock = Stock.find(id)
+        if stock.available
+          @item.delete_stock(stock)
+        else
+          req_item_stock = RequestItemStock.filter({status: 'loan', stock_id: id}).first
+          tag_list = []
+          tag_list << stock.serial_tag
+          req_item_stock.request_item.disburse_loaned_subrequest(tag_list)
+        end
+      end
+      flash[:success] = "Deleted #{tags} assets"
+      redirect_to item_stocks_path @item
+    rescue Exception => e
+      flash[:danger] = "Could not delete all stocks. #{e.message}"
+      redirect_to item_stocks_path @item
+    end
+  end
+
+  private
 
   def set_item
     @item = Item.find(params[:id])

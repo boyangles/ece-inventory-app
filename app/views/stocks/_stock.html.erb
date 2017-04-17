@@ -8,7 +8,9 @@
   <% end %>
 
   <% if is_admin? %>
-      <td class="text-center"><%= link_to "Delete", item_stock_path(@item, stock), method: :delete, class: "btn btn-primary", data: {confirm: "Are you sure you want to delete?"} %></td>
+      <td class="text-center">
+        <%= check_box_tag 'stock_ids[]', stock.id, false, {multiple: true} %>
+      </td>
   <% else %>
       <td></td>
   <% end %>
