@@ -350,6 +350,7 @@ class Item < ApplicationRecord
     where("minimum_stock > quantity")
   end
 
+
   def self.filter_active
     where(status: 'active')
   end
