@@ -99,6 +99,8 @@ class Item < ApplicationRecord
                       model_number: item_hash['model_number'],
                       description: item_hash['description'],
                       has_stocks: false,
+                      minimum_stock: item_hash['minimum_stock'].blank? ? 0 : item_hash['minimum_stock'],
+                      stock_threshold_tracked: item_hash['stock_threshold_tracked'].blank? ? false : item_hash['stock_threshold_tracked'],
                       last_action: 0)
       raise Exception.new("Item creation error. The errors hash is: #{item.errors.full_messages}. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless
           item.save

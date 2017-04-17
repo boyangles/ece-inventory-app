@@ -21,6 +21,7 @@ class Stock < ApplicationRecord
   scope :available, -> (available) { where available: available }
   scope :request_item_id, -> (request_item_id) { joins(:request_item_stock).where(request_item_stocks: { request_item_id: request_item_id }) }
   scope :serial_tag, -> (serial_tag) { where serial_tag: serial_tag }
+  scope :item_id, -> (item_id) { where item_id: item_id }
 
   # Belongs to items
   belongs_to :item
