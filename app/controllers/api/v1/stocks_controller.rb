@@ -50,7 +50,7 @@ class Api::V1::StocksController < BaseController
   def update_serial_tag
     begin
       @stock.update_attributes!(serial_tag: stock_params[:serial_tag])
-      render_single_stock(@stock)
+      render_single_stock_with_stock_custom_fields(@stock)
     rescue Exception => e
       render_client_error(e, 422)
     end
@@ -58,7 +58,7 @@ class Api::V1::StocksController < BaseController
 
   def show
     begin
-      render_single_stock(@stock)
+      render_single_stock_with_stock_custom_fields(@stock)
     rescue => e
       render_client_error(e.message, 422)
     end
@@ -92,14 +92,21 @@ class Api::V1::StocksController < BaseController
     params.fetch(:stock, {}).permit(:item_id, :available, :serial_tag)
   end
 
-  def render_single_stock(input_stock)
+  def render_single_stock_with_stock_custom_fields(input_stock)
     render :json => input_stock.instance_eval {
         |stock| {
           stock_id: stock.id,
           serial_tag: stock.serial_tag,
           item_id: stock.item_id,
           item_name: stock.item.unique_name,
-          available: stock.available
+          available: stock.available,
+          asset_custom_fields: stock.item.custom_fields.where(is_stock: true).map {
+              |cf| {
+                key: cf.field_name,
+                value: StockCustomField.field_content(stock.id, cf.id),
+                type: cf.field_type
+            }
+          }
       }
     }, status: 200
   end
