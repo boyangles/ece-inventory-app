@@ -220,7 +220,14 @@ class ItemsController < ApplicationController
   def create_stocks
     if Item.is_valid_integer(params[:num_stocks])
       begin
-        Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
+        max = 10000
+        if params[:num_stocks].to_i < max
+          Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
+        elsif params[:num_stocks].size == 8
+          Stock.create_stock!(params[:num_stocks], params[:id])
+        else
+          raise Exception.new("Cannot create more than #{max} assets at a time")
+        end
         flash[:success] = "(#{params[:num_stocks]}) Assets successfully created!"
         redirect_to item_stocks_path @item and return
       rescue Exception => e
