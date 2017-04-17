@@ -13,11 +13,6 @@ class ItemsController < ApplicationController
     items_required = Item.all
     items_stocked = Item.all
 
-    # 15.times do|i|
-    #   puts "THE VALUE OF PARAMS STOCKED IS"
-    #   puts params[:stocked]
-    # end
-
     if params[:excluded_tag_names]
       @excluded_tag_filters = params[:excluded_tag_names]
       items_excluded = Item.tagged_with_none(@excluded_tag_filters).select(:id)
@@ -39,7 +34,6 @@ class ItemsController < ApplicationController
         filter_by_model_search(params[:model_search]).
         order('unique_name ASC').paginate(page: params[:page], per_page: 10)
 
-    # update_min_stock_of_certain_items(@items, 999)
   end
 
   # GET /items/1
@@ -50,8 +44,6 @@ class ItemsController < ApplicationController
     else
       @item = Item.filter_active.find(params[:id])
     end
-
-    # update_min_stock_of_certain_items(@item, 666)
 
     outstanding_filter_params = {
         :status => "outstanding"
@@ -85,7 +77,6 @@ class ItemsController < ApplicationController
   def destroy
 
     # Delete stocks with destroy_stocks_by_serial_tags! - surround with try catch
-
     item = Item.find(params[:id]).status = 'deactive'
     item.save!
     flash[:success] = "Item deleted!"
@@ -184,23 +175,23 @@ class ItemsController < ApplicationController
     end
     items_active = Item.where(id: items_excluded & items_required & items_stocked).filter_active
 
-    # do we really wanna paginate?
     @items = items_active.
         filter_by_search(params[:search]).
         filter_by_model_search(params[:model_search]).
         order('unique_name ASC').paginate(page: params[:page], per_page: 10)
-    # @items = items_active.
-    #     filter_by_search(params[:search]).
-    #     filter_by_model_search(params[:model_search]).
-    #     order('unique_name ASC')
   end
 
 
   def update_quantity
-    @item.quantity = @item.quantity + params[:quantity_change].to_f
-    if !@item.save
-      flash.now[:danger] = "Quantity unable to be changed"
-      render 'edit'
+    if @item.has_stocks
+      flash.now[:danger] = "Cannot directly change quantity of per asset Item"
+      render :edit and return
+    else
+      @item.quantity = @item.quantity + params[:quantity_change].to_f
+      if !@item.save
+        flash.now[:danger] = "Quantity unable to be changed"
+        render 'edit'
+      end
     end
   end
 

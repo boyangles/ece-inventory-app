@@ -445,6 +445,8 @@ class Api::V1::ItemsController < BaseController
   end
 
   def fix_quantity
+    render_client_error("Cannot change quantity for item that is per-asset", 422) and return if @item.has_stocks
+
     quantity_params = item_params.slice(:quantity)
     if @item.update(quantity_params)
       render_item_instance_with_tags_and_requests_and_custom_fields(@item)
