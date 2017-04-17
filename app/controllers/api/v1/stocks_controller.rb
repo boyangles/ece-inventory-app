@@ -1,14 +1,14 @@
 class Api::V1::StocksController < BaseController
   before_action :authenticate_with_token!
   before_action :auth_by_approved_status!
-  before_action :auth_by_manager_privilege!, only: []
+  before_action :auth_by_manager_privilege!, only: [:update_field_entry]
   before_action :auth_by_admin_privilege!, only: [:update_serial_tag]
-  before_action :render_404_if_stock_unknown, only: [:show, :update_serial_tag]
-  before_action :set_stock, only: [:show, :update_serial_tag]
+  before_action :render_404_if_stock_unknown, only: [:show, :update_serial_tag, :update_field_entry]
+  before_action :set_stock, only: [:show, :update_serial_tag, :update_field_entry]
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:update_serial_tag].each do |api_action|
+  [:update_serial_tag, :update_field_entry].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -45,6 +45,38 @@ class Api::V1::StocksController < BaseController
     response :ok
     response :unauthorized
     response :not_found
+  end
+
+  swagger_api :update_field_entry do
+    summary 'Updates corresponding Asset Custom Field with content'
+    notes ""
+    param :path, :id, :integer, :required, "Asset ID"
+    param :query, :asset_cf_name, :string, :required, "Asset Custom Field to be updated"
+    param :query, :asset_cf_content, :string, :required, "Field Content"
+    response :ok
+    response :unauthorized
+    response :not_found
+    response :unprocessable_entity
+  end
+
+  def update_field_entry
+    filter_params = params.slice(:asset_cf_name, :asset_cf_content)
+    render_client_error("Inputted custom field doesn't exist!", 422) and
+        return unless CustomField.exists?(field_name: filter_params[:asset_cf_name])
+
+    custom_field = CustomField.find_by(field_name: filter_params[:asset_cf_name])
+    scf_column = CustomField.find_icf_field_column(custom_field.id)
+
+    render_client_error("Custom Field must be per-asset custom field", 422) and
+        return unless custom_field.is_stock
+
+    scf = StockCustomField.find_by(stock_id: @stock.id, custom_field_id: custom_field.id)
+
+    if !scf.blank? && scf.update_attributes({ scf_column => filter_params[:asset_cf_content] })
+      render_single_stock_with_stock_custom_fields(@stock)
+    else
+      render_client_error(scf.errors, 422)
+    end
   end
 
   def update_serial_tag
