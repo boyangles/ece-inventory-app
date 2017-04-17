@@ -69,7 +69,11 @@ class RequestItemsController < ApplicationController
 			begin
 				@request_item.update_attributes!(request_item_params)
 				flash[:success] = "Item #{@request_item.item.unique_name} (Loan: #{@request_item.quantity_loan}, Disburse: #{@request_item.quantity_disburse}) updated in the cart"
-				format.html { redirect_to item_path(@request_item.item.id) and return if params[:from_show] == 'true'; redirect_to items_path }
+				if params[:from_show] == 'serial_tag'
+					format.html { redirect_to request_path(@request_item.request.id) and return}
+				else
+					format.html { redirect_to item_path(@request_item.item.id) and return if params[:from_show] == 'true'; redirect_to items_path }
+				end
 				format.json { head :no_content }
 			rescue Exception => e
 				flash[:danger] = e.message
