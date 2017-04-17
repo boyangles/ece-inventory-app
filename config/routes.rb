@@ -101,7 +101,17 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :backfills, :only => [:index, :create]
+      resources :backfills, :only => [:index, :create] do
+        member do
+          put :change_status
+          patch :change_status
+
+          put :create_comment
+          patch :create_comment
+
+          get :view_comments
+        end
+      end
 
       resources :custom_fields, :only => [:index, :show, :create, :destroy] do
         member do
