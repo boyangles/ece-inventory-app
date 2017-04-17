@@ -33,6 +33,8 @@ class Item < ApplicationRecord
   validates :last_action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }
   validates :minimum_stock,:numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   validates :has_stocks, :inclusion => {:in => [true, false]}
+  validates :stock_threshold_tracked, :inclusion => {:in => [true, false]}
+
 
   # Relation with Tags
   has_many :tags, -> { distinct },  :through => :item_tags
@@ -353,6 +355,7 @@ class Item < ApplicationRecord
   def self.minimum_stock
     where("minimum_stock > quantity")
   end
+
 
   def self.filter_active
     where(status: 'active')

@@ -273,15 +273,15 @@ class RequestItem < ApplicationRecord
       puts q_after
       puts "The item is:"
       puts item.unique_name
-      puts "The minimum stock is:"
-      puts Setting.email_min_stock.to_i
     end
     if q_before >= item.minimum_stock && q_after < item.minimum_stock
       10.times do |i|
-        puts "The email should deliver now!!!!"
+        puts "The conditinos except for threshold are met for email threshold to send!!!!"
       end
-      UserMailer.minimum_stock(q_before, q_after, item).deliver_now
-
+      if item.stock_threshold_tracked
+        puts "THE EMAIL WILL DELIVER NOW"
+        UserMailer.minimum_stock_quantity_change(q_before, q_after, item).deliver_now
+      end
     end
   end
   # Validates that if a request if approved, the admin has set an appropriate amount of serial tags for each quanityt

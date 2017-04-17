@@ -265,7 +265,13 @@ class ItemsController < ApplicationController
   def update_min_stock_of_certain_items(items, stock_quantity)
     # binding.pry
     items.each do |i|
-      Item.find(i).update!(:minimum_stock => stock_quantity)
+      item_temp = Item.find(i)
+      original_min_stock = item_temp.minimum_stock
+      item_temp.update!(:minimum_stock => stock_quantity)
+      puts "i is"
+      puts i
+      puts item_temp
+      minimum_stock_email_changed_min_stock(original_min_stock, item_temp.minimum_stock,item_temp)
     end
   end
 
@@ -297,6 +303,34 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
   end
 
+
+
+  #THIS CODE IS DUPLICATED!! I WILL FIND A WAY TO REFACTOR LATER
+  #THIS CODE IS DUPLICATED!! I WILL FIND A WAY TO REFACTOR LATER
+  #THIS CODE IS DUPLICATED!! I WILL FIND A WAY TO REFACTOR LATER
+  #THIS CODE IS DUPLICATED!! I WILL FIND A WAY TO REFACTOR LATER
+  def minimum_stock_email_changed_min_stock(min_before, min_after, item)
+    10.times do |i|
+      puts "The quantity before is:"
+      puts min_before
+      puts "The quantity after is:"
+      puts min_after
+      puts "The item is:"
+      puts item.unique_name
+    end
+    if min_before >= item.quantity && min_after < item.quantity
+      10.times do |i|
+        puts "The conditinos except for threshold are met for email threshold to send!!!!"
+      end
+      if item.stock_threshold_tracked
+        puts "THE EMAIL WILL DELIVER NOW"
+        UserMailer.minimum_stock_min_stock_change(min_before, min_after, item).deliver_now
+      end
+    end
+  end
+  #THIS CODE IS DUPLICATED!! I WILL FIND A WAY TO REFACTOR LATER
+
+
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
@@ -305,6 +339,7 @@ class ItemsController < ApplicationController
                                      :model_number,
                                      :description,
                                      :minimum_stock,
+                                     :stock_threshold_tracked,
                                      :search,
                                      :model_search,
                                      :status,

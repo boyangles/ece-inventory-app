@@ -21,21 +21,6 @@ class Api::V1::BackfillsController < BaseController
 
   swagger_api :create do
     summary "Creates a Backfill"
-    # notes "
-    # Example for backfill:
-    # [
-    #   {
-    #     \"item_name\": \"item1\",
-    #     \"quantity_loan\": 15,
-    #     \"quantity_disburse\": 13
-    #   },
-    #   {
-    #     \"item_name\": \"item2\",
-    #     \"quantity_loan\": 0,
-    #     \"quantity_disburse\": 12
-    #   }
-    # ]
-    # "
     param :form, 'Attachment', :string, :optional, "Attachment"
     param :form, 'request_item_id', :string, :required, "Request Item ID"
     response :ok
@@ -79,6 +64,19 @@ class Api::V1::BackfillsController < BaseController
   def create
     old_status = @request_item.bf_status
 
+    attachment_path = params[:Attachment]
+
+    10.times do |i|
+      puts "THe request item is #{@request_item}"
+      puts attachment_path
+    end
+
+    render_client_error("The loan must be belong to you to initiate backfill", 422) and
+        return unless loan_belongs_to_user?(@request_item)
+
+    render_client_error("The loan must be in loan state", 422) and
+        return unless old_status == "loan"
+
     #Somewhere, the request needs to be in loan state?
 
     # Need to instantiate an attachment!
@@ -93,15 +91,11 @@ class Api::V1::BackfillsController < BaseController
   end
 
   def change_status
-    old_status = @request_item.bf_status
-    locked_status = backfill_status_locked?(@request_item)
-    100.times do |i|
-      puts "Fuck me in the ass"
-      puts locked_status
-    end
-    if locked_status
-      render json: { errors: 'Request Item status is now locked' } and return
-    end
+    # old_status = @request_item.bf_status
+
+    render_client_error("Request Item status cannot be changed because it is #{@request_item.bf_status}", 422) and
+        return unless !backfill_status_locked?(@request_item)
+
     begin
       @request_item.update_attributes!(bf_status: request_item_params[:bf_status])
       render :json => @request_item
@@ -158,6 +152,19 @@ class Api::V1::BackfillsController < BaseController
 
   private
 
+  def loan_belongs_to_user?(request_item)
+
+    100.times do |i|
+      puts "The request_item user is #{request_item.request.user.username}"
+      puts "The current usre by auth is #{current_user_by_auth.username}"
+    end
+
+    if request_item.request.user.username == current_user_by_auth.username
+        return true
+    end
+    return false
+  end
+
   def backfill_status_locked?(request_item)
     100.times do |i|
       puts "the status of this request item is "
@@ -184,9 +191,6 @@ class Api::V1::BackfillsController < BaseController
     params.fetch(:request_item, {}).permit(:bf_status)
   end
 
-  # def render_multiple_backfills(backfill_requestItems)
-  #   render :json => backfill_requestItems.where(:name => params[:name]), status: 200
-  # end
 
 end
 
