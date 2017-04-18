@@ -13,11 +13,6 @@ class ItemsController < ApplicationController
     items_required = Item.all
     items_stocked = Item.all
 
-    # 15.times do|i|
-    #   puts "THE VALUE OF PARAMS STOCKED IS"
-    #   puts params[:stocked]
-    # end
-
     if params[:excluded_tag_names]
       @excluded_tag_filters = params[:excluded_tag_names]
       items_excluded = Item.tagged_with_none(@excluded_tag_filters).select(:id)
@@ -39,7 +34,6 @@ class ItemsController < ApplicationController
         filter_by_model_search(params[:model_search]).
         order('unique_name ASC').paginate(page: params[:page], per_page: 10)
 
-    # update_min_stock_of_certain_items(@items, 999)
   end
 
   # GET /items/1
@@ -50,8 +44,6 @@ class ItemsController < ApplicationController
     else
       @item = Item.filter_active.find(params[:id])
     end
-
-    # update_min_stock_of_certain_items(@item, 666)
 
     outstanding_filter_params = {
         :status => "outstanding"
@@ -85,7 +77,6 @@ class ItemsController < ApplicationController
   def destroy
 
     # Delete stocks with destroy_stocks_by_serial_tags! - surround with try catch
-
     item = Item.find(params[:id]).status = 'deactive'
     item.save!
     flash[:success] = "Item deleted!"
@@ -193,30 +184,26 @@ class ItemsController < ApplicationController
     end
     items_active = Item.where(id: items_excluded & items_required & items_stocked).filter_active
 
-    # do we really wanna paginate?
     @items = items_active.
         filter_by_search(params[:search]).
         filter_by_model_search(params[:model_search]).
         order('unique_name ASC').paginate(page: params[:page], per_page: 10)
-    # @items = items_active.
-    #     filter_by_search(params[:search]).
-    #     filter_by_model_search(params[:model_search]).
-    #     order('unique_name ASC')
   end
 
 
   def update_quantity
 
-    temp_quantity =   @item.quantity
-
-    @item.quantity = @item.quantity + params[:quantity_change].to_f
-
-
-    minimum_stock_email(temp_quantity,@item.quantity, @item)
-
-    if !@item.save
-      flash.now[:danger] = "Quantity unable to be changed"
-      render 'edit'
+    if @item.has_stocks
+      flash.now[:danger] = "Cannot directly change quantity of per asset Item"
+      render :edit and return
+    else
+      temp_quantity = @item.quantity
+      @item.quantity = @item.quantity + params[:quantity_change].to_f
+      if !@item.save
+        flash.now[:danger] = "Quantity unable to be changed"
+        render 'edit'
+      end
+      minimum_stock_email(temp_quantity,@item.quantity, @item)
     end
   end
 
@@ -322,24 +309,10 @@ class ItemsController < ApplicationController
 
 
   #THIS CODE IS DUPLICATED!! I WILL FIND A WAY TO REFACTOR LATER
-  #THIS CODE IS DUPLICATED!! I WILL FIND A WAY TO REFACTOR LATER
-  #THIS CODE IS DUPLICATED!! I WILL FIND A WAY TO REFACTOR LATER
-  #THIS CODE IS DUPLICATED!! I WILL FIND A WAY TO REFACTOR LATER
   def minimum_stock_email_changed_min_stock(min_before, min_after, item)
-    10.times do |i|
-      puts "The quantity before is:"
-      puts min_before
-      puts "The quantity after is:"
-      puts min_after
-      puts "The item is:"
-      puts item.unique_name
-    end
+
     if min_before >= item.quantity && min_after < item.quantity
-      10.times do |i|
-        puts "The conditinos except for threshold are met for email threshold to send!!!!"
-      end
       if item.stock_threshold_tracked
-        puts "THE EMAIL WILL DELIVER NOW"
         UserMailer.minimum_stock_min_stock_change(min_before, min_after, item).deliver_now
       end
     end
@@ -349,18 +322,7 @@ class ItemsController < ApplicationController
   #THIS CODE IS DUPLICATED!! I WILL FIND A WAY TO REFACTOR LATER. LOL NOT
 
   def minimum_stock_email(q_before, q_after, item)
-    10.times do |i|
-      puts "The quantity before is:"
-      puts q_before
-      puts "The quantity after is:"
-      puts q_after
-      puts "The item is:"
-      puts item.unique_name
-    end
     if q_before >= item.minimum_stock && q_after < item.minimum_stock
-      10.times do |i|
-        puts "The conditinos except for threshold are met for email threshold to send!!!!"
-      end
       if item.stock_threshold_tracked
         puts "THE EMAIL WILL DELIVER NOW"
         UserMailer.minimum_stock_quantity_change(q_before, q_after, item).deliver_now
