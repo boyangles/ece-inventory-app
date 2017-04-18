@@ -72,7 +72,6 @@ class Item < ApplicationRecord
     create_log_on_quantity_change()
     create_log_on_desc_update()
     create_log_on_destruction()
-  	create_log_on_stocks_status_change
 	}
 
   ##
@@ -192,7 +191,7 @@ class Item < ApplicationRecord
         self.has_stocks = true
 	      self.save!
 
-				itemlog =	create_log("convert_to_global", 0)
+				itemlog =	create_log("convert_to_assets", 0)
 				self.stocks.each do |f|
 					sil = StockItemLog.new(:item_log_id => itemlog, :stock_id => f.id, :curr_serial_tag => f.serial_tag)
 					sil.save!
@@ -225,7 +224,7 @@ class Item < ApplicationRecord
         self.has_stocks = true
         self.save!
   
-				itemlog =	create_log("convert_to_global", 0)
+				itemlog =	create_log("convert_to_assets", 0)
 				self.stocks.each do |f|
 					sil = StockItemLog.new(:item_log_id => itemlog, :stock_id => f.id, :curr_serial_tag => f.serial_tag)
 					sil.save!
@@ -434,21 +433,6 @@ class Item < ApplicationRecord
 
     end
   end
-
-	def create_log_on_stocks_status_change
-		if has_stocks_was != has_stocks && has_stocks_was != nil
-			if has_stocks
-				itemlog =	create_log("convert_to_assets", 0)
-				self.stocks.each do |f|
-					sil = StockItemLog.new(:item_log_id => itemlog, :stock_id => f.id, :curr_serial_tag => f.serial_tag)
-					sil.save!
-				end
-			else
-				create_log("convert_to_global", 0)
-				
-			end
-		end
-	end
 
   def create_log(action, quan_change)
 	    if self.curr_user.nil?
