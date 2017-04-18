@@ -49,6 +49,7 @@
       <li class="active"><a href="#home" data-toggle="tab">Item Details</a></li>
       <li><a href="#requests" data-toggle="tab"><%= (is_manager_or_admin?) ? "All Outstanding Requests" : "My Outstanding Requests" %></a></li>
       <li><a href="#loans" data-toggle="tab">Loans</a></li>
+			<li><a href="#backfills" data-toggle="tab">Backfills</a></li>
       <% if is_manager_or_admin? %><li><a href="#logs" data-toggle="tab">Logs</a></li><% end %>
     </ul>
 
@@ -137,9 +138,10 @@
         <% if !requestss.nil? %>
             <% loanss = RequestItem.where("quantity_loan > ?", 0).where(item_id: @item.id).where(request_id: requestss.select(:id)) %>
         <% end %>
-        <% if !loanss.empty? %>
+				<% hey_loans = loanss.where(bf_status: "loan").select(:id) and loanss.where(bf_status: "bf_denied").select(:id) and loanss.where(bf_status: "bf_failed").select(:id) %>
+        <% if !hey_loans.empty? %>
             <ol class="loans">
-              <%= render partial: "loans/loandisplay", collection: loanss, as: :loan %>
+              <%= render partial: "loans/loandisplay", collection: RequestItem.where(id: hey_loans), as: :loan %>
             </ol>
         <% else %>
             <% text = (is_manager_or_admin?) ? "There are no loans on this item currently." : "You have no loans on this item currently" %>
@@ -148,7 +150,29 @@
 
       </div>
 
-      <% if is_manager_or_admin? %>
+      <div class="tab-pane fade" id="backfills">
+        <br>
+        <% requestss = Request.where(status: "approved") %>
+        <% if !is_manager_or_admin? %>
+            <% requestss = requestss.where(user_id: current_user.id) %>
+        <% end %>
+
+        <% if !requestss.nil? %>
+        	<% loanss = RequestItem.where("quantity_loan > ?", 0).where(item_id: @item.id).where(request_id: requestss.select(:id)) %>
+        <% end %>
+  			<% hey_backfills = loanss.where(bf_status: "bf_request").select(:id) and loanss.where(bf_status: "bf_in_transit").select(:id) %>
+        <% if !hey_backfills.empty? %>
+            <ol class="loans">
+              <%= render partial: "loans/loandisplay", collection: RequestItem.where(id: hey_backfills), as: :loan %>
+            </ol>
+        <% else %>
+            <% text = (is_manager_or_admin?) ? "There are no loans on this item currently." : "You have no loans on this item currently" %>
+            <%= text %>
+        <% end %>
+
+      </div>
+
+     	<% if is_manager_or_admin? %>
           <div class="tab-pane fade" id="logs">
             <br>
             <% itemLogs = Log.where(id: ItemLog.select(:log_id).where(item_id: @item.id))%>

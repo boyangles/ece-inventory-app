@@ -51,6 +51,7 @@
 		</p>
 	<% end %>
 
+<!-- REQUEST -->
 <% elsif @log.request? %>
 	<% if request.user_id != @log.user_id %>
 		<p>
@@ -65,6 +66,7 @@
 		<%= link_to "Request", request_path(reqlog.request_id) %>
 	</p>
 
+<!-- ITEMO -->
 <% elsif @log.item? %>
 	<p>
 		<strong>Item </strong>
@@ -118,6 +120,21 @@
 		<% end %>	
 
 
+	<% end %>
+
+	<% if itemlog.has_stocks %>
+	<p>
+		<strong>Affected Assets</strong> (assets without links have been deleted)
+		<ul>
+			<% itemlog.stock_item_logs.each do |sil| %>
+				<% if !Stock.where(id: sil.stock_id).empty? %>
+					<% stock = Stock.find(sil.stock_id) %>
+					<li><%= link_to stock.serial_tag, item_stock_path(itemlog.item_id, stock.id) %></li>
+				<% else %>
+					<li><%= sil.curr_serial_tag %></li>
+				<% end %>
+			<% end %>
+		</ul>
 	<% end %>
 <% end %>
 

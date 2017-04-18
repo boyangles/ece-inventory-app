@@ -1,6 +1,8 @@
 class ItemLog < ApplicationRecord
 	include Loggable
 
+	has_many :stock_item_logs
+
 	enum action: {
 		acquired_or_destroyed_quantity: 0,
 		administrative_correction: 1,
