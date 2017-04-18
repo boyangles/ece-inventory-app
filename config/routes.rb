@@ -101,7 +101,18 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :backfills, :only => [:index, :create]
+      resources :backfills, :only => [:index, :create] do
+        member do
+          put :change_status
+          patch :change_status
+
+          put :create_comment
+          patch :create_comment
+
+          get :view_comments
+
+        end
+      end
 
       resources :custom_fields, :only => [:index, :show, :create, :destroy] do
         member do
@@ -118,6 +129,9 @@ Rails.application.routes.draw do
 
       resources :items, :only => [:index, :show, :create, :destroy] do
         member do
+          get :backfill_requested
+          get :backfill_transit
+
           post :create_single_stock
 
           post :create_stocks
@@ -134,6 +148,9 @@ Rails.application.routes.draw do
 
           put :bulk_minimum_stock
           patch :bulk_minimum_stock
+
+          put :all_minimum_stock
+          patch :all_minimum_stock
 
           put :fix_quantity
           patch :fix_quantity
@@ -164,6 +181,11 @@ Rails.application.routes.draw do
 
       resources :requests, :only => [:index, :show, :create] do
         member do
+          put :return
+          patch :return
+
+          post :direct_request
+
           put :decision
           patch :decision
 

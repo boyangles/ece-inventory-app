@@ -33,6 +33,8 @@ class Item < ApplicationRecord
   validates :last_action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }
   validates :minimum_stock,:numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   validates :has_stocks, :inclusion => {:in => [true, false]}
+  validates :stock_threshold_tracked, :inclusion => {:in => [true, false]}
+
 
   # Relation with Tags
   has_many :tags, -> { distinct },  :through => :item_tags
@@ -97,6 +99,8 @@ class Item < ApplicationRecord
                       model_number: item_hash['model_number'],
                       description: item_hash['description'],
                       has_stocks: false,
+                      minimum_stock: item_hash['minimum_stock'].blank? ? 0 : item_hash['minimum_stock'],
+                      stock_threshold_tracked: item_hash['stock_threshold_tracked'].blank? ? false : item_hash['stock_threshold_tracked'],
                       last_action: 0)
       raise Exception.new("Item creation error. The errors hash is: #{item.errors.full_messages}. Item hash is: #{JSON.pretty_generate(item_hash)}.") unless
           item.save
@@ -353,6 +357,7 @@ class Item < ApplicationRecord
   def self.minimum_stock
     where("minimum_stock > quantity")
   end
+
 
   def self.filter_active
     where(status: 'active')
