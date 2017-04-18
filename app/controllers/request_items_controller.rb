@@ -99,7 +99,7 @@ class RequestItemsController < ApplicationController
 	def return
 		reqit = RequestItem.find(params[:id])
 
-		if reqit.item.has_stocks && params[:serial_tags_loan_return].nil?
+		if reqit.item.has_stocks && params[:serial_tags_loan_return].nil? && (reqit.bf_status == 'loan' or reqit.bf_status == 'bf_denied' or reqit.bf_status == 'bf_failed')
 			flash[:danger] = "Must specify tags to return"
 			redirect_to request_path(reqit.request_id) and return
 		end
@@ -128,6 +128,10 @@ class RequestItemsController < ApplicationController
 		reqit = RequestItem.find(params[:id])
 		reqit.curr_user = current_user
 		if Item.find(reqit.item_id).has_stocks
+			if params[:quantity_to_disburse].nil?
+				flash[:danger] = "You must specify serial tags to disburse"
+				redirect_to request_path(reqit.request_id) and return
+			end
 			if (params[:quantity_to_disburse].size > reqit.quantity_loan)
 				flash[:danger] = "That's more than are loaned out!"
 				redirect_to request_path(reqit.request_id) and return
