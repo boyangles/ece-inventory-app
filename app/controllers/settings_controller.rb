@@ -16,6 +16,9 @@ class SettingsController < ApplicationController
 
   def dates
     @setting = Setting.find_by(var: 'email_dates') || Setting.new(var: 'email_dates')
+
+    @temp_date = @setting
+    # binding.pry
   end
 
   def create
