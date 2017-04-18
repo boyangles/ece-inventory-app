@@ -16,8 +16,8 @@
 
         <div class="pull-right">
           <table><tbody><tr>
-            <td><%= link_to "Edit Asset", edit_item_stock_path(@item.id, @stock.id), :class => "btn btn-primary" %></td>
-
+            <td><%= link_to glyph(:pencil), edit_item_stock_path(@item.id, @stock.id), :class => "btn btn-primary" %></td>
+			      <td><%= link_to glyph(:trash), item_stock_path(@item.id, @stock.id), method: :delete, class: "btn btn-danger", data: {confirm: "Are you sure you want to delete?"} %></td>
           </tr></tbody></table>
         </div>
       </h2>

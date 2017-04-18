@@ -1,0 +1,65 @@
+[{
+  "unique_name": "Resistor 1k",
+  "model_number": "RE-1000",
+  "quantity": 3000,
+  "description": "Basic",
+  "tags": ["Cheap", "Resistor"],
+  "custom_fields": [
+    {"name": "location", "value": "HH201"}
+  ],
+  "has_stocks": false,
+  "assets": []
+},
+{
+  "unique_name": "Resistor 2k",
+  "model_number": "RE-2000",
+  "quantity": 2000,
+  "tags": ["Cheap", "Resistor"],
+  "custom_fields": [
+    {"name": "location", "value": "HH203"}
+  ],
+  "has_stocks": false,
+  "assets": []
+},
+{
+  "unique_name": "Macbook Pro",
+  "model_number": "A1278",
+  "quantity": 3,
+  "tags": ["Expensive"],
+  "custom_fields": [
+    {"name": "location", "value": "Teer115"}
+  ],
+  "has_stocks": false,
+  "assets": []
+},
+{
+  "unique_name": "Digital Oscilloscope",
+  "model_number": "DSO5202P",
+  "quantity": 20,
+  "tags": ["Expensive"],
+  "custom_fields": [
+    {"name": "location", "value": "CIEMAS"}
+  ],
+  "has_stocks": false,
+  "assets": []
+},
+{
+  "unique_name": "Digital Voltmeter",
+  "model_number": "EX320",
+  "quantity": 100,
+  "tags": ["Cheap"],
+  "custom_fields": [
+    {"name": "location", "value": "CIEMAS"}
+  ],
+  "has_stocks": false,
+  "assets": []
+},
+{
+  "unique_name": "12V DC Power Supply",
+  "model_number": "D5050",
+  "quantity": 50,
+  "has_stocks": false,
+  "custom_fields": [],
+  "tags": [],
+  "assets": []
+}]

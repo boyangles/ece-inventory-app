@@ -346,7 +346,9 @@ class User < ApplicationRecord
           req_stocks = request_item.request_item_stocks.filter({status: 'loan'})
           # Set all req_item_stocks to disbursed (user takes items, then backfills by creating new ones)
           # Check that req_stocks.size is equal to quantity_to_return
+					stocks_list = {}
           req_stocks.each do |req_stock|
+						stocks_list[req_stock.stock.id] = req_stock.stock.serial_tag
             req_stock.status = 'disburse'
             stock = req_stock.stock
             stock.destroy
@@ -367,11 +369,14 @@ class User < ApplicationRecord
           @item.quantity_on_loan -= req_stocks.size
           @item.save!
 
-
+					itemlog = request_item.create_log("backfill_request_satisfied", quantity_to_return)
+					request_item.create_stock_logs(itemlog, stocks_list)
         else
+					stocks_list = {}
           list_to_return.each do |st_name|
             stock = Stock.find_by(serial_tag: st_name)
             raise Exception.new("fu1") unless stock
+						stocks_list[stock.id] = st_name
 
             request_item_stock = RequestItemStock.find_by(request_item_id: request_item.id, stock_id: stock.id)
             raise Exception.new("fu2") unless request_item_stock
@@ -392,6 +397,8 @@ class User < ApplicationRecord
             @item.quantity_on_loan -= 1
             @item.save!
           end
+					logid = request_item.create_log("returned", list_to_return.size)
+					request_item.create_stock_logs(logid, stocks_list)
         end
       else
         if quantity_to_return > 0 and bf_status != "bf_satisfied"
