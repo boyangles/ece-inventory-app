@@ -1,0 +1,21 @@
+<div class="search">
+  <%= form_for @request_item, :url => return_request_item_path(@request_item), method: :put do |f| %>
+
+      <div class="form-group">
+
+
+        <div class="form-group">
+          <%= f.label "Returning Assets Serial Tags", class: 'col-lg-4 control-label' %>
+          <div class="col-lg-10">
+            <%= select_tag :serial_tags_loan_return, options_for_select(RequestItemStock.filter({request_item_id: @request_item.id, unavailable: true}).map { |u| [u.stock.serial_tag, u.stock.serial_tag] } ),
+                           { include_blank: true, multiple: true, class: 'chosen-select' } %>
+          </div>
+        </div>
+
+      </div>
+
+      <br><br></br></br>
+
+      <%= f.submit "Submit", class: "btn btn-success col-sm-1", type: "submit" %>
+  <% end %>
+</div>

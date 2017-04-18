@@ -7,6 +7,7 @@ class User < ApplicationRecord
 
   # Relation with Requests
   has_many :requests, dependent: :destroy
+  has_many :request_item_comments, dependent: :destroy
 
   # Relation with Logs - not necessarily one-to-many
   # has_many :logs
@@ -15,14 +16,14 @@ class User < ApplicationRecord
   has_many :user_logs
 
   enum privilege: {
-    student: 0,
-    manager: 1,
-    admin: 2
+      student: 0,
+      manager: 1,
+      admin: 2
   }, _prefix: :privilege
 
   enum status: {
-    deactivated: 0,
-    approved: 1
+      deactivated: 0,
+      approved: 1
   }, _prefix: :status
 
   # Filterable params:
@@ -46,33 +47,33 @@ class User < ApplicationRecord
 
   after_create {
     create_new_cart(self.id)
-		create_log("created", 0, self.privilege)
-	}
+    create_log("created", 0, self.privilege)
+  }
 
-	after_update {
-		log_on_privilege_change()
-		when_deactivated()
-	}
-	
+  after_update {
+    log_on_privilege_change()
+    when_deactivated()
+  }
+
   validates :username, presence: true, length: { maximum: 50 },
-                       uniqueness: { case_sensitive: false }
+            uniqueness: { case_sensitive: false }
   validates :email, presence: true, length: { maximum: 255 },
-                       uniqueness: { case_sensitive: false }
+            uniqueness: { case_sensitive: false }
   validates :password, presence: true, length: { minimum: 6 }, :if => :password
   validates :privilege, :inclusion => { :in => PRIVILEGE_OPTIONS }
   validates :status, :inclusion => { :in => STATUS_OPTIONS }
   validates :auth_token, uniqueness: true
 
-	# scope that gives us current_user
-	#scope :curr_user, lambda { |user| 
-	#	where("user.id = ?", user.id)
-	#}
-	attr_accessor :curr_user
+  # scope that gives us current_user
+  #scope :curr_user, lambda { |user|
+  #	where("user.id = ?", user.id)
+  #}
+  attr_accessor :curr_user
 
   # Returns the hash digest for a given string, used in fixtures for testing
   def User.digest(string)
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
-                                                  BCrypt::Engine.cost
+        BCrypt::Engine.cost
     BCrypt::Password.create(string, cost: cost)
   end
 
@@ -106,39 +107,39 @@ class User < ApplicationRecord
     @cart.save!
   end
 
-	def when_deactivated()
-		if self.status_was == "approved" && self.status == "deactivated"
-			create_log("deactivated", self.privilege, self.privilege)
+  def when_deactivated()
+    if self.status_was == "approved" && self.status == "deactivated"
+      create_log("deactivated", self.privilege, self.privilege)
 
-			# change all user's requests to cancelled
-			self.requests.each do |req|
-				if req.outstanding?
-					req.update("status": "cancelled")
-				end
-			end		 
-		end
-	end
+      # change all user's requests to cancelled
+      self.requests.each do |req|
+        if req.outstanding?
+          req.update("status": "cancelled")
+        end
+      end
+    end
+  end
 
-	def log_on_privilege_change() 
-		old_privilege = self.privilege_was
-		new_privilege = self.privilege
+  def log_on_privilege_change()
+    old_privilege = self.privilege_was
+    new_privilege = self.privilege
 
-		if old_privilege != new_privilege
-			create_log("privilege_updated", old_privilege, new_privilege)
-		end
-	end
+    if old_privilege != new_privilege
+      create_log("privilege_updated", old_privilege, new_privilege)
+    end
+  end
 
-	def create_log(action, old_priv, new_priv)
-		if self.curr_user.nil?
-			curr = nil
-		else
-			curr = self.curr_user.id
-		end
+  def create_log(action, old_priv, new_priv)
+    if self.curr_user.nil?
+      curr = nil
+    else
+      curr = self.curr_user.id
+    end
 
-		log = Log.new(:user_id => curr, :log_type => "user")
-		log.save!
-		userlog = UserLog.new(:log_id => log.id, :user_id => self.id, :action => action, :old_privilege => old_priv, :new_privilege => new_priv)
-		userlog.save!
+    log = Log.new(:user_id => curr, :log_type => "user")
+    log.save!
+    userlog = UserLog.new(:log_id => log.id, :user_id => self.id, :action => action, :old_privilege => old_priv, :new_privilege => new_priv)
+    userlog.save!
 
   end
 
@@ -153,7 +154,6 @@ class User < ApplicationRecord
   #     'quantity_loan': 325        # Optional
   #     'quantity_disburse': 522    # Optional
   #     'quantity_return': 42       # Optional
-  #     'due_date': '06/07/2015'    # Optional
   #   }, ...]
   #   reason: 'Optional reason here'
   #   requested_for: user
@@ -186,12 +186,11 @@ class User < ApplicationRecord
                                        :item_id => requested_item.id,
                                        :quantity_loan => sub_req['quantity_loan'],
                                        :quantity_disburse => sub_req['quantity_disburse'],
-                                       :quantity_return => sub_req['quantity_return'],
-                                       :due_date => sub_req['due_date'])
+                                       :quantity_return => sub_req['quantity_return'])
         raise Exception.new("Subrequest creation error. The error hash is #{new_req_item.errors.full_messages}. Subrequest hash is: #{JSON.pretty_generate(sub_req)}.") unless new_req_item.save
       end
 
-      req.update!(:status => 'approved') unless self.privilege_student?
+      # req.update!(:status => 'approved') unless self.privilege_student?
     end
 
     return req
@@ -206,7 +205,6 @@ class User < ApplicationRecord
   #     'quantity_loan': 325        # Optional
   #     'quantity_disburse': 522    # Optional
   #     'quantity_return': 42       # Optional
-  #     'due_date': '06/07/2015'    # Optional
   #   }, ...]
   # Return:
   #   On success: newly created request
@@ -227,15 +225,14 @@ class User < ApplicationRecord
                                        :item_id => requested_item.id,
                                        :quantity_loan => sub_req['quantity_loan'],
                                        :quantity_disburse => sub_req['quantity_disburse'],
-                                       :quantity_return => sub_req['quantity_return'],
-                                       :due_date => sub_req['due_date'])
+                                       :quantity_return => sub_req['quantity_return'])
         raise Exception.new("Subrequest creation error. The error hash is #{new_req_item.errors.full_messages}. Subrequest hash is: #{JSON.pretty_generate(sub_req)}.") unless new_req_item.save
 
         if req.approved?
           begin
             new_req_item.fulfill_subrequest
           rescue Exception => e
-            raise Exception.new("The following request for item: #{new_req_item.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{new_req_item.item.quantity_was}")
+            raise Exception.new("The following request for item: #{new_req_item.item.unique_name} cannot be fulfilled.")
           end
         end
       end
@@ -270,7 +267,7 @@ class User < ApplicationRecord
           begin
             subrequest.rollback_fulfill_subrequest
           rescue Exception => e
-            raise Exception.new("The following request for item: #{subrequest.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{subrequest.item.quantity_was}")
+            raise Exception.new("The following request for item: #{subrequest.item.unique_name} cannot be fulfilled.")
           end
         end
 
@@ -296,14 +293,13 @@ class User < ApplicationRecord
 
         subrequest.assign_attributes(:quantity_loan => sub_req['quantity_loan'],
                                      :quantity_disburse => sub_req['quantity_disburse'],
-                                     :quantity_return => sub_req['quantity_return'],
-                                     :due_date => sub_req['due_date'])
+                                     :quantity_return => sub_req['quantity_return'])
         raise Exception.new("Subrequest creation error. The error hash is #{updated_req_item.errors.full_messages}. Subrequest hash is: #{JSON.pretty_generate(sub_req)}.") unless subrequest.save
 
         begin
           subrequest.fulfill_subrequest if req.approved?
         rescue Exception => e
-          raise Exception.new("The following request for item: #{subrequest.item.unique_name} cannot be fulfilled. Perhaps it is oversubscribed? The current quantity of the item is: #{subrequest.item.quantity_was}")
+          raise Exception.new("The following request for item: #{subrequest.item.unique_name} cannot be fulfilled.")
         end
       end
     end
@@ -336,6 +332,84 @@ class User < ApplicationRecord
   end
 
   ##
+  # REQ-ITEM-4: return_subrequest
+  # List to return, if stocked and backfilled, is the quantity to create. (not allowing them to specify serial tags when backfill)
+  def return_subrequest(request_item, list_to_return, bf_status)
+    raise Exception.new("fu") if self.privilege_student?
+
+    @item = request_item.item
+    if !@item.has_stocks
+      quantity_to_return = (list_to_return.nil?) ? 0 : list_to_return
+    else
+      quantity_to_return = (list_to_return.nil?) ? 0 : list_to_return.size
+    end
+    ActiveRecord::Base.transaction do
+      if @item.has_stocks
+        if bf_status == 'bf_satisfied'
+          req_stocks = request_item.request_item_stocks.filter({status: 'loan'})
+          # Set all req_item_stocks to disbursed (user takes items, then backfills by creating new ones)
+          # Check that req_stocks.size is equal to quantity_to_return
+          req_stocks.each do |req_stock|
+            req_stock.status = 'disburse'
+            stock = req_stock.stock
+            stock.destroy
+            req_stock.save!
+          end
+
+          # Creates new stocks to replace disbursed ones from backfill
+          for i in 1..quantity_to_return
+            Stock.create!(item_id:   request_item.item.id, available: true)
+          end
+
+          request_item.quantity_loan = 0
+          request_item.quantity_return += req_stocks.size
+          request_item.bf_status = bf_status
+          request_item.save!
+
+          @item.quantity += req_stocks.size
+          @item.quantity_on_loan -= req_stocks.size
+          @item.save!
+
+
+        else
+          list_to_return.each do |st_name|
+            stock = Stock.find_by(serial_tag: st_name)
+            raise Exception.new("fu1") unless stock
+
+            request_item_stock = RequestItemStock.find_by(request_item_id: request_item.id, stock_id: stock.id)
+            raise Exception.new("fu2") unless request_item_stock
+
+            raise Exception.new("fu3") if stock.available
+            stock.available = true
+            stock.save!
+
+            request_item.quantity_loan -= 1
+            request_item.quantity_return += 1
+            request_item.save!
+
+            # request item vs req item stock for return?
+            request_item_stock.status = 'return'
+            request_item_stock.save!
+
+            @item.quantity += 1
+            @item.quantity_on_loan -= 1
+            @item.save!
+          end
+        end
+      else
+        if quantity_to_return > 0 and bf_status != "bf_satisfied"
+          request_item.create_log("returned", quantity_to_return)
+        end
+
+        request_item.update!(bf_status: bf_status, :quantity_loan => request_item[:quantity_loan] - quantity_to_return, :quantity_return => request_item[:quantity_return] + quantity_to_return)
+
+        @item.update!(:quantity => @item[:quantity] + quantity_to_return)
+        @item.update!(:quantity_on_loan => @item[:quantity_on_loan] - quantity_to_return)
+      end
+    end
+  end
+
+  ##
   # USER-2: approve_outstanding_request
   # Allows managers/admins to approve outstanding request
   # Input: @request
@@ -347,6 +421,29 @@ class User < ApplicationRecord
       false
     else
       request.update(:status => 'approved')
+    end
+  end
+
+
+  def make_request_decision(request, request_params)
+    #TODO: change message
+    status_change = request_params[:status]
+    raise Exception.new("Check your privilege") if self.privilege_student && (!status_change == 'cancelled')
+
+    raise Exception.new("Request must be outstanding") unless request.status == 'outstanding'
+
+    case status_change
+      when 'approved'
+        ActiveRecord::Base.transaction do
+          request.request_items.each do |ri|
+            ri.validates_stock_item_serial_tags_are_set!
+            request.update_attributes!(request_params)
+          end
+        end
+      when 'denied'
+        request.update_attributes!(request_params)
+      else # 'cancelled'
+        request.update_attributes!(request_params)
     end
   end
 
@@ -365,6 +462,14 @@ class User < ApplicationRecord
     end
   end
 
+  def update_stock_attributes(stock, stock_params)
+    # Raises exception if manager tries to update the serial tag
+    stock.serial_tag = stock_params[:serial_tag]
+    raise Exception.new('Cannot modify serial tag as manager') if self.privilege_manager? && stock.serial_tag_changed?
+
+    stock.update_attributes!(stock_params)
+  end
+
   ##
   # TODO
   # USER-4: borrowed_items
@@ -377,4 +482,6 @@ class User < ApplicationRecord
   def self.isDukeEmail?(email_address)
     return email_address.match(DUKE_EMAIL_REGEX)
   end
+
+
 end

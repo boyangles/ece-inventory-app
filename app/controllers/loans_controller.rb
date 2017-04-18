@@ -7,8 +7,13 @@ class LoansController < ApplicationController
 			requests = requests.where(user_id: current_user.id)
 		end
 
-		if !requests.nil? 
-			firstLayer = RequestItem.where("quantity_loan > ?", 0).where(request_id: requests.select(:id))
+		if !requests.nil?
+
+			loans_indeed = RequestItem.where(bf_status: "loan").select(:id)
+			denied = RequestItem.where(bf_status: "bf_denied").select(:id)
+			failed = RequestItem.where(bf_status: "bf_failed").select(:id)
+ 
+			firstLayer = RequestItem.where("quantity_loan > ?", 0).where(id: loans_indeed | denied | failed).where(request_id: requests.select(:id))
 
 			loans_items =  RequestItem.where(item_id: Item.select(:id).where("unique_name ILIKE ?", "%#{params[:search_item]}%"))
 			loans_users = RequestItem.where(request_id: Request.select(:id).where(user_id: User.select(:id).where("username ILIKE ?", "%#{params[:search_user]}%")))

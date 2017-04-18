@@ -1,18 +1,20 @@
 [{
-  "unique_name": "test17", 
-  "quantity": 1, 
-  "tags": ["test_tag0", "ECE110"], 
+  "unique_name": "test9", 
+  "quantity": 4, 
   "custom_fields": [
-    {"name": "price", "value": 35}, 
-    {"name": "price", "value": 36}
-  ]
+    {"name": "location", "value": 35}, 
+    {"name": "restock_info", "value": 36}
+  ],
+  "has_stocks": true,
+  "assets": ["aeroaers", "qqqqqqqq", "eijgridk", "33333333"]
 }, 
 {
-  "unique_name": "test18", 
-  "quantity": 1, 
+  "unique_name": "test10", 
+  "quantity": 3, 
   "tags": ["test_tag0", "ECE110"], 
   "custom_fields": [
-    {"name": "price", "value": 35}, 
-    {"name": "price", "value": 36}
-  ]
+    {"name": "location", "value": 35}, 
+    {"name": "restock_info", "value": 36}
+  ],
+  "has_stocks": false
 }]

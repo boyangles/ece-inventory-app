@@ -96,6 +96,34 @@ class UserMailer < ApplicationMailer
     loan_email_template(loanItem, tempUser)
   end
 
+  def minimum_stock_quantity_change(q_before, q_after, item)
+    # puts "Got to this method"
+    # puts "The subscribers are"
+    email_params
+    @subscribers = Subscriber.all
+    @subscribers.each do |recipient|
+      # puts "email sending now!!!!!!!!"
+      @item = item
+      @q_before = q_before
+      @q_after = q_after
+      @tempRec = recipient.user
+      mail(to: @tempRec.email, subject: @heading)
+    end
+  end
+
+  def minimum_stock_min_stock_change(min_before, min_after, item)
+    email_params
+    @subscribers = Subscriber.all
+    @subscribers.each do |recipient|
+      # puts "email sending now!!!!!!!!"
+      @item = item
+      @min_before = min_before
+      @min_after = min_after
+      @tempRec = recipient.user
+      mail(to: @tempRec.email, subject: @heading)
+    end
+  end
+
 
   def loan_reminder_emails_all
     allUsers = User.all
@@ -113,6 +141,15 @@ class UserMailer < ApplicationMailer
         end
       end
     end
+  end
+
+  def backfill_approved_email(requestItem,old_status)
+    @request_item = requestItem
+    @old_status = old_status
+    @user = requestItem.request.user
+    @comments = RequestItemComment.where(:request_item_id => requestItem)
+    email_params
+    mail(to: @user.email, subject: "Backfill Information Attached")
   end
 
   private

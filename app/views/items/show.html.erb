@@ -17,7 +17,12 @@
         <div class="pull-right">
           <table><tbody><tr>
             <% if is_manager_or_admin? && @item.active? %>
-                <td><%= link_to "Edit Item", edit_item_url(@item.id), :class => "btn btn-primary" %></td>
+                <% if @item.has_stocks? %>
+                    <td><%= link_to 'Show Assets', item_stocks_path(@item.id), class: 'btn btn-primary' %></td>
+                <% else %>
+                    <td><%= link_to 'Convert to Assets', convert_to_stocks_item_path(@item.id), method: :post, class: 'btn btn-primary' %></td>
+                <% end %>
+                <td><%= link_to glyph(:pencil), edit_item_url(@item.id), :class => "btn btn-primary" %></td>
             <% end %>
 
             <% if is_admin?  && @item.active? %>
@@ -32,10 +37,10 @@
       <% if @item.active? %>
           <% ri = RequestItem.where(item_id: @item.id).where(request_id: grab_cart(current_user).id).take %>
           <% if ri.nil? %>
-              <%= render 'indexform', request_item: RequestItem.new(item_id: @item.id,
+              <%= render 'showform', request_item: RequestItem.new(item_id: @item.id,
                                                                     request_id: grab_cart(current_user).id) %>
           <% else %>
-              <%= render 'indexform', request_item: ri %>
+              <%= render 'showform', request_item: ri %>
           <% end %>
       <% end %>
     </div><br><br><br>
@@ -66,6 +71,16 @@
               <strong>Description:</strong>
               <%= @item.description %>
             </p>
+            <% if is_manager_or_admin? %>
+            <p>
+              <strong>Minimum Stock:</strong>
+              <%= @item.minimum_stock %>
+            </p>
+            <p>
+              <strong>Email Tracking for Low Stock:</strong>
+              <%= @item.stock_threshold_tracked %>
+            </p>
+            <%end%>
             <p>
               <strong>Tags:</strong>
               <% if @item.tags.first != NIL %>
@@ -82,7 +97,7 @@
         <div class="col-lg-0.5"></div>
 
         <div class="panel panel-info">
-          <div class="panel-heading">Additional Information</div>
+          <div class="panel-heading">Global Information</div>
           <div class="panel-body">
             <!-- Custom Fields -->
             <% @item_custom_fields.each do |icf| %>
@@ -108,9 +123,13 @@
               -- These requests cannot be approved as is --
             </blockquote>
         <% end %>
-
-        <%= render @requests %>
-        <%= will_paginate @requests %>
+        <% if @requests.count == 0 %>
+            <% text = (is_manager_or_admin?) ? "There are no requests on this item currently." : "You have no requests on this item currently" %>
+            <%= text %>
+        <% else %>
+            <%= render @requests %>
+            <%= will_paginate @requests %>
+        <% end %>
 
       </div>
 
@@ -135,35 +154,35 @@
 
       </div>
 
-			<% if is_manager_or_admin? %>
-	      <div class="tab-pane fade" id="logs">
-  	      <br>
-					<% itemLogs = Log.where(id: ItemLog.select(:log_id).where(item_id: @item.id))%>
-	  	    <% itemInReqLogs = Log.where(id: RequestLog.select(:log_id).where(request_id: RequestItem.select(:request_id).where(item_id: @item.id))) %>
- 					<% logss = Log.where(id: itemLogs | itemInReqLogs) %>
-	
-			    <% if logss.any? %>
+      <% if is_manager_or_admin? %>
+          <div class="tab-pane fade" id="logs">
+            <br>
+            <% itemLogs = Log.where(id: ItemLog.select(:log_id).where(item_id: @item.id))%>
+            <% itemInReqLogs = Log.where(id: RequestLog.select(:log_id).where(request_id: RequestItem.select(:request_id).where(item_id: @item.id))) %>
+            <% logss = Log.where(id: itemLogs | itemInReqLogs) %>
 
-						<table class="table table-striped table-hover">
-							<thead>
-								<tr>
-									<th>Time</th>
-									<th>Initiator</th>
-									<th>Object Affected</th>
-									<th>Action</th>
-									<th>Affected User</th>
-									<th></th>
-								</tr>	
-							</thead>
-							<tbody>
-	        	  	<%= render logss %>
-							</tbody>
-						</table>
-	
-  	  		<% end %>
+            <% if logss.any? %>
 
-      	</div>
-			<% end %>
+                <table class="table table-striped table-hover">
+                  <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Initiator</th>
+                    <th>Object Affected</th>
+                    <th>Action</th>
+                    <th>Affected User</th>
+                    <th></th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <%= render logss %>
+                  </tbody>
+                </table>
+
+            <% end %>
+
+          </div>
+      <% end %>
 
 
     </div>

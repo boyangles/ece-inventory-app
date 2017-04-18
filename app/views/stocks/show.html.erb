@@ -1,0 +1,124 @@
+<p id="notice"><%= notice %></p>
+<% provide(:title, @item.unique_name) %>
+
+<% if @stock.nil? %>
+    <div class="panel panel-danger">
+      <div class="panel-heading">
+        <h3 class="panel-title">Stock has been deleted.</h3>
+      </div>
+    </div>
+<% end %>
+
+<% if @item.active? || is_manager_or_admin? %>
+
+    <div class="center_jumbotron">
+      <h2 class="page-header"><%= link_to @item.unique_name, item_stocks_path(@item) %>
+
+        <div class="pull-right">
+          <table><tbody><tr>
+            <td><%= link_to "Edit Asset", edit_item_stock_path(@item.id, @stock.id), :class => "btn btn-primary" %></td>
+
+          </tr></tbody></table>
+        </div>
+      </h2>
+    </div>
+
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#home" data-toggle="tab">Item Details</a></li>
+      <li><a href="#loans" data-toggle="tab">Loans</a></li>
+      <% if is_manager_or_admin? %><li><a href="#logs" data-toggle="tab">Logs</a></li><% end %>
+    </ul>
+
+    <div id="myTabContent" class="tab-content">
+      <div class="tab-pane fade active in" id="home">
+        <br>
+        <div class="panel panel-primary">
+          <div class="panel-heading">Main Details</div>
+          <div class="panel-body">
+            <!-- All Item Information: Quantity in Stock, Model Num, Description -->
+
+            <p>
+              <strong>Serial Tag:</strong>
+              <%= @stock.serial_tag %>
+            </p>
+
+            <p>
+              <strong>Available:</strong>
+              <%= @stock.available? ? 'Available' : 'Not Available' %>
+            </p>
+
+            <p>
+              <strong>Model Number:</strong>
+              <%= @item.model_number %>
+            </p>
+            <p>
+              <strong>Description:</strong>
+              <%= @item.description %>
+            </p>
+            <p>
+              <strong>Tags:</strong>
+              <% if @item.tags.first != NIL %>
+                  <% @item.tags.each_with_index do |tag, index| %>
+                      <%= tag.name + ((index == @item.tags.size-1) ? '' : ', ') %>
+                  <% end %>
+              <% else %>
+                  None
+              <% end %>
+            </p>
+          </div>
+        </div>
+
+        <div class="col-lg-0.5"></div>
+
+        <div class="panel panel-info">
+          <div class="panel-heading">Global Information</div>
+          <div class="panel-body">
+            <!-- Custom Fields -->
+            <% @item_custom_fields.each do |icf| %>
+                <% field_content = ( ItemCustomField.field_content(@item.id, icf.custom_field_id).blank? ?  'None' : ItemCustomField.field_content(@item.id, icf.custom_field_id) ) %>
+                <% if (is_manager_or_admin? || !icf.custom_field.private_indicator) && !icf.custom_field.is_stock %>
+                    <p>
+                      <strong><%= icf.custom_field.field_name %>: </strong>
+                      <%= field_content %>
+                    </p>
+                <% else %>
+                <% end %>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="panel panel-info">
+          <div class="panel-heading">Asset Information</div>
+          <div class="panel-body">
+            <!-- Stock Custom Fields -->
+            <% @stock_custom_fields.each do |scf| %>
+                <% field_content = ( StockCustomField.field_content(@stock.id, scf.custom_field_id).blank? ?  'None' : StockCustomField.field_content(@stock.id, scf.custom_field_id) ) %>
+                <% if is_manager_or_admin? || !scf.custom_field.private_indicator %>
+                    <p>
+                      <strong><%= scf.custom_field.field_name %>: </strong>
+                      <%= field_content %>
+                    </p>
+                <% else %>
+                <% end %>
+            <% end %>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="tab-pane fade" id="loans">
+        <br>
+
+        <% if @request_item_stock.nil? %>
+            <h2>Not yet loaned out!</h2>
+        <% else %>
+            <% request = @request_item_stock.request_item.request %>
+            <%= link_to 'View loan details', request_path(request) %>
+        <% end %>
+      </div>
+
+    </div>
+
+
+<% end %>

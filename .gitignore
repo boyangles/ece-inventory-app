@@ -26,6 +26,11 @@
 /public/apidocs/sendgrid.env
 sendgrid.env
 
+## Make sure that none of the config files gets in so that we don't get boned on attempting to send emails
 /config/environments/development.rb
 /config/environments/production.rb
 /config/environments/test.rb
+
+
+# Ignore uploaded PDFs
+/public/system/*

@@ -3,6 +3,8 @@ module ItemsHelper
 		Item.find_by(:unique_name => item_name)
 	end
 
+
+	# May deprecate this method because we are using request_item
 	def item_quantity_sufficient?(request, item_name)
 		item = Item.find_by(:unique_name => item_name)
 		item.quantity - request.quantity >= 0

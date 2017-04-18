@@ -10,6 +10,12 @@ module SpecTestHelper
     fill_in 'Password', :with => user.password
     click_button 'Log in'
   end
+
+
+  def create_item_with_stocks(num_stocks)
+    @item = create :item, has_stocks: true, quantity: num_stocks
+  end
+
 end
 
 RSpec.configure do |config|

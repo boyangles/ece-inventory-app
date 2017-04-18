@@ -2,13 +2,23 @@
   <td><%= link_to item.unique_name, item_path(item.id) %></td>
   <td><%= item.quantity %></td>
   <td><%= item.model_number %></td>
-  <td><%= item.description %></td>
 
-	<% if is_manager_or_admin? %>
-    <td><%= link_to "Edit", edit_item_path(item.id), class: "btn btn-primary" %></td>
+  <% if is_manager_or_admin? %> <td><%= item.minimum_stock %></td> <% end %>
+  <td colspan="3">
+    <% ri = RequestItem.where(item_id: item.id).where(request_id: grab_cart(current_user).id).take %>
+    <% if ri.nil? %>
+        <%= render 'indexform', request_item: RequestItem.new(item_id: item.id, request_id: grab_cart(current_user).id) %>
+    <% else %>
+        <%= render 'indexform', request_item: ri %>
+    <% end %>
+  </td>
+
+
+  <% if is_manager_or_admin? %>
+      <td><%= link_to glyph(:pencil), edit_item_path(item.id), class: "btn btn-primary" %></td>
   <% end %>
   <% if is_admin? %>
-    <td><%= render 'deactivateitemform', item: item %></td>
+      <td><%= render 'deactivateitemform', item: item %></td>
   <% end %>
 </tr>
 

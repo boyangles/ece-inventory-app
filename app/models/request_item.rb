@@ -3,14 +3,19 @@ class RequestItem < ApplicationRecord
 
   belongs_to :request
   belongs_to :item
+  has_many :attachment
+  has_many :request_item_stocks
+  has_many :request_item_comments, dependent: :destroy
 
   ## Constants
-  REQUEST_TYPE_OPTIONS = %w(disbursement loan mixed)
 
-  enum request_type: {
-      disbursement: 0,
-      loan: 1,
-      mixed: 2
+  enum bf_status: {
+      loan: 0,
+      bf_request: 1,
+      bf_in_transit: 2,
+      bf_denied: 3,
+      bf_satisfied: 4,
+      bf_failed: 5
   }
 
   # Scopes for filtering
@@ -18,29 +23,19 @@ class RequestItem < ApplicationRecord
   scope :item_id, -> (item_id) { where item_id: item_id }
   scope :user_id, -> (user_id) { joins(:request).where(requests: { user_id: user_id }) }
   scope :status, -> (status) { joins(:request).where(requests: { status: status }) }
-  scope :request_type, -> (request_type) {
-    case request_type
-      when 'disbursement'
-        where("(quantity_loan <= 0 AND quantity_return <= 0 AND quantity_disburse > 0)")
-      when 'loan'
-        where("(quantity_loan <= 0 AND quantity_return > 0 AND quantity_disburse <= 0) OR
-               (quantity_loan > 0 AND quantity_return <= 0 AND quantity_disburse <= 0) OR
-               (quantity_loan > 0 AND quantity_return > 0 AND quantity_disburse <= 0)")
-      when 'mixed'
-        where("(quantity_loan <= 0 AND quantity_return <= 0 AND quantity_disburse <= 0) OR
-               (quantity_loan <= 0 AND quantity_return > 0 AND quantity_disburse > 0) OR
-               (quantity_loan > 0 AND quantity_return <= 0 AND quantity_disburse > 0) OR
-               (quantity_loan > 0 AND quantity_return > 0 AND quantity_disburse > 0)")
-      else
-        none
-    end
-  }
   scope :quantity_loan, -> (quantity_loan) { where quantity_loan: quantity_loan }
   scope :quantity_disburse, -> (quantity_disburse) { where quantity_disburse: quantity_disburse }
   scope :quantity_return, -> (quantity_return) { where quantity_return: quantity_return }
+  # scope :serial_tags_loan, -> (serial_tags_loan) { where serial_tags_loan: serial_tags_loan }
+  # scope :serial_tags_disburse, -> (serial_tags_disburse) { where serial_tags_disburse: serial_tags_disburse }
+  scope :bf_status, -> (bf_status) { where bf_status: bf_status }
 
   attr_accessor :curr_user
   attr_readonly :request_id, :item_id
+
+  after_update {
+    log_on_backfill_change
+  }
 
   before_validation {
     self.quantity_disburse = (self.quantity_disburse.blank?) ?  0 : self.quantity_disburse
@@ -61,11 +56,10 @@ class RequestItem < ApplicationRecord
   # Determines if a subrequest is valid or invalid
   #
   # Input: N/A
-  # Output: true/false
   def oversubscribed?
     diff = item[:quantity] - (self[:quantity_disburse] + self[:quantity_loan])
 
-    return diff < 0
+    return (diff < 0)
   end
 
   ##
@@ -76,14 +70,24 @@ class RequestItem < ApplicationRecord
   # Input: N/A
   # Output: @item upon success
   def fulfill_subrequest
-    
-		disbursement_quantity = (self[:quantity_disburse].nil?) ? 0 : self[:quantity_disburse]
-    loan_quantity = (self[:quantity_loan].nil?) ? 0 : self[:quantity_loan]
-
     @item = self.item
+    # item_requested = Item.find(self.item_id)
+    if @item.has_stocks
+      @item.delete_stocks_through_request_by_list(self)
+    else
 
-    @item.update!(:quantity => item[:quantity] - disbursement_quantity - loan_quantity)
-    @item.update!(:quantity_on_loan => item[:quantity_on_loan] + loan_quantity)
+      disbursement_quantity = (self[:quantity_disburse].nil?) ? 0 : self[:quantity_disburse]
+      loan_quantity = (self[:quantity_loan].nil?) ? 0 : self[:quantity_loan]
+
+      # Need to send out minimum stock email if applicable!!
+
+      newItemQuant = @item[:quantity] - disbursement_quantity - loan_quantity
+      minimum_stock_email(@item.quantity,newItemQuant, @item)
+
+      @item.update!(:quantity => newItemQuant)
+      @item.update!(:quantity_on_loan => item[:quantity_on_loan] + loan_quantity)
+
+    end
   end
 
   ##
@@ -99,41 +103,43 @@ class RequestItem < ApplicationRecord
     @item.update!(:quantity_on_loan => item[:quantity_on_loan] - loan_quantity)
   end
 
-  ##
-  # REQ-ITEM-4: return_subrequest
-  def return_subrequest(to_return)
-    quantity_to_return = (to_return.nil?) ? 0 : to_return
-
-    @item = self.item
-
-    ActiveRecord::Base.transaction do
-      if quantity_to_return > 0
-        create_log("returned", quantity_to_return)
-      end
-
-		  self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_return, :quantity_return => self[:quantity_return] + quantity_to_return)
-
-      @item.update!(:quantity => item[:quantity] + quantity_to_return)
-		  @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_return)
-    end
-	end
 
   ##
   # REQ-ITEM-5: disburse_loaned_subrequest
-  def disburse_loaned_subrequest(to_disburse)
-    quantity_to_disburse = (to_disburse.nil?) ? 0 : to_disburse
-
+  def disburse_loaned_subrequest!(serial_tags_list)
     @item = self.item
-
-    ActiveRecord::Base.transaction do
-      if quantity_to_disburse > 0
-        create_log("disbursed_from_loan", quantity_to_disburse)
-      end
-
-	   	self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_disburse, :quantity_disburse => self[:quantity_disburse] + quantity_to_disburse)
-		  @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_disburse)
+    if @item.has_stocks
+      quantity_to_disburse = (serial_tags_list.nil?) ? 0 : serial_tags_list.size
+    else
+      quantity_to_disburse = (serial_tags_list.nil?) ? 0 : serial_tags_list.to_f
     end
-	end
+
+    RequestItem.transaction do
+      if @item.has_stocks
+        serial_tags_list.each do |serial_tag|
+          # mark req item stock as disbursed, delete stock, change quantity for items and req item quantity
+          stock = Stock.find_by(serial_tag: serial_tag)
+          req_item_stock = RequestItemStock.find_by(request_item_id: self.id, stock_id: stock.id)
+
+          req_item_stock.status = 'disburse'
+          req_item_stock.save!
+          stock.destroy
+
+          @item.quantity_on_loan -= 1;
+          @item.save!
+
+          self.quantity_loan -= 1;
+          self.quantity_disburse +=1 ;
+          self.save!
+        end
+      else
+        raise Exception.new("Quantity to convert must be greater than 0") if quantity_to_disburse <= 0
+        create_log("disbursed_from_loan", quantity_to_disburse)
+        self.update!(:quantity_loan => self[:quantity_loan] - quantity_to_disburse, :quantity_disburse => self[:quantity_disburse] + quantity_to_disburse)
+        @item.update!(:quantity_on_loan => item[:quantity_on_loan] - quantity_to_disburse)
+      end
+    end
+  end
 
   ##
   # REQ-ITEM-6: create log!!!
@@ -160,11 +166,28 @@ class RequestItem < ApplicationRecord
     if itemo.model_number_was != itemo.model_number
       old_model = itemo.model_number_was
     end
-    
+
     log = Log.new(:user_id => curr, :log_type => 'item')
     log.save!
     itemlog = ItemLog.new(:log_id => log.id, :item_id => itemo.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => itemo.unique_name, :old_desc => old_desc, :new_desc => itemo.description, :old_model_num => old_model, :new_model_num => itemo.model_number, :curr_quantity => itemo.quantity, :affected_request => self.request.id)
     itemlog.save!
+  end
+
+  def log_on_backfill_change
+    bf_old = bf_status_was
+    bf_new = bf_status
+
+    if bf_old == "loan" and bf_new == "bf_request"
+      create_log("backfill_requested", self.quantity_loan)
+    elsif bf_old == "bf_request" and bf_new == "bf_in_transit"
+      create_log("backfill_request_approved", self.quantity_loan)
+    elsif bf_old == "bf_request" and bf_new == "bf_denied"
+      create_log("backfill_request_denied", self.quantity_loan)
+    elsif bf_old == "bf_in_transit" and bf_new == "bf_satisfied"
+      create_log("backfill_request_satisfied", self.quantity_loan)
+    elsif bf_old == "bf_in_transit" and bf_new == "bf_failed"
+      create_log("backfill_request_failed", self.quantity_loan)
+    end
   end
 
   def determine_subrequest_type
@@ -193,10 +216,88 @@ class RequestItem < ApplicationRecord
     end
   end
 
+  def create_request_item_stocks(serial_tags_disburse, serial_tags_loan)
+
+    serial_tags_disburse = [] unless serial_tags_disburse
+    serial_tags_loan = [] unless serial_tags_loan
+
+    raise Exception.new("Cannot specify asset for both disbuse and loan") unless serial_tags_are_unique(serial_tags_disburse, serial_tags_loan)
+
+    # binding.pry
+    # Destroy all request item stocks associated with request item in order to remove the previous tags
+    RequestItemStock.where(request_item_id: self.id).destroy_all
+
+    RequestItem.transaction do
+      serial_tags_disburse.each do |st|
+        stock = Stock.find_by(serial_tag: st)
+        raise Exception.new("Error in finding requested stock. Input serial tag is: #{st}") unless stock
+        rq_item_stock_dis = RequestItemStock.new(request_item_id: self.id, stock_id: stock.id, status: 'disburse')
+        rq_item_stock_dis.save!
+      end
+
+      serial_tags_loan.each do |st|
+        stock = Stock.find_by(serial_tag: st)
+        raise Exception.new("Error in finding requested stock. Input serial tag is: #{st}") unless stock
+        raise Exception.new("Stock requested for loan is not available: #{st}") unless stock.available
+
+        rq_item_stock_loan = RequestItemStock.new(request_item_id: self.id, stock_id: stock.id, status: 'loan')
+        rq_item_stock_loan.save!
+      end
+      # binding.pry
+      raise Exception.new("Request Item cannot be saved. Errors are: #{self.errors.full_messages}") unless self.save
+    end
+
+  end
+
+  def create_serial_tag_list(status_type)
+    tags = Stock.where(id: RequestItemStock.select(:stock_id)
+                               .where(request_item_id: self.id, status: status_type))
+    list = []
+    tags.each do |f|
+      list.push(f.serial_tag)
+    end
+    return list
+  end
+
+
   ## Validations
 
   def validates_loan_and_disburse_not_zero
     errors.add(:base, "Loan and Disburse cannot both be 0") if (quantity_disburse == 0 && quantity_loan == 0 && quantity_return == 0)
+  end
+
+  def minimum_stock_email(q_before, q_after, item)
+    10.times do |i|
+      puts "The quantity before is:"
+      puts q_before
+      puts "The quantity after is:"
+      puts q_after
+      puts "The item is:"
+      puts item.unique_name
+    end
+    if q_before >= item.minimum_stock && q_after < item.minimum_stock
+      10.times do |i|
+        puts "The conditinos except for threshold are met for email threshold to send!!!!"
+      end
+      if item.stock_threshold_tracked
+        puts "THE EMAIL WILL DELIVER NOW"
+        UserMailer.minimum_stock_quantity_change(q_before, q_after, item).deliver_now
+      end
+    end
+  end
+  # Validates that if a request if approved, the admin has set an appropriate amount of serial tags for each quanityt
+  def validates_stock_item_serial_tags_are_set!
+    item = self.item
+    request = self.request
+
+    num_rq_item_stock_dis = RequestItemStock.where(request_item_id: self.id, status: 'disburse').count
+    num_rq_item_stock_loan = RequestItemStock.where(request_item_id: self.id, status: 'loan').count
+
+    if item.has_stocks
+      if quantity_disburse != num_rq_item_stock_dis || quantity_loan != num_rq_item_stock_loan
+        raise Exception.new("Serial tags must be specified for requested item")
+      end
+    end
   end
 
   def request_type_quantity_validation
@@ -211,5 +312,11 @@ class RequestItem < ApplicationRecord
         errors.add(:quantity_loan, "cannot be negative") unless quantity_loan > -1
         errors.add(:quantity_return, "cannot be negative") unless quantity_return > -1
     end
+  end
+
+  private
+
+  def serial_tags_are_unique(serial_tags_disburse, serial_tags_loan)
+    !((serial_tags_disburse & serial_tags_loan).size > 0)
   end
 end

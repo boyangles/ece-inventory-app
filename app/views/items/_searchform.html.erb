@@ -40,9 +40,18 @@
           </div>
         </div>
 
-			<br><br>
-      </div>
 
+        <% if is_manager_or_admin? %>
+        <div class="form-group">
+          <%= f.label "Below Minimum Stock?", class: "col-lg-4 control-label" %>
+          <div class="col-lg-1">
+            <%= check_box_tag :stocked , params[:stocked], false , {}%>
+          </div>
+        </div>
+        <%end %>
+
+        <br><br>
+      </div>
 
       <%= f.submit "Search", class: "btn btn-default col-lg-2 col-lg-offset-10", type: "submit" %>
       <% end %>

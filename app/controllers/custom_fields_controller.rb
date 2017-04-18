@@ -22,6 +22,6 @@ class CustomFieldsController < ApplicationController
   end
 
   def custom_field_params
-    params.fetch(:custom_field, {}).permit(:field_name, :private_indicator, :field_type)
+    params.fetch(:custom_field, {}).permit(:field_name, :private_indicator, :is_stock, :field_type)
   end
 end
