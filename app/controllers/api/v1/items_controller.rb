@@ -669,12 +669,6 @@ class Api::V1::ItemsController < BaseController
 
 
   private
-  def convert_to_items
-
-  end
-
-
-  private
   def render_item_instance_with_tags(input_item)
     render :json => input_item.instance_eval {
         |item| {
