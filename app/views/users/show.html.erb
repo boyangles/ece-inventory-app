@@ -59,7 +59,7 @@
 				<% hey_backfills = request_items.where(bf_status: "bf_request").select(:id) and request_items.where(bf_status: "bf_in_transit").select(:id) %>
         <% if !hey_backfills.empty? %>
           <ol class="loans">
-            <%= render partial: 'loans/loandisplay', collection: RequestItem.where(id: hey_backfills), as: :loan %>
+            <%= render partial: 'backfills/backfill', collection: RequestItem.where(id: hey_backfills), as: :backfill %>
           </ol>
         <% else %>
           This user currently has no active backfills.
