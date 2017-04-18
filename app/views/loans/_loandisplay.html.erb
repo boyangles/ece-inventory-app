@@ -14,9 +14,7 @@
         <strong>Quantity Loaned </strong><%= loan.quantity_loan %>
         <br>
         <br>
-        <strong>Status </strong> <%= loan.bf_status %>
-        <br>
-        <%= link_to "Related Request", request_path(request.id) %>
+       <%= link_to "Related Request", request_path(request.id) %>
       </div>
 
       <div class="col-lg-5 pull-right">

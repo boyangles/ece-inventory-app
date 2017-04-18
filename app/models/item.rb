@@ -398,7 +398,7 @@ class Item < ApplicationRecord
   end
 
   def create_log_on_quantity_change()
-    if self.quantity_was.nil?
+    if self.quantity_was.nil? or self.has_stocks?
       return
     end
 
@@ -437,7 +437,6 @@ class Item < ApplicationRecord
 	end
 
   def create_log(action, quan_change)
-		if !self.has_stocks
 	    if self.curr_user.nil?
   	    curr = nil
     	else
@@ -461,9 +460,15 @@ class Item < ApplicationRecord
   	  log.save!
   	  itemlog = ItemLog.new(:log_id => log.id, :item_id => self.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => self.unique_name, :old_desc => old_desc, :new_desc => self.description, :old_model_num => old_model, :new_model_num => self.model_number, :curr_quantity => self.quantity, :has_stocks => self.has_stocks)
   	  itemlog.save!
-		end
+			return itemlog.id
   end
 
+	def create_destruction_stock_logs(itemlog_id, list_to_delete)
+		list_to_delete.each do |stock_id|
+			sil = StockItemLog.new(:item_log_id => itemlog_id, :stock_id => stock_id, :curr_serial_tag => Stock.find(stock_id).serial_tag)
+			sil.save!
+		end
+	end
 
   def create_log_on_desc_update()
     if (self.unique_name_was != self.unique_name || self.description_was != self.description || self.model_number_was != self.model_number)
