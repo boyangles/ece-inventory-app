@@ -145,9 +145,6 @@ class ItemsController < ApplicationController
       end
 
       if params[:minimum_stock]!=min_stock_before
-        100.times do |i|
-          puts "AHAHHAHAHAHAHAHAHAHAHAHAH"
-        end
         minimum_stock_email_changed_min_stock(min_stock_before,@item.minimum_stock,@item)
       end
 
