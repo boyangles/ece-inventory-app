@@ -1896,6 +1896,30 @@ Shows a specific request by ID.
 }
 ```
 
+## ITEMS-11 - Bulk Minimum Stock
+### *PUT/PATCH /api/items/{id}/bulk_minimum_stock* ###
+
+### Brief Description ###
+Allows a manager or admin to change the minimum stock of multiple items.
+
+### Sample Correct Input ###
+
+
+### Sample Outputs ###
+
+
+
+## ITEMS-12 All Minimum Stock
+
+### *PUT/PATCH /api/items/{id}/all_minimum_stock* ###
+
+### Brief Description ###
+Allows a manager or admin to change the minimum stock of all items.
+
+### Sample Correct Input ###
+
+
+### Sample Outputs ###
 
 # Logs API #
 ----------
@@ -1971,6 +1995,326 @@ Modify dates loans reminder emails are sent
 }
 ```
 
+# Backfills API #
+----------
+
+## BACKFILLS-1 Creating a Backfill ##
+
+//// ### *POST /api/backfills/* ###
+
+### Brief Description ###
+
+Create a backfill for a given request_item. A user can only make a backfill for his/her own loan.
+
+### Sample Correct Input ###
+
+### Sample Outputs ###
+
+```javascript
+{
+  "bf_status": "bf_request",
+  "request_id": 108,
+  "id": 187,
+  "quantity_disburse": 1,
+  "quantity_return": 0,
+  "quantity_loan": 20,
+  "item_id": 3,
+  "created_at": "2017-04-17T22:51:37.799-04:00",
+  "updated_at": "2017-04-17T23:04:02.696-04:00"
+}
+```
+
+
+## BACKFILLS-2 Viewing All Backfills Made by a Certain User ##
+
+////  ### *GET /api/backfills/* ###
+
+### Brief Description ###
+Allows API user to view all the backfill requests made by that user. If the API user is a manager or admin, he/she will see all the backfill requests made by all users.
+
+### Sample Correct Input ###
+
+### Sample Outputs ###
+
+```javascript
+[
+  {
+    "id": 159,
+    "request_id": 88,
+    "item_id": 2,
+    "created_at": "2017-04-17T00:36:26.134-04:00",
+    "updated_at": "2017-04-17T14:22:54.977-04:00",
+    "quantity_loan": 900,
+    "quantity_disburse": 0,
+    "quantity_return": 0,
+    "bf_status": "bf_satisfied"
+  },
+  {
+    "id": 154,
+    "request_id": 83,
+    "item_id": 6,
+    "created_at": "2017-04-17T00:29:08.195-04:00",
+    "updated_at": "2017-04-17T14:05:54.143-04:00",
+    "quantity_loan": 0,
+    "quantity_disburse": 0,
+    "quantity_return": 500,
+    "bf_status": "bf_satisfied"
+  },
+  {
+    "id": 14,
+    "request_id": 36,
+    "item_id": 16,
+    "created_at": "2017-04-16T23:59:32.525-04:00",
+    "updated_at": "2017-04-17T14:09:15.957-04:00",
+    "quantity_loan": 12,
+    "quantity_disburse": 30,
+    "quantity_return": 0,
+    "bf_status": "bf_satisfied"
+  },
+  {
+    "id": 167,
+    "request_id": 95,
+    "item_id": 3,
+    "created_at": "2017-04-17T15:32:23.925-04:00",
+    "updated_at": "2017-04-17T15:33:06.567-04:00",
+    "quantity_loan": 0,
+    "quantity_disburse": 0,
+    "quantity_return": 300,
+    "bf_status": "bf_satisfied"
+  },
+  {
+    "id": 158,
+    "request_id": 87,
+    "item_id": 17,
+    "created_at": "2017-04-17T00:35:05.654-04:00",
+    "updated_at": "2017-04-17T14:18:54.041-04:00",
+    "quantity_loan": 1,
+    "quantity_disburse": 0,
+    "quantity_return": 0,
+    "bf_status": "bf_satisfied"
+  },
+  {
+    "id": 172,
+    "request_id": 100,
+    "item_id": 11,
+    "created_at": "2017-04-17T16:03:35.898-04:00",
+    "updated_at": "2017-04-17T16:15:50.476-04:00",
+    "quantity_loan": 0,
+    "quantity_disburse": 1,
+    "quantity_return": 2,
+    "bf_status": "bf_satisfied"
+  },
+  {
+    "id": 168,
+    "request_id": 96,
+    "item_id": 14,
+    "created_at": "2017-04-17T15:33:32.572-04:00",
+    "updated_at": "2017-04-17T15:34:04.210-04:00",
+    "quantity_loan": 0,
+    "quantity_disburse": 0,
+    "quantity_return": 200,
+    "bf_status": "bf_satisfied"
+  },
+  {
+    "id": 169,
+    "request_id": 97,
+    "item_id": 12,
+    "created_at": "2017-04-17T15:34:18.931-04:00",
+    "updated_at": "2017-04-17T15:35:10.025-04:00",
+    "quantity_loan": 0,
+    "quantity_disburse": 0,
+    "quantity_return": 100,
+    "bf_status": "bf_satisfied"
+  },
+  {
+    "id": 164,
+    "request_id": 92,
+    "item_id": 11,
+    "created_at": "2017-04-17T12:59:03.829-04:00",
+    "updated_at": "2017-04-17T15:08:10.078-04:00",
+    "quantity_loan": 0,
+    "quantity_disburse": 1,
+    "quantity_return": 1,
+    "bf_status": "bf_satisfied"
+  },
+  {
+    "id": 177,
+    "request_id": 103,
+    "item_id": 6,
+    "created_at": "2017-04-17T16:24:20.871-04:00",
+    "updated_at": "2017-04-17T16:25:31.130-04:00",
+    "quantity_loan": 0,
+    "quantity_disburse": 0,
+    "quantity_return": 2,
+    "bf_status": "bf_satisfied"
+  },
+  {
+    "id": 166,
+    "request_id": 93,
+    "item_id": 16,
+    "created_at": "2017-04-17T15:29:09.056-04:00",
+    "updated_at": "2017-04-17T15:31:53.410-04:00",
+    "quantity_loan": 0,
+    "quantity_disburse": 1,
+    "quantity_return": 200,
+    "bf_status": "bf_satisfied"
+  },
+  {
+    "id": 170,
+    "request_id": 98,
+    "item_id": 16,
+    "created_at": "2017-04-17T15:35:54.072-04:00",
+    "updated_at": "2017-04-17T15:36:17.541-04:00",
+    "quantity_loan": 0,
+    "quantity_disburse": 0,
+    "quantity_return": 200,
+    "bf_status": "bf_satisfied"
+  },
+  {
+    "id": 171,
+    "request_id": 99,
+    "item_id": 6,
+    "created_at": "2017-04-17T15:46:06.233-04:00",
+    "updated_at": "2017-04-17T15:47:47.327-04:00",
+    "quantity_loan": 0,
+    "quantity_disburse": 1,
+    "quantity_return": 300,
+    "bf_status": "bf_satisfied"
+  },
+  {
+    "id": 175,
+    "request_id": 102,
+    "item_id": 6,
+    "created_at": "2017-04-17T16:22:16.506-04:00",
+    "updated_at": "2017-04-17T16:23:34.667-04:00",
+    "quantity_loan": 0,
+    "quantity_disburse": 0,
+    "quantity_return": 1,
+    "bf_status": "bf_satisfied"
+  },
+  {
+    "id": 187,
+    "request_id": 109,
+    "item_id": 14,
+    "created_at": "2017-04-17T22:52:36.347-04:00",
+    "updated_at": "2017-04-17T22:54:30.363-04:00",
+    "quantity_loan": 50,
+    "quantity_disburse": 21,
+    "quantity_return": 0,
+    "bf_status": "bf_request"
+  },
+  {
+    "id": 184,
+    "request_id": 108,
+    "item_id": 3,
+    "created_at": "2017-04-17T22:51:37.799-04:00",
+    "updated_at": "2017-04-17T23:04:02.696-04:00",
+    "quantity_loan": 20,
+    "quantity_disburse": 1,
+    "quantity_return": 0,
+    "bf_status": "bf_request"
+  }
+]
+```
+
+
+
+## BACKFILLS-3 Create a Comment for a Backfill ##
+
+### *PUT/PATCH /api/backfills/{id}/create_comment* ###
+
+### Brief Description ###
+Creates a comment for a given backfill. One must be a manager or admin to have this privilege.
+
+### Sample Correct Input ###
+
+
+### Sample Outputs ###
+
+```javascript
+{
+  "id": 84,
+  "request_item_id": 115,
+  "user_id": 28,
+  "comment": "This backfill looks legitimate"
+}
+```
+
+
+## BACKFILLS-4 Viewing All Comments for a Backfill ##
+
+### *GET /api/backfills/{id}/view_comments* ###
+
+### Brief Description ###
+Shows all the comments made by all managers, for a given backfill
+
+### Sample Correct Input ###
+
+
+### Sample Outputs ###
+
+
+```javascript
+[
+  {
+    "id": 79,
+    "request_item_id": 132,
+    "user_id": 28,
+    "comment": "this looks awesome!"
+  },
+  {
+    "id": 80,
+    "request_item_id": 132,
+    "user_id": 28,
+    "comment": "even better than I imagined! "
+  },
+  {
+    "id": 81,
+    "request_item_id": 132,
+    "user_id": 28,
+    "comment": "wonderful!"
+  },
+  {
+    "id": 82,
+    "request_item_id": 132,
+    "user_id": 28,
+    "comment": "a bit overrated replacement"
+  },
+  {
+    "id": 83,
+    "request_item_id": 132,
+    "user_id": 28,
+    "comment": "thank you so much!"
+  },
+]
+```
+
+
+## BACKFILLS-5 Change the Status of a Backfill ##
+
+### *PUT/PATCH /api/backfills/{id}/change_status* ###
+
+### Brief Description ###
+Allows a manager or admin to change the status of a backfill.  
+
+### Sample Correct Input ###
+
+### Sample Outputs ###
+
+```javascript
+
+{
+  "bf_status": "bf_denied",
+  "id": 173,
+  "quantity_disburse": 1,
+  "quantity_return": 0,
+  "quantity_loan": 20,
+  "request_id": 108,
+  "item_id": 3,
+  "created_at": "2017-04-17T22:51:37.799-04:00",
+  "updated_at": "2017-04-17T23:08:55.539-04:00"
+}
+```
 
 
 
