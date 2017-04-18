@@ -1,4 +1,4 @@
-## Evolution 3 Deployment Guide
+## Evolution 4 Deployment Guide
 
 Our software, the Spicy Software ECE Inventory System, is a web application built using the Ruby on Rails framework.
 
@@ -14,16 +14,22 @@ The database consists of tables with the model classes as the primary (lookup) k
 | Model Class |                                                       Fields                                                       |
 |-------------|:------------------------------------------------------------------------------------------------------------------:|
 | User        | username, password_digest, email, created_at, updated_at, status, privilege, auth_token |
-| Item        | unique_name, quantity, quantity_on_loan, model_number, description, location, status, last_action                                                       |
-| Custom_Field | field_name, private_indicator, field_type | 
+| Item        | unique_name, quantity, quantity_on_loan, model_number, description, location, status, last_action, has_stocks, minimum_stock, stock_threshold_tracked                                                       |
+| Stock | item_id, available, serial_tag |
+| Custom_Field | field_name, private_indicator, field_type, is_stock | 
 | Item_Custom_Field | item_id, custom_field_id, short_text_content, long_text_content, integer_content, float_content|
+| Stock_Custom_Field | stock_id, custom_field_id, short_text_content, long_text_content, integer_content, float_content |
 | Tag         | name                                                                                    |
 | Item_Tag   | tag_id, item_id                                                                            |
-|Request     | reason, created_at, updated_at, status, response, user_id, request_initiator   |
-| Request_Item | request_id, item_id, created_at, updated_at, quantity_loan, quantity_disburse, quantity_return |
+| Request     | reason, created_at, updated_at, status, response, user_id, request_initiator   |
+| Request_Item | request_id, item_id, created_at, updated_at, quantity_loan, quantity_disburse, quantity_return, bf_status |
+| Request_Item_Stocks | stock_id, request_item_id, status |
+| Request_Item_Comments | request_item_id, user_id, comment |
+| Attachment | request_item_id, doc_file_name, doc_content_type, doc_file_size, doc_updated_at |
 | Log        | created_at, user_id, log_type|
-| Item_Log | log_id, item_id, action, curr_quantity, quantity_change, old_name, new_name, old_desc, new_desc, old_model_num, new_model_num, affected_request|
 | User_Log | log_id, user_id, action, old_privilege, new_privilege |
+| Item_Log | log_id, item_id, action, curr_quantity, quantity_change, old_name, new_name, old_desc, new_desc, old_model_num, new_model_num, affected_request, has_stocks|
+| Stock_Item_Log | item_log_id, stock_id, curr_serial_tag |
 | Request_Log | log_id, request_id, action |
 | Stack_Exchange | created_at, updated_at |
 | Subscriber | user_id |
@@ -49,8 +55,9 @@ A user instance is created for every user in the system, whether their accounts 
 * **auth_token** - 
 
 ##### ASSOCIATIONS
-* has-many REQUESTS
-* has-many USER_LOGS
+* has-many REQUESTs
+* has-many REQUEST_ITEM_COMMENTs
+* has-many USER_LOGs
 
 ### Items
 Each item instance represents a type of equipment in the inventory system. Items can be created and edited by managers or administrators. 
@@ -62,15 +69,71 @@ Each item instance represents a type of equipment in the inventory system. Items
 * **location** - This field informs a user of the current location of the item in question.
 * **status** - An item can either be active or deactive. A deactive item cannot be requested, disbursed, etc. However, its logged record is maintained and is viewable by administrators. An active item can be subject to all the requirements of this inventory system.
 * **last_action** - This field was provided to provide information when logging quantity changes. In this way, quantity change will be associated with an action, and logging can stay automatic within the model. 
-
+* **has_stocks** - This Boolean field is true if the item is per-asset; false if not.
+* **stock_threshold_tracked** - This Boolean field is true if the item has a minimum stock; false otherwise.
+* **minimum_stock** - This field stores the minimum stock integer of an item.
 
 ##### ASSOCIATIONS
-* has-many TAGS, through ITEM_TAGS
-* has-many ITEM_TAGS
-* has-many REQUESTS, through REQUEST_ITEMS
-* has-many REQUEST_ITEMS
-* has-many CUSTOM_FIELDS, through ITEM_CUSTOM_FIELDS
-* has-many ITEM_CUSTOM_FIELDS
+* has-many TAGs, through ITEM_TAGs
+* has-many ITEM_TAGs
+* has-many REQUESTs, through REQUEST_ITEMs
+* has-many REQUEST_ITEMs
+* has-many CUSTOM_FIELDs, through ITEM_CUSTOM_FIELDs
+* has-many ITEM_CUSTOM_FIELDs
+* has-many STOCKs
+* has-many ITEM_LOGs
+
+### Stocks
+Stocks keep track of all the assets of an item, alongside their availability.
+
+##### FIELDS
+* **item_id** - This fields tells us which item with which this asset is associated.
+* **available** - This Boolean is true if the asset is in stock and becomes false if the item is loaned out; when an item is returned, it is true again. If an item is disbursed or deleted, it is deleted from the table entirely.
+* **serial_tag** - This is the 8 digit alphanumeric serial tag used to distinguish assets. All serial_tags are unique.
+
+##### ASSOCIATIONS
+* has-many REQUEST_ITEMs, through REQUEST_ITEM_STOCKs
+* has-many REQUEST_ITEM_STOCKs
+* has-many TAGs, through ITEM_TAGs
+* has-many ITEM_TAGs
+
+### Custom_Fields
+Custom Fields help define an item beyond the default fields provided by the system. Currently, two pre-loaded custom fields include Location (public) and Restock_Info (private). This table keeps track of all the custom fields created.
+
+##### FIELDS
+* **field_name** - This string is the name of the custom field.
+* **private_indicator** - This Boolean specifies whether a custom-field is private or not (and therefore whether it is view-able to regular-privilege users).
+* **field_type** - This field is an enum, with four possibilities. It must be short_text_type, long_text_type, integer_type, or float_type.
+* **is_stock** - This Boolean is true if the custom field is specifically a per-asset custom field. 
+
+##### ASSOCIATIONS
+* has-many ITEMS through ITEM_CUSTOM_FIELDs
+* has-many ITEM_CUSTOM_FIELDs
+* has-many STOCK_CUSTOM_FIELDs
+
+### Item_Custom_Fields
+Item Custom Fields holds the actual values of all the custom fields created. Because each custom field can only be one type, three of the four _content fields will always be nil; the non-nil field corresponding with the custom field "field_type" field will hold the value of the field. 
+
+##### FIELDS
+* **item_id** - This ID corresponds with the item to which this entry belongs.
+* **custom_field_id** - This ID corresponds with the custom_field to which this entry belongs.
+* **short_text_content**/**long_text_content**/**integer_content****float_content**   - As mentioned above, three out of four of these fields will always be nil, but the non-nil field will hold the value of the custom field associated with the item specified. 
+
+##### ASSOCIATIONS
+* belongs-to CUSTOM_FIELDs
+* belongs-to ITEMs
+
+### Stock Custom Fields
+Stock Custom Fields holds the actual values of all the custom fields created - for assets. 
+
+##### FIELDS
+* **stock_id** - This ID corresponds with the stock to which this entry belongs.
+* **custom_field_id** - This ID corresponds with the custom_field to which this entry belongs.
+* **short_text_content**/**long_text_content**/**integer_content****float_content**   - Just as in item_custom_fields, three out of four of these fields will always be nil, but the non-nil field will hold the value of the custom field associated with the item specified. 
+
+##### ASSOCIATIONS
+* belongs-to STOCKs
+* belongs-to CUSTOM_FIELDs
 
 ### Tags
 Tags help classify items, and are created by administrators. Items are searchable via their tags. 
@@ -88,31 +151,8 @@ Item tags exist to keep track of the many relationships between various items an
 * **item_id/tag_id** - Keeps track of the specific item and tag which are associated.
 
 ##### ASSOCIATIONS
-* belongs-to ITEMS
-* belongs-to TAGS
-
-### Custom_Fields
-##### FIELDS
-* **field_name** - 
-* **private_indicator** -
-* **field_type** -
-
-##### ASSOCIATIONS
-* has-many ITEMS through ITEM_CUSTOM_FIELDS
-* has-many ITEM_CUSTOM_FIELDS
-
-### Item_Custom_Fields
-##### FIELDS
-* **item_id** -
-* **custom_field_id** -
-* **short_text_content** -
-* **long_text_content** -
-* **integer_content** -
-* **float_content** - 
-
-##### ASSOCIATIONS
-* belongs-to CUSTOM_FIELDS
-* belongs-to ITEMS
+* belongs-to ITEMs
+* belongs-to TAGs
 
 ### Requests
 Requests are the means through which item disbursements are handled. All users have access to an initial request, referred to as a cart, to which they can add items and corresponding quantities at will. Requests can then be submitted for approval via students or for direct logging of disbursements via managers or administrators. 
@@ -126,24 +166,63 @@ Requests are the means through which item disbursements are handled. All users h
 * **request_initiator** - In most cases, this field is the same as the user_id field. This field would be different in the case of a direct disbursement - in that case, the user_id field would hold the id of the recipient of the request, while this field would hold the id of the manager who created the direct disbursement. This value must be an integer.
 
 ##### ASSOCIATIONS
-* has-many ITEMS, through REQUEST_ITEMS
-* has-many REQUEST_ITEMS
-* belongs-to USERS
+* has-many ITEMS, through REQUEST_ITEMs
+* has-many REQUEST_ITEMs
+* belongs-to USERs
 
 ### Request_Items
-Request_Items exist for each instance of an item within a request. This object also keeps track of the quantity of the specific item in the specific request.
-request_id, item_id, created_at, updated_at, quantity|
+Request_Items exist for each instance of an item within a request. This object also keeps track of the quantity of the specific item in the specific request. After the associated request has been approved, we use request_items to track loans, backfills, etc.
+
 ##### FIELDS
 * **request_id** - This is the id of the request with which the request_item is associated.
 * **item_id** - This is the id of the item with which the request_item is associated.
 * **quantity_loan** - This field specifies the quantity of the item to be loaned out/which is loaned out in a request. After a request is approved, this value can decrease to zero after the item is returned by the user or disbursed to the user from the admin. If this value is greater than 0, the system keeps track of this request_item as an active loan. This value must be an integer.
 * **quantity_disburse** - This field specifies the quantity of the item to be disbursed/which is disbursed in a request. After a request is approved, this value can increase if a manager chooses to disburse items directly from loan. This value must be an integer.
 * **quantity_return** - This field specifies the quantity of an item that was loaned out but has been returned into the inventory system. This value must be an integer.
+* **bf_status** - This is an enum that tracks the possible backfill states of a loan. The states possible are: loan, bf_request, bf_in_transit (after a backfill has been approved), bf_denied, bf_satisfied, bf_failed.
 * **created_at**/**updated_at** - These fields keep track of the date and time at which the request_item is created and updated.
 
 ##### ASSOCIATIONS
-* belongs-to REQUESTS
-* belongs-to ITEMS
+* belongs-to REQUESTs
+* belongs-to ITEMs
+* has-many REQUEST_ITEM_STOCKs
+* has-many ATTACHMENTs
+* has-many REQUEST_ITEM_COMMENTs
+
+### Request_Item_Stocks
+These link up the assets with request_items and allow the system to keep track which assets are out on which loan, backfill, disbursement, etc.
+
+##### FIELDS
+* **stock_id** - This field tells us which stock is concerned.
+* **request_item_id** - This field tells us to which request_item the asset is linked.
+* **status** - This enum tells us which action of the request_item to the asset belongs. It is either 'disburse', 'loan', or 'return'; backfills are classified as 'loan' until they are satisfied, at which point they are converted to 'disbursement'.
+
+##### ASSOCIATIONS
+* belongs-to REQUEST_ITEMs
+* belongs-to STOCKs
+
+### Request_Item_Comments
+These are comments that users can make on backfill requests at any time during their lifetime. 
+
+##### FIELDS
+* **request_item_id** - This field contains the request_item - and therefore the backfill - with which this comment is associated.
+* **user_id** - This field contains the identify of the user who is making the comment.
+* **comment** - This field holds the actual text content of the comment.
+
+##### ASSOCIATIONs
+* belongs-to REQUEST_ITEMs
+* belongs-to USERs
+
+### Attachments
+Attachments are the optional PDFs that are uploaded for backfill request. This is achieved in our project using the Paperclip gem; we are able to easily upload and store PDFs while keeping track of their location (url).
+
+##### FIELDS
+* **request_item_id** - This tells us which request_item - and therefore which backfill request - this PDF is linked to. 
+* **doc_file_name** - This is the name of the file.
+
+##### ASSOCIATIONs
+* belongs-to REQUEST_ITEMs
+
 
 ### Logs
 This is the overall log table which includes entries for every action taken in the system related to user, item, and request workflow. Logs are automatically generated in the models of each of these classes upon creation and update, and cannot be modified by any user. 
@@ -153,7 +232,16 @@ This is the overall log table which includes entries for every action taken in t
 * **user_id** - This field specifies the user who did the initiating action which caused the corresponding log entry. 
 * **log_type** - This is an enum which specifies which object was directly edited to generate this log. Because we do not want to include extraneous columns within the log table in order to accommodate the different classes, this will allow us to query the sub-log tables (item_logs, user_logs, and request_logs) in order to grab the details of each log. The enums for this are "request", "user", and "item".
 
-This object has no associations, due to its split nature.
+This object (and most of the log tables) have no associations, due to its split nature.
+
+### User_Logs
+User_Logs keeps track of the details of every transaction that has to do with user creation, deletion, or privilege change.
+
+##### FIELDS
+* **log_id** - This references the entry in the log table which this user_log belongs to. In this way, we can query the User_Logs in order to find the specific information for any entry in the log table whose log_type is "user".
+* **user_id** - This references the specific user whose creation/deletion/privilege-change has caused this automatic logging.
+* **action** - This specifies the exact change that the user underwent. User actions have 3 enum options: they can be created, deleted, or have their privilege changed.
+* **old_privilege**/**new_privilege** - These field will be checked if the action reported is a privilege change; they track the privileges of the user before and after the change.
 
 ### Item_Logs
 Item_Logs keeps the specific information related to every transaction that has to do with item creation, deletion, or field change.
@@ -167,15 +255,10 @@ Item_Logs keeps the specific information related to every transaction that has t
 * **old_desc**/**new_desc** - These field will be checked if the action reported is a description update; they track the descriptions of the item before and after the change.
 * **old_model_num**/**new_model_num** - These field will be checked if the action reported is a description update; they track the model numbers of the item before and after the change.
 * **affected_request** - This field is filled in when an item is logged as loaned, disbursed, returned, or disbursed_from_loan: in this way, we can provide more information with each disbursement, loan, or return.
+* **has_stocks** - This field is a boolean that is true when the item being logged (at the time of logging) is an asset; otherwise it is false. When it is true, our system is able to go search for the assets whose actions are logged in the Stock_Item_Log table.
 
-### User_Logs
-User_Logs keeps track of the details of every transaction that has to do with user creation, deletion, or privilege change.
-
-##### FIELDS
-* **log_id** - This references the entry in the log table which this user_log belongs to. In this way, we can query the User_Logs in order to find the specific information for any entry in the log table whose log_type is "user".
-* **user_id** - This references the specific user whose creation/deletion/privilege-change has caused this automatic logging.
-* **action** - This specifies the exact change that the user underwent. User actions have 3 enum options: they can be created, deleted, or have their privilege changed.
-* **old_privilege**/**new_privilege** - These field will be checked if the action reported is a privilege change; they track the privileges of the user before and after the change.
+##### ASSOCIATIONS
+* has-many STOCK_ITEM_LOGs
 
 ### Request_Logs
 Request_Logs keep track of the details of every transaction that has to do with a request status change, from cart to outstanding, cancelled, approved, and/or denied.
@@ -217,15 +300,15 @@ Assuming that those programs are configured correctly, a developer can then navi
 
 into the command line. Then the developer can navigate to 
 
-    http://localhost:3000
+    https://localhost:3000
 
 and see the local copy of the project, with all local changes.
 
 For information about deploying our project onto a remote server, please refer to the our [deployment guide](DeploymentGuide.md). 
 
 ## Install System from Scratch using Backed Up Data
-To install the system from scratch using backed up data, first refer to the Deployment guide for setting up your environment.
-Then, once everything is ready, locate your database backup file, and follow the steps in the Backup guide under "To Restore Database"
+To install the system from scratch using backed up data, first refer to the  [deployment guide](DeploymentGuide.md) for setting up your environment.
+Then, once everything is ready, locate your database backup file, and follow the steps in the [backup guide]{BackupGuide.md} under "To Restore Database"
 
 ## Testing
 There are two separate test suites, a Rails test suite and an Rspec/Capybara suite. </br>
@@ -238,4 +321,5 @@ The rails tests focus on controller and model back end validations. The rspec te
 
 
 The Pry gem helps debug and write capybara tests more efficiently, as you can debug inside of a test, as opposed to running the suite/test file multiple times. 
+
 

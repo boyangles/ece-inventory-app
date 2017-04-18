@@ -2,7 +2,7 @@
   <td class="text-center"><%= link_to stock.serial_tag, item_stock_path(@item.id, stock.id) %></td>
   <td class="text-center"><%= stock.available %></td>
   <% if is_manager_or_admin? %>
-      <td class="text-center"><%= link_to "Edit", edit_item_stock_path(@item, stock), class: "btn btn-primary" %></td>
+      <td class="text-right"><%= link_to glyph(:pencil), edit_item_stock_path(@item, stock), class: "btn btn-primary" %></td>
   <% else %>
       <td></td>
   <% end %>
@@ -12,6 +12,6 @@
         <%= check_box_tag 'stock_ids[]', stock.id, false, {multiple: true} %>
       </td>
   <% else %>
-      <td></td>
-  <% end %>
+			<td></td> 
+ <% end %>
 </tr>

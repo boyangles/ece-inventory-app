@@ -1905,6 +1905,7 @@ Allows a manager or admin to change the minimum stock of multiple items.
 
 ### Sample Correct Input ###
 
+http://imgur.com/a/QU3Mx
 
 ### Sample Outputs ###
 
@@ -1972,6 +1973,7 @@ Allows a manager or admin to change the minimum stock of all items.
 
 ### Sample Correct Input ###
 
+http://imgur.com/a/EPywz
 
 ### Sample Outputs ###
 
@@ -2338,6 +2340,8 @@ Create a backfill for a given request_item. A user can only make a backfill for 
 
 ### Sample Correct Input ###
 
+[Imgur](http://i.imgur.com/bQORhkF.png)
+
 ### Sample Outputs ###
 
 ```javascript
@@ -2363,6 +2367,8 @@ Create a backfill for a given request_item. A user can only make a backfill for 
 Allows API user to view all the backfill requests made by that user. If the API user is a manager or admin, he/she will see all the backfill requests made by all users.
 
 ### Sample Correct Input ###
+
+[Imgur](http://i.imgur.com/AkzgCr1.png)
 
 ### Sample Outputs ###
 
@@ -2558,6 +2564,7 @@ Creates a comment for a given backfill. One must be a manager or admin to have t
 
 ### Sample Correct Input ###
 
+[Imgur](http://i.imgur.com/dxjMokD.png)
 
 ### Sample Outputs ###
 
@@ -2580,6 +2587,7 @@ Shows all the comments made by all managers, for a given backfill
 
 ### Sample Correct Input ###
 
+[Imgur](http://i.imgur.com/8bg2etO.png)
 
 ### Sample Outputs ###
 
@@ -2628,6 +2636,8 @@ Shows all the comments made by all managers, for a given backfill
 Allows a manager or admin to change the status of a backfill.  
 
 ### Sample Correct Input ###
+
+[Imgur](http://i.imgur.com/il0V1oU.png)
 
 ### Sample Outputs ###
 

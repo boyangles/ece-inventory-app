@@ -60,16 +60,23 @@ class Stock < ApplicationRecord
     raise Exception.new('Inputted Item is not per-asset!') unless item.has_stocks
 
     Stock.transaction do
-      for i in 1..num do
-        Stock.create!(item_id: item_id, available: true)
+  		iteid = item.create_log("acquired_or_destroyed_quantity", num)
+	    for i in 1..num do
+				stock = Stock.create!(item_id: item_id, available: true)
         item.update_item_quantity_on_stock_creation
+				sil = StockItemLog.new(:item_log_id => iteid, :stock_id => stock.id, :curr_serial_tag => stock.serial_tag)
+				sil.save!
       end
+
     end
   end
 
   def self.create_stock!(serial_tag, item_id)
-    Stock.create!(serial_tag: serial_tag, item_id: item_id)
+    stock = Stock.create!(serial_tag: serial_tag, item_id: item_id)
     Item.find(item_id).update_item_quantity_on_stock_creation
+ 		iteid = Item.find(item_id).create_log("acquired_or_destroyed_quantity", 1)
+		sil = StockItemLog.new(:item_log_id => iteid, :stock_id => stock.id, :curr_serial_tag => stock.serial_tag)
+		sil.save! 
   end
 
   def self.filter_by_search(search_input)
