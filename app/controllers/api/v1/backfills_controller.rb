@@ -9,7 +9,7 @@ class Api::V1::BackfillsController < BaseController
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:change_status, :create_comment, :view_comments].each do |api_action|
+  [:view_comments, :change_status, :create_comment].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -193,7 +193,7 @@ class Api::V1::BackfillsController < BaseController
 
 
   def view_comments
-    render json: @request_item.request_item_comments
+    # render json: @request_item.request_item_comments
   end
 
 
@@ -235,6 +235,10 @@ class Api::V1::BackfillsController < BaseController
   end
 
   def render_404_if_request_item_unknown
+    100.times do |i|
+      puts "what"
+      puts params[:request_item_id]
+    end
     render json: { errors: 'Request Item not found!' }, status: 404 unless
         RequestItem.exists?(params[:request_item_id])
   end
