@@ -169,7 +169,7 @@
   			<% hey_backfills = loanss.where(bf_status: "bf_request").select(:id) and loanss.where(bf_status: "bf_in_transit").select(:id) %>
         <% if !hey_backfills.empty? %>
             <ol class="loans">
-              <%= render partial: "loans/loandisplay", collection: RequestItem.where(id: hey_backfills), as: :loan %>
+              <%= render partial: 'backfills/backfill', collection: RequestItem.where(id: hey_backfills), as: :backfill %>
             </ol>
         <% else %>
             <% text = (is_manager_or_admin?) ? "There are no loans on this item currently." : "You have no loans on this item currently" %>
