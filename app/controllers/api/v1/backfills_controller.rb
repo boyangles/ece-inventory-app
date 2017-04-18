@@ -27,7 +27,6 @@ class Api::V1::BackfillsController < BaseController
     request item is in any state besides "loan", it will not be eligible for a new backfill request. A successfully created backfill
     will carry a backfill status of "bf_request".
     '
-    param :form, 'Attachment', :string, :optional, "Attachment"
     param :form, 'request_item_id', :string, :required, "Request Item ID"
     response :ok
     response :unauthorized
@@ -81,14 +80,6 @@ class Api::V1::BackfillsController < BaseController
 
   def create
     old_status = @request_item.bf_status
-
-    attachment_path = params[:Attachment]
-
-
-    10.times do |i|
-      puts "THe request item is #{@request_item}"
-      puts attachment_path
-    end
 
     render_client_error("The loan must be belong to you to initiate backfill", 422) and
         return unless loan_belongs_to_user?(@request_item)
