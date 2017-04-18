@@ -1,6 +1,8 @@
 class ItemLog < ApplicationRecord
 	include Loggable
 
+	has_many :stock_item_logs
+
 	enum action: {
 		acquired_or_destroyed_quantity: 0,
 		administrative_correction: 1,
@@ -15,7 +17,9 @@ class ItemLog < ApplicationRecord
 		backfill_request_approved: 10,
 		backfill_request_denied: 11,
 		backfill_request_satisfied: 12,
-		backfill_request_failed: 13
+		backfill_request_failed: 13,
+		convert_to_assets: 14,
+		convert_to_global: 15
 	}
 
 	validates :action, :inclusion => { :in => ITEM_LOGGED_ACTIONS }

@@ -23,14 +23,14 @@
         <td class="text-center">
           <% if req_item.request_item_stocks.filter(status: 'loan').size > 0 %>
               <% req_item.request_item_stocks.filter(status: 'loan').each_with_index do |req_item_stock, index| %>
-                  <%= link_to Stock.find(req_item_stock.stock_id).serial_tag + ((index == req_item.request_item_stocks.filter(status: 'loan').size-1) ? '' : ', '), item_stock_path(Stock.find(req_item_stock.stock_id).id) %>
+                  <%= link_to Stock.find(req_item_stock.stock_id).serial_tag + ((index == req_item.request_item_stocks.filter(status: 'loan').size-1) ? '' : ', '), item_stock_path(req_item.item.id, Stock.find(req_item_stock.stock_id).id) %>
               <% end %>
           <% else %>
               <%= req_item.item.has_stocks? ? 'None' : 'N/A' %>
           <% end %>
         </td>
 
-        <% if (req_item.quantity_loan > 0) && is_manager_or_admin? && current_user != User.find(request.user_id) && !req_item.bf_request? && !req_item.bf_in_transit? %>
+        <% if (req_item.quantity_loan > 0) && is_manager_or_admin? && !req_item.bf_request? && !req_item.bf_in_transit? %>
             <% if Item.find(req_item.item_id).has_stocks %>
                 <td><%= render 'loans/returnquantityform', request_item: req_item %></td>
                 <td><%= render 'loans/disbursestocksform', request_item: req_item %></td>

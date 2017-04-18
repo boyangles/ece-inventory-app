@@ -21,11 +21,13 @@
   </h2>
 </div>
 
+<% if is_admin? %>
 <%= form_tag( create_stocks_item_path(@item), method: :post, multipart: true) do |f| %>
     <div class="pull-left form-group">
-      <%= text_field_tag :num_stocks, params[:num_stocks], class: 'form-control col-lg-10', placeholder: "Serial Tag (8 Characters)" %>
+      <%= text_field_tag :num_stocks, params[:num_stocks], class: 'form-control col-lg-10', placeholder: "Serial Tag(8) or Quantity" %>
       <%= submit_tag "Create Asset", class: "form-control", type: "submit" %>
     </div>
+<% end %>
 <% end %>
 
 <%= form_tag ( delete_multiple_stocks_item_path @item, method: :delete) do |f| %>
@@ -37,7 +39,9 @@
         <th class="text-center">Serial Tag</th>
         <th class="text-center">Available</th>
         <th></th>
-        <th class="text-center">Select</th>
+        <% if is_admin? %>
+            <th class="text-center">Select</th>
+        <% end %>
       </tr>
       </thead>
 

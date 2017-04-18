@@ -13,11 +13,6 @@ class ItemsController < ApplicationController
     items_required = Item.all
     items_stocked = Item.all
 
-    # 15.times do|i|
-    #   puts "THE VALUE OF PARAMS STOCKED IS"
-    #   puts params[:stocked]
-    # end
-
     if params[:excluded_tag_names]
       @excluded_tag_filters = params[:excluded_tag_names]
       items_excluded = Item.tagged_with_none(@excluded_tag_filters).select(:id)
@@ -39,7 +34,6 @@ class ItemsController < ApplicationController
         filter_by_model_search(params[:model_search]).
         order('unique_name ASC').paginate(page: params[:page], per_page: 10)
 
-    # update_min_stock_of_certain_items(@items, 999)
   end
 
   # GET /items/1
@@ -50,8 +44,6 @@ class ItemsController < ApplicationController
     else
       @item = Item.filter_active.find(params[:id])
     end
-
-    # update_min_stock_of_certain_items(@item, 666)
 
     outstanding_filter_params = {
         :status => "outstanding"
@@ -85,7 +77,6 @@ class ItemsController < ApplicationController
   def destroy
 
     # Delete stocks with destroy_stocks_by_serial_tags! - surround with try catch
-
     item = Item.find(params[:id]).status = 'deactive'
     item.save!
     flash[:success] = "Item deleted!"
@@ -154,9 +145,6 @@ class ItemsController < ApplicationController
       end
 
       if params[:minimum_stock]!=min_stock_before
-        100.times do |i|
-          puts "AHAHHAHAHAHAHAHAHAHAHAHAH"
-        end
         minimum_stock_email_changed_min_stock(min_stock_before,@item.minimum_stock,@item)
       end
 
@@ -193,44 +181,42 @@ class ItemsController < ApplicationController
     end
     items_active = Item.where(id: items_excluded & items_required & items_stocked).filter_active
 
-    # do we really wanna paginate?
     @items = items_active.
         filter_by_search(params[:search]).
         filter_by_model_search(params[:model_search]).
         order('unique_name ASC').paginate(page: params[:page], per_page: 10)
-    # @items = items_active.
-    #     filter_by_search(params[:search]).
-    #     filter_by_model_search(params[:model_search]).
-    #     order('unique_name ASC')
   end
 
 
   def update_quantity
 
-    temp_quantity =   @item.quantity
-
-    @item.quantity = @item.quantity + params[:quantity_change].to_f
-
-
-    minimum_stock_email(temp_quantity,@item.quantity, @item)
-
-    if !@item.save
-      flash.now[:danger] = "Quantity unable to be changed"
-      render 'edit'
+    if @item.has_stocks
+      flash.now[:danger] = "Cannot directly change quantity of per asset Item"
+      render :edit and return
+    else
+      temp_quantity = @item.quantity
+      @item.quantity = @item.quantity + params[:quantity_change].to_f
+      if !@item.save
+        flash.now[:danger] = "Quantity unable to be changed"
+        render 'edit'
+      end
+      minimum_stock_email(temp_quantity,@item.quantity, @item)
     end
   end
 
   def convert_to_stocks
+		@item.curr_user = current_user
     if @item.convert_to_stocks
       flash[:success] = "Item successfully converted to Assets!"
       redirect_to item_stocks_path(@item)
     else
-      flash.now[:danger] = "Item already converted to Assets"
-      render :show
+      flash[:danger] = "Item already converted to Assets"
+      redirect_to items_path
     end
   end
 
   def convert_to_global
+		@item.curr_user = current_user
     if @item.convert_to_global
       flash[:success] = "Item successfully converted to global"
       redirect_to item_path(@item)
@@ -241,9 +227,17 @@ class ItemsController < ApplicationController
   end
 
   def create_stocks
+		@item.curr_user = current_user
     if Item.is_valid_integer(params[:num_stocks])
       begin
-        Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
+        max = 10000
+        if params[:num_stocks].to_i < max
+          Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
+        elsif params[:num_stocks].size == 8
+          Stock.create_stock!(params[:num_stocks], params[:id])
+        else
+          raise Exception.new("Cannot create more than #{max} assets at a time")
+        end
         flash[:success] = "(#{params[:num_stocks]}) Assets successfully created!"
         redirect_to item_stocks_path @item and return
       rescue Exception => e
@@ -294,7 +288,11 @@ class ItemsController < ApplicationController
   def delete_multiple_stocks
     begin
       tags = Stock.get_tags_from_ids(params[:stock_ids])
-      params[:stock_ids].each do |id|
+			@item.curr_user = current_user 
+			heyd = @item.create_log("acquired_or_destroyed_quantity", params[:stock_ids].size)
+			@item.create_destruction_stock_logs(heyd, params[:stock_ids])
+  
+	     params[:stock_ids].each do |id|
         stock = Stock.find(id)
         if stock.available
           @item.delete_stock(stock)
@@ -305,7 +303,8 @@ class ItemsController < ApplicationController
           req_item_stock.request_item.disburse_loaned_subrequest!(tag_list)
         end
       end
-      flash[:success] = "Deleted #{tags} assets"
+
+	    flash[:success] = "Deleted #{tags} assets"
       redirect_to item_stocks_path @item
     rescue Exception => e
       flash[:danger] = "Could not delete all stocks. #{e.message}"
@@ -322,24 +321,10 @@ class ItemsController < ApplicationController
 
 
   #THIS CODE IS DUPLICATED!! I WILL FIND A WAY TO REFACTOR LATER
-  #THIS CODE IS DUPLICATED!! I WILL FIND A WAY TO REFACTOR LATER
-  #THIS CODE IS DUPLICATED!! I WILL FIND A WAY TO REFACTOR LATER
-  #THIS CODE IS DUPLICATED!! I WILL FIND A WAY TO REFACTOR LATER
   def minimum_stock_email_changed_min_stock(min_before, min_after, item)
-    10.times do |i|
-      puts "The quantity before is:"
-      puts min_before
-      puts "The quantity after is:"
-      puts min_after
-      puts "The item is:"
-      puts item.unique_name
-    end
+
     if min_before >= item.quantity && min_after < item.quantity
-      10.times do |i|
-        puts "The conditinos except for threshold are met for email threshold to send!!!!"
-      end
       if item.stock_threshold_tracked
-        puts "THE EMAIL WILL DELIVER NOW"
         UserMailer.minimum_stock_min_stock_change(min_before, min_after, item).deliver_now
       end
     end
@@ -349,18 +334,7 @@ class ItemsController < ApplicationController
   #THIS CODE IS DUPLICATED!! I WILL FIND A WAY TO REFACTOR LATER. LOL NOT
 
   def minimum_stock_email(q_before, q_after, item)
-    10.times do |i|
-      puts "The quantity before is:"
-      puts q_before
-      puts "The quantity after is:"
-      puts q_after
-      puts "The item is:"
-      puts item.unique_name
-    end
     if q_before >= item.minimum_stock && q_after < item.minimum_stock
-      10.times do |i|
-        puts "The conditinos except for threshold are met for email threshold to send!!!!"
-      end
       if item.stock_threshold_tracked
         puts "THE EMAIL WILL DELIVER NOW"
         UserMailer.minimum_stock_quantity_change(q_before, q_after, item).deliver_now
