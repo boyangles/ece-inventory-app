@@ -295,14 +295,6 @@ class RequestItem < ApplicationRecord
   end
 
   def minimum_stock_email(q_before, q_after, item)
-    10.times do |i|
-      puts "The quantity before is:"
-      puts q_before
-      puts "The quantity after is:"
-      puts q_after
-      puts "The item is:"
-      puts item.unique_name
-    end
     if q_before >= item.minimum_stock && q_after < item.minimum_stock
       10.times do |i|
         puts "The conditinos except for threshold are met for email threshold to send!!!!"
