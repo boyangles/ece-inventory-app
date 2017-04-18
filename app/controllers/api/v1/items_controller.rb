@@ -140,7 +140,7 @@ class Api::V1::ItemsController < BaseController
   swagger_api :bulk_minimum_stock do
     summary "Set minimum stock of many items at once. "
     notes "
-    The format of the items should be in the form ['x', 'y', 'z', 'a'], where 'x', 'y', 'z', and 'a' are integers that reference the item_id of the item that will be modified.
+    The format of the items should be in the form [\"x\", \"y\", \"z\", \"a\"], where 'x', 'y', 'z', and 'a' are integers that reference the item_id of the item that will be modified.
     All the items in the array will have their minimum quantity changed to the value of the updated minimum stock quantity
     "
 
@@ -765,7 +765,7 @@ class Api::V1::ItemsController < BaseController
       else
         render_client_error(@item.errors, 422) and return
       end
-      new_item_array << actual_item
+      new_item_array << Item.find(item_temp)
       minimum_stock_email_changed_min_stock(original_min_stock, actual_item.minimum_stock,actual_item)
     end
     render :json => new_item_array
