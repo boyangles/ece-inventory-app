@@ -200,8 +200,8 @@ class ItemsController < ApplicationController
       flash[:success] = "Item successfully converted to Assets!"
       redirect_to item_stocks_path(@item)
     else
-      flash.now[:danger] = "Item already converted to Assets"
-      render :show
+      flash[:danger] = "Item already converted to Assets"
+      redirect_to items_path
     end
   end
 

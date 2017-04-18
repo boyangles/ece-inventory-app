@@ -175,8 +175,12 @@ class Item < ApplicationRecord
           Stock.create!(:item_id => self.id, :available => true)
         end
 
-        (1..self.quantity_on_loan).each do
-          Stock.create!(:item_id => self.id, :available => false)
+        req_items = RequestItem.where('quantity_loan > 0').where(item_id: self.id).where(request_id: Request.where(status: 'approved'))
+        req_items.each do |req_item|
+          (1..req_item.quantity_loan).each do
+            stock = Stock.create!(item_id: self.id, available: false)
+            RequestItemStock.create!(stock_id: stock.id, request_item_id: req_item.id, status: 'loan')
+          end
         end
 
         self.has_stocks = true
@@ -188,6 +192,7 @@ class Item < ApplicationRecord
   end
 
   def convert_to_stocks
+
     return false if self.has_stocks
 
     begin
@@ -196,8 +201,12 @@ class Item < ApplicationRecord
           Stock.create!(:item_id => self.id, :available => true)
         end
 
-        for i in 1..self.quantity_on_loan do
-          Stock.create!(:item_id => self.id, :available => false)
+        req_items = RequestItem.where('quantity_loan > 0').where(item_id: self.id).where(request_id: Request.where(status: 'approved'))
+        req_items.each do |req_item|
+          (1..req_item.quantity_loan).each do
+            stock = Stock.create!(item_id: self.id, available: false)
+            RequestItemStock.create!(stock_id: stock.id, request_item_id: req_item.id, status: 'loan')
+          end
         end
 
         self.has_stocks = true
