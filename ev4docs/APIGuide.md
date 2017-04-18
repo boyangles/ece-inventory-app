@@ -1896,6 +1896,7 @@ Shows a specific request by ID.
 }
 ```
 
+
 ## ITEMS-11 - Bulk Minimum Stock
 ### *PUT/PATCH /api/items/{id}/bulk_minimum_stock* ###
 
@@ -1907,7 +1908,60 @@ Allows a manager or admin to change the minimum stock of multiple items.
 
 ### Sample Outputs ###
 
-
+[
+  {
+    "id": 1,
+    "unique_name": "Resistor",
+    "quantity": 215,
+    "description": "Cibo chirographum amita curtus ocer. Triginta arguo degero abscido.",
+    "model_number": "dc11ee",
+    "status": "active",
+    "last_action": "backfill_requested",
+    "quantity_on_loan": 400,
+    "minimum_stock": 200,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 2,
+    "unique_name": "Transistor",
+    "quantity": 86,
+    "description": "Vitium aufero defero. Astrum creta deludo vicissitudo similique eius torqueo timor.",
+    "model_number": "05d093",
+    "status": "active",
+    "last_action": "backfill_request_satisfied",
+    "quantity_on_loan": 900,
+    "minimum_stock": 200,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 5,
+    "unique_name": "Green_LED",
+    "quantity": 589,
+    "description": "Repellat aurum nam ut. Fugit vir thymbra cicuta amoveo.",
+    "model_number": "d7ad64",
+    "status": "active",
+    "last_action": "acquired_or_destroyed_quantity",
+    "quantity_on_loan": 0,
+    "minimum_stock": 200,
+    "has_stocks": true,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 7,
+    "unique_name": "Screw",
+    "quantity": 7,
+    "description": "Tempus dicta textor. Tamquam sit tam auctus curia iure.",
+    "model_number": "0238a5",
+    "status": "active",
+    "last_action": "backfill_request_denied",
+    "quantity_on_loan": 800,
+    "minimum_stock": 200,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  }
+]
 
 ## ITEMS-12 All Minimum Stock
 
@@ -1920,6 +1974,274 @@ Allows a manager or admin to change the minimum stock of all items.
 
 
 ### Sample Outputs ###
+
+
+```javascript
+
+[
+  {
+    "id": 9,
+    "unique_name": "BOE-Bot",
+    "quantity": 2,
+    "description": "Viriliter audacia depereo. Vivo odit subnecto catena.",
+    "model_number": "ae53cc",
+    "status": "active",
+    "last_action": "loaned",
+    "quantity_on_loan": 371,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 13,
+    "unique_name": "Server_Motor",
+    "quantity": 908,
+    "description": "Alioqui velit vulariter amiculum cavus. Videlicet tabgo adiuvo cupiditas civis.",
+    "model_number": "66cd5b",
+    "status": "active",
+    "last_action": "created",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 15,
+    "unique_name": "Seven_Segment_Display",
+    "quantity": 378,
+    "description": "Vulgus considero necessitatibus adficio cibus advenio deprimo. Quibusdam templum sufficio velut vitium cultellus.",
+    "model_number": "ed3397",
+    "status": "active",
+    "last_action": "created",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 18,
+    "unique_name": "jklj",
+    "quantity": 23414,
+    "description": "asdjkla",
+    "model_number": "234",
+    "status": "active",
+    "last_action": "acquired_or_destroyed_quantity",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 17,
+    "unique_name": "asdfaf",
+    "quantity": 42,
+    "description": "234234",
+    "model_number": "23",
+    "status": "active",
+    "last_action": "backfill_requested",
+    "quantity_on_loan": 1,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 1,
+    "unique_name": "Resistor",
+    "quantity": 215,
+    "description": "Cibo chirographum amita curtus ocer. Triginta arguo degero abscido.",
+    "model_number": "dc11ee",
+    "status": "active",
+    "last_action": "backfill_requested",
+    "quantity_on_loan": 400,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 7,
+    "unique_name": "Screw",
+    "quantity": 7,
+    "description": "Tempus dicta textor. Tamquam sit tam auctus curia iure.",
+    "model_number": "0238a5",
+    "status": "active",
+    "last_action": "backfill_request_denied",
+    "quantity_on_loan": 800,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 16,
+    "unique_name": "IC_Chip",
+    "quantity": 207,
+    "description": "Amicitia tergum odit abduco doloremque. Vomer tantillus vesco vergo.",
+    "model_number": "6a6736",
+    "status": "active",
+    "last_action": "backfill_requested",
+    "quantity_on_loan": 400,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 14,
+    "unique_name": "Piezo_Speaker",
+    "quantity": 163,
+    "description": "Explicabo amissio corrupti conicio copia avaritia atrox tego. Curia calco excepturi tactus totam sint crepusculum colo.",
+    "model_number": "0d0186",
+    "status": "active",
+    "last_action": "backfill_requested",
+    "quantity_on_loan": 50,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 11,
+    "unique_name": "Arduino_Kit",
+    "quantity": 3,
+    "description": "Denuncio vivo caritas depraedor adeptio ut. Cubicularis cur appono vomito.",
+    "model_number": "73152d",
+    "status": "active",
+    "last_action": "backfill_request_approved",
+    "quantity_on_loan": 492,
+    "minimum_stock": 60,
+    "has_stocks": true,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 2,
+    "unique_name": "Transistor",
+    "quantity": 86,
+    "description": "Vitium aufero defero. Astrum creta deludo vicissitudo similique eius torqueo timor.",
+    "model_number": "05d093",
+    "status": "active",
+    "last_action": "backfill_request_satisfied",
+    "quantity_on_loan": 900,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 4,
+    "unique_name": "RED_LED",
+    "quantity": 234,
+    "description": "Cervus bonus aeneus ipsam temporibus. Quasi caelum synagoga campana.",
+    "model_number": "a30076",
+    "status": "active",
+    "last_action": "created",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 6,
+    "unique_name": "Capacitor",
+    "quantity": 490,
+    "description": "Quis strenuus color libero accusamus. Patrocinor porro advenio in speculum curo quia.",
+    "model_number": "628316",
+    "status": "active",
+    "last_action": "loaned",
+    "quantity_on_loan": 89,
+    "minimum_stock": 60,
+    "has_stocks": true,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 3,
+    "unique_name": "Oscilloscope",
+    "quantity": 290,
+    "description": "Crustulum et sed usus. Rerum dedico nesciunt auctor aetas cohors eos repellendus.",
+    "model_number": "200227",
+    "status": "active",
+    "last_action": "backfill_request_denied",
+    "quantity_on_loan": 23,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 8,
+    "unique_name": "Washer",
+    "quantity": 180,
+    "description": "Confero vitiosus velut adsum accedo adultus. Deleo tutis victoria maiores via.",
+    "model_number": "262869",
+    "status": "active",
+    "last_action": "created",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 5,
+    "unique_name": "Green_LED",
+    "quantity": 589,
+    "description": "Repellat aurum nam ut. Fugit vir thymbra cicuta amoveo.",
+    "model_number": "d7ad64",
+    "status": "active",
+    "last_action": "acquired_or_destroyed_quantity",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": true,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 19,
+    "unique_name": "adfjadlfk",
+    "quantity": 4,
+    "description": "asdasdlkf",
+    "model_number": "234",
+    "status": "active",
+    "last_action": "created",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 20,
+    "unique_name": "adfasdfaw",
+    "quantity": 234,
+    "description": "",
+    "model_number": "2134",
+    "status": "active",
+    "last_action": "created",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": true,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 12,
+    "unique_name": "QTI_Sensor",
+    "quantity": 1,
+    "description": "Cohibeo cilicium subvenio averto vorax. Qui valde ex adultus commemoro dolorum viscus.",
+    "model_number": "28ade2",
+    "status": "active",
+    "last_action": "acquired_or_destroyed_quantity",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 10,
+    "unique_name": "Electrical_Tape",
+    "quantity": 107,
+    "description": "Paens ustilo arceo tabella ventosus. Labore deserunt solvo.",
+    "model_number": "236a14",
+    "status": "active",
+    "last_action": "loaned",
+    "quantity_on_loan": 13,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  }
+]
+
+```
 
 # Logs API #
 ----------
