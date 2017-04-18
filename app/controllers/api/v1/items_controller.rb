@@ -571,8 +571,12 @@ class Api::V1::ItemsController < BaseController
       puts "This item is _"
       puts i
     end
-    update_min_stock_of_certain_items(items_to_change,min_quantity)
-    render :json => items_to_change
+
+    if update_min_stock_of_certain_items_using_id(items_to_change,min_quantity)
+
+    else
+      render_client_error(@item.errors, 422)
+    end
   end
 
   def all_minimum_stock
@@ -663,6 +667,7 @@ class Api::V1::ItemsController < BaseController
     params.fetch(:item, {}).permit(:unique_name, :quantity, :model_number, :description, :minimum_stock)
   end
 
+
   private
   def render_item_instance_with_tags(input_item)
     render :json => input_item.instance_eval {
@@ -734,12 +739,30 @@ class Api::V1::ItemsController < BaseController
 
   def update_min_stock_of_certain_items(items, stock_quantity)
     # binding.pry
-    items.each do |i|
-      if Item.find(i).update!(:minimum_stock => stock_quantity)
+    items.each do |item_temp|
+      original_min_stock = Item.find(item_temp).minimum_stock
+      if Item.find(item_temp).update!(:minimum_stock => stock_quantity)
       else
         render_client_error(@item.errors, 422) and return
       end
       minimum_stock_email_changed_min_stock(original_min_stock, item_temp.minimum_stock,item_temp)
     end
+    render :json => items
+  end
+
+  def update_min_stock_of_certain_items_using_id(items, stock_quantity)
+    # binding.pry
+    new_item_array = []
+    items.each do |item_temp|
+      actual_item = Item.find(item_temp)
+      original_min_stock = actual_item.minimum_stock
+      if Item.find(item_temp).update!(:minimum_stock => stock_quantity)
+      else
+        render_client_error(@item.errors, 422) and return
+      end
+      new_item_array << actual_item
+      minimum_stock_email_changed_min_stock(original_min_stock, actual_item.minimum_stock,actual_item)
+    end
+    render :json => new_item_array
   end
 end

@@ -1,6 +1,11 @@
 <%= form_for(@setting, url: update_dates_path, method: 'patch') do |f| %>
 
 
+<p>
+  <strong>
+Previously Selected Dates: <%= @temp_date.value %>
+  </strong>
+</p>
     <%= "Email Dates:" %>
     <%= text_field_tag :start_date, @setting['email_dates'], 'data-behaviour' => 'datepicker' %>
     <script type="text/javascript">
