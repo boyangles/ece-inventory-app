@@ -57,6 +57,7 @@ ActiveRecord::Schema.define(version: 20170417035147) do
     t.string  "new_model_num"
     t.integer "curr_quantity"
     t.integer "affected_request"
+    t.boolean "has_stocks",       default: false
     t.index ["item_id"], name: "index_item_logs_on_item_id", using: :btree
     t.index ["log_id"], name: "index_item_logs_on_log_id", using: :btree
   end
@@ -167,6 +168,15 @@ ActiveRecord::Schema.define(version: 20170417035147) do
     t.index ["custom_field_id"], name: "index_stock_custom_fields_on_custom_field_id", using: :btree
     t.index ["stock_id", "custom_field_id"], name: "index_stock_custom_fields_on_stock_id_and_custom_field_id", unique: true, using: :btree
     t.index ["stock_id"], name: "index_stock_custom_fields_on_stock_id", using: :btree
+  end
+
+  create_table "stock_item_logs", force: :cascade do |t|
+    t.integer "item_log_id"
+    t.integer "stock_id"
+    t.string  "old_serial_tag"
+    t.string  "curr_serial_tag"
+    t.index ["item_log_id"], name: "index_stock_item_logs_on_item_log_id", using: :btree
+    t.index ["stock_id"], name: "index_stock_item_logs_on_stock_id", using: :btree
   end
 
   create_table "stocks", force: :cascade do |t|

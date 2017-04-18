@@ -78,7 +78,6 @@ class Request < ApplicationRecord
         begin
 					#req_item.oversubscribed
 	        req_item.fulfill_subrequest
-          # TODO: Fix logs for stock items
           if !req_item.quantity_disburse.nil? 
             if req_item.quantity_disburse. > 0
               create_item_log("disbursed", req_item, req_item.quantity_disburse)
@@ -181,8 +180,24 @@ class Request < ApplicationRecord
     
     log = Log.new(:user_id => curr, :log_type => 'item')
     log.save!
-    itemlog = ItemLog.new(:log_id => log.id, :item_id => itemo.id, :action => action, :quantity_change => quantity_change, :old_name => old_name, :new_name => itemo.unique_name, :old_desc => old_desc, :new_desc => itemo.description, :old_model_num => old_model, :new_model_num => itemo.model_number, :curr_quantity => itemo.quantity, :affected_request => self.id)
+    itemlog = ItemLog.new(:log_id => log.id, :item_id => itemo.id, :action => action, :quantity_change => quantity_change, :old_name => old_name, :new_name => itemo.unique_name, :old_desc => old_desc, :new_desc => itemo.description, :old_model_num => old_model, :new_model_num => itemo.model_number, :curr_quantity => itemo.quantity, :affected_request => self.id, :has_stocks => itemo.has_stocks)
     itemlog.save!
+
+		if action == 'loaned' 
+			status = 'loan'
+		elsif action == 'disbursed'
+			status = 'disburse'
+		else
+			status = ''
+		end
+
+		if itemo.has_stocks?
+			ri_stocks = req_item.request_item_stocks.filter({status: status})
+			ri_stocks.each do |f|
+				stockItemLog = StockItemLog.new(:item_log_id => itemlog.id, :stock_id => f.stock.id, :curr_serial_tag => f.stock.serial_tag)
+				stockItemLog.save!
+			end
+		end
   end
 
 

@@ -7,6 +7,7 @@ class StocksController < ApplicationController
   before_action :verify_item_is_stocked
 
   def index
+
     @item = Item.find(params[:item_id])
     filter_params = params.slice(:available)
     @stocks = Stock.where(item_id: @item.id).filter(filter_params).filter_by_search(params[:search]).paginate(page: params[:page], per_page: 10)

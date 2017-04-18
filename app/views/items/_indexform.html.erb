@@ -3,6 +3,8 @@
       <tbody>
       <%= f.hidden_field :item_id, :value => request_item.item_id %>
       <%= f.hidden_field :request_id, :value => request_item.request_id %>
+      <%= f.hidden_field :bf_status, :value => 'loan' %>
+
       <tr>
         <td>
           <%= f.number_field :quantity_loan, class: "col-lg-12", id: "loan_id", min: 0, required: true %><br>
