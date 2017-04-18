@@ -22,7 +22,9 @@ class Item < ApplicationRecord
       backfill_request_approved: 10,
       backfill_request_denied: 11,
       backfill_request_satisfied: 12,
-      backfill_request_failed: 13
+      backfill_request_failed: 13,
+      convert_to_assets: 14,
+      convert_to_global: 15
   }
 
   validates :unique_name, presence: true, length: { maximum: 50 },
@@ -64,14 +66,14 @@ class Item < ApplicationRecord
   after_create {
     initialize_stocks
     create_custom_fields_for_items(self.id)
-    create_log("created", self.quantity)
   }
 
   after_update {
     create_log_on_quantity_change()
     create_log_on_desc_update()
     create_log_on_destruction()
-  }
+  	create_log_on_stocks_status_change
+	}
 
   ##
   # ITEM-6: import_item
@@ -179,12 +181,23 @@ class Item < ApplicationRecord
           Stock.create!(:item_id => self.id, :available => true)
         end
 
-        (1..self.quantity_on_loan).each do
-          Stock.create!(:item_id => self.id, :available => false)
+        req_items = RequestItem.where('quantity_loan > 0').where(item_id: self.id).where(request_id: Request.where(status: 'approved'))
+        req_items.each do |req_item|
+          (1..req_item.quantity_loan).each do
+            stock = Stock.create!(item_id: self.id, available: false)
+            RequestItemStock.create!(stock_id: stock.id, request_item_id: req_item.id, status: 'loan')
+          end
         end
-
+				
         self.has_stocks = true
-        self.save!
+	      self.save!
+
+				itemlog =	create_log("convert_to_global", 0)
+				self.stocks.each do |f|
+					sil = StockItemLog.new(:item_log_id => itemlog, :stock_id => f.id, :curr_serial_tag => f.serial_tag)
+					sil.save!
+				end
+	
       end
     end
 
@@ -192,6 +205,7 @@ class Item < ApplicationRecord
   end
 
   def convert_to_stocks
+
     return false if self.has_stocks
 
     begin
@@ -200,13 +214,23 @@ class Item < ApplicationRecord
           Stock.create!(:item_id => self.id, :available => true)
         end
 
-        for i in 1..self.quantity_on_loan do
-          Stock.create!(:item_id => self.id, :available => false)
+        req_items = RequestItem.where('quantity_loan > 0').where(item_id: self.id).where(request_id: Request.where(status: 'approved'))
+        req_items.each do |req_item|
+          (1..req_item.quantity_loan).each do
+            stock = Stock.create!(item_id: self.id, available: false)
+            RequestItemStock.create!(stock_id: stock.id, request_item_id: req_item.id, status: 'loan')
+          end
         end
 
         self.has_stocks = true
         self.save!
-      end
+  
+				itemlog =	create_log("convert_to_global", 0)
+				self.stocks.each do |f|
+					sil = StockItemLog.new(:item_log_id => itemlog, :stock_id => f.id, :curr_serial_tag => f.serial_tag)
+					sil.save!
+				end
+	    end
 
       return true
     rescue Exception => e
@@ -226,6 +250,13 @@ class Item < ApplicationRecord
         for i in 1..self.quantity_on_loan do
           Stock.create!(:item_id => self.id, :available => false)
         end
+			
+				itemlog =	create_log("created", self.quantity)
+				self.stocks.each do |f|
+					sil = StockItemLog.new(:item_log_id => itemlog, :stock_id => f.id, :curr_serial_tag => f.serial_tag)
+					sil.save!
+				end
+	   
       end
 
       return true
@@ -239,17 +270,34 @@ class Item < ApplicationRecord
   def convert_to_global
     return false unless self.has_stocks
 
-    Stock.destroy_all(item_id: self.id)
-    self.has_stocks = false
-    self.save!
+		ActiveRecord::Base.transaction do
+			itemlog =	create_log("convert_to_global", 0)
+			self.stocks.each do |f|
+				sil = StockItemLog.new(:item_log_id => itemlog, :stock_id => f.id, :curr_serial_tag => f.serial_tag)
+				sil.save!
+			end
+	
+	    Stock.destroy_all(item_id: self.id)
+  	  self.has_stocks = false
+    	self.save!
+		end
+
   end
 
   def convert_to_global!
     raise Exception.new("Cannot convert back assets for an item if that item is already specified as not having assets!") unless self.has_stocks
 
-    Stock.destroy_all(item_id: self.id)
-    self.has_stocks = false
-    self.save!
+		ActiveRecord::Base.transaction do
+			itemlog =	create_log("convert_to_global", 0)
+			self.stocks.each do |f|
+				sil = StockItemLog.new(:item_log_id => itemlog, :stock_id => f.id, :curr_serial_tag => f.serial_tag)
+				sil.save!
+			end
+	
+  	  Stock.destroy_all(item_id: self.id)
+    	self.has_stocks = false
+    	self.save!
+		end		
 
     self
   end
@@ -364,7 +412,7 @@ class Item < ApplicationRecord
   end
 
   def create_log_on_quantity_change()
-    if self.quantity_was.nil?
+    if self.quantity_was.nil? or self.has_stocks?
       return
     end
 
@@ -375,38 +423,66 @@ class Item < ApplicationRecord
   end
 
   def create_log_on_destruction()
-
     if self.status == 'deactive' && self.status_was == 'active'
-      create_log("deleted", self.quantity)
+      itemo = create_log("deleted", self.quantity)
+			self.stocks.each do |stock|
+				sil = StockItemLog.new(:item_log_id => itemo, :stock_id => stock.id, :curr_serial_tag => stock.serial_tag)
+				sil.save!
+
+				stock.destroy
+			end
+
     end
   end
+
+	def create_log_on_stocks_status_change
+		if has_stocks_was != has_stocks && has_stocks_was != nil
+			if has_stocks
+				itemlog =	create_log("convert_to_assets", 0)
+				self.stocks.each do |f|
+					sil = StockItemLog.new(:item_log_id => itemlog, :stock_id => f.id, :curr_serial_tag => f.serial_tag)
+					sil.save!
+				end
+			else
+				create_log("convert_to_global", 0)
+				
+			end
+		end
+	end
 
   def create_log(action, quan_change)
-    if self.curr_user.nil?
-      curr = nil
-    else
-      curr = self.curr_user.id
-    end
-    old_name = ""
-    old_desc = ""
-    old_model = ""
+	    if self.curr_user.nil?
+  	    curr = nil
+    	else
+      	curr = self.curr_user.id
+	    end
+  	  old_name = ""
+    	old_desc = ""
+    	old_model = ""
 
-    if self.unique_name_was != self.unique_name
-      old_name = self.unique_name_was
-    end
-    if self.description_was != self.description
-      old_desc = self.description_was
-    end
-    if self.model_number_was != self.model_number
-      old_model = self.model_number_was
-    end
+    	if self.unique_name_was != self.unique_name
+      	old_name = self.unique_name_was
+    	end
+	 	  if self.description_was != self.description
+  	    old_desc = self.description_was
+  	  end
+  	  if self.model_number_was != self.model_number
+  	    old_model = self.model_number_was
+  	  end
 
-    log = Log.new(:user_id => curr, :log_type => 'item')
-    log.save!
-    itemlog = ItemLog.new(:log_id => log.id, :item_id => self.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => self.unique_name, :old_desc => old_desc, :new_desc => self.description, :old_model_num => old_model, :new_model_num => self.model_number, :curr_quantity => self.quantity)
-    itemlog.save!
+	    log = Log.new(:user_id => curr, :log_type => 'item')
+  	  log.save!
+  	  itemlog = ItemLog.new(:log_id => log.id, :item_id => self.id, :action => action, :quantity_change => quan_change, :old_name => old_name, :new_name => self.unique_name, :old_desc => old_desc, :new_desc => self.description, :old_model_num => old_model, :new_model_num => self.model_number, :curr_quantity => self.quantity, :has_stocks => self.has_stocks)
+  	  itemlog.save!
+			return itemlog.id
   end
 
+	def create_destruction_stock_logs(itemlog_id, list_to_delete)
+		list_to_delete.each do |stock_id|
+			sil = StockItemLog.new(:item_log_id => itemlog_id, :stock_id => stock_id, :curr_serial_tag => Stock.find(stock_id).serial_tag)
+			sil.save!
+		end
+	end
 
   def create_log_on_desc_update()
     if (self.unique_name_was != self.unique_name || self.description_was != self.description || self.model_number_was != self.model_number)

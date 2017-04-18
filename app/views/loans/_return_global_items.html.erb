@@ -11,6 +11,7 @@
       <%= form_for (request_item), :url => return_request_item_path(request_item.id), :html => {:method => "put"} do |f| %>
           <%= f.hidden_field :id, :value => (request_item[:id]) %>
           <%= f.hidden_field :quantity_loan, :value => (request_item[:quantity_loan]) %>
+          <%= f.hidden_field :bf_status, value: 'loan' %>
 
           <div class="modal-body text-center">
             <h4>Quantity to Return</h4>

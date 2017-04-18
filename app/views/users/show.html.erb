@@ -38,9 +38,11 @@
       </div>
       <div class="panel-body users-items-display">
         <% request_items = RequestItem.where("quantity_loan > ?", 0).where(request_id: Request.select(:id).where(user_id: @user.id, status: "approved")) %>
-        <% if !request_items.empty? %>
+				<% hey_loans = request_items.where(bf_status: "loan").select(:id) and request_items.where(bf_status: "bf_denied").select(:id) and request_items.where(bf_status: "bf_failed").select(:id) %>
+
+        <% if !hey_loans.empty? %>
           <ol class="loans">
-            <%= render partial: 'loans/loandisplay', collection: request_items, as: :loan %>
+            <%= render partial: 'loans/loandisplay', collection: RequestItem.where(id: hey_loans), as: :loan %>
           </ol>
         <% else %>
           This user currently has no active loans.
@@ -48,7 +50,24 @@
       </div>
     </div>
 
-    <div class="panel panel-info">
+    <div class="panel panel-primary">
+      <div class="panel-heading users-items-display-link">
+        <h3 class="panel-title">Backfills
+          <%= link_to "[click to toggle]", '#', class: "pull-right" %></h3>
+      </div>
+      <div class="panel-body users-items-display">
+				<% hey_backfills = request_items.where(bf_status: "bf_request").select(:id) and request_items.where(bf_status: "bf_in_transit").select(:id) %>
+        <% if !hey_backfills.empty? %>
+          <ol class="loans">
+            <%= render partial: 'loans/loandisplay', collection: RequestItem.where(id: hey_backfills), as: :loan %>
+          </ol>
+        <% else %>
+          This user currently has no active backfills.
+        <% end %>
+      </div>
+    </div>
+
+   <div class="panel panel-info">
       <div class="panel-heading users-items-display-link">
         <h3 class="panel-title">Disbursements
           <%= link_to "[click to toggle]", '#', class: "pull-right" %></h3>

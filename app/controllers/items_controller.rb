@@ -145,9 +145,6 @@ class ItemsController < ApplicationController
       end
 
       if params[:minimum_stock]!=min_stock_before
-        100.times do |i|
-          puts "AHAHHAHAHAHAHAHAHAHAHAHAH"
-        end
         minimum_stock_email_changed_min_stock(min_stock_before,@item.minimum_stock,@item)
       end
 
@@ -208,16 +205,18 @@ class ItemsController < ApplicationController
   end
 
   def convert_to_stocks
+		@item.curr_user = current_user
     if @item.convert_to_stocks
       flash[:success] = "Item successfully converted to Assets!"
       redirect_to item_stocks_path(@item)
     else
-      flash.now[:danger] = "Item already converted to Assets"
-      render :show
+      flash[:danger] = "Item already converted to Assets"
+      redirect_to items_path
     end
   end
 
   def convert_to_global
+		@item.curr_user = current_user
     if @item.convert_to_global
       flash[:success] = "Item successfully converted to global"
       redirect_to item_path(@item)
@@ -228,9 +227,17 @@ class ItemsController < ApplicationController
   end
 
   def create_stocks
+		@item.curr_user = current_user
     if Item.is_valid_integer(params[:num_stocks])
       begin
-        Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
+        max = 10000
+        if params[:num_stocks].to_i < max
+          Stock.create_stocks!(params[:num_stocks].to_i, params[:id])
+        elsif params[:num_stocks].size == 8
+          Stock.create_stock!(params[:num_stocks], params[:id])
+        else
+          raise Exception.new("Cannot create more than #{max} assets at a time")
+        end
         flash[:success] = "(#{params[:num_stocks]}) Assets successfully created!"
         redirect_to item_stocks_path @item and return
       rescue Exception => e
@@ -281,7 +288,11 @@ class ItemsController < ApplicationController
   def delete_multiple_stocks
     begin
       tags = Stock.get_tags_from_ids(params[:stock_ids])
-      params[:stock_ids].each do |id|
+			@item.curr_user = current_user 
+			heyd = @item.create_log("acquired_or_destroyed_quantity", params[:stock_ids].size)
+			@item.create_destruction_stock_logs(heyd, params[:stock_ids])
+  
+	     params[:stock_ids].each do |id|
         stock = Stock.find(id)
         if stock.available
           @item.delete_stock(stock)
@@ -292,7 +303,8 @@ class ItemsController < ApplicationController
           req_item_stock.request_item.disburse_loaned_subrequest!(tag_list)
         end
       end
-      flash[:success] = "Deleted #{tags} assets"
+
+	    flash[:success] = "Deleted #{tags} assets"
       redirect_to item_stocks_path @item
     rescue Exception => e
       flash[:danger] = "Could not delete all stocks. #{e.message}"
