@@ -744,15 +744,17 @@ class Api::V1::ItemsController < BaseController
 
   def update_min_stock_of_certain_items(items, stock_quantity)
     # binding.pry
+    new_item_array = []
     items.each do |item_temp|
       original_min_stock = Item.find(item_temp).minimum_stock
       if Item.find(item_temp).update!(:minimum_stock => stock_quantity)
       else
         render_client_error(@item.errors, 422) and return
       end
+      new_item_array << Item.find(item_temp)
       minimum_stock_email_changed_min_stock(original_min_stock, item_temp.minimum_stock,item_temp)
     end
-    render :json => items
+    render :json => new_item_array
   end
 
   def update_min_stock_of_certain_items_using_id(items, stock_quantity)
