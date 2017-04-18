@@ -765,7 +765,7 @@ class Api::V1::ItemsController < BaseController
       else
         render_client_error(@item.errors, 422) and return
       end
-      new_item_array << actual_item
+      new_item_array << Item.find(item_temp)
       minimum_stock_email_changed_min_stock(original_min_stock, actual_item.minimum_stock,actual_item)
     end
     render :json => new_item_array
