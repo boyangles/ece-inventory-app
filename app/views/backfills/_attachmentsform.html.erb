@@ -29,13 +29,13 @@
 
 
       <div class="modal-body">
-        <% if is_manager_or_admin? %>
-            <div id="request_item_comments_<%= request_item.id %>">
-              <% if request_item.request_item_comments %>
+        <div id="request_item_comments_<%= request_item.id %>">
+          <% if request_item.request_item_comments %>
 
-                  <%= render request_item.request_item_comments, request_item: request_item %>
-              <% end %>
-            </div>
+              <%= render request_item.request_item_comments, request_item: request_item %>
+          <% end %>
+        </div>
+        <% if is_manager_or_admin? %>
             <%= render 'request_item_comments/request_item_comment_form', request_item: request_item %>
         <% end %>
 
