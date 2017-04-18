@@ -503,16 +503,8 @@ class Api::V1::ItemsController < BaseController
       puts "This item is _"
       puts i
     end
-
     update_min_stock_of_certain_items(items_to_change,min_quantity)
-
     render :json => items_to_change
-    # 100.times do |i|
-    #   puts "The minimum quantity is "
-    #   puts min_quantity
-    #   puts "The items are "
-    #   puts items_to_change
-    # end
   end
 
   def all_minimum_stock
@@ -525,6 +517,39 @@ class Api::V1::ItemsController < BaseController
     # render :json => items_to_change
   end
 
+  ##DUplicated code!!
+
+  def minimum_stock_email_changed_min_stock(min_before, min_after, item)
+    10.times do |i|
+      puts "The quantity before is:"
+      puts min_before
+      puts "The quantity after is:"
+      puts min_after
+      puts "The item is:"
+      puts item.unique_name
+    end
+    if min_before >= item.quantity && min_after < item.quantity
+      10.times do |i|
+        puts "The conditinos except for threshold are met for email threshold to send!!!!"
+      end
+      if item.stock_threshold_tracked
+        puts "THE EMAIL WILL DELIVER NOW"
+        UserMailer.minimum_stock_min_stock_change(min_before, min_after, item).deliver_now
+      end
+    end
+  end
+
+  def minimum_stock_email(q_before, q_after, item)
+    if q_before >= item.minimum_stock && q_after < item.minimum_stock
+      10.times do |i|
+        puts "The conditinos except for threshold are met for email threshold to send!!!!"
+      end
+      if item.stock_threshold_tracked
+        puts "THE EMAIL WILL DELIVER NOW"
+        UserMailer.minimum_stock_quantity_change(q_before, q_after, item).deliver_now
+      end
+    end
+  end
 
   def update_field_entry
     filter_params = params.slice(:custom_field_name, :custom_field_content)
@@ -646,9 +671,7 @@ class Api::V1::ItemsController < BaseController
       else
         render_client_error(@item.errors, 422) and return
       end
-      # raise Exception.new("Item failed to save. #{stock.errors.full_messages}.") unless i.save
-      puts "THIS ITEM IS"
-      puts Item.find(i).unique_name
+      minimum_stock_email_changed_min_stock(original_min_stock, item_temp.minimum_stock,item_temp)
     end
   end
 end
