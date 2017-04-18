@@ -36,14 +36,20 @@ Input must be a JSON array otherwise an error message will be shown. Each JSON o
 ]
 ```
 
+### "has_stocks" ###
+**Required**. Must be a boolean type. *True* represents that the corresponding item is per-asset, and *False* represents that it is not per-asset.
+
+### "assets" ###
+**Required**. A JSON array of strings representing esrial tags associated with a particular asest. The JSON array must exist even if no serial tags are specified -- in which care the array is simply empty. In the case that the item is per-asset, it is required that the number of elements in this JSON array must equal to the number specified in the quantity field. If not, then a friendly message to the user will show indicating that the numbers don't match.
+
 ## Sample Input ##
 ```javascript
 [{
   "unique_name": "test_name_0",
-  "quantity": 153,
+  "quantity": 5,
   "model_number": "5x937s",
   "description": "Sample description 0",
-  "tags": ["ECE110", "ECE350", "Outdated"]
+  "tags": ["ECE110", "ECE350", "Outdated"],
   "custom_fields": [
     {
       "name": "price",
@@ -52,11 +58,15 @@ Input must be a JSON array otherwise an error message will be shown. Each JSON o
       "name": "location",
       "value": "CIEMAS"
     }
-  ]
+  ],
+  "has_stocks": true,
+  "assets": ["sample01", "sample02", "sample03", "sample04", "sample05"]
 }, {
   "unique_name": "test_name_1",
   "quantity": 12,
-  "tags": []
-  "custom_fields": []
+  "tags": [],
+  "custom_fields": [],
+  "has_stocks": false,
+  "assets": []
 }]
 ```
