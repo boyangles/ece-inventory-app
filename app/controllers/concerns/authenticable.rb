@@ -25,6 +25,12 @@ module Authenticable
                   status: :unauthorized unless current_user_by_auth.privilege_admin?
   end
 
+  # Not sure if this is correct yet
+  def auth_by_sole_user!
+    render json: { errors: 'You are not  an authorized User' },
+           status: :unauthorized unless current_user_by_auth
+  end
+
   def auth_by_manager_privilege!
     render json: { errors: 'No sufficient privileges' },
            status: :unauthorized unless current_user_by_auth.privilege_admin? || current_user_by_auth.privilege_manager?

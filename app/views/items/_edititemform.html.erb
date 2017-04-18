@@ -78,9 +78,18 @@
       <div class="form-group">
         <%= f.label :minimum_stock, "Minimum Stock", class: "col-lg-2 control-label" %>
         <div class="col-lg-10">
-          <%= f.text_field :minimum_stock, class: "form-control",:placeholder=>"Minimum Stock" %>
+          <%= f.text_field :minimum_stock, class: "form-control", :placeholder=>"Minimum Stock" %>
         </div>
       </div>
+
+
+      <div class="form-group"> 
+        <%= f.label :stock_threshold_tracked, "Receive emails for low stock?", class: "col-lg-2 control-label" %>
+        <div class="col-lg-1">
+          <%= f.check_box :stock_threshold_tracked, class: "form-control", :placeholder => "stock_threshold_tracked" %></td>
+        </div>
+      </div> 
+
 
       <div class="form-group"> 
         <%= f.label :tag, "Tags", class: "col-lg-2 control-label" %>

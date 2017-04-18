@@ -187,7 +187,7 @@ class User < ApplicationRecord
         raise Exception.new("Subrequest creation error. The error hash is #{new_req_item.errors.full_messages}. Subrequest hash is: #{JSON.pretty_generate(sub_req)}.") unless new_req_item.save
       end
 
-      req.update!(:status => 'approved') unless self.privilege_student?
+      # req.update!(:status => 'approved') unless self.privilege_student?
     end
 
     return req

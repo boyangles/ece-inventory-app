@@ -1,16 +1,16 @@
 class Api::V1::ItemsController < BaseController
   before_action :authenticate_with_token!
   before_action :auth_by_approved_status!
-  before_action :auth_by_manager_privilege!, only: [:create, :create_tag_associations, :destroy_tag_associations, :update_general, :bulk_minimum_stock, :bulk_import, :convert_to_stocks, :convert_to_global]
+  before_action :auth_by_manager_privilege!, only: [:create, :create_tag_associations, :destroy_tag_associations, :update_general, :bulk_minimum_stock, :all_minimum_stock, :bulk_import, :convert_to_stocks, :convert_to_global]
   before_action :auth_by_admin_privilege!, only: [:destroy, :fix_quantity, :clear_field_entries, :update_field_entry, :create_stocks, :create_single_stock]
-  before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock]
-  before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock]
+  before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock, :backfill_requested, :backfill_transit]
+  before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock, :backfill_requested, :backfill_transit]
 
 
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import, :bulk_minimum_stock, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock].each do |api_action|
+  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import, :bulk_minimum_stock, :all_minimum_stock, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock, :backfill_requested, :backfill_transit].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -22,7 +22,7 @@ class Api::V1::ItemsController < BaseController
 
   swagger_api :index do
     summary 'Returns all or specified Items'
-    notes "
+    notes '
     Implements Item search.
     If no parameters are specified, then the API returns all available items.
 
@@ -34,12 +34,16 @@ class Api::V1::ItemsController < BaseController
         ECE110, ECE250 --- returns only items who have BOTH of the specified tags
     iv) excluded_tag_names -- search items that MUST NOT include ANY of the specified excluded tags
         ECE110, ECE250 --- returns all items who have neither of the specified tags
-    "
+    v) unstocked -- search items that have quantities that are BELOW the minimum stock.
+        You must answer either true or false.
+        Answer true to see all items that have quantity below minimum stock & satisfy the other constraints.
+        Answer false to see all items satisfying the other constraints.
+    '
     param :query, :search, :string, :optional, "Item Fuzzy Search"
     param :query, :model_search, :string, :optional, "Search by Model Number"
     param :query, :required_tag_names, :string, :optional, "Comma Deliminated list of Required Tag Names"
     param :query, :excluded_tag_names, :string, :optional, "Comma Deliminated list of Excluded Tag Names"
-    param :query, :stocked, :string, :optional, "Include only items below Minimum Stock"
+    param :query, :stocked, :string, :optional, "Include only items below Minimum Stock(true or false)"
     response :ok
     response :unauthorized
     response :unprocessable_entity
@@ -109,7 +113,7 @@ class Api::V1::ItemsController < BaseController
   swagger_api :update_general do
     summary "Updates general attributes (non-quantity) of an item"
     notes "
-    Updates general attributes associated with an item (item name, description, and model number).
+    Updates general attributes associated with an item (item name, description, model number, and minimum stock).
     These updates are all optional. If none are filled out, then the item simply doesn't update.
     "
     param :path, :id, :integer, :required, "Item ID"
@@ -134,12 +138,24 @@ class Api::V1::ItemsController < BaseController
   end
 
   swagger_api :bulk_minimum_stock do
-    summary "Set minimum stock of many items at once"
+    summary "Set minimum stock of many items at once."
+    param :query, 'items', :string, :required, "Items to update"
+    param :query, 'min_quantity', :integer, :required, "Updated minimum stock quantity"
     response :ok
     response :unauthorized
     response :not_found
     response :unprocessable_entity
   end
+
+  swagger_api :all_minimum_stock do
+    summary "Set minimum stock of ALL items at once."
+    param :query, 'min_quantity', :integer, :required, "Updated minimum stock quantity"
+    response :ok
+    response :unauthorized
+    response :not_found
+    response :unprocessable_entity
+  end
+
 
   swagger_api :clear_field_entries do
     summary "Clears specified Custom Fields for Item"
@@ -268,6 +284,74 @@ class Api::V1::ItemsController < BaseController
     response :ok
     response :unauthorized
     response :not_found
+  end
+
+  swagger_api :backfill_requested do
+    summary "View Item stack for request_items that have backfills requested"
+    notes "
+    For students, only view request_items that correspond to self that are backfilled requested.
+    For managers/admins, view all request_items that are backfills requested.
+    "
+    param :path, :id, :integer, :required, "Item ID"
+    response :ok
+    response :unauthorized
+    response :not_found
+  end
+
+  swagger_api :backfill_transit do
+    summary "View Item stack for request_items that have backfills in transit"
+    notes "
+    For students, only view request_items that correspond to own request_items that are backfills.
+    For managers/admins, view all request_items that are backfills in transit
+    "
+    param :path, :id, :integer, :required, "Item ID"
+    response :ok
+    response :unauthorized
+    response :not_found
+  end
+
+  def backfill_requested
+    begin
+      request_items = (current_user_by_auth.privilege_student?) ?
+          RequestItem.filter({item_id: @item.id, user_id: current_user_by_auth.id, bf_status: "bf_request"}) :
+          RequestItem.filter({item_id: @item.id, bf_status: "bf_request"})
+
+      render :json => request_items.map {
+        |request_item| {
+            request_item_id: request_item.id,
+            request_id: request_item.request_id,
+            item_name: request_item.item.unique_name,
+            item_id: request_item.item.id,
+            quantity_on_loan: request_item.quantity_loan,
+            quantity_disbursed: request_item.quantity_disburse,
+            quantity_returned: request_item.quantity_return
+        }
+      }, status: 200
+    rescue Exception => e
+      render_client_error(e.message, 422)
+    end
+  end
+
+  def backfill_transit
+    begin
+      request_items = (current_user_by_auth.privilege_student?) ?
+          RequestItem.filter({item_id: @item.id, user_id: current_user_by_auth.id, bf_status: "bf_in_transit"}) :
+          RequestItem.filter({item_id: @item.id, bf_status: "bf_in_transit"})
+
+      render :json => request_items.map {
+          |request_item| {
+            request_item_id: request_item.id,
+            request_id: request_item.request_id,
+            item_name: request_item.item.unique_name,
+            item_id: request_item.item.id,
+            quantity_on_loan: request_item.quantity_loan,
+            quantity_disbursed: request_item.quantity_disburse,
+            quantity_returned: request_item.quantity_return
+        }
+      }, status: 200
+    rescue Exception => e
+      render_client_error(e.message, 422)
+    end
   end
 
   def create_single_stock
@@ -475,6 +559,64 @@ class Api::V1::ItemsController < BaseController
 
   def bulk_minimum_stock
 
+    items = params[:items]
+    min_quantity = params[:min_quantity]
+
+    render_client_error("Invalid JSON format", 422) and return unless valid_json?(items)
+
+    items_to_change = JSON.parse(items)
+    render_client_error("JSON format must be array", 422) and return unless items_to_change.kind_of?(Array)
+
+    items_to_change.each do |i|
+      puts "This item is _"
+      puts i
+    end
+    update_min_stock_of_certain_items(items_to_change,min_quantity)
+    render :json => items_to_change
+  end
+
+  def all_minimum_stock
+    min_quantity = params[:min_quantity]
+    if update_min_stock_of_certain_items(Item.all,min_quantity)
+
+    else
+      render_client_error(@item.errors, 422)
+    end
+    # render :json => items_to_change
+  end
+
+  ##DUplicated code!!
+
+  def minimum_stock_email_changed_min_stock(min_before, min_after, item)
+    10.times do |i|
+      puts "The quantity before is:"
+      puts min_before
+      puts "The quantity after is:"
+      puts min_after
+      puts "The item is:"
+      puts item.unique_name
+    end
+    if min_before >= item.quantity && min_after < item.quantity
+      10.times do |i|
+        puts "The conditinos except for threshold are met for email threshold to send!!!!"
+      end
+      if item.stock_threshold_tracked
+        puts "THE EMAIL WILL DELIVER NOW"
+        UserMailer.minimum_stock_min_stock_change(min_before, min_after, item).deliver_now
+      end
+    end
+  end
+
+  def minimum_stock_email(q_before, q_after, item)
+    if q_before >= item.minimum_stock && q_after < item.minimum_stock
+      10.times do |i|
+        puts "The conditinos except for threshold are met for email threshold to send!!!!"
+      end
+      if item.stock_threshold_tracked
+        puts "THE EMAIL WILL DELIVER NOW"
+        UserMailer.minimum_stock_quantity_change(q_before, q_after, item).deliver_now
+      end
+    end
   end
 
   def update_field_entry
@@ -586,5 +728,18 @@ class Api::V1::ItemsController < BaseController
           available: stock.available
       }
     }
+  end
+
+  private
+
+  def update_min_stock_of_certain_items(items, stock_quantity)
+    # binding.pry
+    items.each do |i|
+      if Item.find(i).update!(:minimum_stock => stock_quantity)
+      else
+        render_client_error(@item.errors, 422) and return
+      end
+      minimum_stock_email_changed_min_stock(original_min_stock, item_temp.minimum_stock,item_temp)
+    end
   end
 end
