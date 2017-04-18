@@ -2340,7 +2340,7 @@ Create a backfill for a given request_item. A user can only make a backfill for 
 
 ### Sample Correct Input ###
 
-http://imgur.com/a/Aerkf
+[Imgur](http://i.imgur.com/bQORhkF.png)
 
 ### Sample Outputs ###
 
@@ -2368,7 +2368,7 @@ Allows API user to view all the backfill requests made by that user. If the API 
 
 ### Sample Correct Input ###
 
-http://imgur.com/a/iEKzM
+[Imgur](http://i.imgur.com/AkzgCr1.png)
 
 ### Sample Outputs ###
 
@@ -2564,7 +2564,7 @@ Creates a comment for a given backfill. One must be a manager or admin to have t
 
 ### Sample Correct Input ###
 
-http://imgur.com/a/znqPm
+[Imgur](http://i.imgur.com/dxjMokD.png)
 
 ### Sample Outputs ###
 
@@ -2587,7 +2587,7 @@ Shows all the comments made by all managers, for a given backfill
 
 ### Sample Correct Input ###
 
-http://imgur.com/a/gdSyL
+[Imgur](http://i.imgur.com/8bg2etO.png)
 
 ### Sample Outputs ###
 
@@ -2637,7 +2637,7 @@ Allows a manager or admin to change the status of a backfill.
 
 ### Sample Correct Input ###
 
-http://imgur.com/a/9n8oM
+[Imgur](http://i.imgur.com/il0V1oU.png)
 
 ### Sample Outputs ###
 
