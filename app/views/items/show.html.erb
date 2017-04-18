@@ -71,6 +71,7 @@
               <strong>Description:</strong>
               <%= @item.description %>
             </p>
+            <% if is_manager_or_admin? %>
             <p>
               <strong>Minimum Stock:</strong>
               <%= @item.minimum_stock %>
@@ -79,6 +80,7 @@
               <strong>Email Tracking for Low Stock:</strong>
               <%= @item.stock_threshold_tracked %>
             </p>
+            <%end%>
             <p>
               <strong>Tags:</strong>
               <% if @item.tags.first != NIL %>
