@@ -13,6 +13,8 @@
 				<br>
 				<strong>Item </strong><%= link_to item.unique_name, item_path(item.id) %>
 				<br>
+        <strong>Request Item ID </strong><%= backfill.id %>
+        <br>
 				<strong>Quantity </strong>
 					
 				<% if backfill.bf_satisfied? %>

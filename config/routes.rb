@@ -110,6 +110,7 @@ Rails.application.routes.draw do
           patch :create_comment
 
           get :view_comments
+
         end
       end
 

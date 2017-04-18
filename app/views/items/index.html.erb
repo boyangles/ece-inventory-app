@@ -31,7 +31,9 @@
 	  			<th>Item Name</th>
 	  			<th>In Stock</th>
 	  			<th>Model Number</th>
+          <% if is_manager_or_admin? %>
           <th>Minimum Stock</th>
+          <% end %>
 					<th>Description</th>
 	  			<th>Request for Loan</th>
 	  			<th>Request for Disbursement</th>
