@@ -1,4 +1,4 @@
-# Three and a Half Asians Inventory System API #
+# Spicy Asians Inventory System API #
 
 # Sessions API #
 ----------
