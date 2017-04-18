@@ -74,7 +74,7 @@ class Stock < ApplicationRecord
   def self.create_stock!(serial_tag, item_id)
     stock = Stock.create!(serial_tag: serial_tag, item_id: item_id)
     Item.find(item_id).update_item_quantity_on_stock_creation
- 		iteid = item.create_log("acquired_or_destroyed_quantity", 1)
+ 		iteid = Item.find(item_id).create_log("acquired_or_destroyed_quantity", 1)
 		sil = StockItemLog.new(:item_log_id => iteid, :stock_id => stock.id, :curr_serial_tag => stock.serial_tag)
 		sil.save! 
   end

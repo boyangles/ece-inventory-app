@@ -1896,6 +1896,7 @@ Shows a specific request by ID.
 }
 ```
 
+
 ## ITEMS-11 - Bulk Minimum Stock
 ### *PUT/PATCH /api/items/{id}/bulk_minimum_stock* ###
 
@@ -1904,10 +1905,64 @@ Allows a manager or admin to change the minimum stock of multiple items.
 
 ### Sample Correct Input ###
 
+http://imgur.com/a/QU3Mx
 
 ### Sample Outputs ###
 
-
+[
+  {
+    "id": 1,
+    "unique_name": "Resistor",
+    "quantity": 215,
+    "description": "Cibo chirographum amita curtus ocer. Triginta arguo degero abscido.",
+    "model_number": "dc11ee",
+    "status": "active",
+    "last_action": "backfill_requested",
+    "quantity_on_loan": 400,
+    "minimum_stock": 200,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 2,
+    "unique_name": "Transistor",
+    "quantity": 86,
+    "description": "Vitium aufero defero. Astrum creta deludo vicissitudo similique eius torqueo timor.",
+    "model_number": "05d093",
+    "status": "active",
+    "last_action": "backfill_request_satisfied",
+    "quantity_on_loan": 900,
+    "minimum_stock": 200,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 5,
+    "unique_name": "Green_LED",
+    "quantity": 589,
+    "description": "Repellat aurum nam ut. Fugit vir thymbra cicuta amoveo.",
+    "model_number": "d7ad64",
+    "status": "active",
+    "last_action": "acquired_or_destroyed_quantity",
+    "quantity_on_loan": 0,
+    "minimum_stock": 200,
+    "has_stocks": true,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 7,
+    "unique_name": "Screw",
+    "quantity": 7,
+    "description": "Tempus dicta textor. Tamquam sit tam auctus curia iure.",
+    "model_number": "0238a5",
+    "status": "active",
+    "last_action": "backfill_request_denied",
+    "quantity_on_loan": 800,
+    "minimum_stock": 200,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  }
+]
 
 ## ITEMS-12 All Minimum Stock
 
@@ -1918,8 +1973,277 @@ Allows a manager or admin to change the minimum stock of all items.
 
 ### Sample Correct Input ###
 
+http://imgur.com/a/EPywz
 
 ### Sample Outputs ###
+
+
+```javascript
+
+[
+  {
+    "id": 9,
+    "unique_name": "BOE-Bot",
+    "quantity": 2,
+    "description": "Viriliter audacia depereo. Vivo odit subnecto catena.",
+    "model_number": "ae53cc",
+    "status": "active",
+    "last_action": "loaned",
+    "quantity_on_loan": 371,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 13,
+    "unique_name": "Server_Motor",
+    "quantity": 908,
+    "description": "Alioqui velit vulariter amiculum cavus. Videlicet tabgo adiuvo cupiditas civis.",
+    "model_number": "66cd5b",
+    "status": "active",
+    "last_action": "created",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 15,
+    "unique_name": "Seven_Segment_Display",
+    "quantity": 378,
+    "description": "Vulgus considero necessitatibus adficio cibus advenio deprimo. Quibusdam templum sufficio velut vitium cultellus.",
+    "model_number": "ed3397",
+    "status": "active",
+    "last_action": "created",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 18,
+    "unique_name": "jklj",
+    "quantity": 23414,
+    "description": "asdjkla",
+    "model_number": "234",
+    "status": "active",
+    "last_action": "acquired_or_destroyed_quantity",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 17,
+    "unique_name": "asdfaf",
+    "quantity": 42,
+    "description": "234234",
+    "model_number": "23",
+    "status": "active",
+    "last_action": "backfill_requested",
+    "quantity_on_loan": 1,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 1,
+    "unique_name": "Resistor",
+    "quantity": 215,
+    "description": "Cibo chirographum amita curtus ocer. Triginta arguo degero abscido.",
+    "model_number": "dc11ee",
+    "status": "active",
+    "last_action": "backfill_requested",
+    "quantity_on_loan": 400,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 7,
+    "unique_name": "Screw",
+    "quantity": 7,
+    "description": "Tempus dicta textor. Tamquam sit tam auctus curia iure.",
+    "model_number": "0238a5",
+    "status": "active",
+    "last_action": "backfill_request_denied",
+    "quantity_on_loan": 800,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 16,
+    "unique_name": "IC_Chip",
+    "quantity": 207,
+    "description": "Amicitia tergum odit abduco doloremque. Vomer tantillus vesco vergo.",
+    "model_number": "6a6736",
+    "status": "active",
+    "last_action": "backfill_requested",
+    "quantity_on_loan": 400,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 14,
+    "unique_name": "Piezo_Speaker",
+    "quantity": 163,
+    "description": "Explicabo amissio corrupti conicio copia avaritia atrox tego. Curia calco excepturi tactus totam sint crepusculum colo.",
+    "model_number": "0d0186",
+    "status": "active",
+    "last_action": "backfill_requested",
+    "quantity_on_loan": 50,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 11,
+    "unique_name": "Arduino_Kit",
+    "quantity": 3,
+    "description": "Denuncio vivo caritas depraedor adeptio ut. Cubicularis cur appono vomito.",
+    "model_number": "73152d",
+    "status": "active",
+    "last_action": "backfill_request_approved",
+    "quantity_on_loan": 492,
+    "minimum_stock": 60,
+    "has_stocks": true,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 2,
+    "unique_name": "Transistor",
+    "quantity": 86,
+    "description": "Vitium aufero defero. Astrum creta deludo vicissitudo similique eius torqueo timor.",
+    "model_number": "05d093",
+    "status": "active",
+    "last_action": "backfill_request_satisfied",
+    "quantity_on_loan": 900,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 4,
+    "unique_name": "RED_LED",
+    "quantity": 234,
+    "description": "Cervus bonus aeneus ipsam temporibus. Quasi caelum synagoga campana.",
+    "model_number": "a30076",
+    "status": "active",
+    "last_action": "created",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 6,
+    "unique_name": "Capacitor",
+    "quantity": 490,
+    "description": "Quis strenuus color libero accusamus. Patrocinor porro advenio in speculum curo quia.",
+    "model_number": "628316",
+    "status": "active",
+    "last_action": "loaned",
+    "quantity_on_loan": 89,
+    "minimum_stock": 60,
+    "has_stocks": true,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 3,
+    "unique_name": "Oscilloscope",
+    "quantity": 290,
+    "description": "Crustulum et sed usus. Rerum dedico nesciunt auctor aetas cohors eos repellendus.",
+    "model_number": "200227",
+    "status": "active",
+    "last_action": "backfill_request_denied",
+    "quantity_on_loan": 23,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 8,
+    "unique_name": "Washer",
+    "quantity": 180,
+    "description": "Confero vitiosus velut adsum accedo adultus. Deleo tutis victoria maiores via.",
+    "model_number": "262869",
+    "status": "active",
+    "last_action": "created",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 5,
+    "unique_name": "Green_LED",
+    "quantity": 589,
+    "description": "Repellat aurum nam ut. Fugit vir thymbra cicuta amoveo.",
+    "model_number": "d7ad64",
+    "status": "active",
+    "last_action": "acquired_or_destroyed_quantity",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": true,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 19,
+    "unique_name": "adfjadlfk",
+    "quantity": 4,
+    "description": "asdasdlkf",
+    "model_number": "234",
+    "status": "active",
+    "last_action": "created",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 20,
+    "unique_name": "adfasdfaw",
+    "quantity": 234,
+    "description": "",
+    "model_number": "2134",
+    "status": "active",
+    "last_action": "created",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": true,
+    "stock_threshold_tracked": false
+  },
+  {
+    "id": 12,
+    "unique_name": "QTI_Sensor",
+    "quantity": 1,
+    "description": "Cohibeo cilicium subvenio averto vorax. Qui valde ex adultus commemoro dolorum viscus.",
+    "model_number": "28ade2",
+    "status": "active",
+    "last_action": "acquired_or_destroyed_quantity",
+    "quantity_on_loan": 0,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  },
+  {
+    "id": 10,
+    "unique_name": "Electrical_Tape",
+    "quantity": 107,
+    "description": "Paens ustilo arceo tabella ventosus. Labore deserunt solvo.",
+    "model_number": "236a14",
+    "status": "active",
+    "last_action": "loaned",
+    "quantity_on_loan": 13,
+    "minimum_stock": 60,
+    "has_stocks": false,
+    "stock_threshold_tracked": true
+  }
+]
+
+```
 
 # Logs API #
 ----------
@@ -2016,6 +2340,8 @@ Create a backfill for a given request_item. A user can only make a backfill for 
 
 ### Sample Correct Input ###
 
+[Imgur](http://i.imgur.com/bQORhkF.png)
+
 ### Sample Outputs ###
 
 ```javascript
@@ -2041,6 +2367,8 @@ Create a backfill for a given request_item. A user can only make a backfill for 
 Allows API user to view all the backfill requests made by that user. If the API user is a manager or admin, he/she will see all the backfill requests made by all users.
 
 ### Sample Correct Input ###
+
+[Imgur](http://i.imgur.com/AkzgCr1.png)
 
 ### Sample Outputs ###
 
@@ -2236,6 +2564,7 @@ Creates a comment for a given backfill. One must be a manager or admin to have t
 
 ### Sample Correct Input ###
 
+[Imgur](http://i.imgur.com/dxjMokD.png)
 
 ### Sample Outputs ###
 
@@ -2258,6 +2587,7 @@ Shows all the comments made by all managers, for a given backfill
 
 ### Sample Correct Input ###
 
+[Imgur](http://i.imgur.com/8bg2etO.png)
 
 ### Sample Outputs ###
 
@@ -2307,6 +2637,8 @@ Allows a manager or admin to change the status of a backfill.
 
 ### Sample Correct Input ###
 
+[Imgur](http://i.imgur.com/il0V1oU.png)
+
 ### Sample Outputs ###
 
 ```javascript
@@ -2323,3 +2655,197 @@ Allows a manager or admin to change the status of a backfill.
   "updated_at": "2017-04-17T23:08:55.539-04:00"
 }
 ```
+
+
+# Stocks API #
+----------
+
+## STOCK-1 Updates the serial tag for an existing asset ##
+
+### *PUT /api/stocks/{id}/update_serial_tag* ###
+
+### Brief Description ###
+Updates the serial tag for existing stock
+
+
+Parameter  	  | Description												| Data Type
+------------- | -------------											| -------------
+Authorization | Authorization Token	**(Required)**						| Header/String
+ID	  | ID of Asset **(Required)**						| Integer
+Serial Tag	  | 8 Digital Alphanumeric Serial Tag **(Required)** 	| String
+
+### Response Messages ###
+HTTP Status Code	| Reasons						
+------------- 		| -------------
+200					| OK
+401					| Unauthorized
+422	  				| Unprocessable Entity
+
+
+### Sample Correct Input ###
+
+![Imgur](http://i.imgur.com/BsjYEDi.png)
+
+### Sample Outputs ###
+
+**Correct Query (200)**
+```javascript
+{
+  "stock_id": 1,
+  "serial_tag": "SOp7Ck3A",
+  "item_id": 11,
+  "item_name": "Arduino_Kit",
+  "available": true,
+  "asset_custom_fields": [
+    {
+      "key": "location",
+      "value": null,
+      "type": "short_text_type"
+    }
+  ]
+}
+```
+
+## STOCK-2 Updates corresponding Asset Custom Fields with Content ##
+
+### *PUT /api/stocks/{id}/update_field_entry* ###
+
+### Brief Description ###
+Update asset custom field with content
+
+
+Parameter  	  | Description												| Data Type
+------------- | -------------											| -------------
+Authorization | Authorization Token	**(Required)**						| Header/String
+ID	  | ID of Asset **(Required)**						| Integer
+Asset Custom Field Name	  | Field to be Updated **(Required)** 	| String
+Asset Custom Field Content  |   New Content **(Required)**  |   String
+
+### Response Messages ###
+HTTP Status Code	| Reasons						
+------------- 		| -------------
+200					| OK
+401					| Unauthorized
+422	  				| Unprocessable Entity
+
+
+### Sample Correct Input ###
+
+![Imgur](http://i.imgur.com/O2cZ4BP.png)
+
+### Sample Outputs ###
+
+**Correct Query (200)**
+```javascript
+{
+  "stock_id": 1,
+  "serial_tag": "SOp7Ck3A",
+  "item_id": 11,
+  "item_name": "Arduino_Kit",
+  "available": true,
+  "asset_custom_fields": [
+    {
+      "key": "location",
+      "value": "CIEMAS",
+      "type": "short_text_type"
+    }
+  ]
+}
+```
+
+## STOCK-3 Shows all or filtered assets ##
+
+### *GET /api/stocks* ###
+
+### Brief Description ###
+Update asset custom field with content
+
+
+Parameter  	  | Description												| Data Type
+------------- | -------------											| -------------
+Authorization | Authorization Token	**(Required)**						| Header/String
+Serial Tag Search	  | Serial Tag Search Criteria *(Optional)* 	| String
+Item ID Search  |   Item ID Search Criteria *(Optional)*  |   Integer
+
+### Response Messages ###
+HTTP Status Code	| Reasons						
+------------- 		| -------------
+200					| OK
+401					| Unauthorized
+422	  				| Unprocessable Entity
+
+
+### Sample Correct Input ###
+
+![Imgur](http://i.imgur.com/Qkt3ZR8.png)
+
+### Sample Outputs ###
+
+**Correct Query (200)**
+```javascript
+{
+  "stock_id": 1,
+  "serial_tag": "SOp7Ck3A",
+  "item_id": 11,
+  "item_name": "Arduino_Kit",
+  "available": true,
+  "asset_custom_fields": [
+    {
+      "key": "location",
+      "value": "CIEMAS",
+      "type": "short_text_type"
+    }
+  ]
+}
+```
+
+## STOCK-2 Updates corresponding Asset Custom Fields with Content ##
+
+### *PUT /api/stocks/{id}/update_field_entry* ###
+
+### Brief Description ###
+Update asset custom field with content
+
+
+Parameter  	  | Description												| Data Type
+------------- | -------------											| -------------
+Authorization | Authorization Token	**(Required)**						| Header/String
+ID	  | ID of Asset **(Required)**						| Integer
+Asset Custom Field Name	  | Field to be Updated **(Required)** 	| String
+Asset Custom Field Content  |   New Content **(Required)**  |   String
+
+### Response Messages ###
+HTTP Status Code	| Reasons						
+------------- 		| -------------
+200					| OK
+401					| Unauthorized
+422	  				| Unprocessable Entity
+
+
+### Sample Correct Input ###
+
+![Imgur](http://i.imgur.com/O2cZ4BP.png)
+
+### Sample Outputs ###
+
+**Correct Query (200)**
+```javascript
+{
+  "stock_id": 1,
+  "serial_tag": "SOp7Ck3A",
+  "item_id": 11,
+  "item_name": "Arduino_Kit",
+  "available": true,
+  "asset_custom_fields": [
+    {
+      "key": "location",
+      "value": "CIEMAS",
+      "type": "short_text_type"
+    }
+  ]
+}
+```
+
+## STOCK-4 Shows Specified Asset ##
+
+![Imgur](http://i.imgur.com/Ow9ufVH.png)

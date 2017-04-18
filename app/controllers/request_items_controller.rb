@@ -98,6 +98,12 @@ class RequestItemsController < ApplicationController
 
 	def return
 		reqit = RequestItem.find(params[:id])
+
+		if reqit.item.has_stocks && params[:serial_tags_loan_return].nil?
+			flash[:danger] = "Must specify tags to return"
+			redirect_to request_path(reqit.request_id) and return
+		end
+
 		if (params[:quantity_to_return].to_f > reqit.quantity_loan)
 			flash[:danger] = "That's more than are loaned out!"
 		else
