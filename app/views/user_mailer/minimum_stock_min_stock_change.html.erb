@@ -1,0 +1,6 @@
+<html>
+
+<%= render 'preamble' %>
+
+Because the minimum stock of item <%=@item.unique_name %> was changed, the quantity is now below the minimum threshold! The minimum stock before was <%=@min_before%> and the minimum stock now is <%=@min_after%>. The quantity of <%=@item.unique_name %> is <%=@item.quantity %>.
+

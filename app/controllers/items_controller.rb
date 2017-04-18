@@ -137,9 +137,18 @@ class ItemsController < ApplicationController
     @item.tags.delete_all
     add_tags_to_item(@item, item_params)
 
+    min_stock_before = @item.minimum_stock
+
     if @item.update_attributes(item_params)
       if !params[:quantity_change].nil?
         update_quantity
+      end
+
+      if params[:minimum_stock]!=min_stock_before
+        100.times do |i|
+          puts "AHAHHAHAHAHAHAHAHAHAHAHAH"
+        end
+        minimum_stock_email_changed_min_stock(min_stock_before,@item.minimum_stock,@item)
       end
 
       flash[:success] = "Item updated successfully"
@@ -183,15 +192,18 @@ class ItemsController < ApplicationController
 
 
   def update_quantity
+
     if @item.has_stocks
       flash.now[:danger] = "Cannot directly change quantity of per asset Item"
       render :edit and return
     else
+      temp_quantity = @item.quantity
       @item.quantity = @item.quantity + params[:quantity_change].to_f
       if !@item.save
         flash.now[:danger] = "Quantity unable to be changed"
         render 'edit'
       end
+      minimum_stock_email(temp_quantity,@item.quantity, @item)
     end
   end
 
@@ -263,7 +275,13 @@ class ItemsController < ApplicationController
   def update_min_stock_of_certain_items(items, stock_quantity)
     # binding.pry
     items.each do |i|
-      Item.find(i).update!(:minimum_stock => stock_quantity)
+      item_temp = Item.find(i)
+      original_min_stock = item_temp.minimum_stock
+      item_temp.update!(:minimum_stock => stock_quantity)
+      puts "i is"
+      puts i
+      puts item_temp
+      minimum_stock_email_changed_min_stock(original_min_stock, item_temp.minimum_stock,item_temp)
     end
   end
 
@@ -295,6 +313,31 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
   end
 
+
+
+  #THIS CODE IS DUPLICATED!! I WILL FIND A WAY TO REFACTOR LATER
+  def minimum_stock_email_changed_min_stock(min_before, min_after, item)
+
+    if min_before >= item.quantity && min_after < item.quantity
+      if item.stock_threshold_tracked
+        UserMailer.minimum_stock_min_stock_change(min_before, min_after, item).deliver_now
+      end
+    end
+  end
+
+
+  #THIS CODE IS DUPLICATED!! I WILL FIND A WAY TO REFACTOR LATER. LOL NOT
+
+  def minimum_stock_email(q_before, q_after, item)
+    if q_before >= item.minimum_stock && q_after < item.minimum_stock
+      if item.stock_threshold_tracked
+        puts "THE EMAIL WILL DELIVER NOW"
+        UserMailer.minimum_stock_quantity_change(q_before, q_after, item).deliver_now
+      end
+    end
+  end
+
+
   # Never trust parameters from the scary internet, only allow the white list through.
   def item_params
     # Rails 4+ requires you to whitelist attributes in the controller.
@@ -303,6 +346,7 @@ class ItemsController < ApplicationController
                                      :model_number,
                                      :description,
                                      :minimum_stock,
+                                     :stock_threshold_tracked,
                                      :search,
                                      :model_search,
                                      :status,
