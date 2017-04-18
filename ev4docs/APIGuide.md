@@ -2645,3 +2645,197 @@ Allows a manager or admin to change the status of a backfill.
   "updated_at": "2017-04-17T23:08:55.539-04:00"
 }
 ```
+
+
+# Stocks API #
+----------
+
+## STOCK-1 Updates the serial tag for an existing asset ##
+
+### *PUT /api/stocks/{id}/update_serial_tag* ###
+
+### Brief Description ###
+Updates the serial tag for existing stock
+
+
+Parameter  	  | Description												| Data Type
+------------- | -------------											| -------------
+Authorization | Authorization Token	**(Required)**						| Header/String
+ID	  | ID of Asset **(Required)**						| Integer
+Serial Tag	  | 8 Digital Alphanumeric Serial Tag **(Required)** 	| String
+
+### Response Messages ###
+HTTP Status Code	| Reasons						
+------------- 		| -------------
+200					| OK
+401					| Unauthorized
+422	  				| Unprocessable Entity
+
+
+### Sample Correct Input ###
+
+![Imgur](http://i.imgur.com/BsjYEDi.png)
+
+### Sample Outputs ###
+
+**Correct Query (200)**
+```javascript
+{
+  "stock_id": 1,
+  "serial_tag": "SOp7Ck3A",
+  "item_id": 11,
+  "item_name": "Arduino_Kit",
+  "available": true,
+  "asset_custom_fields": [
+    {
+      "key": "location",
+      "value": null,
+      "type": "short_text_type"
+    }
+  ]
+}
+```
+
+## STOCK-2 Updates corresponding Asset Custom Fields with Content ##
+
+### *PUT /api/stocks/{id}/update_field_entry* ###
+
+### Brief Description ###
+Update asset custom field with content
+
+
+Parameter  	  | Description												| Data Type
+------------- | -------------											| -------------
+Authorization | Authorization Token	**(Required)**						| Header/String
+ID	  | ID of Asset **(Required)**						| Integer
+Asset Custom Field Name	  | Field to be Updated **(Required)** 	| String
+Asset Custom Field Content  |   New Content **(Required)**  |   String
+
+### Response Messages ###
+HTTP Status Code	| Reasons						
+------------- 		| -------------
+200					| OK
+401					| Unauthorized
+422	  				| Unprocessable Entity
+
+
+### Sample Correct Input ###
+
+![Imgur](http://i.imgur.com/O2cZ4BP.png)
+
+### Sample Outputs ###
+
+**Correct Query (200)**
+```javascript
+{
+  "stock_id": 1,
+  "serial_tag": "SOp7Ck3A",
+  "item_id": 11,
+  "item_name": "Arduino_Kit",
+  "available": true,
+  "asset_custom_fields": [
+    {
+      "key": "location",
+      "value": "CIEMAS",
+      "type": "short_text_type"
+    }
+  ]
+}
+```
+
+## STOCK-3 Shows all or filtered assets ##
+
+### *GET /api/stocks* ###
+
+### Brief Description ###
+Update asset custom field with content
+
+
+Parameter  	  | Description												| Data Type
+------------- | -------------											| -------------
+Authorization | Authorization Token	**(Required)**						| Header/String
+Serial Tag Search	  | Serial Tag Search Criteria *(Optional)* 	| String
+Item ID Search  |   Item ID Search Criteria *(Optional)*  |   Integer
+
+### Response Messages ###
+HTTP Status Code	| Reasons						
+------------- 		| -------------
+200					| OK
+401					| Unauthorized
+422	  				| Unprocessable Entity
+
+
+### Sample Correct Input ###
+
+![Imgur](http://i.imgur.com/Qkt3ZR8.png)
+
+### Sample Outputs ###
+
+**Correct Query (200)**
+```javascript
+{
+  "stock_id": 1,
+  "serial_tag": "SOp7Ck3A",
+  "item_id": 11,
+  "item_name": "Arduino_Kit",
+  "available": true,
+  "asset_custom_fields": [
+    {
+      "key": "location",
+      "value": "CIEMAS",
+      "type": "short_text_type"
+    }
+  ]
+}
+```
+
+## STOCK-2 Updates corresponding Asset Custom Fields with Content ##
+
+### *PUT /api/stocks/{id}/update_field_entry* ###
+
+### Brief Description ###
+Update asset custom field with content
+
+
+Parameter  	  | Description												| Data Type
+------------- | -------------											| -------------
+Authorization | Authorization Token	**(Required)**						| Header/String
+ID	  | ID of Asset **(Required)**						| Integer
+Asset Custom Field Name	  | Field to be Updated **(Required)** 	| String
+Asset Custom Field Content  |   New Content **(Required)**  |   String
+
+### Response Messages ###
+HTTP Status Code	| Reasons						
+------------- 		| -------------
+200					| OK
+401					| Unauthorized
+422	  				| Unprocessable Entity
+
+
+### Sample Correct Input ###
+
+![Imgur](http://i.imgur.com/O2cZ4BP.png)
+
+### Sample Outputs ###
+
+**Correct Query (200)**
+```javascript
+{
+  "stock_id": 1,
+  "serial_tag": "SOp7Ck3A",
+  "item_id": 11,
+  "item_name": "Arduino_Kit",
+  "available": true,
+  "asset_custom_fields": [
+    {
+      "key": "location",
+      "value": "CIEMAS",
+      "type": "short_text_type"
+    }
+  ]
+}
+```
+
+## STOCK-4 Shows Specified Asset ##
+
+![Imgur](http://i.imgur.com/Ow9ufVH.png)
