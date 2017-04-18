@@ -3,14 +3,14 @@ class Api::V1::ItemsController < BaseController
   before_action :auth_by_approved_status!
   before_action :auth_by_manager_privilege!, only: [:create, :create_tag_associations, :destroy_tag_associations, :update_general, :bulk_minimum_stock, :all_minimum_stock, :bulk_import, :convert_to_stocks, :convert_to_global]
   before_action :auth_by_admin_privilege!, only: [:destroy, :fix_quantity, :clear_field_entries, :update_field_entry, :create_stocks, :create_single_stock]
-  before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock]
-  before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock]
+  before_action :render_404_if_item_unknown, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock, :backfill_requested, :backfill_transit]
+  before_action :set_item, only: [:destroy, :create_tag_associations, :destroy_tag_associations, :show, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock, :backfill_requested, :backfill_transit]
 
 
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import, :bulk_minimum_stock, :all_minimum_stock, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock].each do |api_action|
+  [:create_tag_associations, :destroy_tag_associations, :update_general, :fix_quantity, :clear_field_entries, :update_field_entry, :bulk_import, :bulk_minimum_stock, :all_minimum_stock, :self_outstanding_requests, :self_loans, :convert_to_stocks, :convert_to_global, :create_stocks, :create_single_stock, :backfill_requested, :backfill_transit].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -284,6 +284,74 @@ class Api::V1::ItemsController < BaseController
     response :ok
     response :unauthorized
     response :not_found
+  end
+
+  swagger_api :backfill_requested do
+    summary "View Item stack for request_items that have backfills requested"
+    notes "
+    For students, only view request_items that correspond to self that are backfilled requested.
+    For managers/admins, view all request_items that are backfills requested.
+    "
+    param :path, :id, :integer, :required, "Item ID"
+    response :ok
+    response :unauthorized
+    response :not_found
+  end
+
+  swagger_api :backfill_transit do
+    summary "View Item stack for request_items that have backfills in transit"
+    notes "
+    For students, only view request_items that correspond to own request_items that are backfills.
+    For managers/admins, view all request_items that are backfills in transit
+    "
+    param :path, :id, :integer, :required, "Item ID"
+    response :ok
+    response :unauthorized
+    response :not_found
+  end
+
+  def backfill_requested
+    begin
+      request_items = (current_user_by_auth.privilege_student?) ?
+          RequestItem.filter({item_id: @item.id, user_id: current_user_by_auth.id, bf_status: "bf_request"}) :
+          RequestItem.filter({item_id: @item.id, bf_status: "bf_request"})
+
+      render :json => request_items.map {
+        |request_item| {
+            request_item_id: request_item.id,
+            request_id: request_item.request_id,
+            item_name: request_item.item.unique_name,
+            item_id: request_item.item.id,
+            quantity_on_loan: request_item.quantity_loan,
+            quantity_disbursed: request_item.quantity_disburse,
+            quantity_returned: request_item.quantity_return
+        }
+      }, status: 200
+    rescue Exception => e
+      render_client_error(e.message, 422)
+    end
+  end
+
+  def backfill_transit
+    begin
+      request_items = (current_user_by_auth.privilege_student?) ?
+          RequestItem.filter({item_id: @item.id, user_id: current_user_by_auth.id, bf_status: "bf_in_transit"}) :
+          RequestItem.filter({item_id: @item.id, bf_status: "bf_in_transit"})
+
+      render :json => request_items.map {
+          |request_item| {
+            request_item_id: request_item.id,
+            request_id: request_item.request_id,
+            item_name: request_item.item.unique_name,
+            item_id: request_item.item.id,
+            quantity_on_loan: request_item.quantity_loan,
+            quantity_disbursed: request_item.quantity_disburse,
+            quantity_returned: request_item.quantity_return
+        }
+      }, status: 200
+    rescue Exception => e
+      render_client_error(e.message, 422)
+    end
   end
 
   def create_single_stock
