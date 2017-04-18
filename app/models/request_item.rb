@@ -28,6 +28,7 @@ class RequestItem < ApplicationRecord
   scope :quantity_return, -> (quantity_return) { where quantity_return: quantity_return }
   # scope :serial_tags_loan, -> (serial_tags_loan) { where serial_tags_loan: serial_tags_loan }
   # scope :serial_tags_disburse, -> (serial_tags_disburse) { where serial_tags_disburse: serial_tags_disburse }
+  scope :bf_status, -> (bf_status) { where bf_status: bf_status }
 
   attr_accessor :curr_user
   attr_readonly :request_id, :item_id

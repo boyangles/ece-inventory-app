@@ -129,6 +129,9 @@ Rails.application.routes.draw do
 
       resources :items, :only => [:index, :show, :create, :destroy] do
         member do
+          get :backfill_requested
+          get :backfill_transit
+
           post :create_single_stock
 
           post :create_stocks
