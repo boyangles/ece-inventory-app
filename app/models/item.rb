@@ -64,7 +64,6 @@ class Item < ApplicationRecord
   after_create {
     initialize_stocks
     create_custom_fields_for_items(self.id)
-    create_log("created", self.quantity)
   }
 
   after_update {
@@ -183,7 +182,14 @@ class Item < ApplicationRecord
         end
 				
         self.has_stocks = true
-        self.save!
+	      self.save!
+
+				itemlog =	create_log("convert_to_global", 0)
+				self.stocks.each do |f|
+					sil = StockItemLog.new(:item_log_id => itemlog, :stock_id => f.id, :curr_serial_tag => f.serial_tag)
+					sil.save!
+				end
+	
       end
     end
 
@@ -205,7 +211,13 @@ class Item < ApplicationRecord
 
         self.has_stocks = true
         self.save!
-      end
+  
+				itemlog =	create_log("convert_to_global", 0)
+				self.stocks.each do |f|
+					sil = StockItemLog.new(:item_log_id => itemlog, :stock_id => f.id, :curr_serial_tag => f.serial_tag)
+					sil.save!
+				end
+	    end
 
       return true
     rescue Exception => e
@@ -225,6 +237,13 @@ class Item < ApplicationRecord
         for i in 1..self.quantity_on_loan do
           Stock.create!(:item_id => self.id, :available => false)
         end
+			
+				itemlog =	create_log("created", self.quantity)
+				self.stocks.each do |f|
+					sil = StockItemLog.new(:item_log_id => itemlog, :stock_id => f.id, :curr_serial_tag => f.serial_tag)
+					sil.save!
+				end
+	   
       end
 
       return true
@@ -238,18 +257,34 @@ class Item < ApplicationRecord
   def convert_to_global
     return false unless self.has_stocks
 
-    Stock.destroy_all(item_id: self.id)
-    self.has_stocks = false
-    self.save!
+		ActiveRecord::Base.transaction do
+			itemlog =	create_log("convert_to_global", 0)
+			self.stocks.each do |f|
+				sil = StockItemLog.new(:item_log_id => itemlog, :stock_id => f.id, :curr_serial_tag => f.serial_tag)
+				sil.save!
+			end
+	
+	    Stock.destroy_all(item_id: self.id)
+  	  self.has_stocks = false
+    	self.save!
+		end
 
   end
 
   def convert_to_global!
     raise Exception.new("Cannot convert back assets for an item if that item is already specified as not having assets!") unless self.has_stocks
 
-    Stock.destroy_all(item_id: self.id)
-    self.has_stocks = false
-    self.save!
+		ActiveRecord::Base.transaction do
+			itemlog =	create_log("convert_to_global", 0)
+			self.stocks.each do |f|
+				sil = StockItemLog.new(:item_log_id => itemlog, :stock_id => f.id, :curr_serial_tag => f.serial_tag)
+				sil.save!
+			end
+	
+  	  Stock.destroy_all(item_id: self.id)
+    	self.has_stocks = false
+    	self.save!
+		end		
 
     self
   end
@@ -374,18 +409,29 @@ class Item < ApplicationRecord
   end
 
   def create_log_on_destruction()
-
     if self.status == 'deactive' && self.status_was == 'active'
-      create_log("deleted", self.quantity)
+      itemo = create_log("deleted", self.quantity)
+			self.stocks.each do |stock|
+				sil = StockItemLog.new(:item_log_id => itemo, :stock_id => stock.id, :curr_serial_tag => stock.serial_tag)
+				sil.save!
+
+				stock.destroy
+			end
+
     end
   end
 
 	def create_log_on_stocks_status_change
 		if has_stocks_was != has_stocks && has_stocks_was != nil
 			if has_stocks
-				create_log("convert_to_assets", 0)
+				itemlog =	create_log("convert_to_assets", 0)
+				self.stocks.each do |f|
+					sil = StockItemLog.new(:item_log_id => itemlog, :stock_id => f.id, :curr_serial_tag => f.serial_tag)
+					sil.save!
+				end
 			else
 				create_log("convert_to_global", 0)
+				
 			end
 		end
 	end
