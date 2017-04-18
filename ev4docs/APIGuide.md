@@ -1995,6 +1995,14 @@ Modify dates loans reminder emails are sent
 }
 ```
 
+# Subscribers API #
+----------
+![](http://i.imgur.com/xYXG10h.png)
+
+![](http://i.imgur.com/ZJ6fBtB.png)
+
+![](http://i.imgur.com/o5Y5pqK.png)
+
 # Backfills API #
 ----------
 
@@ -2315,13 +2323,3 @@ Allows a manager or admin to change the status of a backfill.
   "updated_at": "2017-04-17T23:08:55.539-04:00"
 }
 ```
-
-
-
-# Subscribers API #
-----------
-![](http://i.imgur.com/xYXG10h.png)
-
-![](http://i.imgur.com/ZJ6fBtB.png)
-
-![](http://i.imgur.com/o5Y5pqK.png)
