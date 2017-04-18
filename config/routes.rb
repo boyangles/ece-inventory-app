@@ -178,6 +178,9 @@ Rails.application.routes.draw do
 
       resources :requests, :only => [:index, :show, :create] do
         member do
+          put :return
+          patch :return
+
           post :direct_request
 
           put :decision
