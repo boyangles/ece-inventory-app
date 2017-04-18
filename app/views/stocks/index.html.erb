@@ -39,7 +39,9 @@
         <th class="text-center">Serial Tag</th>
         <th class="text-center">Available</th>
         <th></th>
-        <th class="text-center">Select</th>
+        <% if is_admin? %>
+            <th class="text-center">Select</th>
+        <% end %>
       </tr>
       </thead>
 

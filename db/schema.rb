@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170416220546) do
+ActiveRecord::Schema.define(version: 20170417035147) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,11 +76,12 @@ ActiveRecord::Schema.define(version: 20170416220546) do
     t.integer "quantity"
     t.string  "description"
     t.string  "model_number"
-    t.integer "status",           default: 0
-    t.integer "last_action",      default: 3
-    t.integer "quantity_on_loan", default: 0
-    t.integer "minimum_stock",    default: 0
-    t.boolean "has_stocks",       default: false
+    t.integer "status",                  default: 0
+    t.integer "last_action",             default: 3
+    t.integer "quantity_on_loan",        default: 0
+    t.integer "minimum_stock",           default: 0
+    t.boolean "has_stocks",              default: false
+    t.boolean "stock_threshold_tracked", default: false
   end
 
   create_table "logs", force: :cascade do |t|

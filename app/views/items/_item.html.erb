@@ -2,6 +2,7 @@
   <td><%= link_to item.unique_name, item_path(item.id) %></td>
   <td><%= item.quantity %></td>
   <td><%= item.model_number %></td>
+
   <% if is_manager_or_admin? %> <td><%= item.minimum_stock %></td> <% end %>
   <td colspan="3">
     <% ri = RequestItem.where(item_id: item.id).where(request_id: grab_cart(current_user).id).take %>
@@ -11,7 +12,6 @@
         <%= render 'indexform', request_item: ri %>
     <% end %>
   </td>
-
 
 
   <% if is_manager_or_admin? %>

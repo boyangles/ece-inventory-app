@@ -2,15 +2,15 @@ class Api::V1::RequestsController < BaseController
 
   before_action :authenticate_with_token!
   before_action :auth_by_approved_status!
-  before_action :auth_by_manager_privilege!, only: [:decision, :create_req_items, :destroy_req_items, :update_req_items, :return_req_items, :index_subrequests]
-  before_action :render_404_if_request_unknown, only: [:show, :decision, :update_general, :create_req_items, :destroy_req_items, :update_req_items, :return_req_items]
-  before_action :set_request, only: [:show, :decision, :update_general, :create_req_items, :destroy_req_items, :update_req_items, :return_req_items]
+  before_action :auth_by_manager_privilege!, only: [:decision, :create_req_items, :destroy_req_items, :update_req_items, :return_req_items, :index_subrequests, :return]
+  before_action :render_404_if_request_unknown, only: [:show, :decision, :update_general, :create_req_items, :destroy_req_items, :update_req_items, :return_req_items, :return]
+  before_action :set_request, only: [:show, :decision, :update_general, :create_req_items, :destroy_req_items, :update_req_items, :return_req_items, :return]
 
   before_action -> { render_422_if_request_not_outstanding!(params[:id]) }, only: [:decision, :update_general] # :create_req_items, :destroy_req_items, :update_req_items, :return_req_items
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  [:decision, :update_general, :create_req_items, :destroy_req_items, :update_req_items, :return_req_items, :index_subrequests].each do |api_action|
+  [:decision, :update_general, :create_req_items, :destroy_req_items, :update_req_items, :return_req_items, :index_subrequests, :return].each do |api_action|
     swagger_api api_action do
       param :header, :Authorization, :string, :required, 'Authentication token'
     end
@@ -54,6 +54,7 @@ class Api::V1::RequestsController < BaseController
     param :path, :id, :integer, :required, "Request ID"
     param_list :form, 'request[status]', :string, :required, "Status to update to (approved/denied)"
     param :form, 'request[response]', :string, :optional, "Response"
+    param :query, :asset_instances, :string, :required, 'Example --> [{"request_item_id": 151, "assets_to_loan": ["sz63FMW5", "40FIhjhP"], "assets_to_disburse": []}, ...]'
     response :ok
     response :unauthorized
     response :unprocessable_entity
@@ -136,7 +137,7 @@ class Api::V1::RequestsController < BaseController
   end
 
   swagger_api :return_req_items do
-    summary 'Returns specific amounts for requested items'
+    summary 'DEPRECATED:: Returns specific amounts for requested items'
     notes "
     Allows for a return mechanism after a request has been approved. Specifies how much quantity of an item that is to be returned.
     Example for request_items:
@@ -153,6 +154,30 @@ class Api::V1::RequestsController < BaseController
     "
     param :path, :id, :integer, :required, "Request ID"
     param :query, :request_items, :string, :required, 'Example --> [{"item_name": "item1", "quantity_return": 15}, ...]'
+    response :ok
+    response :unauthorized
+    response :unprocessable_entity
+  end
+
+  swagger_api :return do
+    summary 'Returns requested item for per-asset items and global items'
+    notes "
+    Allows for a return mechanism after a request has been approved. Specifies how much quantity of an item that is to be returned for a global item, and specifies the assets to be returned for a per-asset item.
+    Example for request_items:
+    [
+      {
+        \"request_item_id\": 83,
+        \"quantity_to_return\": 15,
+        \"bf_status\": \"loan\"
+      },
+      {
+        \"request_item_id\": 84,
+        \"serial_tags_loan_return\": [\"sample01\", \"sample02\"]
+      }
+    ]
+    "
+    param :path, :id, :integer, :required, "Request ID"
+    param :query, :request_items, :string, :required, 'See Example above'
     response :ok
     response :unauthorized
     response :unprocessable_entity
@@ -239,12 +264,73 @@ class Api::V1::RequestsController < BaseController
   end
 
   def decision
-    begin
-      @request.update!(request_params)
-      render_request_with_sub_requests(@request, @request.user)
-    rescue Exception => e
-      render_client_error(e.message, 422) and return
+    render_client_error("Can only make decision on outstanding requests", 422) and return unless @request.outstanding?
+    old_status = @request.status
+
+    if request_params[:status] == 'approved'
+      query_params = params.slice(:asset_instances)
+      render_client_error("Invalid JSON format", 422) and return unless valid_json?(query_params[:asset_instances])
+      asset_instances = JSON.parse(query_params[:asset_instances])
+      render_client_error("JSON format must be array", 422) and return unless asset_instances.kind_of?(Array)
+
+      begin
+        ActiveRecord::Base.transaction do
+          @request.request_items.each do |request_item|
+            if request_item.item.has_stocks
+              request_item_accounted_for = false
+
+              asset_instances.each do |asset_instance|
+                if request_item.id == asset_instance['request_item_id']
+                  request_item_accounted_for = true
+                  request_item.curr_user = current_user_by_auth
+                  request_item.create_request_item_stocks(asset_instance['assets_to_disburse'], asset_instance['assets_to_loan'])
+                end
+              end
+
+              raise Exception.new("Subrequest specified not accounted for request_item ID: #{request_item.id}") unless request_item_accounted_for
+            end
+          end
+
+          @request.curr_user = current_user_by_auth
+          @request.update_attributes!(request_params)
+        end
+      rescue Exception => e
+        render_client_error(e.message, 422) and return
+      end
+    else
+      begin
+        @request.update!(request_params)
+      rescue Exception => e
+        render_client_error(e.message, 422) and return
+      end
     end
+
+    #Two separate emails, one if user made own request, or if manager made request for him.
+
+    #If request became approved through manager approving request. No subscriber email required.
+    if old_status == 'outstanding' && request_params[:status] == 'approved'
+      userMadeRequest = true
+      # UserMailer.request_approved_email_all_subscribers(current_user, @request, userMadeRequest).deliver_now
+      UserMailer.request_approved_email(current_user_by_auth, @request, @request.user,userMadeRequest).deliver_now
+
+      #If request became approved through manager making request for him. Subscriber email required.
+    elsif old_status == 'cart' && request_params[:status] == 'approved'
+      userMadeRequest = false
+      UserMailer.request_approved_email_all_subscribers(current_user_by_auth, @request, userMadeRequest).deliver_now
+
+      #If request was initiated through user checking out cart. Subscriber email required.
+    elsif old_status == 'cart' && request_params[:status] == 'outstanding'
+      UserMailer.request_initiated_email_all_subscribers(@request.user, @request).deliver_now
+
+      #If request was denied by manager. No subscriber email required.
+    elsif old_status =='outstanding' && request_params[:status] == 'denied'
+      UserMailer.request_denied_email(current_user, @request, @request.user).deliver_now
+
+    elsif old_status =='outstanding' && request_params[:status] == 'cancelled'
+      UserMailer.request_cancelled_email(current_user_by_auth, @request, @request.user).deliver_now
+    end
+
+    render_request_with_sub_requests(@request, @request.user)
   end
 
   def update_general
@@ -309,6 +395,39 @@ class Api::V1::RequestsController < BaseController
     begin
       updated_request = current_user_by_auth.return_specified_items(@request, req_items)
       render_request_with_sub_requests(updated_request, updated_request.user)
+    rescue Exception => e
+      render_client_error(e.message, 422) and return
+    end
+  end
+
+  def return
+    query_params = params.slice(:request_items)
+    render_client_error("Invalid JSON format", 422) and return unless valid_json?(query_params[:request_items])
+    req_items = JSON.parse(query_params[:request_items])
+    render_client_error("JSON format must be array", 422) and return unless req_items.kind_of?(Array)
+
+    begin
+      ActiveRecord::Base.transaction do
+        req_items.each do |request_item_hash|
+          reqit = RequestItem.find(request_item_hash['request_item_id'])
+          raise Exception.new("Request Item for Request Item ID: #{request_item_hash['request_item_id']} could not be found.") if reqit.blank?
+
+          if (request_item_hash['quantity_to_return'].to_f > reqit.quantity_loan)
+            raise Exception.new("Trying to return more than are loaned out for request item with id: #{reqit.id}.")
+          else
+            reqit.curr_user = current_user_by_auth
+            if reqit.item.has_stocks
+              current_user_by_auth.return_subrequest(reqit, request_item_hash['serial_tags_loan_return'], request_item_hash['bf_status'])
+            else
+              current_user_by_auth.return_subrequest(reqit, request_item_hash['quantity_to_return'].to_f, request_item_hash['bf_status'])
+            end
+
+            UserMailer.loan_return_email(reqit, request_item_hash['quantity_to_return']).deliver_now
+          end
+        end
+      end
+
+      render_request_with_sub_requests(@request, @request.user)
     rescue Exception => e
       render_client_error(e.message, 422) and return
     end

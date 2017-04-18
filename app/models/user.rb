@@ -154,7 +154,6 @@ class User < ApplicationRecord
   #     'quantity_loan': 325        # Optional
   #     'quantity_disburse': 522    # Optional
   #     'quantity_return': 42       # Optional
-  #     'due_date': '06/07/2015'    # Optional
   #   }, ...]
   #   reason: 'Optional reason here'
   #   requested_for: user
@@ -184,12 +183,11 @@ class User < ApplicationRecord
                                        :item_id => requested_item.id,
                                        :quantity_loan => sub_req['quantity_loan'],
                                        :quantity_disburse => sub_req['quantity_disburse'],
-                                       :quantity_return => sub_req['quantity_return'],
-                                       :due_date => sub_req['due_date'])
+                                       :quantity_return => sub_req['quantity_return'])
         raise Exception.new("Subrequest creation error. The error hash is #{new_req_item.errors.full_messages}. Subrequest hash is: #{JSON.pretty_generate(sub_req)}.") unless new_req_item.save
       end
 
-      req.update!(:status => 'approved') unless self.privilege_student?
+      # req.update!(:status => 'approved') unless self.privilege_student?
     end
 
     return req
@@ -204,7 +202,6 @@ class User < ApplicationRecord
   #     'quantity_loan': 325        # Optional
   #     'quantity_disburse': 522    # Optional
   #     'quantity_return': 42       # Optional
-  #     'due_date': '06/07/2015'    # Optional
   #   }, ...]
   # Return:
   #   On success: newly created request
@@ -225,8 +222,7 @@ class User < ApplicationRecord
                                        :item_id => requested_item.id,
                                        :quantity_loan => sub_req['quantity_loan'],
                                        :quantity_disburse => sub_req['quantity_disburse'],
-                                       :quantity_return => sub_req['quantity_return'],
-                                       :due_date => sub_req['due_date'])
+                                       :quantity_return => sub_req['quantity_return'])
         raise Exception.new("Subrequest creation error. The error hash is #{new_req_item.errors.full_messages}. Subrequest hash is: #{JSON.pretty_generate(sub_req)}.") unless new_req_item.save
 
         if req.approved?
@@ -294,8 +290,7 @@ class User < ApplicationRecord
 
         subrequest.assign_attributes(:quantity_loan => sub_req['quantity_loan'],
                                      :quantity_disburse => sub_req['quantity_disburse'],
-                                     :quantity_return => sub_req['quantity_return'],
-                                     :due_date => sub_req['due_date'])
+                                     :quantity_return => sub_req['quantity_return'])
         raise Exception.new("Subrequest creation error. The error hash is #{updated_req_item.errors.full_messages}. Subrequest hash is: #{JSON.pretty_generate(sub_req)}.") unless subrequest.save
 
         begin
