@@ -138,7 +138,12 @@ class Api::V1::ItemsController < BaseController
   end
 
   swagger_api :bulk_minimum_stock do
-    summary "Set minimum stock of many items at once."
+    summary "Set minimum stock of many items at once. "
+    notes "
+    The format of the items should be in the form ['x', 'y', 'z', 'a'], where 'x', 'y', 'z', and 'a' are integers that reference the item_id of the item that will be modified.
+    All the items in the array will have their minimum quantity changed to the value of the updated minimum stock quantity
+    "
+
     param :query, 'items', :string, :required, "Items to update"
     param :query, 'min_quantity', :integer, :required, "Updated minimum stock quantity"
     response :ok
